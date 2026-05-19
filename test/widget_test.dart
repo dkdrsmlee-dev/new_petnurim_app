@@ -2,25 +2,26 @@
 // WidgetTester로 탭 같은 사용자 동작을 실행하고 화면 상태를 검증합니다.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:new_petnurim_app/main.dart';
+import 'package:new_petnurim_app/app/petnurim_app.dart';
 
 void main() {
-  testWidgets('카운터 증가 스모크 테스트', (WidgetTester tester) async {
+  testWidgets('초기 라우팅과 온보딩 이동 스모크 테스트', (WidgetTester tester) async {
     // 앱을 렌더링합니다.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const ProviderScope(child: PetnurimApp()));
+    await tester.pumpAndSettle();
 
-    // 카운터가 0에서 시작하는지 확인합니다.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // 루트 경로에서 스플래시 역할의 시작 화면을 보여줍니다.
+    expect(find.text('펫누림'), findsWidgets);
+    expect(find.text('온보딩 보기'), findsOneWidget);
 
-    // 더하기 버튼을 누르고 화면을 갱신합니다.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // 라우터를 통해 온보딩 화면으로 이동합니다.
+    await tester.tap(find.byIcon(Icons.flag_outlined));
+    await tester.pumpAndSettle();
 
-    // 카운터가 1로 증가했는지 확인합니다.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('온보딩'), findsWidgets);
+    expect(find.text('서비스 시작하기'), findsOneWidget);
   });
 }

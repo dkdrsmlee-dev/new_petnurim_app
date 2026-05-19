@@ -13,6 +13,13 @@ React UI 구조를 대체합니다. 기존 데모는 동작 기준과 API 흐름
 - 네이티브 SDK 연동, 보안 토큰 저장, 딥링크 처리는 Flutter/native 영역에서 담당합니다.
 - 기존 React에 있던 API 호출과 회원가입 흐름은 Dart 서비스로 옮깁니다.
 
+## 현재 적용된 기본 구성
+
+- 라우팅: `go_router`
+- 상태관리/의존성 주입: `flutter_riverpod`
+- 앱 진입점: `ProviderScope` + `PetnurimApp`
+- 기본 화면 흐름: 스플래시, 온보딩, 인증 시작, 회원가입 단계, 홈, 주소검색 WebView 후보
+
 ## 초기 구조
 
 ```txt
@@ -30,6 +37,20 @@ lib/
     home/
     webview/           꼭 필요한 WebView 흐름
   native/              Kakao, Naver, PASS, 플랫폼 브리지
+```
+
+## 현재 라우트
+
+```txt
+/                 스플래시
+/onboarding       온보딩
+/auth/start       로그인 시작
+/signup/terms     약관 동의
+/signup/verify    본인인증
+/signup/profile   회원정보 입력
+/signup/complete  가입 완료
+/home             홈
+/webview/address  주소검색 WebView 후보
 ```
 
 ## 실행

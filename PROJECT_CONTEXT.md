@@ -18,6 +18,15 @@
 - 외부 웹 흐름이 필요한 경우에만 WebView를 유지합니다.
 - `bootstrap`, `saveToken`, `clearToken` 같은 브리지 개념은 Flutter 서비스로 흡수합니다.
 
+## 2단계 앱 골격
+
+- `lib/main.dart`: `ProviderScope`로 앱을 시작합니다.
+- `lib/app/petnurim_app.dart`: `MaterialApp.router` 기반 앱 셸입니다.
+- `lib/app/app_router.dart`: `go_router` 라우팅 정의입니다.
+- `lib/app/app_theme.dart`: 앱 공통 Material 테마입니다.
+- `lib/core`: API, 설정, 토큰 저장소의 초기 인터페이스 위치입니다.
+- `lib/features`: 화면 흐름별 최소 Flutter 화면입니다.
+
 ## WebView 후보 영역
 
 - Daum/Kakao 주소검색
