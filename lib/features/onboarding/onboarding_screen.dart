@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/app_routes.dart';
 import '../../app/widgets/route_step_screen.dart';
+import '../../core/storage/onboarding_storage.dart';
 
-class OnboardingScreen extends StatelessWidget {
+class OnboardingScreen extends ConsumerWidget {
   const OnboardingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return RouteStepScreen(
       title: '온보딩',
       eyebrow: '처음 실행 흐름',
@@ -21,7 +23,14 @@ class OnboardingScreen extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: () => context.go(AppRoutes.authStart),
+            onPressed: () async {
+              await ref
+                  .read(onboardingStorageProvider)
+                  .saveOnboardingSeen(true);
+              if (context.mounted) {
+                context.go(AppRoutes.authStart);
+              }
+            },
             icon: const Icon(Icons.arrow_forward),
             label: const Text('서비스 시작하기'),
           ),

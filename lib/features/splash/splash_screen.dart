@@ -1,48 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../app/app_routes.dart';
+import '../../app/app_bootstrap.dart';
 import '../../app/widgets/route_step_screen.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return RouteStepScreen(
-      title: '펫누림',
-      eyebrow: '앱 시작점',
-      description: '저장된 토큰과 온보딩 상태를 확인한 뒤 다음 화면으로 이동할 진입 화면입니다.',
-      details: const [
-        '2단계에서는 라우팅 구조 확인을 위해 수동 이동 버튼을 제공합니다.',
-        '3단계에서 토큰 저장소와 부트스트랩 로직을 연결합니다.',
-      ],
-      actions: [
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton.icon(
-            onPressed: () => context.go(AppRoutes.onboarding),
-            icon: const Icon(Icons.flag_outlined),
-            label: const Text('온보딩 보기'),
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(appBootstrapStateProvider, (previous, next) {
+      next.whenData((state) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            context.go(state.nextRoute);
+          }
+        });
+      });
+    });
+
+    final bootstrapState = ref.watch(appBootstrapStateProvider);
+
+    return bootstrapState.when(
+      loading: () => const RouteStepScreen(
+        title: '펫누림',
+        eyebrow: '앱 시작점',
+        description: '저장된 토큰과 온보딩 상태를 확인하고 있습니다.',
+        details: [
+          'access token은 보안 저장소에서 읽습니다.',
+          '온보딩 완료 여부는 로컬 설정 저장소에서 읽습니다.',
+        ],
+      ),
+      error: (error, stackTrace) => RouteStepScreen(
+        title: '시작 상태 확인 실패',
+        eyebrow: '앱 시작점',
+        description: '앱 시작 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+        details: [error.toString()],
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => ref.invalidate(appBootstrapStateProvider),
+              icon: const Icon(Icons.refresh),
+              label: const Text('다시 시도'),
+            ),
           ),
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: () => context.go(AppRoutes.authStart),
-            icon: const Icon(Icons.login),
-            label: const Text('로그인 시작 화면'),
-          ),
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: TextButton.icon(
-            onPressed: () => context.go(AppRoutes.home),
-            icon: const Icon(Icons.home_outlined),
-            label: const Text('홈 화면 확인'),
-          ),
-        ),
-      ],
+        ],
+      ),
+      data: (state) => RouteStepScreen(
+        title: '펫누림',
+        eyebrow: '앱 시작점',
+        description: '시작 상태 확인을 마쳤습니다. 다음 화면으로 이동합니다.',
+        details: [
+          '다음 경로: ${state.nextRoute}',
+          '온보딩 완료: ${state.onboardingSeen ? '예' : '아니오'}',
+          '로그인 토큰: ${state.isAuthenticated ? '있음' : '없음'}',
+        ],
+      ),
     );
   }
 }
