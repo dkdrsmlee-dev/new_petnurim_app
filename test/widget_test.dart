@@ -1,9 +1,5 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// 기본 Flutter 위젯 테스트입니다.
+// WidgetTester로 탭 같은 사용자 동작을 실행하고 화면 상태를 검증합니다.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,19 +7,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:new_petnurim_app/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('카운터 증가 스모크 테스트', (WidgetTester tester) async {
+    // 앱을 렌더링합니다.
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
+    // 카운터가 0에서 시작하는지 확인합니다.
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame.
+    // 더하기 버튼을 누르고 화면을 갱신합니다.
     await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
 
-    // Verify that our counter has incremented.
+    // 카운터가 1로 증가했는지 확인합니다.
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });

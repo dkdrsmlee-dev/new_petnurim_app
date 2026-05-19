@@ -12,10 +12,9 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            <!-- Specifies an Android theme to apply to this Activity as soon as
-                 the Android process has started. This theme is visible to the user
-                 while the Flutter UI initializes. After that, this theme continues
-                 to determine the Window background behind the Flutter UI. -->
+            <!-- Android 프로세스 시작 직후 Activity에 적용할 테마입니다.
+                 Flutter UI가 초기화되는 동안 사용자에게 보이고,
+                 이후에도 Flutter UI 뒤쪽 Window 배경을 결정합니다. -->
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
@@ -25,17 +24,16 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Don't delete the meta-data below.
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <!-- 아래 meta-data는 Flutter 도구가 GeneratedPluginRegistrant.java를 만들 때 사용하므로 삭제하지 않습니다. -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-    <!-- Required to query activities that can process text, see:
+    <!-- 텍스트 처리 Activity 조회에 필요합니다. 참고:
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
 
-         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+         특히 Flutter 엔진의 io.flutter.plugin.text.ProcessTextPlugin에서 사용합니다. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>

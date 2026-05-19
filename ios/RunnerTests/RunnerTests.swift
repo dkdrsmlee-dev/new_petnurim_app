@@ -5,8 +5,8 @@ import XCTest
 class RunnerTests: XCTestCase {
 
   func testExample() {
-    // If you add code to the Runner application, consider adding tests here.
-    // See https://developer.apple.com/documentation/xctest for more information about using XCTest.
+    // Runner 앱에 네이티브 코드를 추가하면 이곳에 테스트를 보강합니다.
+    // XCTest 참고: https://developer.apple.com/documentation/xctest
   }
 
 }

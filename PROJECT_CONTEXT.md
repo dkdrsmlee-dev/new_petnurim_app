@@ -1,30 +1,30 @@
-# Project Context
+# 프로젝트 컨텍스트
 
-## Reference Project
+## 참고 프로젝트
 
-`nurimAppDemo` is the previous hybrid demo:
+`nurimAppDemo`는 이전 하이브리드 데모입니다.
 
-- Repository: https://github.com/dkdrsmlee-dev/nurimAppDemo.git
-- Structure: Flutter WebView shell plus React UI
-- Flutter responsibilities: WebView host, JWT storage bridge, Kakao SDK, Naver native channel, deep links
-- React responsibilities: splash, onboarding, social login start, terms, verification mock, profile input, signup complete, home, app state, API calls
+- 저장소: https://github.com/dkdrsmlee-dev/nurimAppDemo.git
+- 구조: Flutter WebView 셸 + React UI
+- Flutter 역할: WebView 호스팅, JWT 저장 브리지, Kakao SDK, Naver 네이티브 채널, 딥링크
+- React 역할: 스플래시, 온보딩, 소셜 로그인 시작, 약관, 본인인증 목업, 회원정보 입력, 가입 완료, 홈, 앱 상태, API 호출
 
-## New Direction
+## 새 구현 방향
 
-`new_petnurim_app` should become a Flutter-first app.
+`new_petnurim_app`는 Flutter 중심 앱으로 구현합니다.
 
-- Rebuild app-owned screens as Flutter widgets.
-- Reuse `nurimAppDemo` as a behavior and API reference, not as a codebase to embed wholesale.
-- Keep WebView only where an external web flow is required.
-- Move bridge concepts such as bootstrap/saveToken/clearToken into Flutter services.
+- 앱이 직접 소유하는 화면은 Flutter 위젯으로 다시 만듭니다.
+- `nurimAppDemo`는 전체 코드를 끼워 넣는 대상이 아니라, 동작과 API 기준을 확인하는 참고 자료로 씁니다.
+- 외부 웹 흐름이 필요한 경우에만 WebView를 유지합니다.
+- `bootstrap`, `saveToken`, `clearToken` 같은 브리지 개념은 Flutter 서비스로 흡수합니다.
 
-## Candidate WebView Areas
+## WebView 후보 영역
 
-- Daum/Kakao address search.
-- PASS or identity verification only if the provider requires a web flow.
-- Rich HTML terms content only if Flutter text rendering is insufficient.
+- Daum/Kakao 주소검색
+- 제공사가 웹 흐름을 요구하는 PASS 또는 본인인증
+- Flutter 텍스트 렌더링으로 부족한 복잡한 HTML 약관 본문
 
-## Early API Surface To Port
+## 초기에 옮길 API
 
 - `GET /api/v1/auth/config`
 - `POST /api/v1/auth/social/{provider}`
@@ -35,11 +35,11 @@
 - `PATCH /api/v1/auth/signup/profile`
 - `POST /api/v1/auth/signup/complete`
 
-## Suggested Implementation Order
+## 권장 구현 순서
 
-1. App shell, routing, state, and token storage.
-2. API client and response envelope handling.
-3. Kakao/Naver login and backend social login.
-4. Signup flow screens and services.
-5. Narrow WebView flows for address search or verification.
-6. Home, bottom navigation, logout, and profile entry points.
+1. 앱 셸, 라우팅, 상태, 토큰 저장
+2. API 클라이언트와 응답 envelope 처리
+3. Kakao/Naver 로그인과 백엔드 소셜 로그인
+4. 회원가입 흐름 화면과 서비스
+5. 주소검색 또는 본인인증용 최소 WebView 흐름
+6. 홈, 하단 내비게이션, 로그아웃, 프로필 진입점
