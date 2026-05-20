@@ -17,6 +17,10 @@ React UI 구조를 대체합니다. 기존 데모는 동작 기준과 API 흐름
 
 - 라우팅: `go_router`
 - 상태관리/의존성 주입: `flutter_riverpod`
+- Kakao 로그인: `kakao_flutter_sdk`
+- Naver 로그인: Android/iOS 네이티브 채널 + Naver SDK
+- API 통신: `http` 기반 공통 클라이언트와 `COMMON.SUCCESS` envelope 처리
+- 보안 저장소: `flutter_secure_storage`
 - 앱 진입점: `ProviderScope` + `PetnurimApp`
 - 기본 화면 흐름: 스플래시, 온보딩, 인증 시작, 회원가입 단계, 홈, 주소검색 WebView 후보
 
@@ -59,6 +63,24 @@ lib/
 flutter pub get
 flutter run
 ```
+
+로컬 백엔드나 소셜 로그인 앱 키가 바뀌면 실행 시 `--dart-define`으로 주입합니다.
+
+```bash
+flutter run \
+  --dart-define=NURIM_API_BASE_URL=http://192.168.0.147:4011 \
+  --dart-define=KAKAO_NATIVE_APP_KEY=카카오_네이티브_앱키 \
+  --dart-define=NAVER_CLIENT_ID=네이버_클라이언트_ID \
+  --dart-define=NAVER_CLIENT_SECRET=네이버_클라이언트_SECRET \
+  --dart-define=NAVER_CLIENT_NAME=네이버_앱_이름
+```
+
+## 현재 검증 상태
+
+- `flutter analyze`
+- `flutter test`
+- Android 실단말 디버그 실행: `SM G991N`
+- iOS 빌드 확인: `flutter build ios --no-codesign`
 
 ## 참고 소스
 

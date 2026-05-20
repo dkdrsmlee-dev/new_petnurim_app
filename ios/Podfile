@@ -1,5 +1,5 @@
-# 프로젝트 전체 iOS 최소 버전을 고정하려면 아래 주석을 해제합니다.
-# platform :ios, '13.0'
+# 프로젝트 전체 iOS 최소 버전을 고정합니다.
+platform :ios, '13.0'
 
 # CocoaPods 분석 전송은 빌드 지연을 만들 수 있으므로 비활성화합니다.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -29,6 +29,8 @@ flutter_ios_podfile_setup
 
 target 'Runner' do
   use_frameworks!
+
+  pod 'NidThirdPartyLogin'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do

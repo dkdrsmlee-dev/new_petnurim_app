@@ -2,7 +2,20 @@
     <application
         android:label="new_petnurim_app"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name="com.kakao.sdk.flutter.AuthCodeCustomTabsActivity"
+            android:exported="true">
+            <intent-filter android:label="flutter_web_auth">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:scheme="kakao930bf238e56cb22cf6484fa8af790a5a"
+                    android:host="oauth" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,6 +36,12 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="com.dkdr.new_petnurim_app" android:host="naverlogin" />
+            </intent-filter>
         </activity>
         <!-- 아래 meta-data는 Flutter 도구가 GeneratedPluginRegistrant.java를 만들 때 사용하므로 삭제하지 않습니다. -->
         <meta-data
@@ -35,6 +54,8 @@
 
          특히 Flutter 엔진의 io.flutter.plugin.text.ProcessTextPlugin에서 사용합니다. -->
     <queries>
+        <package android:name="com.kakao.talk" />
+        <package android:name="com.nhn.android.search" />
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

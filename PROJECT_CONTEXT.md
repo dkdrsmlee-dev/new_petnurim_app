@@ -27,6 +27,16 @@
 - `lib/core`: API, 설정, 토큰 저장소의 초기 인터페이스 위치입니다.
 - `lib/features`: 화면 흐름별 최소 Flutter 화면입니다.
 
+## 4단계 인증 기반
+
+- `lib/core/config/social_auth_config.dart`: Kakao/Naver 실행 설정을 `--dart-define`으로 받습니다.
+- `lib/native/native_social_login_service.dart`: Kakao SDK와 Naver MethodChannel 호출을 담당합니다.
+- `lib/features/auth/data/auth_repository.dart`: 로그인 설정 조회와 백엔드 소셜 로그인 API를 묶습니다.
+- `lib/features/auth/application/auth_providers.dart`: 인증 의존성과 로그인 설정 provider를 제공합니다.
+- `lib/features/auth/auth_start_screen.dart`: 서버 설정에 따라 Kakao/Naver 버튼을 활성화하고 결과에 따라 홈 또는 약관 화면으로 이동합니다.
+- Android: Kakao callback Activity, Naver SDK 의존성, Naver MethodChannel을 연결했습니다.
+- iOS: `NidThirdPartyLogin` Pod, URL scheme, AppDelegate MethodChannel을 연결했습니다.
+
 ## WebView 후보 영역
 
 - Daum/Kakao 주소검색
