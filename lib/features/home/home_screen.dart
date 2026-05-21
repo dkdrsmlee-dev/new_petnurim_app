@@ -335,49 +335,104 @@ class _MyPageView extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
       children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 16),
+          child: Text(
+            '홍길동님의 정보를 관리하실 수 있습니다.',
+            style: TextStyle(fontWeight: FontWeight.w800),
+          ),
+        ),
         _SurfacePanel(
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 26,
-                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                child: Icon(
-                  Icons.person,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
-              ),
-              const SizedBox(width: 14),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '펫누림 회원',
+              Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      '나의 정보',
                       style: TextStyle(fontWeight: FontWeight.w800),
                     ),
-                    SizedBox(height: 4),
-                    Text('소셜 계정으로 로그인됨'),
-                  ],
-                ),
+                  ),
+                  OutlinedButton(
+                    onPressed: () => context.push(AppRoutes.myInfo),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(92, 36),
+                    ),
+                    child: const Text('정보 수정'),
+                  ),
+                ],
               ),
+              const SizedBox(height: 8),
+              const Text('example@example.com'),
             ],
           ),
         ),
+        const SizedBox(height: 10),
+        const _SurfacePanel(
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('멤버십', style: TextStyle(fontWeight: FontWeight.w800)),
+                    SizedBox(height: 8),
+                    Text('월 3.0 멤버십 (2026/04/12 가입)'),
+                  ],
+                ),
+              ),
+              SizedBox(width: 10),
+              _SmallOutlinedButton(label: '정보 수정'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        const _SurfacePanel(
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('마이 펫', style: TextStyle(fontWeight: FontWeight.w800)),
+                    SizedBox(height: 8),
+                    Text('똘똘이 2살/남'),
+                  ],
+                ),
+              ),
+              SizedBox(width: 10),
+              _SmallOutlinedButton(label: '정보 수정'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        const _ListItem(
+          icon: Icons.stars_outlined,
+          title: '리워드 관리',
+          subtitle: '보유중인 리워드 총액 45,000 Point',
+        ),
+        const SizedBox(height: 10),
+        const _ListItem(
+          icon: Icons.credit_card_outlined,
+          title: '결제수단 관리',
+          subtitle: '월 3.0결제용(**12)',
+        ),
+        const SizedBox(height: 10),
+        const _ListItem(icon: Icons.support_agent, title: '고객센터', subtitle: ''),
+        const SizedBox(height: 10),
+        const _ListItem(
+          icon: Icons.description_outlined,
+          title: '서비스 약관',
+          subtitle: '',
+        ),
+        const SizedBox(height: 10),
+        const _ListItem(
+          icon: Icons.settings_outlined,
+          title: '설정',
+          subtitle: '',
+        ),
         const SizedBox(height: 16),
-        const _SectionTitle(title: '계정'),
-        const SizedBox(height: 10),
-        const _ListItem(
-          icon: Icons.account_circle_outlined,
-          title: '내 정보',
-          subtitle: '프로필과 연락처',
-        ),
-        const SizedBox(height: 10),
-        const _ListItem(
-          icon: Icons.pets_outlined,
-          title: '반려동물 관리',
-          subtitle: '등록된 반려동물',
-        ),
-        const SizedBox(height: 10),
         _SurfacePanel(
           padding: const EdgeInsets.all(12),
           child: FilledButton.icon(
@@ -441,7 +496,10 @@ class _ListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _SurfacePanel(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: subtitle.isEmpty ? 16 : 14,
+      ),
       child: Row(
         children: [
           Icon(icon, color: Theme.of(context).colorScheme.primary),
@@ -454,14 +512,34 @@ class _ListItem extends StatelessWidget {
                   title,
                   style: const TextStyle(fontWeight: FontWeight.w800),
                 ),
-                const SizedBox(height: 4),
-                Text(subtitle),
+                if (subtitle.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(subtitle),
+                ],
               ],
             ),
           ),
           const Icon(Icons.chevron_right),
         ],
       ),
+    );
+  }
+}
+
+class _SmallOutlinedButton extends StatelessWidget {
+  const _SmallOutlinedButton({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: null,
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size(92, 36),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+      ),
+      child: Text(label),
     );
   }
 }

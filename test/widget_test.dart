@@ -13,6 +13,8 @@ import 'package:new_petnurim_app/features/auth/data/auth_repository.dart';
 import 'package:new_petnurim_app/features/auth/domain/login_config.dart';
 import 'package:new_petnurim_app/features/auth/domain/social_login_result.dart';
 import 'package:new_petnurim_app/features/auth/domain/social_provider.dart';
+import 'package:new_petnurim_app/features/member/data/member_repository.dart';
+import 'package:new_petnurim_app/features/member/domain/member_withdrawal.dart';
 
 void main() {
   testWidgets('토큰이 없고 온보딩 미완료이면 온보딩으로 이동한다', (WidgetTester tester) async {
@@ -56,6 +58,7 @@ void main() {
           onboardingStorageProvider.overrideWithValue(
             InMemoryOnboardingStorage(),
           ),
+          memberRepositoryProvider.overrideWithValue(_FakeMemberRepository()),
         ],
         child: const PetnurimApp(),
       ),
@@ -83,6 +86,7 @@ void main() {
             InMemoryOnboardingStorage(initialSeen: true),
           ),
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+          memberRepositoryProvider.overrideWithValue(_FakeMemberRepository()),
         ],
         child: const PetnurimApp(),
       ),
@@ -93,11 +97,64 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('마이페이지'), findsOneWidget);
-    expect(find.text('소셜 계정으로 로그인됨'), findsOneWidget);
+    expect(find.text('홍길동님의 정보를 관리하실 수 있습니다.'), findsOneWidget);
 
+    await tester.scrollUntilVisible(
+      find.text('로그아웃'),
+      220,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
     await tester.tap(find.text('로그아웃'));
     await tester.pumpAndSettle();
 
+    expect(await tokenStorage.readAccessToken(), isNull);
+    expect(find.text('계정으로 바로 시작하세요'), findsOneWidget);
+  });
+
+  testWidgets('나의 정보 화면에서 회원탈퇴하면 토큰을 지우고 로그인 화면으로 이동한다', (
+    WidgetTester tester,
+  ) async {
+    final tokenStorage = InMemoryTokenStorage(
+      initialAccessToken: 'access-token',
+    );
+    final memberRepository = _FakeMemberRepository();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          tokenStorageProvider.overrideWithValue(tokenStorage),
+          onboardingStorageProvider.overrideWithValue(
+            InMemoryOnboardingStorage(initialSeen: true),
+          ),
+          authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+          memberRepositoryProvider.overrideWithValue(memberRepository),
+        ],
+        child: const PetnurimApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('마이'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(OutlinedButton, '정보 수정').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('나의 정보'), findsWidgets);
+    expect(find.text('홍길동 님'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.widgetWithText(OutlinedButton, '회원탈퇴'),
+      220,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(OutlinedButton, '회원탈퇴'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('탈퇴하기'));
+    await tester.pumpAndSettle();
+
+    expect(memberRepository.withdrawCalled, isTrue);
     expect(await tokenStorage.readAccessToken(), isNull);
     expect(find.text('계정으로 바로 시작하세요'), findsOneWidget);
   });
@@ -121,6 +178,22 @@ class _FakeAuthRepository implements AuthRepository {
         name: '${provider.label} 사용자',
         phone: '',
       ),
+    );
+  }
+}
+
+class _FakeMemberRepository implements MemberRepository {
+  bool withdrawCalled = false;
+
+  @override
+  Future<MemberWithdrawResult> withdraw({
+    required String reasonCode,
+    String? reasonText,
+  }) async {
+    withdrawCalled = true;
+    return const MemberWithdrawResult(
+      withdrawalStatus: 'COMPLETED',
+      effectiveDt: '2026-05-21 10:00:00',
     );
   }
 }
