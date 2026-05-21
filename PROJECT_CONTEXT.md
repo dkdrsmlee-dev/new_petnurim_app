@@ -47,6 +47,13 @@
 - 프로필 화면은 주소/생년월일을 입력받아 `PATCH /api/v1/auth/signup/profile`에 저장합니다.
 - 가입 완료 화면은 `POST /api/v1/auth/signup/complete` 응답의 access token을 저장하고 홈으로 이동합니다.
 
+## 6단계 홈/앱 기본 구조
+
+- 홈은 로그인 후 앱의 기본 진입점입니다.
+- 하단 내비게이션은 홈, 진료, 반려동물, 마이 탭으로 구성합니다.
+- 마이페이지 로그아웃은 보안 저장소의 access token을 삭제한 뒤 로그인 시작 화면으로 이동합니다.
+- 앱 재실행 시 access token이 있으면 홈으로, 없으면 온보딩/로그인 흐름으로 이동합니다.
+
 ## WebView 후보 영역
 
 - Daum/Kakao 주소검색

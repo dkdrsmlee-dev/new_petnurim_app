@@ -45,12 +45,14 @@ void main() {
   });
 
   testWidgets('토큰이 있으면 홈으로 이동한다', (WidgetTester tester) async {
+    final tokenStorage = InMemoryTokenStorage(
+      initialAccessToken: 'access-token',
+    );
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          tokenStorageProvider.overrideWithValue(
-            InMemoryTokenStorage(initialAccessToken: 'access-token'),
-          ),
+          tokenStorageProvider.overrideWithValue(tokenStorage),
           onboardingStorageProvider.overrideWithValue(
             InMemoryOnboardingStorage(),
           ),
@@ -61,7 +63,43 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('펫누림 홈'), findsOneWidget);
-    expect(find.text('2단계 홈 골격'), findsOneWidget);
+    expect(find.text('오늘의 펫누림'), findsOneWidget);
+    expect(find.text('진료 준비하기'), findsOneWidget);
+    expect(await tokenStorage.readAccessToken(), 'access-token');
+  });
+
+  testWidgets('홈 마이페이지에서 로그아웃하면 토큰을 지우고 로그인 화면으로 이동한다', (
+    WidgetTester tester,
+  ) async {
+    final tokenStorage = InMemoryTokenStorage(
+      initialAccessToken: 'access-token',
+    );
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          tokenStorageProvider.overrideWithValue(tokenStorage),
+          onboardingStorageProvider.overrideWithValue(
+            InMemoryOnboardingStorage(initialSeen: true),
+          ),
+          authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+        ],
+        child: const PetnurimApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('마이'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('마이페이지'), findsOneWidget);
+    expect(find.text('소셜 계정으로 로그인됨'), findsOneWidget);
+
+    await tester.tap(find.text('로그아웃'));
+    await tester.pumpAndSettle();
+
+    expect(await tokenStorage.readAccessToken(), isNull);
+    expect(find.text('계정으로 바로 시작하세요'), findsOneWidget);
   });
 }
 
