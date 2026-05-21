@@ -70,7 +70,6 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
                 pendingProvider: _pendingProvider,
                 errorMessage: _errorMessage,
                 onSelectProvider: _startSocialLogin,
-                onBackToSplash: () => context.go(AppRoutes.splash),
                 onDebugSignup: _startDebugSignup,
               ),
             ),
@@ -218,7 +217,6 @@ class _AuthProviderButtons extends StatelessWidget {
     required this.pendingProvider,
     required this.errorMessage,
     required this.onSelectProvider,
-    required this.onBackToSplash,
     required this.onDebugSignup,
   });
 
@@ -227,7 +225,6 @@ class _AuthProviderButtons extends StatelessWidget {
   final String? errorMessage;
   final void Function(SocialProvider provider, LoginConfig config)
   onSelectProvider;
-  final VoidCallback onBackToSplash;
   final VoidCallback onDebugSignup;
 
   @override
@@ -265,13 +262,7 @@ class _AuthProviderButtons extends StatelessWidget {
               side: const BorderSide(color: Colors.orange),
             ),
           ),
-          const SizedBox(height: 12),
         ],
-        TextButton.icon(
-          onPressed: pendingProvider == null ? onBackToSplash : null,
-          icon: const Icon(Icons.arrow_back),
-          label: const Text('처음으로'),
-        ),
       ],
     );
   }
