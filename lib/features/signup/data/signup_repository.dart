@@ -180,15 +180,29 @@ class BackendSignupRepository implements SignupRepository {
     final koreanDateMatch = RegExp(
       r'^(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일$',
     ).firstMatch(trimmed);
-    if (koreanDateMatch == null) {
-      return trimmed;
+    if (koreanDateMatch != null) {
+      final year = koreanDateMatch.group(1)!;
+      final month = koreanDateMatch.group(2)!.padLeft(2, '0');
+      final day = koreanDateMatch.group(3)!.padLeft(2, '0');
+      return '$year$month$day';
     }
 
-    final year = koreanDateMatch.group(1)!;
-    final month = koreanDateMatch.group(2)!.padLeft(2, '0');
-    final day = koreanDateMatch.group(3)!.padLeft(2, '0');
+    final hyphenMatch = RegExp(
+      r'^(\d{4})-(\d{2})-(\d{2})$',
+    ).firstMatch(trimmed);
+    if (hyphenMatch != null) {
+      final year = hyphenMatch.group(1)!;
+      final month = hyphenMatch.group(2)!;
+      final day = hyphenMatch.group(3)!;
+      return '$year$month$day';
+    }
 
-    return '$year-$month-$day';
+    final digits = trimmed.replaceAll(RegExp(r'\D'), '');
+    if (digits.length == 8) {
+      return digits;
+    }
+
+    return trimmed;
   }
 
   void _ensureSignupToken(String signupToken, String message) {

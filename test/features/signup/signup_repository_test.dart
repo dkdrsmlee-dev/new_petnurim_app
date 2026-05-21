@@ -97,7 +97,7 @@ void main() {
             'zipCode': '12345',
             'address1': 'Seoul Gangnam',
             'address2': '101호',
-            'birthDate': '2002-02-02',
+            'birthDate': '20020202',
           });
 
           return http.Response(jsonEncode({'code': 'COMMON.SUCCESS'}), 200);
