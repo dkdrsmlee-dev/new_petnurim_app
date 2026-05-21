@@ -8,10 +8,17 @@ class ApiException implements Exception {
 
   @override
   String toString() {
-    if (statusCode == null) {
+    final details = <String>[];
+    if (statusCode != null) {
+      details.add('HTTP $statusCode');
+    }
+    if (code != null && code!.isNotEmpty) {
+      details.add('코드: $code');
+    }
+    
+    if (details.isEmpty) {
       return message;
     }
-
-    return '$message (HTTP $statusCode)';
+    return '$message (${details.join(', ')})';
   }
 }

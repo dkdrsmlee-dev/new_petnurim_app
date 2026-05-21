@@ -66,15 +66,17 @@ class SocialLoginResult {
     final profileData = data['profile'] is Map
         ? _asMap(data['profile'])
         : const <String, Object?>{};
-    final isNewUser = _readBool(data, const [
+    final isRegistered = _readBool(data, const [
+      'isRegistered',
+      'registered',
+      'signupCompleted',
+      'memberExists',
+    ]);
+    final isNewUserField = _readBool(data, const [
       'isNewUser',
       'newUser',
       'requiresSignup',
     ]);
-    final nextStep = SocialLoginNextStep.fromBackend(
-      rawNextStep: _readString(data, const ['nextStep']),
-      isNewUser: isNewUser,
-    );
     final accessToken = _readString(data, const [
       'accessToken',
       'token',
@@ -82,6 +84,20 @@ class SocialLoginResult {
       'jwtToken',
     ]);
     final signupToken = _readString(data, const ['signupToken']);
+
+    bool isNewUser = false;
+    if (isRegistered != null) {
+      isNewUser = !isRegistered;
+    } else if (isNewUserField != null) {
+      isNewUser = isNewUserField;
+    } else {
+      isNewUser = signupToken != null && accessToken == null;
+    }
+
+    final nextStep = SocialLoginNextStep.fromBackend(
+      rawNextStep: _readString(data, const ['nextStep']),
+      isNewUser: isNewUser,
+    );
     final providerUserId =
         _readString(profileData, const ['providerUserId']) ??
         nativeProviderUserId;

@@ -24,10 +24,28 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
     final termsState = ref.watch(activeTermsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('약관 동의')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          onPressed: _submitting ? null : () => context.go(AppRoutes.authStart),
+        ),
+        title: const Text(
+          '서비스 약관동의',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: termsState.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: CircularProgressIndicator(color: Colors.black)),
           error: (error, stackTrace) => _ErrorView(
             message: _readErrorMessage(error, '약관 목록을 불러오지 못했습니다.'),
             onRetry: () => ref.invalidate(activeTermsProvider),
@@ -42,67 +60,129 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
     final requiredChecked = _requiredTermsChecked(terms);
     final allChecked = terms.isNotEmpty && terms.every(_isChecked);
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
+    return Column(
       children: [
-        Text(
-          '회원가입 1단계',
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.w700,
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            children: [
+              const Text(
+                '환영합니다!\n웹 3.0 서비스 이용약관에\n동의해 주세요.',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 32),
+              // 전체 동의 카드 (배경 박스)
+              GestureDetector(
+                onTap: terms.isEmpty || _submitting ? null : () => _toggleAll(!allChecked),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8FAFC),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        allChecked ? Icons.check_circle : Icons.check_circle_outline,
+                        color: allChecked ? Colors.black : const Color(0xFFCBD5E1),
+                        size: 24,
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        '모두 확인 하였으며, 동의합니다.',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              if (terms.isEmpty)
+                const _NoticeBox(message: '활성화된 약관이 없습니다.')
+              else
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: terms.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final term = terms[index];
+                    return _TermTile(
+                      term: term,
+                      checked: _isChecked(term),
+                      enabled: !_submitting,
+                      onChanged: (_) => _toggleTerm(term.termsId),
+                      onOpen: () => _openTerm(term),
+                    );
+                  },
+                ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 16),
+                _NoticeBox(message: _errorMessage!),
+              ],
+              const SizedBox(height: 32),
+              const Center(
+                child: Text(
+                  '만 14세 이상 회원 가입 가능합니다.\n해당 내용은 이용약관 및 정책에서도 확인 가능합니다.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xFF94A3B8),
+                    fontSize: 12,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
           ),
         ),
-        const SizedBox(height: 12),
-        Text(
-          '약관을 확인해 주세요',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
-        ),
-        const SizedBox(height: 12),
-        const Text('필수 약관에 동의하면 본인인증 단계로 이동할 수 있습니다.'),
-        const SizedBox(height: 24),
-        CheckboxListTile(
-          value: allChecked,
-          onChanged: terms.isEmpty || _submitting ? null : _toggleAll,
-          contentPadding: EdgeInsets.zero,
-          controlAffinity: ListTileControlAffinity.leading,
-          title: const Text('전체 동의'),
-        ),
-        const Divider(height: 24),
-        if (terms.isEmpty)
-          const _NoticeBox(message: '활성화된 약관이 없습니다.')
-        else
-          for (final term in terms)
-            _TermTile(
-              term: term,
-              checked: _isChecked(term),
-              enabled: !_submitting,
-              onChanged: (_) => _toggleTerm(term.termsId),
-              onOpen: () => _openTerm(term),
+        // 하단 고정 버튼
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+          child: SizedBox(
+            width: double.infinity,
+            height: 54,
+            child: ElevatedButton(
+              onPressed: requiredChecked && !_submitting
+                  ? () => _submitTerms(terms)
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: const Color(0xFFE2E8F0),
+                disabledForegroundColor: const Color(0xFF94A3B8),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: _submitting
+                  ? const SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text(
+                      '본인 인증 후 가입하기',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
             ),
-        if (_errorMessage != null) ...[
-          const SizedBox(height: 16),
-          _NoticeBox(message: _errorMessage!),
-        ],
-        const SizedBox(height: 24),
-        FilledButton.icon(
-          onPressed: requiredChecked && !_submitting
-              ? () => _submitTerms(terms)
-              : null,
-          icon: _submitting
-              ? const SizedBox.square(
-                  dimension: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.check_circle_outline),
-          label: Text(_submitting ? '약관 저장 중' : '본인인증 진행하기'),
-        ),
-        const SizedBox(height: 12),
-        TextButton.icon(
-          onPressed: _submitting ? null : () => context.go(AppRoutes.authStart),
-          icon: const Icon(Icons.arrow_back),
-          label: const Text('로그인 시작으로'),
+          ),
         ),
       ],
     );
@@ -115,11 +195,11 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
     return terms.isNotEmpty && requiredTerms.every(_isChecked);
   }
 
-  void _toggleAll(bool? checked) {
+  void _toggleAll(bool checked) {
     final terms = ref.read(activeTermsProvider).value ?? const <ActiveTerm>[];
     setState(() {
       for (final term in terms) {
-        _checkedTerms[term.termsId] = checked == true;
+        _checkedTerms[term.termsId] = checked;
       }
     });
   }
@@ -151,9 +231,15 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                 TermAgreement(termsId: term.termsId, agreed: _isChecked(term)),
           )
           .toList();
-      await ref
-          .read(signupRepositoryProvider)
-          .submitTerms(signupToken: signupToken, agreements: agreements);
+
+      if (signupToken == 'mock_signup_token_for_debug_testing') {
+        // 디버그 강제 진입 토큰인 경우 백엔드 API 통신을 모킹하여 통과 처리
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+      } else {
+        await ref
+            .read(signupRepositoryProvider)
+            .submitTerms(signupToken: signupToken, agreements: agreements);
+      }
 
       if (mounted) {
         context.go(AppRoutes.signupVerify);
@@ -218,17 +304,73 @@ class _TermTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Checkbox(value: checked, onChanged: enabled ? onChanged : null),
-      title: Text('[${term.requiredLabel}] ${term.termsName}'),
-      subtitle: term.termsKey.isEmpty ? null : Text(term.termsKey),
-      trailing: IconButton(
-        onPressed: onOpen,
-        icon: const Icon(Icons.chevron_right),
-        tooltip: '약관 보기',
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: const Color(0xFFF1F5F9)),
+        borderRadius: BorderRadius.circular(10),
       ),
-      onTap: enabled ? () => onChanged(!checked) : null,
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: enabled ? () => onChanged(!checked) : null,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    Icon(
+                      checked ? Icons.check_box : Icons.check_box_outline_blank,
+                      color: checked ? Colors.black : const Color(0xFFCBD5E1),
+                      size: 22,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '[${term.requiredLabel}] ${term.termsName}',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            term.contentSummary,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF64748B),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: onOpen,
+            icon: const Icon(
+              Icons.chevron_right,
+              color: Color(0xFF94A3B8),
+              size: 20,
+            ),
+            tooltip: '약관 보기',
+          ),
+          const SizedBox(width: 4),
+        ],
+      ),
     );
   }
 }

@@ -66,6 +66,16 @@ class ActiveTerm {
 
   String get requiredLabel => isRequired ? '필수' : '선택';
 
+  String get contentSummary {
+    final normalized = content.replaceAll(RegExp(r'\s+'), ' ').trim();
+    if (normalized.isEmpty) {
+      return '약관 상세 내용을 확인해 주세요.';
+    }
+    return normalized.length > 72
+        ? '${normalized.substring(0, 72)}...'
+        : normalized;
+  }
+
   static String _readString(Map<dynamic, dynamic> data, String key) {
     final value = data[key];
     if (value is String) {
@@ -101,6 +111,10 @@ class TermAgreement {
   final bool agreed;
 
   Map<String, Object?> toJson() {
-    return {'termsId': termsId, 'agreed': agreed};
+    final parsedInt = int.tryParse(termsId);
+    return {
+      'termsId': parsedInt ?? termsId,
+      'agreed': agreed,
+    };
   }
 }

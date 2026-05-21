@@ -14,6 +14,7 @@ import 'package:new_petnurim_app/features/auth/domain/login_config.dart';
 import 'package:new_petnurim_app/features/auth/domain/social_login_result.dart';
 import 'package:new_petnurim_app/features/auth/domain/social_provider.dart';
 import 'package:new_petnurim_app/features/member/data/member_repository.dart';
+import 'package:new_petnurim_app/features/member/domain/member_info.dart';
 import 'package:new_petnurim_app/features/member/domain/member_withdrawal.dart';
 
 void main() {
@@ -142,15 +143,30 @@ void main() {
 
     expect(find.text('나의 정보'), findsWidgets);
     expect(find.text('홍길동 님'), findsOneWidget);
-
     await tester.scrollUntilVisible(
-      find.widgetWithText(OutlinedButton, '회원탈퇴'),
+      find.text('회원탈퇴'),
       220,
       scrollable: find.byType(Scrollable).last,
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(OutlinedButton, '회원탈퇴'));
+    await tester.tap(find.text('회원탈퇴'));
     await tester.pumpAndSettle();
+
+    // 1. Check the consent box
+    await tester.scrollUntilVisible(
+      find.text('유의사항을 모두 확인하였으며, 회원 탈퇴에 동의 합니다.'),
+      150,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('유의사항을 모두 확인하였으며, 회원 탈퇴에 동의 합니다.'));
+    await tester.pumpAndSettle();
+
+    // 2. Tap the '회원탈퇴' button
+    await tester.tap(find.widgetWithText(ElevatedButton, '회원탈퇴'));
+    await tester.pumpAndSettle();
+
+    // 3. Confirm by tapping '탈퇴하기' in the dialog
     await tester.tap(find.text('탈퇴하기'));
     await tester.pumpAndSettle();
 
@@ -184,6 +200,17 @@ class _FakeAuthRepository implements AuthRepository {
 
 class _FakeMemberRepository implements MemberRepository {
   bool withdrawCalled = false;
+
+  @override
+  Future<MemberInfo> getMemberInfo() async {
+    return const MemberInfo(
+      name: '홍길동',
+      email: 'email@email.co.kr',
+      phoneNumber: '010-1234-1234',
+      address: '서울시 강남구 역삼동 123-45 12층 오크빌 1204호',
+      birthDate: '20100307',
+    );
+  }
 
   @override
   Future<MemberWithdrawResult> withdraw({

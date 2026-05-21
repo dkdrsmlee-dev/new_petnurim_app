@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/auth_start_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/member/my/my_info_screen.dart';
+import '../features/member/my/withdraw_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/signup/complete_screen.dart';
 import '../features/signup/profile_screen.dart';
@@ -61,6 +62,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.myInfo,
         name: AppRouteNames.myInfo,
         builder: (context, state) => const MyInfoScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.myWithdraw,
+        name: AppRouteNames.myWithdraw,
+        builder: (context, state) => const WithdrawScreen(),
       ),
       GoRoute(
         path: AppRoutes.addressWebView,

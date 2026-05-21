@@ -8,6 +8,7 @@ abstract final class AppRoutes {
   static const signupComplete = '/signup/complete';
   static const home = '/home';
   static const myInfo = '/my/info';
+  static const myWithdraw = '/my/withdraw';
   static const addressWebView = '/webview/address';
 }
 
@@ -21,5 +22,6 @@ abstract final class AppRouteNames {
   static const signupComplete = 'signupComplete';
   static const home = 'home';
   static const myInfo = 'myInfo';
+  static const myWithdraw = 'myWithdraw';
   static const addressWebView = 'addressWebView';
 }

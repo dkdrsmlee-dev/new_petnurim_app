@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -70,6 +71,7 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
                 errorMessage: _errorMessage,
                 onSelectProvider: _startSocialLogin,
                 onBackToSplash: () => context.go(AppRoutes.splash),
+                onDebugSignup: _startDebugSignup,
               ),
             ),
           ],
@@ -135,6 +137,25 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
     }
   }
 
+  void _startDebugSignup() {
+    const mockProfile = SocialLoginProfile(
+      provider: SocialProvider.kakao,
+      providerLabel: '카카오',
+      name: '홍길동',
+      phone: '010-1234-1234',
+    );
+    final mockResult = SocialLoginResult(
+      provider: SocialProvider.kakao,
+      nextStep: SocialLoginNextStep.signup,
+      accessToken: null,
+      signupToken: 'mock_signup_token_for_debug_testing',
+      profile: mockProfile,
+    );
+    ref.read(pendingSocialLoginResultProvider.notifier).setResult(mockResult);
+    ref.read(signupFlowProvider.notifier).startFromSocialLogin(mockResult);
+    context.go(AppRoutes.signupTerms);
+  }
+
   String _readErrorMessage(Object error, String fallbackMessage) =>
       readAuthErrorMessage(error, fallbackMessage);
 }
@@ -198,6 +219,7 @@ class _AuthProviderButtons extends StatelessWidget {
     required this.errorMessage,
     required this.onSelectProvider,
     required this.onBackToSplash,
+    required this.onDebugSignup,
   });
 
   final LoginConfig config;
@@ -206,6 +228,7 @@ class _AuthProviderButtons extends StatelessWidget {
   final void Function(SocialProvider provider, LoginConfig config)
   onSelectProvider;
   final VoidCallback onBackToSplash;
+  final VoidCallback onDebugSignup;
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +253,20 @@ class _AuthProviderButtons extends StatelessWidget {
           const SizedBox(height: 8),
           _AuthNotice(message: errorMessage!),
         ],
-        const SizedBox(height: 12),
+        if (kDebugMode) ...[
+          OutlinedButton.icon(
+            onPressed: pendingProvider == null ? onDebugSignup : null,
+            icon: const Icon(Icons.bug_report_outlined, color: Colors.orange),
+            label: const Text(
+              '[테스트] 신규 가입 흐름 강제진입',
+              style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+            ),
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.orange),
+            ),
+          ),
+          const SizedBox(height: 12),
+        ],
         TextButton.icon(
           onPressed: pendingProvider == null ? onBackToSplash : null,
           icon: const Icon(Icons.arrow_back),

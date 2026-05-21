@@ -84,6 +84,9 @@ class ApiClient {
     };
 
     final encodedBody = body == null ? null : jsonEncode(body);
+    if (kDebugMode) {
+      debugPrint('[API_REQUEST][$method $path] body: $encodedBody');
+    }
     final response = await _send(
       method: method,
       uri: uri(path),

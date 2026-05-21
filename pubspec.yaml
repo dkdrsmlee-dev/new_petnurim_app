@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # iOS 스타일 아이콘을 사용할 때 필요한 기본 아이콘 패키지입니다.
   cupertino_icons: ^1.0.8
@@ -19,6 +21,7 @@ dependencies:
   flutter_secure_storage: ^10.2.0
   shared_preferences: ^2.5.5
   kakao_flutter_sdk: ^2.0.0+1
+  webview_flutter: ^4.10.0
 
 dev_dependencies:
   flutter_test:
