@@ -143,6 +143,24 @@ void main() {
 
     expect(find.text('나의 정보'), findsWidgets);
     expect(find.text('홍길동 님'), findsOneWidget);
+
+    // 생년월일 변경 버튼 탭하여 바텀 시트가 잘 뜨는지 검증
+    final birthDateRow = find.ancestor(
+      of: find.text('생년월일'),
+      matching: find.byType(Row),
+    );
+    final birthDateChangeButton = find.descendant(
+      of: birthDateRow,
+      matching: find.byType(OutlinedButton),
+    );
+    await tester.tap(birthDateChangeButton);
+    await tester.pumpAndSettle();
+    
+    // 바텀 시트 안의 '완료' 버튼이 보이는지 확인 (바텀 시트가 정상적으로 열렸음을 의미)
+    expect(find.text('완료'), findsOneWidget);
+    await tester.tap(find.text('완료'));
+    await tester.pumpAndSettle();
+
     await tester.scrollUntilVisible(
       find.text('회원탈퇴'),
       220,

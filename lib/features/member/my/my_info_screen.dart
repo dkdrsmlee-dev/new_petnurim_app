@@ -229,6 +229,11 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       ),
                     ),
                     TextButton(
+                      style: TextButton.styleFrom(
+                        minimumSize: Size.zero,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
                       onPressed: () {
                         setState(() {
                           _customBirthDate =
