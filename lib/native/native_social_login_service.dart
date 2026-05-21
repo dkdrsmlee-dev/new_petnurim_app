@@ -46,23 +46,23 @@ class KakaoNaverSocialLoginService implements NativeSocialLoginService {
   }
 
   Future<NativeSocialLoginResult> _loginWithKakao() async {
-    late final OAuthToken oauthToken;
-
-    if (await isKakaoTalkInstalled()) {
-      try {
-        oauthToken = await UserApi.instance.loginWithKakaoTalk();
-      } on PlatformException catch (error) {
-        if (error.code == 'CANCELED') {
-          throw const SocialLoginCancelledException('카카오 로그인이 취소되었습니다.');
-        }
-
-        oauthToken = await UserApi.instance.loginWithKakaoAccount();
-      }
-    } else {
-      oauthToken = await UserApi.instance.loginWithKakaoAccount();
+    final OAuthToken oauthToken;
+    final User user;
+    try {
+      oauthToken = await _requestKakaoToken();
+      user = await UserApi.instance.me();
+    } on PlatformException catch (error) {
+      throw _platformExceptionToAuthException(error);
+    } on KakaoClientException catch (error) {
+      throw _kakaoExceptionToAuthException(error);
+    } on KakaoAuthException catch (error) {
+      throw _kakaoExceptionToAuthException(error);
+    } on KakaoApiException catch (error) {
+      throw _kakaoExceptionToAuthException(error);
+    } on KakaoException catch (error) {
+      throw _kakaoExceptionToAuthException(error);
     }
 
-    final user = await UserApi.instance.me();
     final accessToken = oauthToken.accessToken.trim();
     if (accessToken.isEmpty) {
       throw const AuthException('카카오 access token을 받지 못했습니다.');
@@ -76,6 +76,122 @@ class KakaoNaverSocialLoginService implements NativeSocialLoginService {
       name: user.kakaoAccount?.profile?.nickname?.trim(),
       phone: user.kakaoAccount?.phoneNumber?.trim(),
     );
+  }
+
+  Future<OAuthToken> _requestKakaoToken() async {
+    if (!await isKakaoTalkInstalled()) {
+      return UserApi.instance.loginWithKakaoAccount();
+    }
+
+    try {
+      return await UserApi.instance.loginWithKakaoTalk();
+    } on PlatformException catch (error) {
+      if (_isPlatformCancelled(error)) {
+        throw const SocialLoginCancelledException('카카오 로그인이 취소되었습니다.');
+      }
+
+      return UserApi.instance.loginWithKakaoAccount();
+    } on KakaoClientException catch (error) {
+      if (_isKakaoCancelled(error)) {
+        throw const SocialLoginCancelledException('카카오 로그인이 취소되었습니다.');
+      }
+
+      return UserApi.instance.loginWithKakaoAccount();
+    } on KakaoAuthException catch (error) {
+      if (_isKakaoCancelled(error)) {
+        throw const SocialLoginCancelledException('카카오 로그인이 취소되었습니다.');
+      }
+
+      return UserApi.instance.loginWithKakaoAccount();
+    } on KakaoException {
+      return UserApi.instance.loginWithKakaoAccount();
+    }
+  }
+
+  bool _isPlatformCancelled(PlatformException error) {
+    final code = error.code.toLowerCase();
+    return code == 'canceled' || code == 'cancelled' || code == 'access_denied';
+  }
+
+  AuthException _platformExceptionToAuthException(PlatformException error) {
+    if (_isPlatformCancelled(error)) {
+      return const SocialLoginCancelledException('카카오 로그인이 취소되었습니다.');
+    }
+
+    final message = error.message?.trim();
+    if (message == null || message.isEmpty) {
+      return AuthException('카카오 네이티브 호출 오류가 발생했습니다. (${error.code})');
+    }
+
+    return AuthException('카카오 네이티브 호출 오류: $message (${error.code})');
+  }
+
+  bool _isKakaoCancelled(KakaoException error) {
+    if (error is KakaoClientException) {
+      return error.reason == ClientErrorCause.cancelled;
+    }
+
+    if (error is KakaoAuthException) {
+      return error.error == AuthErrorCause.accessDenied;
+    }
+
+    if (error is KakaoApiException) {
+      return error.code == ApiErrorCause.accessDenied;
+    }
+
+    return false;
+  }
+
+  AuthException _kakaoExceptionToAuthException(KakaoException error) {
+    if (_isKakaoCancelled(error)) {
+      return const SocialLoginCancelledException('카카오 로그인이 취소되었습니다.');
+    }
+
+    if (error is KakaoAuthException) {
+      return AuthException(_kakaoAuthMessage(error));
+    }
+
+    if (error is KakaoApiException) {
+      return AuthException('카카오 API 오류: ${error.msg} (${error.code.name})');
+    }
+
+    if (error is KakaoClientException) {
+      return AuthException('카카오 SDK 오류: ${error.msg} (${error.reason.name})');
+    }
+
+    final message = error.message?.trim();
+    if (message == null || message.isEmpty) {
+      return const AuthException('카카오 SDK 오류가 발생했습니다.');
+    }
+
+    return AuthException('카카오 SDK 오류: $message');
+  }
+
+  String _kakaoAuthMessage(KakaoAuthException error) {
+    final detail = error.errorDescription?.trim();
+    final suffix = '(${error.error.name})';
+
+    switch (error.error) {
+      case AuthErrorCause.invalidClient:
+        return '카카오 앱 키가 올바르지 않습니다. 카카오 개발자 콘솔의 앱 키 설정을 확인해 주세요. $suffix';
+      case AuthErrorCause.misconfigured:
+        return '카카오 앱 플랫폼 설정이 올바르지 않습니다. Android 패키지명, 키 해시, Redirect URI를 확인해 주세요. $suffix';
+      case AuthErrorCause.invalidScope:
+        return '카카오 동의항목 설정이 올바르지 않습니다. 카카오 개발자 콘솔의 동의항목을 확인해 주세요. $suffix';
+      case AuthErrorCause.unauthorized:
+        return '카카오 앱에 로그인 권한이 없습니다. 카카오 개발자 콘솔의 권한 설정을 확인해 주세요. $suffix';
+      case AuthErrorCause.serverError:
+        return '카카오 서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요. $suffix';
+      case AuthErrorCause.invalidRequest:
+      case AuthErrorCause.invalidGrant:
+      case AuthErrorCause.accessDenied:
+      case AuthErrorCause.unknown:
+        if (detail == null || detail.isEmpty) {
+          return '카카오 인증 오류가 발생했습니다. $suffix';
+        }
+
+        return '카카오 인증 오류: $detail $suffix';
+    }
   }
 
   Future<NativeSocialLoginResult> _loginWithNaver() async {

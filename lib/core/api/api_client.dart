@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -92,9 +93,18 @@ class ApiClient {
     final payload = _decodeJson(response.body, fallbackMessage);
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
+      _debugLogFailure(
+        method: method,
+        path: path,
+        statusCode: response.statusCode,
+        payload: payload,
+      );
+
       throw ApiException(
         extractEnvelopeMessage(payload, fallbackMessage),
         statusCode: response.statusCode,
+        code: _readString(payload, 'code'),
+        data: _readData(payload),
       );
     }
 
@@ -130,6 +140,47 @@ class ApiClient {
     } on FormatException {
       throw ApiException('응답 형식이 올바르지 않습니다. $fallbackMessage');
     }
+  }
+
+  void _debugLogFailure({
+    required String method,
+    required String path,
+    required int statusCode,
+    required Object? payload,
+  }) {
+    if (!kDebugMode) {
+      return;
+    }
+
+    final code = _readString(payload, 'code') ?? '-';
+    final message = extractEnvelopeMessage(payload, '응답 메시지 없음');
+    final data = _readData(payload);
+    final dataText = data == null ? '-' : jsonEncode(data);
+    debugPrint(
+      '[api][$method $path] 실패 status=$statusCode code=$code '
+      'message=$message data=$dataText',
+    );
+  }
+
+  String? _readString(Object? payload, String key) {
+    if (payload is! Map) {
+      return null;
+    }
+
+    final value = payload[key];
+    if (value is String && value.trim().isNotEmpty) {
+      return value.trim();
+    }
+
+    return null;
+  }
+
+  Object? _readData(Object? payload) {
+    if (payload is! Map || !payload.containsKey('data')) {
+      return null;
+    }
+
+    return payload['data'];
   }
 }
 

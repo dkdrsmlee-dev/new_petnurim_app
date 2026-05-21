@@ -4,10 +4,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/app_routes.dart';
 import 'application/auth_providers.dart';
-import 'domain/auth_exception.dart';
 import 'domain/login_config.dart';
+import 'domain/readable_auth_error.dart';
 import 'domain/social_login_result.dart';
 import 'domain/social_provider.dart';
+import '../signup/application/signup_providers.dart';
 
 class AuthStartScreen extends ConsumerStatefulWidget {
   const AuthStartScreen({super.key});
@@ -102,13 +103,19 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
 
       switch (result.nextStep) {
         case SocialLoginNextStep.home:
+          ref.read(signupFlowProvider.notifier).clear();
           context.go(AppRoutes.home);
           break;
         case SocialLoginNextStep.signup:
+          ref.read(signupFlowProvider.notifier).startFromSocialLogin(result);
           context.go(AppRoutes.signupTerms);
           break;
       }
     } catch (error) {
+      debugPrint(
+        '[auth][${provider.name}] 로그인 실패: ${error.runtimeType}: $error',
+      );
+
       if (!mounted) {
         return;
       }
@@ -128,13 +135,8 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
     }
   }
 
-  String _readErrorMessage(Object error, String fallbackMessage) {
-    if (error is AuthException) {
-      return error.message;
-    }
-
-    return fallbackMessage;
-  }
+  String _readErrorMessage(Object error, String fallbackMessage) =>
+      readAuthErrorMessage(error, fallbackMessage);
 }
 
 class _AuthLoadingView extends StatelessWidget {

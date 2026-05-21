@@ -51,17 +51,17 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.dkdr.newPetnurimApp.naver-auth</string>
+			<string>com.dkdr.newpetnurim.naver-auth</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.dkdr.newPetnurimApp</string>
+				<string>com.dkdr.newpetnurim</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.dkdr.newPetnurimApp.kakao-auth</string>
+			<string>com.dkdr.newpetnurim.kakao-auth</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>kakao930bf238e56cb22cf6484fa8af790a5a</string>

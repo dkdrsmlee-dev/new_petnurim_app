@@ -37,6 +37,16 @@
 - Android: Kakao callback Activity, Naver SDK 의존성, Naver MethodChannel을 연결했습니다.
 - iOS: `NidThirdPartyLogin` Pod, URL scheme, AppDelegate MethodChannel을 연결했습니다.
 
+## 5단계 회원가입 흐름
+
+- `lib/features/signup/domain`: 약관, 프로필, 가입 완료 응답, 회원가입 진행 상태 모델을 둡니다.
+- `lib/features/signup/data/signup_repository.dart`: 회원가입 API 호출을 담당합니다.
+- `lib/features/signup/application/signup_providers.dart`: 회원가입 repository, 약관 목록, 진행 상태 provider를 제공합니다.
+- 약관 화면은 `GET /api/v1/terms`와 `POST /api/v1/auth/signup/terms`를 사용합니다.
+- 본인인증 화면은 `POST /api/v1/auth/signup/verify-phone` 후 `GET /api/v1/auth/signup/profile-init`을 호출합니다.
+- 프로필 화면은 주소/생년월일을 입력받아 `PATCH /api/v1/auth/signup/profile`에 저장합니다.
+- 가입 완료 화면은 `POST /api/v1/auth/signup/complete` 응답의 access token을 저장하고 홈으로 이동합니다.
+
 ## WebView 후보 영역
 
 - Daum/Kakao 주소검색
@@ -62,3 +72,11 @@
 4. 회원가입 흐름 화면과 서비스
 5. 주소검색 또는 본인인증용 최소 WebView 흐름
 6. 홈, 하단 내비게이션, 로그아웃, 프로필 진입점
+
+## 패키지명 설정 정보
+
+* **Android Package / Application ID**: `com.dkdr.newpetnurim` (기존 `com.dkdr.new_petnurim_app`에서 변경 완료)
+* **iOS Bundle Identifier**: `com.dkdr.newpetnurim` (기존 `com.dkdr.newPetnurimApp`에서 변경 완료)
+* **네이버 로그인 URL Scheme**: `com.dkdr.newpetnurim`
+* **카카오 로그인 플랫폼**: `com.dkdr.newpetnurim` 패키지명 및 번들 ID 등록 완료
+* **네이버 로그인 주의사항**: Android `MainActivity`에 `android:taskAffinity=""`를 두면 Naver SDK Bridge/CustomTab 콜백이 분리되어 `user_cancel`로 실패합니다. 이전 `nurimAppDemo`와 동일하게 해당 속성을 두지 않습니다.

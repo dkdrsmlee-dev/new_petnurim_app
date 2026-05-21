@@ -5,7 +5,7 @@ import UIKit
 @main
 @objc class AppDelegate: FlutterAppDelegate {
   private let naverAuthChannelName = "petnurim/naver_auth"
-  private let defaultNaverUrlScheme = "com.dkdr.newPetnurimApp"
+  private let defaultNaverUrlScheme = "com.dkdr.newpetnurim"
   private var pendingNaverResult: FlutterResult?
 
   override func application(

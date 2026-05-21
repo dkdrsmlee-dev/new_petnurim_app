@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.dkdr.new_petnurim_app"
+    namespace = "com.dkdr.newpetnurim"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // 실제 배포 전 고유한 Application ID를 확정합니다.
-        applicationId = "com.dkdr.new_petnurim_app"
+        applicationId = "com.dkdr.newpetnurim"
         // 앱 요구사항에 맞춰 SDK/버전 값을 조정합니다.
         // 참고: https://flutter.dev/to/review-gradle-config
         minSdk = flutter.minSdkVersion

@@ -1,4 +1,4 @@
-package com.dkdr.new_petnurim_app
+package com.dkdr.newpetnurim
 
 import android.os.Handler
 import android.os.Looper

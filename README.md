@@ -23,6 +23,7 @@ React UI 구조를 대체합니다. 기존 데모는 동작 기준과 API 흐름
 - 보안 저장소: `flutter_secure_storage`
 - 앱 진입점: `ProviderScope` + `PetnurimApp`
 - 기본 화면 흐름: 스플래시, 온보딩, 인증 시작, 회원가입 단계, 홈, 주소검색 WebView 후보
+- 회원가입 흐름: 약관 조회/저장, 휴대폰 인증 처리, 초기 프로필 조회, 회원정보 저장, 가입 완료 API 연결
 
 ## 초기 구조
 
@@ -37,7 +38,7 @@ lib/
     splash/
     onboarding/
     auth/
-    signup/
+    signup/             약관, 본인인증, 프로필, 가입 완료
     home/
     webview/           꼭 필요한 WebView 흐름
   native/              Kakao, Naver, PASS, 플랫폼 브리지
@@ -80,6 +81,7 @@ flutter run \
 - `flutter analyze`
 - `flutter test`
 - Android 실단말 디버그 실행: `SM G991N`
+- Android 실단말 소셜 로그인: Kakao/Naver 성공 확인
 - iOS 빌드 확인: `flutter build ios --no-codesign`
 
 ## 참고 소스
