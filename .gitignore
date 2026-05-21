@@ -11,6 +11,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+.antigravitycli/
 
 # IntelliJ 관련
 *.iml
