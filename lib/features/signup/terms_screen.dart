@@ -30,17 +30,10 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF30343C), size: 24),
           onPressed: _submitting ? null : () => context.go(AppRoutes.authStart),
         ),
-        title: const Text(
-          '서비스 약관동의',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        title: null,
         centerTitle: true,
       ),
       body: SafeArea(
@@ -64,49 +57,52 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
       children: [
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             children: [
               const Text(
-                '환영합니다!\n웹 3.0 서비스 이용약관에\n동의해 주세요.',
+                '서비스 이용을 위해\n약관에 동의해 주세요.',
                 style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
+                  fontFamily: 'Pretendard',
+                  color: Color(0xFF30343C),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
                   height: 1.4,
+                  letterSpacing: -0.66,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 40),
               // 전체 동의 카드 (배경 박스)
               GestureDetector(
                 onTap: terms.isEmpty || _submitting ? null : () => _toggleAll(!allChecked),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC),
-                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    color: const Color(0xFFF4F6F8),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         allChecked ? Icons.check_circle : Icons.check_circle_outline,
-                        color: allChecked ? Colors.black : const Color(0xFFCBD5E1),
+                        color: allChecked ? const Color(0xFF30343C) : const Color(0xFFCBD5E1),
                         size: 24,
                       ),
-                      const SizedBox(width: 12),
-                      const Text(
-                        '모두 확인 하였으며, 동의합니다.',
+                      const SizedBox(width: 8),
+                      Text(
+                        '약관 전체 동의',
                         style: TextStyle(
-                          color: Colors.black,
+                          fontFamily: 'Pretendard',
+                          color: allChecked ? const Color(0xFF30343C) : const Color(0xFF87909E),
                           fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: -0.66,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               if (terms.isEmpty)
                 const _NoticeBox(message: '활성화된 약관이 없습니다.')
               else
@@ -114,7 +110,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: terms.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 8),
+                  separatorBuilder: (context, index) => const SizedBox(height: 0),
                   itemBuilder: (context, index) {
                     final term = terms[index];
                     return _TermTile(
@@ -130,37 +126,25 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                 const SizedBox(height: 16),
                 _NoticeBox(message: _errorMessage!),
               ],
-              const SizedBox(height: 32),
-              const Center(
-                child: Text(
-                  '만 14세 이상 회원 가입 가능합니다.\n해당 내용은 이용약관 및 정책에서도 확인 가능합니다.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF94A3B8),
-                    fontSize: 12,
-                    height: 1.5,
-                  ),
-                ),
-              ),
               const SizedBox(height: 16),
             ],
           ),
         ),
         // 하단 고정 버튼
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           child: SizedBox(
             width: double.infinity,
-            height: 54,
+            height: 56,
             child: ElevatedButton(
               onPressed: requiredChecked && !_submitting
                   ? () => _submitTerms(terms)
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
+                backgroundColor: const Color(0xFF30343C),
                 foregroundColor: Colors.white,
-                disabledBackgroundColor: const Color(0xFFE2E8F0),
-                disabledForegroundColor: const Color(0xFF94A3B8),
+                disabledBackgroundColor: const Color(0xFFE8EBF1),
+                disabledForegroundColor: const Color(0xFFA2ADBE),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -175,10 +159,12 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                       ),
                     )
                   : const Text(
-                      '본인 인증 후 가입하기',
+                      '다음',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontFamily: 'Pretendard',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.66,
                       ),
                     ),
             ),
@@ -304,54 +290,33 @@ class _TermTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFF1F5F9)),
-        borderRadius: BorderRadius.circular(10),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 12),
       child: Row(
         children: [
           Expanded(
             child: InkWell(
               onTap: enabled ? () => onChanged(!checked) : null,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10),
-                bottomLeft: Radius.circular(10),
-              ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Row(
                   children: [
                     Icon(
-                      checked ? Icons.check_box : Icons.check_box_outline_blank,
-                      color: checked ? Colors.black : const Color(0xFFCBD5E1),
-                      size: 22,
+                      checked ? Icons.check_circle : Icons.check_circle_outline,
+                      color: checked ? const Color(0xFF30343C) : const Color(0xFFCBD5E1),
+                      size: 18,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '[${term.requiredLabel}] ${term.termsName}',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            term.contentSummary,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF64748B),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        '(${term.requiredLabel}) ${term.termsName}',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          color: checked ? const Color(0xFF30343C) : const Color(0xFF87909E),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: -0.66,
+                        ),
                       ),
                     ),
                   ],
@@ -359,16 +324,18 @@ class _TermTile extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(
-            onPressed: onOpen,
-            icon: const Icon(
-              Icons.chevron_right,
-              color: Color(0xFF94A3B8),
-              size: 20,
+          GestureDetector(
+            onTap: onOpen,
+            behavior: HitTestBehavior.opaque,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: Icon(
+                Icons.chevron_right,
+                color: Color(0xFFCBD5E1),
+                size: 16,
+              ),
             ),
-            tooltip: '약관 보기',
           ),
-          const SizedBox(width: 4),
         ],
       ),
     );
