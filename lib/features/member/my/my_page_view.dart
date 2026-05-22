@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/widgets/pet_card.dart';
 import '../data/member_repository.dart';
 import '../domain/member_my_page.dart';
 
@@ -108,24 +109,22 @@ class _MyPageContent extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 10),
-        const _SurfacePanel(
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('마이 펫', style: TextStyle(fontWeight: FontWeight.w800)),
-                    SizedBox(height: 8),
-                    Text('똘똘이 2살/남'),
-                  ],
-                ),
-              ),
-              SizedBox(width: 10),
-              _SmallOutlinedButton(label: '정보 수정'),
-            ],
-          ),
+        const SizedBox(height: 12),
+        NurimMyPetSection(
+          padding: EdgeInsets.zero,
+          pets: const [
+            NurimPetCardData(
+              name: '콩두리',
+              breed: '시바',
+              ageText: '2살',
+              genderText: '남아',
+              membershipTier: '브론즈',
+              rewardText: '28,000P',
+              isPrimary: true,
+            ),
+          ],
+          onPetPressed: (_) {},
+          onAddPressed: () {},
         ),
         const SizedBox(height: 10),
         const _ListButton(

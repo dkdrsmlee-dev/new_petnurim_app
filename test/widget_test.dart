@@ -103,7 +103,7 @@ void main() {
     await tester.scrollUntilVisible(
       find.text('로그아웃'),
       220,
-      scrollable: find.byType(Scrollable).last,
+      scrollable: _verticalScrollable(),
     );
     await tester.pumpAndSettle();
     await tester.tap(find.text('로그아웃'));
@@ -164,7 +164,7 @@ void main() {
     await tester.scrollUntilVisible(
       find.text('회원탈퇴'),
       220,
-      scrollable: find.byType(Scrollable).last,
+      scrollable: _verticalScrollable(),
     );
     await tester.pumpAndSettle();
     await tester.tap(find.text('회원탈퇴'));
@@ -174,7 +174,7 @@ void main() {
     await tester.scrollUntilVisible(
       find.text('유의사항을 모두 확인하였으며, 회원 탈퇴에 동의 합니다.'),
       150,
-      scrollable: find.byType(Scrollable).last,
+      scrollable: _verticalScrollable(),
     );
     await tester.pumpAndSettle();
     await tester.tap(find.text('유의사항을 모두 확인하였으며, 회원 탈퇴에 동의 합니다.'));
@@ -192,6 +192,13 @@ void main() {
     expect(await tokenStorage.readAccessToken(), isNull);
     expect(find.text('안녕하세요 :)\n회원가입 후 이용해 주세요.'), findsOneWidget);
   });
+}
+
+Finder _verticalScrollable() {
+  return find.byWidgetPredicate(
+    (widget) =>
+        widget is Scrollable && widget.axisDirection == AxisDirection.down,
+  );
 }
 
 class _FakeAuthRepository implements AuthRepository {
