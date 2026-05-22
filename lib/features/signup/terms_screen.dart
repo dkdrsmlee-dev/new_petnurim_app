@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/app_routes.dart';
+import '../../core/widgets/bottom_action_bar.dart';
 import '../auth/domain/readable_auth_error.dart';
 import 'application/signup_providers.dart';
 import 'domain/signup_terms.dart';
@@ -30,7 +31,11 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF30343C), size: 24),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color(0xFF30343C),
+            size: 24,
+          ),
           onPressed: _submitting ? null : () => context.go(AppRoutes.authStart),
         ),
         title: null,
@@ -38,7 +43,9 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
       ),
       body: SafeArea(
         child: termsState.when(
-          loading: () => const Center(child: CircularProgressIndicator(color: Colors.black)),
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: Colors.black),
+          ),
           error: (error, stackTrace) => _ErrorView(
             message: _readErrorMessage(error, '약관 목록을 불러오지 못했습니다.'),
             onRetry: () => ref.invalidate(activeTermsProvider),
@@ -73,9 +80,14 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
               const SizedBox(height: 40),
               // 전체 동의 카드 (배경 박스)
               GestureDetector(
-                onTap: terms.isEmpty || _submitting ? null : () => _toggleAll(!allChecked),
+                onTap: terms.isEmpty || _submitting
+                    ? null
+                    : () => _toggleAll(!allChecked),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF4F6F8),
                     borderRadius: BorderRadius.circular(12),
@@ -83,8 +95,12 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                   child: Row(
                     children: [
                       Icon(
-                        allChecked ? Icons.check_circle : Icons.check_circle_outline,
-                        color: allChecked ? const Color(0xFF7F4FFF) : const Color(0xFFCBD5E1),
+                        allChecked
+                            ? Icons.check_circle
+                            : Icons.check_circle_outline,
+                        color: allChecked
+                            ? const Color(0xFF7F4FFF)
+                            : const Color(0xFFCBD5E1),
                         size: 24,
                       ),
                       const SizedBox(width: 8),
@@ -92,7 +108,9 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                         '약관 전체 동의',
                         style: TextStyle(
                           fontFamily: 'Pretendard',
-                          color: allChecked ? const Color(0xFF30343C) : const Color(0xFF87909E),
+                          color: allChecked
+                              ? const Color(0xFF30343C)
+                              : const Color(0xFF87909E),
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           letterSpacing: -0.66,
@@ -110,7 +128,8 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: terms.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 0),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 0),
                   itemBuilder: (context, index) {
                     final term = terms[index];
                     return _TermTile(
@@ -130,45 +149,11 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
             ],
           ),
         ),
-        // 하단 고정 버튼
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-          child: SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: requiredChecked && !_submitting
-                  ? () => _submitTerms(terms)
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7F4FFF),
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: const Color(0xFFE8EBF1),
-                disabledForegroundColor: const Color(0xFFA2ADBE),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: _submitting
-                  ? const SizedBox.square(
-                      dimension: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text(
-                      '다음',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.66,
-                      ),
-                    ),
-            ),
-          ),
+        NurimBottomActionBar(
+          primaryLabel: '다음',
+          primaryEnabled: requiredChecked,
+          isLoading: _submitting,
+          onPrimaryPressed: () => _submitTerms(terms),
         ),
       ],
     );
@@ -303,7 +288,9 @@ class _TermTile extends StatelessWidget {
                   children: [
                     Icon(
                       checked ? Icons.check_circle : Icons.check_circle_outline,
-                      color: checked ? const Color(0xFF7F4FFF) : const Color(0xFFCBD5E1),
+                      color: checked
+                          ? const Color(0xFF7F4FFF)
+                          : const Color(0xFFCBD5E1),
                       size: 18,
                     ),
                     const SizedBox(width: 8),
@@ -312,7 +299,9 @@ class _TermTile extends StatelessWidget {
                         '(${term.requiredLabel}) ${term.termsName}',
                         style: TextStyle(
                           fontFamily: 'Pretendard',
-                          color: checked ? const Color(0xFF30343C) : const Color(0xFF87909E),
+                          color: checked
+                              ? const Color(0xFF30343C)
+                              : const Color(0xFF87909E),
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           letterSpacing: -0.66,

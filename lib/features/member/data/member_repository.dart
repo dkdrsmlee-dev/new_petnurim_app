@@ -4,9 +4,12 @@ import '../../../core/api/api_client.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../auth/domain/auth_exception.dart';
 import '../domain/member_info.dart';
+import '../domain/member_my_page.dart';
 import '../domain/member_withdrawal.dart';
 
 abstract interface class MemberRepository {
+  Future<MemberMyPage> getMyPage();
+
   Future<MemberInfo> getMemberInfo();
 
   Future<MemberWithdrawResult> withdraw({
@@ -26,16 +29,25 @@ class BackendMemberRepository implements MemberRepository {
   final TokenStorage _tokenStorage;
 
   @override
-  Future<MemberInfo> getMemberInfo() async {
-    // 백엔드 API가 응답하지 않거나 아직 준비되지 않아 Mock 데이터를 즉시 반환하도록 수정합니다.
-    await Future.delayed(const Duration(milliseconds: 300));
-    return const MemberInfo(
-      name: '홍길동',
-      email: 'email@email.co.kr',
-      phoneNumber: '01012341234',
-      address: '서울시 강남구 역삼동 123-45 12층 오크빌 1204호',
-      birthDate: '20100307',
+  Future<MemberMyPage> getMyPage() async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/member/mypage',
+      bearerToken: await _readAccessToken('로그인 정보가 없어 마이페이지를 조회할 수 없습니다.'),
+      fallbackMessage: '마이페이지 정보를 불러오지 못했습니다.',
     );
+
+    return MemberMyPage.fromJson(payload);
+  }
+
+  @override
+  Future<MemberInfo> getMemberInfo() async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/member/me',
+      bearerToken: await _readAccessToken('로그인 정보가 없어 내 정보를 조회할 수 없습니다.'),
+      fallbackMessage: '내 정보를 불러오지 못했습니다.',
+    );
+
+    return MemberInfo.fromJson(payload);
   }
 
   @override
@@ -43,15 +55,10 @@ class BackendMemberRepository implements MemberRepository {
     required String reasonCode,
     String? reasonText,
   }) async {
-    final accessToken = await _tokenStorage.readAccessToken();
-    if (accessToken == null || accessToken.trim().isEmpty) {
-      throw const AuthException('로그인 정보가 없어 회원탈퇴를 진행할 수 없습니다.');
-    }
-
     final trimmedReasonText = reasonText?.trim();
     final payload = await _apiClient.postJson(
       '/api/v1/member/withdraw',
-      bearerToken: accessToken,
+      bearerToken: await _readAccessToken('로그인 정보가 없어 회원탈퇴를 진행할 수 없습니다.'),
       body: {
         'reasonCode': reasonCode,
         'withdrawalAgreeYn': 'Y',
@@ -62,6 +69,15 @@ class BackendMemberRepository implements MemberRepository {
     );
 
     return MemberWithdrawResult.fromJson(payload);
+  }
+
+  Future<String> _readAccessToken(String emptyMessage) async {
+    final accessToken = await _tokenStorage.readAccessToken();
+    if (accessToken == null || accessToken.trim().isEmpty) {
+      throw AuthException(emptyMessage);
+    }
+
+    return accessToken.trim();
   }
 }
 
@@ -74,4 +90,10 @@ final memberRepositoryProvider = Provider<MemberRepository>((ref) {
 
 final memberInfoProvider = FutureProvider.autoDispose<MemberInfo>((ref) async {
   return ref.watch(memberRepositoryProvider).getMemberInfo();
+});
+
+final memberMyPageProvider = FutureProvider.autoDispose<MemberMyPage>((
+  ref,
+) async {
+  return ref.watch(memberRepositoryProvider).getMyPage();
 });

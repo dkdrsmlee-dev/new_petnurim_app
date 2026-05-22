@@ -15,6 +15,7 @@ import 'package:new_petnurim_app/features/auth/domain/social_login_result.dart';
 import 'package:new_petnurim_app/features/auth/domain/social_provider.dart';
 import 'package:new_petnurim_app/features/member/data/member_repository.dart';
 import 'package:new_petnurim_app/features/member/domain/member_info.dart';
+import 'package:new_petnurim_app/features/member/domain/member_my_page.dart';
 import 'package:new_petnurim_app/features/member/domain/member_withdrawal.dart';
 
 void main() {
@@ -154,7 +155,7 @@ void main() {
     );
     await tester.tap(birthDateChangeButton);
     await tester.pumpAndSettle();
-    
+
     // 바텀 시트 안의 '완료' 버튼이 보이는지 확인 (바텀 시트가 정상적으로 열렸음을 의미)
     expect(find.text('완료'), findsOneWidget);
     await tester.tap(find.text('완료'));
@@ -217,6 +218,16 @@ class _FakeAuthRepository implements AuthRepository {
 
 class _FakeMemberRepository implements MemberRepository {
   bool withdrawCalled = false;
+
+  @override
+  Future<MemberMyPage> getMyPage() async {
+    return const MemberMyPage(
+      userId: 'hong01',
+      name: '홍길동',
+      email: 'email@email.co.kr',
+      joinDt: '2026-02-27T00:00:00.000Z',
+    );
+  }
 
   @override
   Future<MemberInfo> getMemberInfo() async {

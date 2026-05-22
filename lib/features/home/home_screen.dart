@@ -6,6 +6,7 @@ import '../../app/app_bootstrap.dart';
 import '../../app/app_routes.dart';
 import '../../core/storage/token_storage.dart';
 import '../../core/widgets/custom_gnb.dart';
+import '../member/my/my_page_view.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -87,7 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const _CareTabView(),
             const _PetTabView(),
             const _EventTabView(),
-            _MyPageView(isLoggingOut: _isLoggingOut, onLogout: _logout),
+            MyPageView(isLoggingOut: _isLoggingOut, onLogout: _logout),
           ],
         ),
       ),
@@ -331,133 +332,6 @@ class _PetTabView extends StatelessWidget {
   }
 }
 
-class _MyPageView extends ConsumerWidget {
-  const _MyPageView({required this.isLoggingOut, required this.onLogout});
-
-  final bool isLoggingOut;
-  final VoidCallback onLogout;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
-      children: [
-        const Padding(
-          padding: EdgeInsets.only(bottom: 16),
-          child: Text(
-            '홍길동님의 정보를 관리하실 수 있습니다.',
-            style: TextStyle(fontWeight: FontWeight.w800),
-          ),
-        ),
-        _SurfacePanel(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Expanded(
-                    child: Text(
-                      '나의 정보',
-                      style: TextStyle(fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                  OutlinedButton(
-                    onPressed: () => context.push(AppRoutes.myInfo),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(92, 36),
-                    ),
-                    child: const Text('정보 수정'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              const Text('example@example.com'),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        const _SurfacePanel(
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('멤버십', style: TextStyle(fontWeight: FontWeight.w800)),
-                    SizedBox(height: 8),
-                    Text('월 3.0 멤버십 (2026/04/12 가입)'),
-                  ],
-                ),
-              ),
-              SizedBox(width: 10),
-              _SmallOutlinedButton(label: '정보 수정'),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        const _SurfacePanel(
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('마이 펫', style: TextStyle(fontWeight: FontWeight.w800)),
-                    SizedBox(height: 8),
-                    Text('똘똘이 2살/남'),
-                  ],
-                ),
-              ),
-              SizedBox(width: 10),
-              _SmallOutlinedButton(label: '정보 수정'),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        const _ListItem(
-          icon: Icons.stars_outlined,
-          title: '리워드 관리',
-          subtitle: '보유중인 리워드 총액 45,000 Point',
-        ),
-        const SizedBox(height: 10),
-        const _ListItem(
-          icon: Icons.credit_card_outlined,
-          title: '결제수단 관리',
-          subtitle: '월 3.0결제용(**12)',
-        ),
-        const SizedBox(height: 10),
-        const _ListItem(icon: Icons.support_agent, title: '고객센터', subtitle: ''),
-        const SizedBox(height: 10),
-        const _ListItem(
-          icon: Icons.description_outlined,
-          title: '서비스 약관',
-          subtitle: '',
-        ),
-        const SizedBox(height: 10),
-        const _ListItem(
-          icon: Icons.settings_outlined,
-          title: '설정',
-          subtitle: '',
-        ),
-        const SizedBox(height: 16),
-        _SurfacePanel(
-          padding: const EdgeInsets.all(12),
-          child: FilledButton.icon(
-            onPressed: isLoggingOut ? null : onLogout,
-            icon: isLoggingOut
-                ? const SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.logout),
-            label: Text(isLoggingOut ? '로그아웃 중' : '로그아웃'),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _ListPage extends StatelessWidget {
   const _ListPage({
     required this.title,
@@ -529,24 +403,6 @@ class _ListItem extends StatelessWidget {
           const Icon(Icons.chevron_right),
         ],
       ),
-    );
-  }
-}
-
-class _SmallOutlinedButton extends StatelessWidget {
-  const _SmallOutlinedButton({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: null,
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(92, 36),
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-      ),
-      child: Text(label),
     );
   }
 }
