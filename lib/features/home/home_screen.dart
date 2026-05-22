@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/app_bootstrap.dart';
 import '../../app/app_routes.dart';
 import '../../core/storage/token_storage.dart';
+import '../../core/widgets/custom_gnb.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -25,16 +26,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       title: '펫누림 홈',
     ),
     _HomeTab(
-      label: '진료',
-      icon: Icons.medical_services_outlined,
-      selectedIcon: Icons.medical_services,
-      title: '진료',
+      label: '기프트',
+      icon: Icons.card_giftcard_outlined,
+      selectedIcon: Icons.card_giftcard,
+      title: '기프트 쇼핑',
     ),
     _HomeTab(
-      label: '반려동물',
-      icon: Icons.pets_outlined,
-      selectedIcon: Icons.pets,
-      title: '반려동물',
+      label: '문진',
+      icon: Icons.assignment_outlined,
+      selectedIcon: Icons.assignment,
+      title: '문진 및 진료',
+    ),
+    _HomeTab(
+      label: '경품메타',
+      icon: Icons.emoji_events_outlined,
+      selectedIcon: Icons.emoji_events,
+      title: '경품메타',
+    ),
+    _HomeTab(
+      label: '이벤트',
+      icon: Icons.campaign_outlined,
+      selectedIcon: Icons.campaign,
+      title: '진행중인 이벤트',
     ),
     _HomeTab(
       label: '마이',
@@ -60,7 +73,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           IconButton(
             tooltip: '설정',
-            onPressed: () => setState(() => _selectedIndex = 3),
+            onPressed: () => setState(() => _selectedIndex = 5),
             icon: const Icon(Icons.settings_outlined),
           ),
         ],
@@ -69,28 +82,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: IndexedStack(
           index: _selectedIndex,
           children: [
-            _HomeOverview(onOpenCare: () => setState(() => _selectedIndex = 1)),
+            _HomeOverview(onOpenCare: () => setState(() => _selectedIndex = 2)),
+            const _GiftTabView(),
             const _CareTabView(),
             const _PetTabView(),
+            const _EventTabView(),
             _MyPageView(isLoggingOut: _isLoggingOut, onLogout: _logout),
           ],
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
+      bottomNavigationBar: CustomGnb(
+        currentIndex: _selectedIndex >= 5 ? -1 : _selectedIndex,
+        onTap: (index) {
           setState(() {
             _selectedIndex = index;
           });
         },
-        destinations: [
-          for (final tab in _tabs)
-            NavigationDestination(
-              icon: Icon(tab.icon),
-              selectedIcon: Icon(tab.selectedIcon),
-              label: tab.label,
-            ),
-        ],
       ),
     );
   }
@@ -578,6 +585,54 @@ class _SurfacePanel extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(padding: padding, child: child),
+    );
+  }
+}
+
+class _GiftTabView extends StatelessWidget {
+  const _GiftTabView();
+
+  @override
+  Widget build(BuildContext context) {
+    return const _ListPage(
+      title: '기프트 쇼핑',
+      description: '반려동물을 위한 다양한 선물을 만나보세요.',
+      items: [
+        _ListItem(
+          icon: Icons.shopping_bag_outlined,
+          title: '스토어',
+          subtitle: '추천 선물 목록',
+        ),
+        _ListItem(
+          icon: Icons.confirmation_number_outlined,
+          title: '쿠폰함',
+          subtitle: '나의 보유 쿠폰',
+        ),
+      ],
+    );
+  }
+}
+
+class _EventTabView extends StatelessWidget {
+  const _EventTabView();
+
+  @override
+  Widget build(BuildContext context) {
+    return const _ListPage(
+      title: '이벤트',
+      description: '진행 중인 다양한 이벤트와 혜택을 확인하세요.',
+      items: [
+        _ListItem(
+          icon: Icons.card_giftcard_outlined,
+          title: '출석 체크',
+          subtitle: '매일매일 룰렛 돌리기',
+        ),
+        _ListItem(
+          icon: Icons.campaign_outlined,
+          title: '친구 초대',
+          subtitle: '함께 하고 포인트 받기',
+        ),
+      ],
     );
   }
 }

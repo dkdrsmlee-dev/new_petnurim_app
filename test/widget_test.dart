@@ -94,7 +94,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('마이'));
+    await tester.tap(find.byIcon(Icons.settings_outlined));
     await tester.pumpAndSettle();
 
     expect(find.text('마이페이지'), findsOneWidget);
@@ -136,7 +136,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('마이'));
+    await tester.tap(find.byIcon(Icons.settings_outlined));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(OutlinedButton, '정보 수정').first);
     await tester.pumpAndSettle();
