@@ -75,10 +75,10 @@ flutter run
 ```bash
 flutter run \
   --dart-define=NURIM_API_BASE_URL=http://192.168.0.147:4011 \
-  --dart-define=KAKAO_NATIVE_APP_KEY=카카오_네이티브_앱키 \
-  --dart-define=NAVER_CLIENT_ID=네이버_클라이언트_ID \
-  --dart-define=NAVER_CLIENT_SECRET=네이버_클라이언트_SECRET \
-  --dart-define=NAVER_CLIENT_NAME=네이버_앱_이름
+  --dart-define=KAKAO_NATIVE_APP_KEY=930bf238e56cb22cf6484fa8af790a5a \
+  --dart-define=NAVER_CLIENT_ID=rOPP7lBMsxvpvDDFcrwF \
+  --dart-define=NAVER_CLIENT_SECRET=Jdxpqldi9t \
+  --dart-define=NAVER_CLIENT_NAME=DKDOCTOR
 ```
 
 ## 현재 검증 상태

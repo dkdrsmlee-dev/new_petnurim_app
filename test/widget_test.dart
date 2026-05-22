@@ -41,8 +41,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.arrow_forward));
     await tester.pumpAndSettle();
 
-    expect(find.text('서비스 시작하기'), findsWidgets);
-    expect(find.text('계정으로 바로 시작하세요'), findsOneWidget);
+    expect(find.text('안녕하세요 :)\n회원가입 후 이용해 주세요.'), findsOneWidget);
     expect(find.text('카카오로 시작하기'), findsOneWidget);
     expect(find.text('네이버로 시작하기'), findsOneWidget);
   });
@@ -110,7 +109,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(await tokenStorage.readAccessToken(), isNull);
-    expect(find.text('계정으로 바로 시작하세요'), findsOneWidget);
+    expect(find.text('안녕하세요 :)\n회원가입 후 이용해 주세요.'), findsOneWidget);
   });
 
   testWidgets('나의 정보 화면에서 회원탈퇴하면 토큰을 지우고 로그인 화면으로 이동한다', (
@@ -190,7 +189,7 @@ void main() {
 
     expect(memberRepository.withdrawCalled, isTrue);
     expect(await tokenStorage.readAccessToken(), isNull);
-    expect(find.text('계정으로 바로 시작하세요'), findsOneWidget);
+    expect(find.text('안녕하세요 :)\n회원가입 후 이용해 주세요.'), findsOneWidget);
   });
 }
 

@@ -26,55 +26,50 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
   @override
   Widget build(BuildContext context) {
     final loginConfig = ref.watch(loginConfigProvider);
-    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('서비스 시작하기'),
-        automaticallyImplyLeading: false,
-      ),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 32),
-          children: [
-            Text(
-              '펫누림',
-              style: textTheme.labelLarge?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '계정으로 바로 시작하세요',
-              style: textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '사용 가능한 로그인 수단을 확인한 뒤 안전하게 계정을 연결합니다.',
-              style: textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 32),
-            loginConfig.when(
-              loading: () => const _AuthLoadingView(),
-              error: (error, stackTrace) => _AuthConfigErrorView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: loginConfig.when(
+            loading: () => const _AuthLoadingView(),
+            error: (error, stackTrace) => Center(
+              child: _AuthConfigErrorView(
                 message: _readErrorMessage(
                   error,
                   '로그인 설정을 불러오지 못했습니다. 다시 시도해 주세요.',
                 ),
                 onRetry: () => ref.invalidate(loginConfigProvider),
               ),
-              data: (config) => _AuthProviderButtons(
-                config: config,
-                pendingProvider: _pendingProvider,
-                errorMessage: _errorMessage,
-                onSelectProvider: _startSocialLogin,
-                onDebugSignup: _startDebugSignup,
-              ),
             ),
-          ],
+            data: (config) => Column(
+              children: [
+                const Spacer(flex: 3),
+                const Text(
+                  '안녕하세요 :)\n회원가입 후 이용해 주세요.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                    letterSpacing: -0.66,
+                    color: Color(0xFF30343C),
+                  ),
+                ),
+                const SizedBox(height: 60),
+                _AuthProviderButtons(
+                  config: config,
+                  pendingProvider: _pendingProvider,
+                  errorMessage: _errorMessage,
+                  onSelectProvider: _startSocialLogin,
+                  onDebugSignup: _startDebugSignup,
+                ),
+                const Spacer(flex: 4),
+              ],
+            ),
+          ),
         ),
       ),
     );
