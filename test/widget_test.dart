@@ -43,8 +43,8 @@ void main() {
 
     expect(find.text('서비스 시작하기'), findsWidgets);
     expect(find.text('계정으로 바로 시작하세요'), findsOneWidget);
-    expect(find.text('카카오로 계속하기'), findsOneWidget);
-    expect(find.text('네이버로 계속하기'), findsOneWidget);
+    expect(find.text('카카오로 시작하기'), findsOneWidget);
+    expect(find.text('네이버로 시작하기'), findsOneWidget);
   });
 
   testWidgets('토큰이 있으면 홈으로 이동한다', (WidgetTester tester) async {
