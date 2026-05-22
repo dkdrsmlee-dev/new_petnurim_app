@@ -84,7 +84,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                     children: [
                       Icon(
                         allChecked ? Icons.check_circle : Icons.check_circle_outline,
-                        color: allChecked ? const Color(0xFF30343C) : const Color(0xFFCBD5E1),
+                        color: allChecked ? const Color(0xFF7F4FFF) : const Color(0xFFCBD5E1),
                         size: 24,
                       ),
                       const SizedBox(width: 8),
@@ -141,7 +141,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                   ? () => _submitTerms(terms)
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF30343C),
+                backgroundColor: const Color(0xFF7F4FFF),
                 foregroundColor: Colors.white,
                 disabledBackgroundColor: const Color(0xFFE8EBF1),
                 disabledForegroundColor: const Color(0xFFA2ADBE),
@@ -303,7 +303,7 @@ class _TermTile extends StatelessWidget {
                   children: [
                     Icon(
                       checked ? Icons.check_circle : Icons.check_circle_outline,
-                      color: checked ? const Color(0xFF30343C) : const Color(0xFFCBD5E1),
+                      color: checked ? const Color(0xFF7F4FFF) : const Color(0xFFCBD5E1),
                       size: 18,
                     ),
                     const SizedBox(width: 8),
