@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,13 +9,19 @@ import '../config/app_config.dart';
 import 'api_envelope.dart';
 import 'api_exception.dart';
 
+final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
 class ApiClient {
-  const ApiClient({required AppConfig config, required http.Client httpClient})
-    : _config = config,
-      _httpClient = httpClient;
+  const ApiClient({
+    required AppConfig config,
+    required http.Client httpClient,
+    this.onUnauthorized,
+  })  : _config = config,
+        _httpClient = httpClient;
 
   final AppConfig _config;
   final http.Client _httpClient;
+  final VoidCallback? onUnauthorized;
 
   Uri uri(String path) => _config.apiUri(path);
 
@@ -103,6 +110,10 @@ class ApiClient {
         payload: payload,
       );
 
+      if (response.statusCode == 401) {
+        onUnauthorized?.call();
+      }
+
       throw ApiException(
         extractEnvelopeMessage(payload, fallbackMessage),
         statusCode: response.statusCode,
@@ -187,6 +198,8 @@ class ApiClient {
   }
 }
 
+final unauthorizedHandlerProvider = Provider<VoidCallback?>((ref) => null);
+
 final httpClientProvider = Provider<http.Client>((ref) {
   final client = http.Client();
   ref.onDispose(client.close);
@@ -197,5 +210,6 @@ final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient(
     config: ref.watch(appConfigProvider),
     httpClient: ref.watch(httpClientProvider),
+    onUnauthorized: ref.watch(unauthorizedHandlerProvider),
   );
 });

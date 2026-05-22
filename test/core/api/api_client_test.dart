@@ -75,4 +75,27 @@ void main() {
       ),
     );
   });
+
+  test('HTTP 401 응답은 onUnauthorized 콜백을 호출한다', () async {
+    var called = false;
+    final client = ApiClient(
+      config: const AppConfig(apiBaseUrl: 'https://api.petnurim.test'),
+      httpClient: MockClient((request) async {
+        return http.Response.bytes(
+          utf8.encode(jsonEncode({'message': '권한이 없습니다.'})),
+          401,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      }),
+      onUnauthorized: () {
+        called = true;
+      },
+    );
+
+    try {
+      await client.getJson('/api/v1/me');
+    } catch (_) {}
+
+    expect(called, isTrue);
+  });
 }

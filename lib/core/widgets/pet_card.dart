@@ -23,11 +23,13 @@ class NurimPetCardData {
   final bool isPrimary;
   final ImageProvider? imageProvider;
 
-  String get description => [
+  List<String> get descriptionList => [
     breed,
     ageText,
     genderText,
-  ].where((value) => value.trim().isNotEmpty).join(' · ');
+  ].map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+
+  String get description => descriptionList.join(' · ');
 }
 
 class NurimPetCard extends StatelessWidget {
@@ -36,7 +38,7 @@ class NurimPetCard extends StatelessWidget {
     required this.pet,
     this.onPressed,
     this.width,
-    this.height = 224,
+    this.height = 204,
   });
 
   final NurimPetCardData pet;
@@ -47,22 +49,61 @@ class NurimPetCard extends StatelessWidget {
   static const Color _backgroundColor = Colors.white;
   static const Color _borderColor = Color(0xFFD6DBE4);
   static const Color _titleColor = Color(0xFF30343C);
-  static const Color _mutedColor = Color(0xFF87909E);
-  static const Color _softBackgroundColor = Color(0xFFF7F8FA);
+  static const Color _nameColor = Color(0xFF51565F);
+  static const Color _rewardColor = Color(0xFF30343C);
+  static const Color _mutedColor = Color(0xFF909AA9);
+  static const Color _softBackgroundColor = Color(0xFFF8F9FB);
   static const Color _dividerColor = Color(0xFFE8EBF1);
   static const Color _primaryColor = Color(0xFF7F4FFF);
   static const Color _primarySoftColor = Color(0xFFC7B3FF);
   static const Color _primaryBadgeColor = Color(0xFFF4C21B);
+
+  Widget _buildDescription() {
+    final list = pet.descriptionList;
+    if (list.isEmpty) return const SizedBox.shrink();
+
+    final children = <Widget>[];
+    for (int i = 0; i < list.length; i++) {
+      children.add(
+        Flexible(
+          child: Text(
+            list[i],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              height: 1.4,
+              letterSpacing: -0.66,
+              color: Color(0xFF909AA9),
+            ),
+          ),
+        ),
+      );
+      if (i < list.length - 1) {
+        children.add(const SizedBox(width: 4));
+        children.add(const _DotSeparator());
+        children.add(const SizedBox(width: 4));
+      }
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: children,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final card = Container(
       width: width,
       height: height,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: _backgroundColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _borderColor),
       ),
       child: Column(
@@ -71,12 +112,14 @@ class NurimPetCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _PetAvatar(imageProvider: pet.imageProvider),
-              const SizedBox(width: 18),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Flexible(
                           child: Text(
@@ -85,122 +128,112 @@ class NurimPetCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontFamily: 'Pretendard',
-                              fontSize: 24,
-                              fontWeight: FontWeight.w800,
-                              height: 1.25,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              height: 1.4,
                               letterSpacing: -0.66,
-                              color: _titleColor,
+                              color: _nameColor,
                             ),
                           ),
                         ),
                         if (pet.isPrimary) ...[
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 4),
                           const _PrimaryPetBadge(),
                         ],
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      pet.description,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        height: 1.45,
-                        letterSpacing: -0.66,
-                        color: _mutedColor,
-                      ),
-                    ),
+                    _buildDescription(),
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
-              const Icon(Icons.chevron_right, size: 38, color: _mutedColor),
+              const SizedBox(width: 16),
+              const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Color(0xFF909AA9),
+              ),
             ],
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 16),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: _softBackgroundColor,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.workspace_premium_outlined,
-                          size: 28,
-                          color: _mutedColor,
-                        ),
-                        const SizedBox(width: 12),
-                        const Expanded(
-                          child: Text(
-                            '멤버십',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              height: 1.4,
-                              letterSpacing: -0.66,
-                              color: _mutedColor,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        _MembershipChip(label: pet.membershipTier),
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 17, thickness: 1, color: _dividerColor),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.paid_outlined,
-                          size: 28,
-                          color: _mutedColor,
-                        ),
-                        const SizedBox(width: 12),
-                        const Expanded(
-                          child: Text(
-                            '리워드',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              height: 1.4,
-                              letterSpacing: -0.66,
-                              color: _mutedColor,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          pet.rewardText,
+                  Row(
+                    children: [
+                      const _CrownIcon(
+                        size: 20,
+                        color: Color(0xFF87909E),
+                      ),
+                      const SizedBox(width: 6),
+                      const Expanded(
+                        child: Text(
+                          '멤버십',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.right,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Pretendard',
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            height: 1.25,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            height: 1.4,
                             letterSpacing: -0.66,
-                            color: _titleColor,
+                            color: Color(0xFF87909E),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 12),
+                      _MembershipChip(label: pet.membershipTier),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Divider(height: 1, thickness: 1, color: _dividerColor),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const _CoinStackIcon(
+                        size: 20,
+                        color: Color(0xFF87909E),
+                        bgColor: _softBackgroundColor,
+                      ),
+                      const SizedBox(width: 6),
+                      const Expanded(
+                        child: Text(
+                          '리워드',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            height: 1.4,
+                            letterSpacing: -0.66,
+                            color: Color(0xFF87909E),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        pet.rewardText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                          color: _rewardColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -217,7 +250,7 @@ class NurimPetCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         onTap: onPressed,
         child: card,
       ),
@@ -246,15 +279,15 @@ class NurimMyPetSection extends StatelessWidget {
         final horizontalInset = _horizontalInsetFor(padding);
         final availableWidth = constraints.maxWidth.isFinite
             ? constraints.maxWidth - horizontalInset
-            : 343.0;
-        final cardWidth = math.min(343.0, math.max(0.0, availableWidth));
+            : 320.0;
+        final cardWidth = math.min(320.0, math.max(0.0, availableWidth));
         final visiblePets = pets.isEmpty ? [_emptyPet] : pets;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(
-              height: 224,
+              height: 204,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: padding,
@@ -299,6 +332,22 @@ class NurimMyPetSection extends StatelessWidget {
   }
 }
 
+class _DotSeparator extends StatelessWidget {
+  const _DotSeparator();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 3,
+      height: 3,
+      decoration: const BoxDecoration(
+        color: Color(0xFFB4C0D3),
+        shape: BoxShape.circle,
+      ),
+    );
+  }
+}
+
 class _PetAvatar extends StatelessWidget {
   const _PetAvatar({required this.imageProvider});
 
@@ -307,11 +356,11 @@ class _PetAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      radius: 36,
+      radius: 24,
       backgroundColor: const Color(0xFFF0F2F5),
       backgroundImage: imageProvider,
       child: imageProvider == null
-          ? const Icon(Icons.pets, size: 32, color: NurimPetCard._mutedColor)
+          ? const Icon(Icons.pets, size: 24, color: NurimPetCard._mutedColor)
           : null,
     );
   }
@@ -323,9 +372,9 @@ class _PrimaryPetBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CircleAvatar(
-      radius: 15,
+      radius: 12,
       backgroundColor: NurimPetCard._primaryBadgeColor,
-      child: Icon(Icons.star_rounded, size: 18, color: Colors.white),
+      child: Icon(Icons.star_rounded, size: 16, color: Colors.white),
     );
   }
 }
@@ -338,13 +387,13 @@ class _MembershipChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 30,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
+      height: 24,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFF2EFFF),
+        border: Border.all(color: const Color(0xFFC6BAFF)),
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: NurimPetCard._primarySoftColor, width: 1.5),
       ),
       child: Text(
         label,
@@ -352,9 +401,9 @@ class _MembershipChip extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           fontFamily: 'Pretendard',
-          fontSize: 14,
-          fontWeight: FontWeight.w800,
-          height: 1.4,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          height: 1.2,
           letterSpacing: -0.66,
           color: NurimPetCard._primaryColor,
         ),
@@ -459,5 +508,148 @@ class _DashedRoundedRectPainter extends CustomPainter {
   @override
   bool shouldRepaint(_DashedRoundedRectPainter oldDelegate) {
     return color != oldDelegate.color;
+  }
+}
+
+class _CrownIcon extends StatelessWidget {
+  const _CrownIcon({this.size = 20, this.color = NurimPetCard._mutedColor});
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(size, size),
+      painter: _CrownPainter(color: color),
+    );
+  }
+}
+
+class _CrownPainter extends CustomPainter {
+  const _CrownPainter({required this.color});
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final path = Path();
+    final double w = size.width;
+    final double h = size.height;
+
+    path.moveTo(4, h - 3);
+    path.lineTo(w - 4, h - 3);
+    path.lineTo(w - 3, h * 0.45);
+    path.lineTo(w * 0.78, h * 0.22);
+    path.lineTo(w * 0.62, h * 0.6);
+    path.lineTo(w * 0.5, h * 0.12);
+    path.lineTo(w * 0.38, h * 0.6);
+    path.lineTo(w * 0.22, h * 0.22);
+    path.lineTo(3, h * 0.45);
+    path.close();
+
+    path.moveTo(4, h - 7);
+    path.lineTo(w - 4, h - 7);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_CrownPainter oldDelegate) => color != oldDelegate.color;
+}
+
+class _CoinStackIcon extends StatelessWidget {
+  const _CoinStackIcon({
+    this.size = 20,
+    this.color = NurimPetCard._mutedColor,
+    this.bgColor = NurimPetCard._softBackgroundColor,
+  });
+  final double size;
+  final Color color;
+  final Color bgColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(size, size),
+      painter: _CoinStackPainter(color: color, bgColor: bgColor),
+    );
+  }
+}
+
+class _CoinStackPainter extends CustomPainter {
+  const _CoinStackPainter({required this.color, required this.bgColor});
+  final Color color;
+  final Color bgColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final strokePaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final fillPaint = Paint()
+      ..color = bgColor
+      ..style = PaintingStyle.fill;
+
+    final double w = size.width;
+    final double h = size.height;
+    final double cw = w * 0.65;
+    final double ch = h * 0.22;
+    final double thick = h * 0.16;
+
+    final List<double> centersY = [
+      h * 0.72,
+      h * 0.50,
+      h * 0.28,
+    ];
+
+    for (final cy in centersY) {
+      final bodyPath = Path()
+        ..addOval(Rect.fromCenter(center: Offset(w / 2, cy), width: cw, height: ch))
+        ..moveTo(w / 2 - cw / 2, cy)
+        ..lineTo(w / 2 - cw / 2, cy + thick)
+        ..arcTo(Rect.fromCenter(center: Offset(w / 2, cy + thick), width: cw, height: ch), math.pi, -math.pi, false)
+        ..lineTo(w / 2 + cw / 2, cy)
+        ..close();
+      canvas.drawPath(bodyPath, fillPaint);
+
+      canvas.drawArc(
+        Rect.fromCenter(center: Offset(w / 2, cy + thick), width: cw, height: ch),
+        0,
+        math.pi,
+        false,
+        strokePaint,
+      );
+
+      canvas.drawLine(
+        Offset(w / 2 - cw / 2, cy),
+        Offset(w / 2 - cw / 2, cy + thick),
+        strokePaint,
+      );
+      canvas.drawLine(
+        Offset(w / 2 + cw / 2, cy),
+        Offset(w / 2 + cw / 2, cy + thick),
+        strokePaint,
+      );
+
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset(w / 2, cy), width: cw, height: ch),
+        strokePaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CoinStackPainter oldDelegate) {
+    return color != oldDelegate.color || bgColor != oldDelegate.bgColor;
   }
 }

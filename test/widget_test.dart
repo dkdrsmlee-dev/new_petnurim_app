@@ -1,6 +1,9 @@
 // 기본 Flutter 위젯 테스트입니다.
 // WidgetTester로 탭 같은 사용자 동작을 실행하고 화면 상태를 검증합니다.
 
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +22,10 @@ import 'package:new_petnurim_app/features/member/domain/member_my_page.dart';
 import 'package:new_petnurim_app/features/member/domain/member_withdrawal.dart';
 
 void main() {
+  setUpAll(() {
+    HttpOverrides.global = _MockHttpOverrides();
+  });
+
   testWidgets('토큰이 없고 온보딩 미완료이면 온보딩으로 이동한다', (WidgetTester tester) async {
     // 앱을 렌더링합니다.
     await tester.pumpWidget(
@@ -259,3 +266,63 @@ class _FakeMemberRepository implements MemberRepository {
     );
   }
 }
+
+class _MockHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return _MockHttpClient();
+  }
+}
+
+class _MockHttpClient implements HttpClient {
+  @override
+  Future<HttpClientRequest> getUrl(Uri url) async => _MockHttpClientRequest();
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => null;
+}
+
+class _MockHttpClientRequest implements HttpClientRequest {
+  @override
+  Future<HttpClientResponse> close() async => _MockHttpClientResponse();
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => null;
+}
+
+class _MockHttpClientResponse implements HttpClientResponse {
+  @override
+  int get statusCode => 200;
+
+  @override
+  HttpClientResponseCompressionState get compressionState =>
+      HttpClientResponseCompressionState.notCompressed;
+
+  @override
+  int get contentLength => _transparentImage.length;
+
+  @override
+  StreamSubscription<List<int>> listen(
+    void Function(List<int> event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return Stream<List<int>>.fromIterable([_transparentImage]).listen(
+      onData,
+      onError: onError,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+    );
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => null;
+}
+
+final List<int> _transparentImage = [
+  0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x21, 0xf9, 0x04, 0x01, 0x00,
+  0x00, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
+  0x00, 0x02, 0x02, 0x44, 0x01, 0x00, 0x3b
+];

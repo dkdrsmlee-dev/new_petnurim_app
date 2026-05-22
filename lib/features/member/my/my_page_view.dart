@@ -112,15 +112,18 @@ class _MyPageContent extends StatelessWidget {
         const SizedBox(height: 12),
         NurimMyPetSection(
           padding: EdgeInsets.zero,
-          pets: const [
-            NurimPetCardData(
+          pets: [
+            const NurimPetCardData(
               name: '콩두리',
-              breed: '시바',
+              breed: '웰시코기',
               ageText: '2살',
               genderText: '남아',
               membershipTier: '브론즈',
               rewardText: '28,000P',
               isPrimary: true,
+              imageProvider: NetworkImage(
+                'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=150&h=150&fit=crop',
+              ),
             ),
           ],
           onPetPressed: (_) {},
