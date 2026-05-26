@@ -20,7 +20,7 @@ class NurimListButton extends StatelessWidget {
 
   static const Color _backgroundColor = Colors.white;
   static const Color _borderColor = Color(0xFFE8EBF1);
-  static const Color _textColor = Color(0xFF30343C);
+  static const Color _textColor = Color(0xFF51565F);
   static const Color _disabledTextColor = Color(0xFFA2ADBE);
   static const Color _iconColor = Color(0xFF87909E);
 
@@ -48,9 +48,9 @@ class NurimListButton extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'Pretendard',
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    height: 1.5,
+                    height: 1.4,
                     letterSpacing: -0.66,
                     color: enabled ? _textColor : _disabledTextColor,
                   ),
@@ -60,7 +60,7 @@ class NurimListButton extends StatelessWidget {
                 const SizedBox(width: 16),
                 Icon(
                   Icons.chevron_right,
-                  size: 20,
+                  size: 24,
                   color: enabled ? _iconColor : _disabledTextColor,
                 ),
               ],
@@ -71,3 +71,4 @@ class NurimListButton extends StatelessWidget {
     );
   }
 }
+

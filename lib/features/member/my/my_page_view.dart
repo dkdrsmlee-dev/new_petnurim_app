@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/widgets/list_button.dart';
 import '../../../core/widgets/my_info_row.dart';
+import '../../../core/widgets/mypage_name.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
 import '../../../core/widgets/section_title.dart';
@@ -84,39 +86,9 @@ class _MyPageContentState extends State<_MyPageContent> {
           child: ListView(
             padding: const EdgeInsets.symmetric(vertical: 16),
             children: [
-              // Mypage name (프로필 영역)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 20, // 40px 지름
-                      backgroundColor: const Color(0xFF7F4FFF), // var(--color/violet/90, #7f4fff)
-                      child: Text(
-                        name.isNotEmpty ? name[0] : '홍',
-                        style: const TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      '$name님 반가워요 :)',
-                      style: const TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600, // SemiBold
-                        height: 1.4,
-                        letterSpacing: -0.66,
-                        color: Color(0xFF30343C), // strong text color
-                      ),
-                    ),
-                  ],
-                ),
+                child: NurimMypageName(name: name),
               ),
               const SizedBox(height: 16),
 
@@ -205,57 +177,48 @@ class _MyPageContentState extends State<_MyPageContent> {
               ),
               const SizedBox(height: 24),
 
-              // 하단 메뉴 목록 영역
+              // 구분선 (Section Divider) - 화면 전체 너비
+              Container(
+                height: 8,
+                color: const Color(0xFFF4F6F8), // var(--color/gray/20, #f4f6f8)
+              ),
+
+              // 하단 메뉴 목록 영역 (고객센터, 서비스 약관, 설정)
+              NurimListButton(
+                title: '고객센터',
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                onPressed: () {},
+              ),
+              NurimListButton(
+                title: '서비스 약관',
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                onPressed: () {},
+              ),
+              NurimListButton(
+                title: '설정',
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                onPressed: () {},
+              ),
+              const SizedBox(height: 24),
+
+              // 로그아웃 버튼 (테스트 유지를 위해 하단에 배치)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    const _ListButton(
-                      icon: Icons.stars_outlined,
-                      title: '리워드 관리',
-                      subtitle: '보유중인 리워드 총액 45,000 Point',
-                    ),
-                    const SizedBox(height: 10),
-                    const _ListButton(
-                      icon: Icons.credit_card_outlined,
-                      title: '결제수단 관리',
-                      subtitle: '월 3.0결제용(**12)',
-                    ),
-                    const SizedBox(height: 10),
-                    const _ListButton(
-                      icon: Icons.support_agent,
-                      title: '고객센터',
-                      subtitle: '',
-                    ),
-                    const SizedBox(height: 10),
-                    const _ListButton(
-                      icon: Icons.description_outlined,
-                      title: '서비스 약관',
-                      subtitle: '',
-                    ),
-                    const SizedBox(height: 10),
-                    const _ListButton(
-                      icon: Icons.settings_outlined,
-                      title: '설정',
-                      subtitle: '',
-                    ),
-                    const SizedBox(height: 16),
-                    _SurfacePanel(
-                      padding: const EdgeInsets.all(12),
-                      child: FilledButton.icon(
-                        onPressed: widget.isLoggingOut ? null : widget.onLogout,
-                        icon: widget.isLoggingOut
-                            ? const SizedBox.square(
-                                dimension: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : const Icon(Icons.logout),
-                        label: Text(widget.isLoggingOut ? '로그아웃 중' : '로그아웃'),
-                      ),
-                    ),
-                  ],
+                child: _SurfacePanel(
+                  padding: const EdgeInsets.all(12),
+                  child: FilledButton.icon(
+                    onPressed: widget.isLoggingOut ? null : widget.onLogout,
+                    icon: widget.isLoggingOut
+                        ? const SizedBox.square(
+                            dimension: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.logout),
+                    label: Text(widget.isLoggingOut ? '로그아웃 중' : '로그아웃'),
+                  ),
                 ),
               ),
+
             ],
           ),
         ),
@@ -288,68 +251,6 @@ class _MyPageErrorView extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ListButton extends StatelessWidget {
-  const _ListButton({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return _SurfacePanel(
-      padding: EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: subtitle.isEmpty ? 16 : 14,
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                if (subtitle.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(subtitle),
-                ],
-              ],
-            ),
-          ),
-          const Icon(Icons.chevron_right),
-        ],
-      ),
-    );
-  }
-}
-
-class _SmallOutlinedButton extends StatelessWidget {
-  const _SmallOutlinedButton({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: null,
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(92, 36),
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-      ),
-      child: Text(label),
     );
   }
 }

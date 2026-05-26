@@ -434,7 +434,7 @@ class _AddPetButton extends StatelessWidget {
                 : NurimPetCard._borderColor,
           ),
           child: SizedBox(
-            height: 56,
+            height: 40,
             child: Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -443,19 +443,19 @@ class _AddPetButton extends StatelessWidget {
                     '마이 펫 추가',
                     style: TextStyle(
                       fontFamily: 'Pretendard',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                       height: 1.4,
                       letterSpacing: -0.66,
                       color: enabled
-                          ? NurimPetCard._titleColor
+                          ? NurimPetCard._primaryColor
                           : NurimPetCard._mutedColor,
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 4),
                   Icon(
                     Icons.add,
-                    size: 26,
+                    size: 16,
                     color: enabled
                         ? NurimPetCard._primaryColor
                         : NurimPetCard._mutedColor,
@@ -469,6 +469,7 @@ class _AddPetButton extends StatelessWidget {
     );
   }
 }
+
 
 class _DashedRoundedRectPainter extends CustomPainter {
   const _DashedRoundedRectPainter({required this.color});

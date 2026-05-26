@@ -12,6 +12,7 @@ import 'package:new_petnurim_app/features/member/my/my_page_view.dart';
 import 'package:new_petnurim_app/core/widgets/section_title.dart';
 import 'package:new_petnurim_app/core/widgets/pet_card.dart';
 import 'package:new_petnurim_app/core/widgets/membership_card.dart';
+import 'package:new_petnurim_app/core/widgets/list_button.dart';
 
 class _FakeMemberRepository implements MemberRepository {
   @override
@@ -53,6 +54,14 @@ void main() {
   });
 
   testWidgets('MyPageView UI Layout Test - Membership removed, My Pet header and card exists', (WidgetTester tester) async {
+    // Set a portrait layout constraints for mobile testing
+    tester.view.physicalSize = const Size(375, 812);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
     // 1. Render the MyPageView with overridden MemberRepository
     await tester.pumpWidget(
       MaterialApp(
@@ -79,7 +88,7 @@ void main() {
     // 3. Verify that the profile name is correctly rendered
     expect(find.text('홍길동님 반가워요 :)'), findsOneWidget);
 
-    // 4. Verify that the separator (grey divider bar) is present
+    // 4. Verify that the first separator (grey divider bar) is present
     // It is a Container with height 8 and color 0xFFF4F6F8
     final dividerFinder = find.byWidgetPredicate(
       (widget) =>
@@ -87,7 +96,7 @@ void main() {
           widget.constraints?.maxHeight == 8 &&
           widget.color == const Color(0xFFF4F6F8),
     );
-    expect(dividerFinder, findsOneWidget);
+    expect(dividerFinder, findsAtLeast(1)); 
 
     // 5. Verify that '마이 펫' section title and '전체보기' action label is present
     expect(find.byType(NurimSectionTitle), findsOneWidget);
@@ -100,6 +109,21 @@ void main() {
     // 7. Verify that pet names (콩두리, 초코) are rendered inside the pet card section
     expect(find.text('콩두리'), findsOneWidget);
     expect(find.text('초코'), findsOneWidget);
+
+    // 8. Scroll down to show list buttons at the bottom
+    final scrollable = find.byType(Scrollable).first;
+    await tester.scrollUntilVisible(find.text('설정'), 100.0, scrollable: scrollable);
+    await tester.pumpAndSettle();
+
+    // 9. Verify the list buttons: 고객센터, 서비스 약관, 설정 are present after scrolling
+    expect(find.byType(NurimListButton), findsNWidgets(3));
+    expect(find.text('고객센터'), findsOneWidget);
+    expect(find.text('서비스 약관'), findsOneWidget);
+    expect(find.text('설정'), findsOneWidget);
+
+    // 10. Verify that old menus "리워드 관리" and "결제수단 관리" are NOT present
+    expect(find.text('리워드 관리'), findsNothing);
+    expect(find.text('결제수단 관리'), findsNothing);
   });
 }
 
