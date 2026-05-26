@@ -56,7 +56,7 @@ class NurimMembershipCard extends StatelessWidget {
         width: width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ① 상단: 왕관 + 등급명 + 배지
             _buildHeader(),

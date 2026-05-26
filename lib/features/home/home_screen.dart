@@ -63,22 +63,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final selectedTab = _tabs[_selectedIndex];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(selectedTab.title),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            tooltip: '알림',
-            onPressed: () {},
-            icon: const Icon(Icons.notifications_none),
-          ),
-          IconButton(
-            tooltip: '설정',
-            onPressed: () => setState(() => _selectedIndex = 5),
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
-      ),
+      appBar: _selectedIndex == 5
+          ? null
+          : AppBar(
+              title: Text(selectedTab.title),
+              automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                  tooltip: '알림',
+                  onPressed: () {},
+                  icon: const Icon(Icons.notifications_none),
+                ),
+                IconButton(
+                  tooltip: '설정',
+                  onPressed: () => setState(() => _selectedIndex = 5),
+                  icon: const Icon(Icons.settings_outlined),
+                ),
+              ],
+            ),
       body: SafeArea(
         child: IndexedStack(
           index: _selectedIndex,
@@ -88,7 +90,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             const _CareTabView(),
             const _PetTabView(),
             const _EventTabView(),
-            MyPageView(isLoggingOut: _isLoggingOut, onLogout: _logout),
+            MyPageView(
+              isLoggingOut: _isLoggingOut,
+              onLogout: _logout,
+              onBackToHome: () => setState(() => _selectedIndex = 0),
+            ),
           ],
         ),
       ),
