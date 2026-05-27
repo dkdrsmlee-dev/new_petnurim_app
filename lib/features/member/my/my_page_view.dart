@@ -105,7 +105,7 @@ class _MyPageContentState extends State<_MyPageContent> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       NurimMyInfoRow(
-                        labelText: '내 정보',
+                        labelText: '내 정보 관리',
                         primaryValue: email,
                         secondaryValue: '(카카오)',
                         actionLabel: '관리',

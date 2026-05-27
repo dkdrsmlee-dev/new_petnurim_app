@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app_bootstrap.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/storage/token_storage.dart';
+import '../../../core/widgets/page_header.dart';
 import '../data/member_repository.dart';
 
 class MyInfoScreen extends ConsumerStatefulWidget {
@@ -23,21 +24,9 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     final memberInfoAsync = ref.watch(memberInfoProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '나의 정보',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          tooltip: '뒤로',
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-        ),
+      appBar: NurimPageHeader(
+        title: '내 정보 관리',
+        onBackPressed: () => context.pop(),
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
