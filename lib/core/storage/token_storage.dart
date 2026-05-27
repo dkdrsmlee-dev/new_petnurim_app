@@ -3,10 +3,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 abstract interface class TokenStorage {
   Future<String?> readAccessToken();
-
   Future<void> saveAccessToken(String token);
+  
+  Future<String?> readRefreshToken();
+  Future<void> saveRefreshToken(String token);
 
-  Future<void> clearAccessToken();
+  Future<void> clearTokens();
 }
 
 class SecureTokenStorage implements TokenStorage {
@@ -14,6 +16,7 @@ class SecureTokenStorage implements TokenStorage {
     : _secureStorage = secureStorage;
 
   static const _accessTokenKey = 'petnurim.accessToken';
+  static const _refreshTokenKey = 'petnurim.refreshToken';
 
   final FlutterSecureStorage _secureStorage;
 
@@ -28,16 +31,31 @@ class SecureTokenStorage implements TokenStorage {
   }
 
   @override
-  Future<void> clearAccessToken() {
-    return _secureStorage.delete(key: _accessTokenKey);
+  Future<String?> readRefreshToken() {
+    return _secureStorage.read(key: _refreshTokenKey);
+  }
+
+  @override
+  Future<void> saveRefreshToken(String token) {
+    return _secureStorage.write(key: _refreshTokenKey, value: token);
+  }
+
+  @override
+  Future<void> clearTokens() async {
+    await _secureStorage.delete(key: _accessTokenKey);
+    await _secureStorage.delete(key: _refreshTokenKey);
   }
 }
 
 class InMemoryTokenStorage implements TokenStorage {
-  InMemoryTokenStorage({String? initialAccessToken})
-    : _accessToken = initialAccessToken;
+  InMemoryTokenStorage({
+    String? initialAccessToken,
+    String? initialRefreshToken,
+  })  : _accessToken = initialAccessToken,
+        _refreshToken = initialRefreshToken;
 
   String? _accessToken;
+  String? _refreshToken;
 
   @override
   Future<String?> readAccessToken() async => _accessToken;
@@ -48,8 +66,17 @@ class InMemoryTokenStorage implements TokenStorage {
   }
 
   @override
-  Future<void> clearAccessToken() async {
+  Future<String?> readRefreshToken() async => _refreshToken;
+
+  @override
+  Future<void> saveRefreshToken(String token) async {
+    _refreshToken = token;
+  }
+
+  @override
+  Future<void> clearTokens() async {
     _accessToken = null;
+    _refreshToken = null;
   }
 }
 

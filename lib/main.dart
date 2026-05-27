@@ -26,7 +26,7 @@ void main() {
             if (isRedirecting) return;
             isRedirecting = true;
             try {
-              await ref.read(tokenStorageProvider).clearAccessToken();
+              await ref.read(tokenStorageProvider).clearTokens();
               ref.invalidate(appBootstrapStateProvider);
               ref.read(appRouterProvider).go(AppRoutes.authStart);
               scaffoldMessengerKey.currentState?.showSnackBar(

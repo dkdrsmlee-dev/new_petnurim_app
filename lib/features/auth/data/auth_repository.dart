@@ -65,6 +65,11 @@ class BackendAuthRepository implements AuthRepository {
         throw const AuthException('로그인 완료에 필요한 access token을 받지 못했습니다.');
       }
       await _tokenStorage.saveAccessToken(accessToken);
+
+      final refreshToken = result.refreshToken;
+      if (refreshToken != null && refreshToken.trim().isNotEmpty) {
+        await _tokenStorage.saveRefreshToken(refreshToken);
+      }
     }
 
     return result;

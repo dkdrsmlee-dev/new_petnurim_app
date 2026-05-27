@@ -6,6 +6,7 @@ import '../../app/app_bootstrap.dart';
 import '../../app/app_routes.dart';
 import '../../core/storage/token_storage.dart';
 import '../../core/widgets/custom_gnb.dart';
+import '../../core/widgets/main_header.dart';
 import '../member/my/my_page_view.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -65,22 +66,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: _selectedIndex == 5
           ? null
-          : AppBar(
-              title: Text(selectedTab.title),
-              automaticallyImplyLeading: false,
-              actions: [
-                IconButton(
-                  tooltip: '알림',
-                  onPressed: () {},
-                  icon: const Icon(Icons.notifications_none),
-                ),
-                IconButton(
-                  tooltip: '설정',
-                  onPressed: () => setState(() => _selectedIndex = 5),
-                  icon: const Icon(Icons.settings_outlined),
-                ),
-              ],
-            ),
+          : const MainHeader(),
       body: SafeArea(
         child: IndexedStack(
           index: _selectedIndex,
@@ -118,7 +104,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _isLoggingOut = true;
     });
 
-    await ref.read(tokenStorageProvider).clearAccessToken();
+    await ref.read(tokenStorageProvider).clearTokens();
     ref.invalidate(appBootstrapStateProvider);
 
     if (!mounted) {

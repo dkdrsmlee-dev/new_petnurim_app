@@ -444,7 +444,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     );
 
     if (shouldLogout == true) {
-      await ref.read(tokenStorageProvider).clearAccessToken();
+      await ref.read(tokenStorageProvider).clearTokens();
       ref.invalidate(appBootstrapStateProvider);
       if (mounted) {
         context.go(AppRoutes.authStart);

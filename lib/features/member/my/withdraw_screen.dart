@@ -480,7 +480,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
             reasonText: reasonText,
           );
 
-      await ref.read(tokenStorageProvider).clearAccessToken();
+      await ref.read(tokenStorageProvider).clearTokens();
       ref.invalidate(appBootstrapStateProvider);
 
       if (!mounted) return;
@@ -499,7 +499,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
 
       if (isUnauthorized) {
         // 로그인 만료인 경우 로컬 토큰 정리 및 세션 클리어 후 화면 이동
-        await ref.read(tokenStorageProvider).clearAccessToken();
+        await ref.read(tokenStorageProvider).clearTokens();
         ref.invalidate(appBootstrapStateProvider);
 
         if (mounted) {

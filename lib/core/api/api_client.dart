@@ -6,22 +6,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../config/app_config.dart';
+import '../storage/token_storage.dart';
 import 'api_envelope.dart';
 import 'api_exception.dart';
 
 final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 class ApiClient {
-  const ApiClient({
+  ApiClient({
     required AppConfig config,
     required http.Client httpClient,
+    this.tokenStorage,
     this.onUnauthorized,
   })  : _config = config,
         _httpClient = httpClient;
 
   final AppConfig _config;
   final http.Client _httpClient;
+  final TokenStorage? tokenStorage;
   final VoidCallback? onUnauthorized;
+
+  Future<bool>? _refreshFuture;
 
   Uri uri(String path) => _config.apiUri(path);
 
@@ -94,12 +99,29 @@ class ApiClient {
     if (kDebugMode) {
       debugPrint('[API_REQUEST][$method $path] body: $encodedBody');
     }
-    final response = await _send(
+    var response = await _send(
       method: method,
       uri: uri(path),
       headers: requestHeaders,
       body: encodedBody,
     );
+
+    if (response.statusCode == 401 && path != '/api/v1/auth/refresh' && tokenStorage != null) {
+      final success = await _refreshToken();
+      if (success) {
+        final newAccessToken = await tokenStorage!.readAccessToken();
+        if (newAccessToken != null && newAccessToken.trim().isNotEmpty) {
+          requestHeaders['Authorization'] = 'Bearer ${newAccessToken.trim()}';
+          response = await _send(
+            method: method,
+            uri: uri(path),
+            headers: requestHeaders,
+            body: encodedBody,
+          );
+        }
+      }
+    }
+
     final payload = _decodeJson(response.body, fallbackMessage);
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -124,6 +146,61 @@ class ApiClient {
 
     ensureEnvelopeSuccess(payload, fallbackMessage);
     return unwrapEnvelopeData(payload);
+  }
+
+  Future<bool> _refreshToken() async {
+    if (_refreshFuture != null) {
+      return _refreshFuture!;
+    }
+
+    _refreshFuture = _doRefreshToken();
+    try {
+      return await _refreshFuture!;
+    } finally {
+      _refreshFuture = null;
+    }
+  }
+
+  Future<bool> _doRefreshToken() async {
+    if (tokenStorage == null) return false;
+    final rToken = await tokenStorage!.readRefreshToken();
+    if (rToken == null || rToken.trim().isEmpty) return false;
+
+    try {
+      final refreshResponse = await _send(
+        method: 'POST',
+        uri: uri('/api/v1/auth/refresh'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'refreshToken': rToken.trim()}),
+      );
+
+      if (refreshResponse.statusCode == 201 || refreshResponse.statusCode == 200) {
+        final payload = _decodeJson(refreshResponse.body, 'Refresh Failed');
+        final data = payload is Map && payload.containsKey('data') ? payload['data'] : payload;
+
+        if (data is Map) {
+          final newAccess = data['accessToken'] as String?;
+          final newRefresh = data['refreshToken'] as String?;
+
+          if (newAccess != null && newAccess.trim().isNotEmpty) {
+            await tokenStorage!.saveAccessToken(newAccess);
+            if (newRefresh != null && newRefresh.trim().isNotEmpty) {
+              await tokenStorage!.saveRefreshToken(newRefresh);
+            }
+            return true;
+          }
+        }
+      }
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[ApiClient] Token refresh error: $e');
+      }
+      return false;
+    }
   }
 
   Future<http.Response> _send({
@@ -210,6 +287,7 @@ final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient(
     config: ref.watch(appConfigProvider),
     httpClient: ref.watch(httpClientProvider),
+    tokenStorage: ref.watch(tokenStorageProvider),
     onUnauthorized: ref.watch(unauthorizedHandlerProvider),
   );
 });
