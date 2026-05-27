@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/app_routes.dart';
+import '../../core/storage/last_login_storage.dart';
+import '../../core/widgets/last_login_badge.dart';
 import '../../core/widgets/social_login_button.dart';
 import 'application/auth_providers.dart';
 import 'domain/login_config.dart';
@@ -26,6 +28,8 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
   @override
   Widget build(BuildContext context) {
     final loginConfig = ref.watch(loginConfigProvider);
+    final lastLoginAsync = ref.watch(lastLoginProviderProvider);
+    final lastLoginProvider = lastLoginAsync.value;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -63,10 +67,31 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
                   config: config,
                   pendingProvider: _pendingProvider,
                   errorMessage: _errorMessage,
+                  lastLoginProvider: lastLoginProvider,
                   onSelectProvider: _startSocialLogin,
-                  onDebugSignup: _startDebugSignup,
                 ),
                 const Spacer(flex: 4),
+                if (kDebugMode) ...[
+                  OutlinedButton.icon(
+                    onPressed:
+                        _pendingProvider == null ? _startDebugSignup : null,
+                    icon: const Icon(
+                      Icons.bug_report_outlined,
+                      color: Colors.orange,
+                    ),
+                    label: const Text(
+                      '[테스트] 신규 가입 흐름 강제진입',
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.orange),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ],
             ),
           ),
@@ -93,6 +118,11 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
           .read(authRepositoryProvider)
           .loginWithProvider(provider);
       ref.read(pendingSocialLoginResultProvider.notifier).setResult(result);
+
+      // 로그인 성공 시 마지막 로그인 provider를 저장합니다.
+      await ref
+          .read(lastLoginStorageProvider)
+          .saveLastLoginProvider(provider.name);
 
       if (!mounted) {
         return;
@@ -212,52 +242,66 @@ class _AuthProviderButtons extends StatelessWidget {
     required this.config,
     required this.pendingProvider,
     required this.errorMessage,
+    required this.lastLoginProvider,
     required this.onSelectProvider,
-    required this.onDebugSignup,
   });
 
   final LoginConfig config;
   final SocialProvider? pendingProvider;
   final String? errorMessage;
+  final SocialProvider? lastLoginProvider;
   final void Function(SocialProvider provider, LoginConfig config)
   onSelectProvider;
-  final VoidCallback onDebugSignup;
 
   @override
   Widget build(BuildContext context) {
     final hasAnyProvider = SocialProvider.values.any(config.isProviderEnabled);
+    final providers = SocialProvider.values;
+    final lastLoginIndex = lastLoginProvider != null
+        ? providers.indexOf(lastLoginProvider!)
+        : -1;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final provider in SocialProvider.values) ...[
-          SocialLoginButton(
-            provider: provider,
-            enabled:
-                config.isProviderEnabled(provider) && pendingProvider == null,
-            pending: pendingProvider == provider,
-            onPressed: () => onSelectProvider(provider, config),
-          ),
-          const SizedBox(height: 12),
-        ],
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (int i = 0; i < providers.length; i++) ...[
+                  SocialLoginButton(
+                    provider: providers[i],
+                    enabled:
+                        config.isProviderEnabled(providers[i]) &&
+                        pendingProvider == null,
+                    pending: pendingProvider == providers[i],
+                    onPressed: () => onSelectProvider(providers[i], config),
+                  ),
+                  if (i < providers.length - 1)
+                    const SizedBox(height: 12),
+                ],
+              ],
+            ),
+            if (lastLoginIndex != -1)
+              Positioned(
+                // 54(버튼 높이) + 12(간격)
+                top: (lastLoginIndex * 66.0) + 54.0,
+                left: 0,
+                right: 0,
+                child: const Align(
+                  alignment: Alignment.center,
+                  child: LastLoginBadge(),
+                ),
+              ),
+          ],
+        ),
         if (!hasAnyProvider)
           const _AuthNotice(message: '현재 사용할 수 있는 SNS 로그인 수단이 없습니다.'),
         if (errorMessage != null && errorMessage!.isNotEmpty) ...[
           const SizedBox(height: 8),
           _AuthNotice(message: errorMessage!),
-        ],
-        if (kDebugMode) ...[
-          OutlinedButton.icon(
-            onPressed: pendingProvider == null ? onDebugSignup : null,
-            icon: const Icon(Icons.bug_report_outlined, color: Colors.orange),
-            label: const Text(
-              '[테스트] 신규 가입 흐름 강제진입',
-              style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
-            ),
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Colors.orange),
-            ),
-          ),
         ],
       ],
     );
