@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MainHeader extends StatelessWidget implements PreferredSizeWidget {
-  const MainHeader({Key? key}) : super(key: key);
+  const MainHeader({Key? key, this.onTapProfile}) : super(key: key);
+
+  final VoidCallback? onTapProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,7 @@ class MainHeader extends StatelessWidget implements PreferredSizeWidget {
                 const SizedBox(width: 16), // Gap between icons
                 // Profile Icon (Figma Node: Profile24_Icon)
                 GestureDetector(
-                  onTap: () {},
+                  onTap: onTapProfile,
                   child: SvgPicture.asset(
                     'assets/images/icon_profile.svg',
                     width: 24,

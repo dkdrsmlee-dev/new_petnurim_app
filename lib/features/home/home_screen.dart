@@ -66,7 +66,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       appBar: _selectedIndex == 5
           ? null
-          : const MainHeader(),
+          : MainHeader(
+              onTapProfile: () {
+                setState(() {
+                  _selectedIndex = 5;
+                });
+              },
+            ),
       body: SafeArea(
         child: IndexedStack(
           index: _selectedIndex,
