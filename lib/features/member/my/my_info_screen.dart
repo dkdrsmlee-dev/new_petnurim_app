@@ -55,98 +55,142 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
             final displayBirthDate = _customBirthDate ?? formattedApiBirthDate;
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+              padding: const EdgeInsets.symmetric(vertical: 24),
               children: [
-                _ProfileHeader(name: memberInfo.name),
-                const SizedBox(height: 28),
-                _InfoRow(
-                  label: '연결계정',
-                  value: memberInfo.email,
-                  // 연결계정은 변경이 불가능하므로 action(변경 버튼)을 제공하지 않습니다.
-                ),
-                _InfoRow(
-                  label: '휴대폰 번호',
-                  value: _formatPhoneNumber(memberInfo.phoneNumber),
-                  action: '변경',
-                  onActionPressed: () {
-                    // 본인인증(공통) 진행 안내 목업
-                    _showMockDialog('휴대폰 번호 변경', '휴대폰 번호 변경을 위해 본인인증을 진행합니다.');
-                  },
-                ),
-                _InfoRow(
-                  label: '비밀번호',
-                  value: '',
-                  action: '변경',
-                  onActionPressed: () {
-                    // 비밀번호 변경 본인인증 안내 목업
-                    _showMockDialog('비밀번호 변경', '비밀번호 변경을 위해 본인인증을 진행합니다.');
-                  },
-                ),
-                _InfoRow(
-                  label: '주소',
-                  value: memberInfo.address.isNotEmpty
-                      ? memberInfo.address
-                      : '등록된 주소가 없습니다.',
-                  action: '변경',
-                  onActionPressed: () {
-                    // 주소 변경 (주소 WebView 화면 이동 등)
-                    context.push(AppRoutes.addressWebView);
-                  },
-                ),
-                _InfoRow(
-                  label: '생년월일',
-                  value: displayBirthDate,
-                  action: '변경',
-                  onActionPressed: () => _showBirthDatePicker(memberInfo.birthDate),
-                ),
-                
-                // 로그아웃 Row (디자인 가이드에 따라 리스트 타일 형태로 탭 시 다이얼로그 호출)
-                InkWell(
-                  onTap: _showLogoutDialog,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 18),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '로그아웃',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black,
-                            ),
-                          ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Text(
+                        '기본 정보',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.66,
+                          color: Color(0xFF87909E),
                         ),
-                        Icon(Icons.chevron_right, color: Colors.grey),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: const Color(0xFFD6DBE4)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          children: [
+                            _CustomInfoRow(
+                              title: '계정',
+                              infoText: memberInfo.email,
+                              subText: '(카카오)',
+                            ),
+                            _CustomInfoRow(
+                              title: '이름',
+                              infoText: memberInfo.name,
+                            ),
+                            _CustomInfoRow(
+                              title: '생년월일',
+                              infoText: displayBirthDate,
+                              onPressed: () => _showBirthDatePicker(memberInfo.birthDate),
+                            ),
+                            _CustomInfoRow(
+                              title: '휴대폰 번호',
+                              infoText: _formatPhoneNumber(memberInfo.phoneNumber),
+                              showDivider: false,
+                              showChevron: true,
+                              onPressed: () {
+                                _showMockDialog('휴대폰 번호 변경', '휴대폰 번호 변경을 위해 본인인증을 진행합니다.');
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const Divider(height: 1),
-                
-                // 회원탈퇴 Row
-                InkWell(
-                  onTap: () => context.push(AppRoutes.myWithdraw),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 18),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '회원탈퇴',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black,
-                            ),
+                const SizedBox(height: 24),
+                Container(
+                  height: 6,
+                  color: const Color(0xFFF4F6F8),
+                ),
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Text(
+                        '주소 정보',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.66,
+                          color: Color(0xFF87909E),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: const Color(0xFFD6DBE4)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: _CustomAddressRow(
+                          address: memberInfo.address.isNotEmpty
+                              ? memberInfo.address
+                              : '주소를 등록해 주세요.',
+                          hasAddress: memberInfo.address.isNotEmpty,
+                          onPressed: () {
+                            context.push(AppRoutes.addressWebView);
+                          },
+                          onEditPressed: () {
+                            context.push(AppRoutes.addressWebView);
+                          },
+                          onDeletePressed: _showDeleteAddressDialog,
+                        ),
+                      ),
+                      const SizedBox(height: 50),
+                      OutlinedButton(
+                        onPressed: _showLogoutDialog,
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xFF51565F),
+                          side: const BorderSide(color: Color(0xFFD6DBE4)),
+                          minimumSize: const Size.fromHeight(48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          textStyle: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.66,
                           ),
                         ),
-                        Icon(Icons.chevron_right, color: Colors.grey),
-                      ],
-                    ),
+                        child: const Text('로그아웃'),
+                      ),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: TextButton(
+                          onPressed: () => context.push(AppRoutes.myWithdraw),
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFF87909E),
+                            textStyle: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: -0.66,
+                            ),
+                          ),
+                          child: const Text('회원탈퇴'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const Divider(height: 1),
               ],
             );
           },
@@ -307,84 +351,93 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
             borderRadius: BorderRadius.circular(16.0),
           ),
           backgroundColor: Colors.white,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(24, 28, 24, 16),
-                child: Column(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       '로그아웃 안내',
                       style: TextStyle(
+                        fontFamily: 'Pretendard',
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1E2024),
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Text(
-                      '진행 중인 서비스가 있는 상태에서 로그아웃할 경우 안내를 받을 수 없습니다.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
-                        height: 1.4,
+                    InkWell(
+                      onTap: () => Navigator.of(context).pop(false),
+                      child: const Icon(
+                        Icons.close,
+                        color: Color(0xFF87909E),
+                        size: 24,
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 8),
-              const Divider(height: 1, color: Colors.grey),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.of(context).pop(false),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(16),
+                const SizedBox(height: 16),
+                const Text(
+                  '진행 중인 서비스가 있는 상태에서 로그아웃할 경우 안내를 받을 수 없습니다.',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF51565F),
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF51565F),
+                          side: const BorderSide(color: Color(0xFFD6DBE4)),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          textStyle: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                      child: const Text(
-                        '취소',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        child: const Text('취소'),
                       ),
                     ),
-                  ),
-                  Container(width: 1, height: 48, color: Colors.grey),
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.of(context).pop(true),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(16),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF7F4FFF),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          textStyle: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                      child: const Text(
-                        '로그아웃',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        child: const Text('로그아웃'),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -396,6 +449,114 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
       if (mounted) {
         context.go(AppRoutes.authStart);
       }
+    }
+  }
+
+
+  // 주소 삭제 확인 다이얼로그
+  Future<void> _showDeleteAddressDialog() async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          backgroundColor: Colors.white,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      '주소 삭제',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1E2024),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => Navigator.of(context).pop(false),
+                      child: const Icon(
+                        Icons.close,
+                        color: Color(0xFF87909E),
+                        size: 24,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  '등록된 주소를 삭제하시겠습니까?',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF51565F),
+                  ),
+                ),
+                const SizedBox(height: 28),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF51565F),
+                          side: const BorderSide(color: Color(0xFFD6DBE4)),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          textStyle: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        child: const Text('취소'),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF7F4FFF),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          textStyle: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        child: const Text('삭제'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (shouldDelete == true) {
+      _showMockDialog('주소 삭제', '주소가 성공적으로 삭제되었습니다.');
     }
   }
 
@@ -420,103 +581,208 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   }
 }
 
-class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.name});
+class _CustomInfoRow extends StatelessWidget {
+  const _CustomInfoRow({
+    required this.title,
+    required this.infoText,
+    this.subText,
+    this.showDivider = true,
+    this.showChevron = false,
+    this.onPressed,
+  });
 
-  final String name;
+  final String title;
+  final String infoText;
+  final String? subText;
+  final bool showDivider;
+  final bool showChevron;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final displayName = name.isNotEmpty ? name : '홍길동';
-    return Column(
-      children: [
-        const CircleAvatar(
-          radius: 36,
-          backgroundColor: Color(0xFFE5E7EB),
-          child: Icon(Icons.person, size: 40, color: Colors.grey),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          '$displayName 님',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w800,
-            color: Colors.black,
+    Widget child = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        border: showDivider
+            ? const Border(
+                bottom: BorderSide(color: Color(0xFFE8EBF1)),
+              )
+            : null,
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF51565F),
+                letterSpacing: -0.66,
+              ),
+            ),
           ),
-        ),
-      ],
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Flexible(
+                  child: Text(
+                    infoText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF87909E),
+                      letterSpacing: -0.66,
+                    ),
+                  ),
+                ),
+                if (subText != null) ...[
+                  const SizedBox(width: 2),
+                  Text(
+                    subText!,
+                    style: const TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF87909E),
+                      letterSpacing: -0.66,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          if (showChevron) ...[
+            const SizedBox(width: 2),
+            const Icon(Icons.chevron_right, size: 16, color: Color(0xFF87909E)),
+          ],
+        ],
+      ),
     );
+
+    if (onPressed != null) {
+      child = InkWell(
+        onTap: onPressed,
+        child: child,
+      );
+    }
+    return child;
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.action,
-    this.onActionPressed,
+class _CustomAddressRow extends StatelessWidget {
+  const _CustomAddressRow({
+    required this.address,
+    required this.hasAddress,
+    required this.onPressed,
+    required this.onEditPressed,
+    required this.onDeletePressed,
   });
 
-  final String label;
-  final String value;
-  final String? action;
-  final VoidCallback? onActionPressed;
+  final String address;
+  final bool hasAddress;
+  final VoidCallback onPressed;
+  final VoidCallback onEditPressed;
+  final VoidCallback onDeletePressed;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+    Widget child = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
             children: [
-              SizedBox(
-                width: 92,
+              const Expanded(
                 child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black,
+                  '주소',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF51565F),
+                    letterSpacing: -0.66,
                   ),
                 ),
               ),
-              Expanded(
-                child: Text(
-                  value,
-                  textAlign: TextAlign.right,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.black87,
-                    height: 1.35,
-                  ),
-                ),
-              ),
-              if (action != null) ...[
-                const SizedBox(width: 12),
+              if (hasAddress) ...[
                 OutlinedButton(
-                  onPressed: onActionPressed,
+                  onPressed: onEditPressed,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    side: const BorderSide(color: Colors.grey),
-                    minimumSize: const Size(56, 32),
+                    foregroundColor: const Color(0xFF51565F),
+                    side: const BorderSide(color: Color(0xFFD6DBE4)),
+                    minimumSize: const Size(48, 28),
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                  ),
-                  child: Text(
-                    action!,
-                    style: const TextStyle(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    textStyle: const TextStyle(
+                      fontFamily: 'Pretendard',
                       fontSize: 13,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
+                  child: const Text('수정'),
+                ),
+                const SizedBox(width: 8),
+                OutlinedButton(
+                  onPressed: onDeletePressed,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF51565F),
+                    side: const BorderSide(color: Color(0xFFD6DBE4)),
+                    minimumSize: const Size(48, 28),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    textStyle: const TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  child: const Text('삭제'),
                 ),
               ],
             ],
           ),
-        ),
-        const Divider(height: 1),
-      ],
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  address,
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: hasAddress ? const Color(0xFF87909E) : const Color(0xFFA2ADBE),
+                    letterSpacing: -0.66,
+                  ),
+                ),
+              ),
+              if (!hasAddress)
+                const Icon(Icons.chevron_right, size: 16, color: Color(0xFF87909E)),
+            ],
+          ),
+        ],
+      ),
     );
+
+    if (!hasAddress) {
+      child = InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(16),
+        child: child,
+      );
+    }
+    return child;
   }
 }

@@ -201,23 +201,7 @@ class _MyPageContentState extends State<_MyPageContent> {
               ),
               const SizedBox(height: 24),
 
-              // 로그아웃 버튼 (테스트 유지를 위해 하단에 배치)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _SurfacePanel(
-                  padding: const EdgeInsets.all(12),
-                  child: FilledButton.icon(
-                    onPressed: widget.isLoggingOut ? null : widget.onLogout,
-                    icon: widget.isLoggingOut
-                        ? const SizedBox.square(
-                            dimension: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.logout),
-                    label: Text(widget.isLoggingOut ? '로그아웃 중' : '로그아웃'),
-                  ),
-                ),
-              ),
+
 
             ],
           ),
@@ -255,24 +239,3 @@ class _MyPageErrorView extends StatelessWidget {
   }
 }
 
-class _SurfacePanel extends StatelessWidget {
-  const _SurfacePanel({
-    required this.child,
-    this.padding = const EdgeInsets.all(18),
-  });
-
-  final Widget child;
-  final EdgeInsetsGeometry padding;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(padding: padding, child: child),
-    );
-  }
-}
