@@ -258,7 +258,7 @@ class NurimPetCard extends StatelessWidget {
   }
 }
 
-class NurimMyPetSection extends StatelessWidget {
+class NurimMyPetSection extends StatefulWidget {
   const NurimMyPetSection({
     super.key,
     required this.pets,
@@ -273,49 +273,61 @@ class NurimMyPetSection extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final resolvedPadding = padding.resolve(TextDirection.ltr);
-        // 계산식: 화면 너비(maxWidth) - 좌측 패딩 - 카드 간격(16) - 다음 카드 노출량(20)
-        final preferredWidth = constraints.maxWidth.isFinite 
-            ? constraints.maxWidth - resolvedPadding.left - 16 - 20 
-            : 323.0;
-        // 최대 너비를 400으로 늘려 큰 기기에서도 20px만 보이도록 제한을 완화합니다.
-        final cardWidth = math.min(400.0, math.max(280.0, preferredWidth));
-        final visiblePets = pets.isEmpty ? [_emptyPet] : pets;
+  State<NurimMyPetSection> createState() => _NurimMyPetSectionState();
+}
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              height: 204,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: padding,
-                physics: const BouncingScrollPhysics(),
-                itemCount: visiblePets.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 16),
-                itemBuilder: (context, index) {
-                  final pet = visiblePets[index];
-                  return NurimPetCard(
-                    width: cardWidth,
-                    pet: pet,
-                    onPressed: pets.isEmpty || onPetPressed == null
-                        ? null
-                        : () => onPetPressed!(pet),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: padding,
-              child: _AddPetButton(onPressed: onAddPressed),
-            ),
-          ],
-        );
-      },
+class _NurimMyPetSectionState extends State<NurimMyPetSection> {
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    // 390 너비 기준으로 약 56px의 여백(좌우 28px)을 갖게 되어,
+    // 카드 간 간격(16)을 제외하면 양옆 카드가 약 20px씩 노출됩니다.
+    _pageController = PageController(viewportFraction: 0.85);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final visiblePets = widget.pets.isEmpty ? [_emptyPet] : widget.pets;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          height: 204,
+          child: PageView.builder(
+            controller: _pageController,
+            physics: const BouncingScrollPhysics(),
+            itemCount: visiblePets.length,
+            itemBuilder: (context, index) {
+              final pet = visiblePets[index];
+              return Padding(
+                // 뷰포트 간 간격을 만들기 위해 양쪽에 8px씩 패딩을 줍니다 (총 간격 16px)
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: NurimPetCard(
+                  width: double.infinity, // PageView가 너비를 제어하므로 최대 확장
+                  pet: pet,
+                  onPressed: widget.pets.isEmpty || widget.onPetPressed == null
+                      ? null
+                      : () => widget.onPetPressed!(pet),
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: widget.padding,
+          child: _AddPetButton(onPressed: widget.onAddPressed),
+        ),
+      ],
     );
   }
 

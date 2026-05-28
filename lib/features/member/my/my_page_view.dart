@@ -171,6 +171,18 @@ class _MyPageContentState extends State<_MyPageContent> {
                       'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=150&h=150&fit=crop',
                     ),
                   ),
+                  const NurimPetCardData(
+                    name: '크림이',
+                    breed: '포메라니안',
+                    ageText: '1살',
+                    genderText: '남아',
+                    membershipTier: '프렌드',
+                    rewardText: '5,000P',
+                    isPrimary: false,
+                    imageProvider: NetworkImage(
+                      'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=150&h=150&fit=crop',
+                    ),
+                  ),
                 ],
                 onPetPressed: (_) {},
                 onAddPressed: () {},
