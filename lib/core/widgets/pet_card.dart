@@ -276,11 +276,13 @@ class NurimMyPetSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final horizontalInset = _horizontalInsetFor(padding);
-        final availableWidth = constraints.maxWidth.isFinite
-            ? constraints.maxWidth - horizontalInset
-            : 320.0;
-        final cardWidth = math.min(320.0, math.max(0.0, availableWidth));
+        final resolvedPadding = padding.resolve(TextDirection.ltr);
+        // 계산식: 화면 너비(maxWidth) - 좌측 패딩 - 카드 간격(16) - 다음 카드 노출량(20)
+        final preferredWidth = constraints.maxWidth.isFinite 
+            ? constraints.maxWidth - resolvedPadding.left - 16 - 20 
+            : 323.0;
+        // 최대 너비를 400으로 늘려 큰 기기에서도 20px만 보이도록 제한을 완화합니다.
+        final cardWidth = math.min(400.0, math.max(280.0, preferredWidth));
         final visiblePets = pets.isEmpty ? [_emptyPet] : pets;
 
         return Column(
