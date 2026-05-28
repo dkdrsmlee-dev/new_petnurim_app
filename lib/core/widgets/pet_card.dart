@@ -429,20 +429,21 @@ class _AddPetButton extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onPressed,
-        child: CustomPaint(
-          painter: _DashedRoundedRectPainter(
-            color: enabled
-                ? NurimPetCard._primaryColor
-                : NurimPetCard._borderColor,
-          ),
-          child: SizedBox(
-            height: 40,
-            child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '마이 펫 추가',
+        child: RepaintBoundary(
+          child: CustomPaint(
+            painter: _DashedRoundedRectPainter(
+              color: enabled
+                  ? NurimPetCard._primaryColor
+                  : NurimPetCard._borderColor,
+            ),
+            child: SizedBox(
+              height: 40,
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '마이 펫 추가',
                     style: TextStyle(
                       fontFamily: 'Pretendard',
                       fontSize: 16,
@@ -463,6 +464,7 @@ class _AddPetButton extends StatelessWidget {
                         : NurimPetCard._mutedColor,
                   ),
                 ],
+              ),
               ),
             ),
           ),
