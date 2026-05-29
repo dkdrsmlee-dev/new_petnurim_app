@@ -1,10 +1,6 @@
 # new_petnurim_app
 
-펫누림 앱을 Flutter 중심으로 새로 구현하는 저장소입니다.
-
-이 저장소는 기존 `dkdrsmlee-dev/nurimAppDemo`의 Flutter WebView 셸 +
-React UI 구조를 대체합니다. 기존 데모는 동작 기준과 API 흐름을 확인하는
-참고 자료로만 사용하고, 새 앱의 주요 화면은 Flutter 위젯으로 구현합니다.
+펫누림 플러터앱
 
 ## 개발 방향
 
