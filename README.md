@@ -86,7 +86,3 @@ flutter run \
   - 회원 정보 조회(`MyInfoScreen`), 날짜 휠 피커(한국어 대응), 로그아웃 및 회원탈퇴(WithdrawScreen) 실서버 통신 및 토큰 제거 전체 라이프사이클 동작 검증 완료
 - **플랫폼 빌드**: Android 실단말 디버그 실행(`SM G991N`) 및 iOS 빌드 확인 (`flutter build ios --no-codesign`) 완료
 
-## 참고 소스
-
-- 기존 데모 저장소: https://github.com/dkdrsmlee-dev/nurimAppDemo.git
-- 새 저장소 원격: https://github.com/dkdrsmlee-dev/new_petnurim_app.git
