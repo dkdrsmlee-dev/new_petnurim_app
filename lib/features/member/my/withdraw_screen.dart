@@ -28,14 +28,14 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
     '기타 (직접 입력)',
   ];
 
-  // 사유 코드 매핑
+  // 사유 코드 매핑 (백엔드 WITHDRAW_REASON_TYPE 일치)
   final Map<int, String> _reasonCodes = {
-    0: 'FREQ_LOW',
-    1: 'NO_FEATURE',
+    0: 'LOW_USAGE',
+    1: 'FEATURE_LACK',
     2: 'INCONVENIENT',
-    3: 'EXPENSIVE',
+    3: 'PRICE',
     4: 'PRIVACY',
-    5: 'BAD_SERVICE',
+    5: 'CUSTOMER_SERVICE',
     6: 'ETC',
   };
 
