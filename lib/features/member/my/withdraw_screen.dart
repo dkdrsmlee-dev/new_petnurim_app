@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +7,9 @@ import '../../../app/app_bootstrap.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/storage/token_storage.dart';
+import '../../../core/widgets/common_dialog.dart';
+import '../../../core/widgets/page_header.dart';
+import '../../../core/widgets/selection_control.dart';
 import '../data/member_repository.dart';
 
 class WithdrawScreen extends ConsumerStatefulWidget {
@@ -45,8 +48,6 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
   bool _isWithdrawing = false; // 탈퇴 로딩 상태
   String? _errorMessage;
 
-  // 데모/테스트용: 사용자가 '구독 중인 서비스 예외 팝업'도 테스트할 수 있도록 하는 플래그
-  bool _mockIsSubscribed = false;
 
   @override
   void dispose() {
@@ -57,63 +58,31 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '회원탈퇴',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-        ),
-        actions: [
-          // 테스트용 구독 플래그 스위치
-          if (kDebugMode)
-            Row(
-              children: [
-                const Text(
-                  '구독상태(테스트)',
-                  style: TextStyle(color: Colors.black54, fontSize: 11),
-                ),
-                Switch(
-                  value: _mockIsSubscribed,
-                  activeThumbColor: Colors.black,
-                  onChanged: (val) {
-                    setState(() {
-                      _mockIsSubscribed = val;
-                    });
-                  },
-                ),
-              ],
-            ),
-        ],
-      ),
+      appBar: const NurimPageHeader(title: '회원 탈퇴'),
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Expanded(
+            Positioned.fill(
+              bottom: 90, // Leave space for bottom buttons
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
                 children: [
                   // 1. 유의사항 안내 섹션
                   const Text(
-                    '회원탈퇴 전에 꼭 확인해 주세요.',
+                    '탈퇴 전 꼭 확인해 주세요.',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Color(0xFF30343C),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade200),
+                      color: const Color(0xFFF8F9FB),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,112 +91,77 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                         SizedBox(height: 8),
                         _BulletItem(text: '보유 중인 리워드/포인트는 모두 소멸됩니다.'),
                         SizedBox(height: 8),
-                        _BulletItem(
-                            text: '진행 중인 서비스/구독은 잔여 기간을 모두 소진한 후 탈퇴가능합니다.'),
+                        _BulletItem(text: '진행 중인 서비스/구독은 잔여 기간을 모두 소진한 후 탈퇴 가능합니다.'),
                         SizedBox(height: 8),
                         _BulletItem(text: '탈퇴 후 30일 동안 재가입이 불가합니다.'),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 40),
 
                   // 2. 탈퇴 사유 선택 섹션
                   const Text(
-                    '회원탈퇴 사유를 선택 해 주세요.(선택)',
+                    '탈퇴 사유를 알려주세요.(선택)',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Color(0xFF30343C),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   ...List.generate(_reasons.length, (index) {
-                    return InkWell(
-                      onTap: () {
+                    return SelectionControl<int>(
+                      style: SelectionControlStyle.radio,
+                      text: _reasons[index],
+                      value: index,
+                      groupValue: _selectedReasonIndex,
+                      onChanged: (val) {
                         setState(() {
-                          _selectedReasonIndex = index;
+                          _selectedReasonIndex = val;
                         });
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          children: [
-                            Icon(
-                              _selectedReasonIndex == index
-                                  ? Icons.radio_button_checked
-                                  : Icons.radio_button_off,
-                              color: _selectedReasonIndex == index
-                                  ? Colors.black
-                                  : Colors.grey,
-                              size: 22,
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              _reasons[index],
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     );
                   }),
 
                   // '기타 (직접 입력)' 선택 시 텍스트 영역 활성화
                   if (_selectedReasonIndex == 6) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     TextField(
                       controller: _customReasonController,
                       maxLines: 4,
                       maxLength: 100,
                       decoration: InputDecoration(
                         hintText: '탈퇴 사유를 입력해 주세요.',
-                        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+                        hintStyle: const TextStyle(color: Color(0xFF87909E), fontSize: 14),
+                        filled: true,
+                        fillColor: const Color(0xFFF8F9FB),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide.none,
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.black),
+                          borderSide: const BorderSide(color: Color(0xFF30343C)),
                         ),
-                        contentPadding: const EdgeInsets.all(12),
+                        contentPadding: const EdgeInsets.all(16),
                       ),
-                      style: const TextStyle(fontSize: 14, color: Colors.black),
+                      style: const TextStyle(fontSize: 14, color: Color(0xFF30343C)),
                     ),
                   ],
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 40),
 
                   // 3. 회원탈퇴 동의하기 섹션
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade200),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: CheckboxListTile(
-                      title: const Text(
-                        '유의사항을 모두 확인하였으며, 회원 탈퇴에 동의 합니다.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      value: _agreed,
-                      activeColor: Colors.black,
-                      checkColor: Colors.white,
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      onChanged: (value) {
-                        setState(() {
-                          _agreed = value ?? false;
-                        });
-                      },
-                    ),
+                  SelectionControl<bool>(
+                    style: SelectionControlStyle.checkbox,
+                    text: '유의사항을 모두 확인하였으며, 이에 동의합니다.',
+                    value: _agreed,
+                    onChanged: (val) {
+                      setState(() {
+                        _agreed = val ?? false;
+                      });
+                    },
                   ),
-                  
+
                   if (_errorMessage != null) ...[
                     const SizedBox(height: 12),
                     Text(
@@ -238,32 +172,72 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                 ],
               ),
             ),
-
+            
             // 4. 하단 고정 회원탈퇴 버튼
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _agreed && !_isWithdrawing ? _handleWithdrawClick : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    disabledBackgroundColor: Colors.grey.shade300,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: _isWithdrawing
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          '회원탈퇴',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: _agreed ? Colors.white : Colors.grey.shade500,
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 52,
+                        child: OutlinedButton(
+                          onPressed: _isWithdrawing ? null : () => context.pop(),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFFE8EBF1)),
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            '취소',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF51565F),
+                            ),
                           ),
                         ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: _agreed && !_isWithdrawing ? _handleWithdrawClick : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF7F4FFF),
+                            disabledBackgroundColor: const Color(0xFFE8EBF1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: _isWithdrawing
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                )
+                              : Text(
+                                  '탈퇴하기',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: _agreed ? Colors.white : const Color(0xFFA2ADBE),
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -275,87 +249,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
 
   // 탈퇴 버튼 클릭 시 처리 로직
   void _handleWithdrawClick() {
-    if (_mockIsSubscribed) {
-      // 1) 구독 중인 경우 예외 팝업 (USR-MIF-026)
-      _showSubscriptionAlert();
-    } else {
-      // 2) 정상 탈퇴 확인 팝업 (USR-MIF-025)
-      _showWithdrawConfirmAlert();
-    }
-  }
-
-  // 1) 구독 중인 서비스 안내 팝업
-  void _showSubscriptionAlert() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          backgroundColor: Colors.white,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(24, 28, 24, 16),
-                child: Column(
-                  children: [
-                    Text(
-                      '구독 서비스 안내',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      '4월 30일까지 구독중인 서비스가 있습니다.\n멤버십 해지 후 회원탈퇴를 진행해 주세요.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1, color: Colors.grey),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    // 기획서: 멤버십 관리 페이지로 이동 혹은 그냥 팝업 닫음
-                    // 여기서는 팝업을 닫고 이전 나의 정보 화면으로 복귀하거나 일단 닫기 처리
-                  },
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
-                    ),
-                  ),
-                  child: const Text(
-                    '확인',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    _showWithdrawConfirmAlert();
   }
 
   // 2) 일반 탈퇴 진행 확인 팝업
@@ -363,93 +257,14 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
+      barrierColor: const Color(0x99000000),
       builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          backgroundColor: Colors.white,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(24, 28, 24, 16),
-                child: Column(
-                  children: [
-                    Text(
-                      '회원탈퇴',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      '회원탈퇴를 진행하시겠습니까?\n탈퇴 시 계정 및 모든 데이터는 복구되지 않습니다.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1, color: Colors.grey),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(16),
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        '취소',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(width: 1, height: 48, color: Colors.grey),
-                  Expanded(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        _executeWithdraw();
-                      },
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(16),
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        '탈퇴하기',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+        return CommonDialog(
+          title: '정말 탈퇴하시겠어요?',
+          content: '탈퇴 후에는 계정 정보와\n이용 내역을 복구할 수 없어요.',
+          cancelText: '취소',
+          confirmText: '탈퇴하기',
+          onConfirm: _executeWithdraw,
         );
       },
     );
@@ -537,18 +352,19 @@ class _BulletItem extends StatelessWidget {
         const Text(
           '• ',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.bold,
-            color: Colors.black54,
+            color: Color(0xFF87909E),
           ),
         ),
         Expanded(
           child: Text(
             text,
             style: const TextStyle(
-              fontSize: 13,
-              color: Colors.black87,
+              fontSize: 15,
+              color: Color(0xFF87909E),
               height: 1.4,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
