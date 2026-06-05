@@ -23,6 +23,9 @@ dependencies:
   kakao_flutter_sdk: ^2.0.0+1
   webview_flutter: ^4.10.0
   flutter_svg: ^2.0.10
+  camera: ^0.12.0+1
+  path_provider: ^2.1.5
+  permission_handler: ^12.0.3
 
 dev_dependencies:
   flutter_test:
@@ -35,3 +38,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/images/home/

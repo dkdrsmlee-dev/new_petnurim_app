@@ -5,9 +5,13 @@ import 'package:go_router/go_router.dart';
 import '../../app/app_bootstrap.dart';
 import '../../app/app_routes.dart';
 import '../../core/storage/token_storage.dart';
+import '../../core/widgets/card_banner.dart';
 import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
+import '../../core/widgets/section_title.dart';
+import '../camera/camera_screen.dart';
 import '../member/my/my_page_view.dart';
+import 'widgets/home_event_carousel.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -19,50 +23,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _selectedIndex = 0;
   bool _isLoggingOut = false;
-
-  static const _tabs = [
-    _HomeTab(
-      label: '홈',
-      icon: Icons.home_outlined,
-      selectedIcon: Icons.home,
-      title: '펫누림 홈',
-    ),
-    _HomeTab(
-      label: '기프트',
-      icon: Icons.card_giftcard_outlined,
-      selectedIcon: Icons.card_giftcard,
-      title: '기프트 쇼핑',
-    ),
-    _HomeTab(
-      label: '문진',
-      icon: Icons.assignment_outlined,
-      selectedIcon: Icons.assignment,
-      title: '문진 및 진료',
-    ),
-    _HomeTab(
-      label: '경품메타',
-      icon: Icons.emoji_events_outlined,
-      selectedIcon: Icons.emoji_events,
-      title: '경품메타',
-    ),
-    _HomeTab(
-      label: '이벤트',
-      icon: Icons.campaign_outlined,
-      selectedIcon: Icons.campaign,
-      title: '진행중인 이벤트',
-    ),
-    _HomeTab(
-      label: '마이',
-      icon: Icons.person_outline,
-      selectedIcon: Icons.person,
-      title: '마이페이지',
-    ),
-  ];
-
+  
   @override
   Widget build(BuildContext context) {
-    final selectedTab = _tabs[_selectedIndex];
-
     return Scaffold(
       appBar: _selectedIndex == 5
           ? null
@@ -121,20 +84,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class _HomeTab {
-  const _HomeTab({
-    required this.label,
-    required this.icon,
-    required this.selectedIcon,
-    required this.title,
-  });
-
-  final String label;
-  final IconData icon;
-  final IconData selectedIcon;
-  final String title;
-}
-
 class _HomeOverview extends StatelessWidget {
   const _HomeOverview({required this.onOpenCare});
 
@@ -143,134 +92,103 @@ class _HomeOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+      padding: const EdgeInsets.only(top: 16, bottom: 28),
       children: [
-        _SurfacePanel(
+        const HomeEventCarousel(),
+        const SizedBox(height: 32),
+        const NurimSectionTitle(
+          title: '매일 받는 리워드 혜택',
+          padding: EdgeInsets.symmetric(horizontal: 20),
+        ),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '오늘의 펫누림',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
+              NurimCardBanner(
+                title: '출석 체크 리워드',
+                subtitle: '매일 출석하고 포인트 받자!',
+                pointText: '+100P',
+                statusText: '연속 출석',
+                dayText: '15일',
+                bannerImg: Container(
+                  width: 78,
+                  height: 78,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFEEEBE),
+                    shape: BoxShape.circle,
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 39 + 10.01 - (77.332 / 2),
+                        top: 39 - 12.44 - (79.802 / 2),
+                        width: 77.332,
+                        height: 79.802,
+                        child: Image.asset(
+                          'assets/images/home/card_img_1.png',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                bannerIcon: const Icon(Icons.local_fire_department, color: Color(0xFFFF5F5F), size: 20),
+                onTap: () {},
               ),
               const SizedBox(height: 10),
-              Text(
-                '반려동물 관리와 진료 준비를 한곳에서 확인하세요.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 18),
-              FilledButton.icon(
-                onPressed: onOpenCare,
-                icon: const Icon(Icons.event_available),
-                label: const Text('진료 준비하기'),
+              NurimCardBanner(
+                title: '마이펫 촬영 리워드',
+                subtitle: '귀여운 사진 찍고 포인트 받자!',
+                pointText: '+100P',
+                pointTextColor: const Color(0xFF85B48B),
+                pointBgColor: const Color(0xFFE7FAEA),
+                statusText: '이번 주 촬영',
+                dayText: '3일 / 7일',
+                bannerImg: Container(
+                  width: 78,
+                  height: 78,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFDCEFDE),
+                    shape: BoxShape.circle,
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 39 + 19.5 - (77.033 / 2),
+                        top: 39 + 6.77 - (54.544 / 2),
+                        width: 77.033,
+                        height: 54.544,
+                        child: Transform.scale(
+                          scaleX: -1, // -scale-y-100 + rotate-180 = horizontal flip
+                          child: Image.asset(
+                            'assets/images/home/card_img_2.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                bannerIcon: const Icon(Icons.camera_alt, color: Color(0xFF85B48B), size: 20), // Figma has IconCamera20 but camera_alt is a good fallback
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CameraScreen()),
+                  );
+                },
               ),
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        const _SectionTitle(title: '바로가기'),
-        const SizedBox(height: 10),
-        const _QuickActionGrid(),
-        const SizedBox(height: 20),
-        const _SectionTitle(title: '최근 알림'),
-        const SizedBox(height: 10),
-        const _NoticeList(),
       ],
     );
   }
 }
 
-class _QuickActionGrid extends StatelessWidget {
-  const _QuickActionGrid();
 
-  @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      childAspectRatio: 1.7,
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: const [
-        _ActionTile(icon: Icons.assignment_outlined, label: '문진표'),
-        _ActionTile(icon: Icons.local_hospital_outlined, label: '병원 찾기'),
-        _ActionTile(icon: Icons.vaccines_outlined, label: '접종 기록'),
-        _ActionTile(icon: Icons.receipt_long_outlined, label: '진료 내역'),
-      ],
-    );
-  }
-}
-
-class _ActionTile extends StatelessWidget {
-  const _ActionTile({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return _SurfacePanel(
-      padding: const EdgeInsets.all(14),
-      child: Row(
-        children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.w700),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NoticeList extends StatelessWidget {
-  const _NoticeList();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        _NoticeTile(title: '가입 정보가 안전하게 연결되었습니다.', date: '오늘'),
-        SizedBox(height: 10),
-        _NoticeTile(title: '반려동물 프로필을 등록해 주세요.', date: '대기'),
-      ],
-    );
-  }
-}
-
-class _NoticeTile extends StatelessWidget {
-  const _NoticeTile({required this.title, required this.date});
-
-  final String title;
-  final String date;
-
-  @override
-  Widget build(BuildContext context) {
-    return _SurfacePanel(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          const Icon(Icons.info_outline),
-          const SizedBox(width: 12),
-          Expanded(child: Text(title)),
-          const SizedBox(width: 8),
-          Text(
-            date,
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _CareTabView extends StatelessWidget {
   const _CareTabView();
@@ -401,22 +319,6 @@ class _ListItem extends StatelessWidget {
           const Icon(Icons.chevron_right),
         ],
       ),
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: Theme.of(
-        context,
-      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
     );
   }
 }

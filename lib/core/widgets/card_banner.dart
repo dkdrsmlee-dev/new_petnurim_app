@@ -12,6 +12,8 @@ class NurimCardBanner extends StatelessWidget {
     this.bannerIcon,
     this.onTap,
     this.width,
+    this.pointTextColor,
+    this.pointBgColor,
   });
 
   final String title;
@@ -23,6 +25,8 @@ class NurimCardBanner extends StatelessWidget {
   final Widget? bannerIcon;
   final VoidCallback? onTap;
   final double? width;
+  final Color? pointTextColor;
+  final Color? pointBgColor;
 
   static const Color _backgroundColor = Colors.white;
   static const Color _borderColor = Color(0xFFF4F6F8);
@@ -94,18 +98,18 @@ class NurimCardBanner extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: _pointBgColor,
+                        color: pointBgColor ?? _pointBgColor,
                         borderRadius: BorderRadius.circular(9999),
                       ),
                       child: Text(
                         pointText,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           height: 1.4,
                           letterSpacing: -0.66,
-                          color: _pointTextColor,
+                          color: pointTextColor ?? _pointTextColor,
                         ),
                       ),
                     ),
