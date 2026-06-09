@@ -394,7 +394,52 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 builder: (context) => EdgeButtonDialog(
                   title: '일일 출석체크가 완료되었어요!',
                   confirmText: '확인',
-                  onConfirm: () {},
+                  onConfirm: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => EdgeButtonDialog(
+                        title: '출석체크 완료!\n리워드 100PR이 지급되었어요!',
+                        confirmText: '확인',
+                        onConfirm: () {},
+                        topWidget: SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                left: 1,
+                                bottom: 1,
+                                width: 56,
+                                height: 56,
+                                child: Image.asset(
+                                  'assets/images/ic_coin.png',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                width: 12,
+                                height: 12,
+                                child: SvgPicture.asset(
+                                  'assets/images/ic_star_large.svg',
+                                ),
+                              ),
+                              Positioned(
+                                left: 0,
+                                bottom: 0,
+                                width: 9,
+                                height: 9,
+                                child: SvgPicture.asset(
+                                  'assets/images/ic_star_small.svg',
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                   topWidget: Image.asset(
                     'assets/images/ic_pet_foot.png',
                     width: 60,
