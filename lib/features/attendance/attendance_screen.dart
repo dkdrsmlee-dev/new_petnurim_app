@@ -822,11 +822,16 @@ class MilestoneLinePainter extends CustomPainter {
 
     final path = Path();
     path.moveTo(p1.dx, p1.dy);
-    path.lineTo(p3.dx, p3.dy);
+    
+    // 피그마 기준, 오른쪽 반원 커브는 세 번째 스탬프 중심(p3.dx)보다 약간 앞에서 시작해야
+    // 우측 화면 여백(약 27.5px)이 확보되고 완벽한 반원(반지름 63)이 그려집니다.
+    double arcStartX = p3.dx - 13.0; // 297.5 - 13 = 284.5
+
+    path.lineTo(arcStartX, p3.dy);
     
     // 오른쪽 아래로 향하는 부드러운 반원 커브 곡선 (반지름 63)
     path.arcToPoint(
-      Offset(p3.dx, y2), 
+      Offset(arcStartX, y2), 
       radius: const Radius.circular(63),
       clockwise: true,
     );
