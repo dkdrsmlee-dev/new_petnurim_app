@@ -597,8 +597,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     children: [
                       const Text(
                         '친구에게',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'GmarketSans',
+                          fontFamily: 'Gmarket Sans',
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -606,16 +607,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           letterSpacing: -0.66,
                         ),
                       ),
-                      const SizedBox(width: 8),
                       SizedBox(
-                        width: 47,
-                        height: 40,
+                        width: 50,
+                        height: 50,
                         child: Stack(
                           clipBehavior: Clip.none,
                           children: [
                             Positioned(
-                              left: 0.9,
-                              top: 9.9,
+                              left: 5,
+                              top: 5,
                               child: Transform.rotate(
                                 angle: -13.2376 * 3.1415926535 / 180,
                                 alignment: Alignment.topLeft,
@@ -634,11 +634,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
                       const Text(
                         '소문내기',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'GmarketSans',
+                          fontFamily: 'Gmarket Sans',
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -658,21 +658,27 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   }
 
   Widget _buildShareIconItem({required Widget child, required String label}) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        child,
-        const SizedBox(height: 9),
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Pretendard',
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF51565F),
+    return SizedBox(
+      width: 47,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          child,
+          const SizedBox(height: 4),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF51565F),
+              height: 1.4,
+              letterSpacing: -0.66,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -724,25 +730,24 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       height: 34,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        gradient: LinearGradient(
-          begin: Alignment.bottomLeft,
-          end: Alignment.topRight,
-          colors: [
-            Color(0xFFf09433),
-            Color(0xFFe6683c),
-            Color(0xFFdc2743),
-            Color(0xFFcc2366),
-            Color(0xFFbc1888),
-          ],
-        ),
       ),
-      child: Center(
-        child: SvgPicture.string(
-          instaSvg,
-          width: 18,
-          height: 18,
-          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-        ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/banner/insta_bg.png',
+            fit: BoxFit.cover,
+          ),
+          Center(
+            child: SvgPicture.string(
+              instaSvg,
+              width: 18,
+              height: 18,
+              colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -755,8 +760,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         color: Color(0xFF51565F),
         shape: BoxShape.circle,
       ),
-      child: const Center(
-        child: Icon(Icons.link, color: Colors.white, size: 20),
+      child: Center(
+        child: SvgPicture.asset(
+          'assets/images/banner/link_icon.svg',
+          width: 14,
+          height: 14,
+        ),
       ),
     );
   }
