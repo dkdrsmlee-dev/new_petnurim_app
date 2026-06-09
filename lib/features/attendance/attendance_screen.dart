@@ -15,21 +15,21 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
   // Figma 이미지 URL 상수들
-  static const String imgCheckTitle = "https://www.figma.com/api/mcp/asset/8854d0c7-a7ff-4093-9463-50d8ab0acd36";
-  static const String imgCoin11 = "https://www.figma.com/api/mcp/asset/36bd6bef-6fbf-4fe6-8e8c-a298e57f7293";
-  static const String imgCoin51 = "https://www.figma.com/api/mcp/asset/465d64c4-e296-4b4a-bd4c-332f86eef402";
-  static const String imgCoin41 = "https://www.figma.com/api/mcp/asset/415c9fa1-a4dd-4486-a821-c449ffa56086";
-  static const String imgCloud = "https://www.figma.com/api/mcp/asset/e967e12e-949e-4e8a-ba8a-d2a8f31aa603";
+  static const String imgCheckTitle = "assets/images/banner/check_title.png";
+  static const String imgCoin11 = "assets/images/banner/coin11.png";
+  static const String imgCoin51 = "assets/images/banner/coin51.png";
+  static const String imgCoin41 = "assets/images/banner/coin41.png";
+  static const String imgCloud = "assets/images/banner/cloud.svg";
   static const String imgStar8 = "assets/images/banner/star8.svg";
   static const String imgStar11 = "assets/images/banner/star11.svg";
   static const String imgStar12 = "assets/images/banner/star12.svg";
   static const String imgStar13 = "assets/images/banner/star13.svg";
   static const String imgStar16 = "assets/images/banner/star16.svg";
   static const String imgStar9 = "assets/images/banner/star9.svg";
-  static const String imgStamp1 = "https://www.figma.com/api/mcp/asset/d0a836fb-e9fa-4a88-97a1-a9f59bdeafec";
-  static const String imgVector8 = "https://www.figma.com/api/mcp/asset/3fc7ca95-eb58-44ce-8d17-fbaba4f0bcd2";
-  static const String imgAo1 = "https://www.figma.com/api/mcp/asset/7a48a4ae-4d08-48e5-9856-5032a1ce2104";
-  static const String imgDlf1 = "https://www.figma.com/api/mcp/asset/e0f995db-a226-42be-9641-bf2aa1ca47de";
+  static const String imgStamp1 = "assets/images/banner/stamp1.png";
+  static const String imgVector8 = "assets/images/banner/vector8.svg";
+  static const String imgAo1 = "assets/images/banner/ao1.png";
+  static const String imgDlf1 = "assets/images/banner/dlf1.png";
 
   // 예시 데이터: 이번 달 출석 일수 및 출석일 목록
   final DateTime _today = DateTime(2026, 5, 14); // 스크린샷 기준 5월 14일
@@ -86,7 +86,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   Widget _buildBannerSection() {
     return Container(
       width: double.infinity,
-      height: 550, // Figma 배너 영역 전체 높이
+      height: 558, // Figma 배너 영역 전체 높이
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -96,126 +96,150 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       ),
       child: Stack(
         clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
         children: [
-          // 1. 구름 및 벡터 배경 (SVG)
-          Positioned(
-            left: -56.29,
-            top: 167.43,
-            width: 448,
-            height: 266,
-            child: SvgPicture.network(imgCloud, fit: BoxFit.cover),
-          ),
-
-          // 1-1. 매일매일 글자 장식 (PNG)
-          _buildTransformedImage(imgAo1, isSvg: false, left: 111.58, top: 36, width: 42, height: 42, angle: 0),
-          _buildTransformedImage(imgDlf1, isSvg: false, left: 148.02, top: 40, width: 42, height: 42, angle: 0),
-          _buildTransformedImage(imgAo1, isSvg: false, left: 185.02, top: 45.04, width: 42, height: 42, angle: 0),
-          _buildTransformedImage(imgDlf1, isSvg: false, left: 221.42, top: 49, width: 42, height: 42, angle: 0),
-          
-          // 2. 별 장식들 (SVG) - React 코드 기반 완벽 동기화
-          _buildTransformedImage(imgStar11, isSvg: true, left: 211, top: 23, width: 11, height: 11, angle: 0), // Star 11 (star-top-small-1)
-          _buildTransformedImage(imgStar12, isSvg: true, left: 219, top: 30, width: 15, height: 15, angle: 0), // Star 12 (star-top-small-2)
-          _buildTransformedImage(imgStar13, isSvg: true, left: 58, top: 179, width: 10, height: 10, angle: 0), // Star 13 (star-mid-left)
-          _buildTransformedImage(imgStar8, isSvg: true, left: 303, top: 207, width: 22, height: 22, angle: 0), // Star 8 (star-mid-right-1)
-          _buildTransformedImage(imgStar9, isSvg: true, left: 323, top: 204, width: 13, height: 13, angle: 0), // Star 9 (star-mid-right-2)
-          _buildTransformedImage(imgStar16, isSvg: true, left: 48, top: 425, width: 9, height: 9, angle: 0), // Star 16 (star-bottom-left-2)
-          _buildTransformedImage(imgStar13, isSvg: true, left: 58, top: 436, width: 10, height: 10, angle: 0), // Star 15 (star-bottom-left-1)
-          _buildTransformedImage(imgStar12, isSvg: true, left: 301, top: 512, width: 15, height: 15, angle: 0), // Star 14 (star-bottom-right)
-          
-          // 3. 코인 장식들 (PNG)
-          _buildTransformedImage(imgCoin51, isSvg: false, left: 30.22, top: 20.7, width: 22.67, height: 29.16, angle: 30.07),
-          _buildTransformedImage(imgCoin41, isSvg: false, left: 308.52, top: 57.3, width: 27.53, height: 28.66, angle: 35.4),
-          _buildTransformedImage(imgCoin11, isSvg: false, left: 67.97, top: 180.84, width: 27.02, height: 27.02, angle: -23.78),
-          
-          // 4. 큰 보라색 도장 장식 (stamp 1) - 3D 이미지이므로 PNG로 처리
-          _buildTransformedImage(imgStamp1, isSvg: false, left: 235.49, top: 183.15, width: 51.67, height: 66.74, angle: 12.12),
-
-          // 5. 메인 3D 타이틀 (가운데 정렬)
-          Positioned(
-            top: 65.88,
-            left: 0,
-            right: 0,
-            child: Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                width: 260,
-                height: 107,
-                child: Image.network(imgCheckTitle, fit: BoxFit.contain),
-              ),
-            ),
-          ),
-
-          // 6 & 7. 서브 헤드라인 및 기간 뱃지 (간격 17px)
-          Positioned(
-            top: 182, // Figma 기준 Text의 bounding box top
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                const Text(
-                  '찍을수록 쏟아지는 리워드!',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    letterSpacing: -0.66,
-                    height: 1.4,
+          SizedBox(
+            width: 375, // Figma 기준 너비
+              height: 558,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // 1. 구름 및 벡터 배경 (SVG)
+                  Positioned(
+                    left: -56.29,
+                    top: 167.43,
+                    width: 448,
+                    height: 266.024,
+                    child: SvgPicture.asset(imgCloud, fit: BoxFit.cover),
                   ),
-                ),
-                const SizedBox(height: 17), // 피그마 실측 간격
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF30343C),
-                    borderRadius: BorderRadius.circular(9999),
+                  Positioned(
+                    left: 102.78,
+                    top: 333.94,
+                    width: 244.789,
+                    height: 125.55,
+                    child: SvgPicture.asset(imgVector8, fit: BoxFit.fill),
                   ),
-                  child: const Text(
-                    '2026.4.1~4.30',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      letterSpacing: -0.66,
+
+
+                  // 2. 별 장식들 (SVG) - React 코드 기반 완벽 동기화
+                  _buildTransformedImage(imgStar11, isSvg: true, left: 207.82, top: 19.7, boundingWidth: 17.745, boundingHeight: 17.745, imageWidth: 13.584, imageHeight: 13.584, angle: -22.48),
+                  _buildTransformedImage(imgStar12, isSvg: true, left: 216.69, top: 27.85, boundingWidth: 19.202, boundingHeight: 19.202, imageWidth: 16.786, imageHeight: 16.786, angle: 8.99),
+                  _buildTransformedImage(imgStar13, isSvg: true, left: 53.07, top: 173.55, boundingWidth: 20.131, boundingHeight: 20.131, imageWidth: 14.25, imageHeight: 14.25, angle: 42.35),
+                  _buildTransformedImage(imgStar8, isSvg: true, left: 298.29, top: 202, boundingWidth: 31.297, boundingHeight: 31.297, imageWidth: 24.797, imageHeight: 24.797, angle: 18.18),
+                  _buildTransformedImage(imgStar9, isSvg: true, left: 322.44, top: 203.35, boundingWidth: 14.297, boundingHeight: 14.297, imageWidth: 12.7, imageHeight: 12.7, angle: 0),
+                  _buildTransformedImage(imgStar16, isSvg: true, left: 45.09, top: 422.5, boundingWidth: 13.866, boundingHeight: 13.866, imageWidth: 10.783, imageHeight: 10.783, angle: 110.41),
+                  _buildTransformedImage(imgStar13, isSvg: true, left: 52.49, top: 431, boundingWidth: 20.131, boundingHeight: 20.131, imageWidth: 14.25, imageHeight: 14.25, angle: 42.35),
+                  _buildTransformedImage(imgStar12, isSvg: true, left: 299.4, top: 510.4, boundingWidth: 19.202, boundingHeight: 19.202, imageWidth: 16.786, imageHeight: 16.786, angle: 8.99),
+
+                  // 3. 코인 장식들 (PNG)
+                  _buildTransformedImage(imgCoin51, isSvg: false, left: 30.22, top: 20.7, boundingWidth: 34.232, boundingHeight: 36.596, imageWidth: 22.671, imageHeight: 29.161, angle: 30.07),
+                  _buildTransformedImage(imgCoin41, isSvg: false, left: 308.52, top: 57.3, boundingWidth: 39.05, boundingHeight: 39.318, imageWidth: 27.532, imageHeight: 28.668, angle: 35.4),
+                  _buildTransformedImage(imgCoin11, isSvg: false, left: 67.97, top: 180.84, boundingWidth: 35.621, boundingHeight: 35.621, imageWidth: 27.02, imageHeight: 27.02, angle: -23.78),
+
+                  // 4. 서브 헤드라인 (가장 아래에 깔려야 하므로 일찍 선언)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 193 - 11.2, // Text center is 193 (translate-y-1/2 of 22.4)
+                    child: const Text(
+                      '찍을수록 쏟아지는 리워드!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        letterSpacing: -0.66,
+                        height: 1.4,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
 
-          // 8. 보상 마일스톤 (7일, 14일, ...)
-          Positioned(
-            top: 285,
-            left: 0,
-            right: 0,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Positioned.fill(
-                  child: CustomPaint(
-                    painter: MilestoneLinePainter(),
+                  // 5. 기간 뱃지 (도장보다 밑에 깔려야 함)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 217,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF30343C),
+                          borderRadius: BorderRadius.circular(9999),
+                        ),
+                        child: const Text(
+                          '2026.4.1~4.30',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: -0.66,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Wrap(
-                    spacing: 20,
-                    runSpacing: 36,
-                    alignment: WrapAlignment.center,
-                    children: _milestones.map((milestone) {
-                      return RewardMilestoneStamp(
-                        title: milestone['title'],
-                        points: milestone['points'],
-                        isCompleted: milestone['isCompleted'],
-                      );
-                    }).toList(),
+
+                  // 6. 큰 보라색 도장 장식 (stamp 1) - 뱃지 위로 올라오도록 뱃지 다음 순서에 선언!
+                  _buildTransformedImage(imgStamp1, isSvg: false, left: 235.49, top: 183.15, boundingWidth: 64.542, boundingHeight: 76.106, imageWidth: 51.677, imageHeight: 66.742, angle: 12.12),
+
+                  // 7. 메인 3D 타이틀 ("출석체크")
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 65.88,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        width: 260,
+                        height: 107,
+                        child: Image.asset(imgCheckTitle, fit: BoxFit.cover),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+
+                  // 8. 매일매일 글자 장식 (PNG) - 타이틀 위로 올라오도록 타이틀 다음에 선언!
+                  _buildTransformedImage(imgAo1, isSvg: false, left: 111.58, top: 36, boundingWidth: 42, boundingHeight: 42, imageWidth: 42, imageHeight: 42, angle: 0),
+                  _buildTransformedImage(imgDlf1, isSvg: false, left: 148.02, top: 40, boundingWidth: 42, boundingHeight: 42, imageWidth: 42, imageHeight: 42, angle: 0),
+                  _buildTransformedImage(imgAo1, isSvg: false, left: 185.02, top: 45.04, boundingWidth: 42, boundingHeight: 42, imageWidth: 42, imageHeight: 42, angle: 0),
+                  _buildTransformedImage(imgDlf1, isSvg: false, left: 221.42, top: 49, boundingWidth: 42, boundingHeight: 42, imageWidth: 42, imageHeight: 42, angle: 0),
+
+                  // 9. 보상 마일스톤
+                  Positioned(
+                    top: 285,
+                    left: 0,
+                    right: 0,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Positioned.fill(
+                          child: CustomPaint(
+                            painter: MilestoneLinePainter(),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Wrap(
+                            spacing: 20,
+                            runSpacing: 12,
+                            alignment: WrapAlignment.center,
+                            children: _milestones.map((milestone) {
+                              return RewardMilestoneStamp(
+                                title: milestone['title'],
+                                points: milestone['points'],
+                                isCompleted: milestone['isCompleted'],
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -226,24 +250,32 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       {required bool isSvg,
       required double left,
       required double top,
-      required double width,
-      required double height,
+      required double boundingWidth,
+      required double boundingHeight,
+      required double imageWidth,
+      required double imageHeight,
       required double angle}) {
     final isLocalAsset = url.startsWith('assets/');
     return Positioned(
       left: left,
       top: top,
-      width: width,
-      height: height,
-      child: Transform.rotate(
-        angle: angle * (3.1415926535897932 / 180),
-        child: isSvg 
-            ? (isLocalAsset 
-                ? SvgPicture.asset(url, fit: BoxFit.contain)
-                : SvgPicture.network(url, fit: BoxFit.contain, colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)))
-            : (isLocalAsset
-                ? Image.asset(url, fit: BoxFit.contain)
-                : Image.network(url, fit: BoxFit.contain)),
+      width: boundingWidth,
+      height: boundingHeight,
+      child: Center(
+        child: Transform.rotate(
+          angle: angle * (3.1415926535897932 / 180),
+          child: SizedBox(
+            width: imageWidth,
+            height: imageHeight,
+            child: isSvg
+                ? (isLocalAsset
+                    ? SvgPicture.asset(url, fit: BoxFit.contain)
+                    : SvgPicture.network(url, fit: BoxFit.contain, colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn)))
+                : (isLocalAsset
+                    ? Image.asset(url, fit: BoxFit.contain)
+                    : Image.network(url, fit: BoxFit.contain)),
+          ),
+        ),
       ),
     );
   }
@@ -390,75 +422,342 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   Widget _buildShareSection() {
     return Container(
       width: double.infinity,
-      color: const Color(0xFF3B3E51), // 스크린샷 배경색 (임의 지정)
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-      child: Column(
-        children: [
-          // 타이틀 (친구에게 소문내기)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Icon(Icons.pets, color: Colors.white, size: 24), // TODO: 에셋으로 교체
-              SizedBox(width: 8),
-              Text(
-                '친구에게',
-                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+      height: 228,
+      color: const Color(0xFF383E62), // 피그마 지정 배경색
+      child: Center(
+        child: SizedBox(
+          width: 375,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            clipBehavior: Clip.none,
+            children: [
+              // 배경 그라데이션 타원
+              Positioned(
+                top: 197.5 - 86.0,
+                left: 188.0 - 206.7,
+                child: Container(
+                  width: 206.7 * 2,
+                  height: 86.0 * 2,
+                  decoration: const BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.elliptical(206.7, 86.0)),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFF7079AA),
+                        Color(0xFF383E62),
+                      ],
+                      stops: [0.0, 0.69],
+                    ),
+                  ),
+                ),
               ),
-              SizedBox(width: 8),
-              Icon(Icons.campaign, color: Colors.pinkAccent, size: 32), // 메가폰 아이콘 임시
-              SizedBox(width: 8),
-              Text(
-                '소문내기',
-                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+
+              // 공유 버튼 묶음 박스 (Drop shadow 추가)
+              Positioned(
+                top: 80.5,
+                left: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x33101828), // rgba(16, 24, 40, 0.2)
+                        offset: Offset(0, 4),
+                        blurRadius: 6,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildShareIconItem(
+                        child: _buildKakaoIcon(),
+                        label: '카카오',
+                      ),
+                      const SizedBox(width: 57),
+                      _buildShareIconItem(
+                        child: _buildInstaIcon(),
+                        label: '인스타',
+                      ),
+                      const SizedBox(width: 57),
+                      _buildShareIconItem(
+                        child: _buildLinkIcon(),
+                        label: '링크복사',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // 왼쪽 떠있는 강아지 말풍선
+              Positioned(
+                left: 56.6,
+                top: 18.8,
+                child: SizedBox(
+                  width: 26.7,
+                  height: 26.7,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned.fill(
+                        child: SvgPicture.asset('assets/images/banner/ellipse1587.svg'),
+                      ),
+                      Positioned(
+                        left: 60.0 - 56.6,
+                        top: 24.3 - 18.8,
+                        child: SizedBox(
+                          width: 20,
+                          height: 13.7,
+                          child: Image.asset('assets/images/banner/dog-head-1.png'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // 오른쪽 떠있는 고양이 말풍선
+              Positioned(
+                left: 308.6,
+                top: 180.6,
+                child: SizedBox(
+                  width: 26.7,
+                  height: 26.7,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned.fill(
+                        child: SvgPicture.asset('assets/images/banner/ellipse1587_purple.svg'),
+                      ),
+                      Positioned(
+                        left: 314.0 - 308.6,
+                        top: 185.9 - 180.6,
+                        child: SizedBox(
+                          width: 16,
+                          height: 14.1,
+                          child: Image.asset('assets/images/banner/cat-head-1.png'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // 배경 반짝이 별 (Sparkle 1 - Dark Blue)
+              Positioned(
+                left: 299,
+                top: 33,
+                child: SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: SvgPicture.asset('assets/images/banner/sparkle_1.svg'),
+                ),
+              ),
+              // 배경 반짝이 별 (Sparkle 2 - White with stroke)
+              Positioned(
+                left: 306,
+                top: 39,
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: SvgPicture.asset('assets/images/banner/sparkle_2.svg'),
+                ),
+              ),
+              // 배경 반짝이 별 (Sparkle 3 - White with stroke)
+              Positioned(
+                left: 62,
+                top: 55,
+                child: SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: SvgPicture.asset('assets/images/banner/sparkle_3.svg'),
+                ),
+              ),
+              // 배경 반짝이 별 (Sparkle 4 - White transparent)
+              Positioned(
+                left: 128,
+                top: 196,
+                child: SizedBox(
+                  width: 8,
+                  height: 8,
+                  child: SvgPicture.asset('assets/images/banner/sparkle_4.svg'),
+                ),
+              ),
+
+              // 타이틀 (친구에게 소문내기) - absolute positioning
+              Positioned(
+                top: 24,
+                child: SizedBox(
+                  width: 205,
+                  height: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '친구에게',
+                        style: TextStyle(
+                          fontFamily: 'GmarketSans',
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        width: 47,
+                        height: 40,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Positioned(
+                              left: 0.9,
+                              top: 9.9,
+                              child: Transform.rotate(
+                                angle: -13.2376 * 3.1415926535 / 180,
+                                alignment: Alignment.topLeft,
+                                child: SizedBox(
+                                  width: 40,
+                                  height: 40.39,
+                                  child: Image.asset('assets/images/banner/noti-1.png'),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 35,
+                              top: 7,
+                              child: _buildMegaphoneVectors(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        '소문내기',
+                        style: TextStyle(
+                          fontFamily: 'GmarketSans',
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          // 공유 버튼 묶음 박스
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildShareIcon(Icons.chat_bubble, const Color(0xFFFFE812), '카카오', Colors.black),
-                _buildShareIcon(Icons.camera_alt, const Color(0xFFE1306C), '인스타', Colors.white),
-                _buildShareIcon(Icons.link, const Color(0xFF6C737F), '링크복사', Colors.white),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildShareIcon(IconData icon, Color bgColor, String label, Color iconColor) {
+  Widget _buildShareIconItem({required Widget child, required String label}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: bgColor,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: iconColor),
-        ),
-        const SizedBox(height: 8),
+        child,
+        const SizedBox(height: 9),
         Text(
           label,
           style: const TextStyle(
             fontFamily: 'Pretendard',
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF30343C),
+            color: Color(0xFF51565F),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildMegaphoneVectors() {
+    const String vectorsSvg = '''
+<svg width="12" height="18" viewBox="200 31 12 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M201.042 36.8033L205.701 32.1445" stroke="#F7FF1A" stroke-width="2" stroke-linecap="round"/>
+  <path d="M203.372 41.1025L210.396 39.2207" stroke="#F7FF1A" stroke-width="2" stroke-linecap="round"/>
+  <path d="M203.754 45.8174L210.396 47.5971" stroke="#F7FF1A" stroke-width="2" stroke-linecap="round"/>
+</svg>
+''';
+    return SvgPicture.string(vectorsSvg);
+  }
+
+  Widget _buildKakaoIcon() {
+    const String kakaoSvg = '''
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 3c-5.799 0-10.5 3.664-10.5 8.183 0 2.936 1.956 5.513 4.966 6.946l-1.042 3.86c-.057.208.188.369.36.242l4.475-2.955c.57.065 1.155.1 1.741.1 5.799 0 10.5-3.664 10.5-8.183S17.799 3 12 3z"/>
+</svg>
+''';
+
+    return Container(
+      width: 34,
+      height: 34,
+      decoration: const BoxDecoration(
+        color: Color(0xFFFAE524),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: SvgPicture.string(
+          kakaoSvg,
+          width: 18,
+          height: 18,
+          colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInstaIcon() {
+    const String instaSvg = '''
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.88z"/>
+</svg>
+''';
+
+    return Container(
+      width: 34,
+      height: 34,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+          colors: [
+            Color(0xFFf09433),
+            Color(0xFFe6683c),
+            Color(0xFFdc2743),
+            Color(0xFFcc2366),
+            Color(0xFFbc1888),
+          ],
+        ),
+      ),
+      child: Center(
+        child: SvgPicture.string(
+          instaSvg,
+          width: 18,
+          height: 18,
+          colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLinkIcon() {
+    return Container(
+      width: 34,
+      height: 34,
+      decoration: const BoxDecoration(
+        color: Color(0xFF51565F),
+        shape: BoxShape.circle,
+      ),
+      child: const Center(
+        child: Icon(Icons.link, color: Colors.white, size: 20),
+      ),
     );
   }
 
