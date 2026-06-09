@@ -27,7 +27,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   static const String imgStar16 = "assets/images/banner/star16.svg";
   static const String imgStar9 = "assets/images/banner/star9.svg";
   static const String imgStamp1 = "assets/images/banner/stamp1.png";
-  static const String imgVector8 = "assets/images/banner/vector8.svg";
   static const String imgAo1 = "assets/images/banner/ao1.png";
   static const String imgDlf1 = "assets/images/banner/dlf1.png";
 
@@ -68,7 +67,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             // 3. 오늘 출석하기 버튼
             _buildBottomButton(),
             
-            const SizedBox(height: 32),
+            const SizedBox(height: 48),
             
             // 4. 친구에게 소문내기 섹션
             _buildShareSection(),
@@ -112,13 +111,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     height: 266.024,
                     child: SvgPicture.asset(imgCloud, fit: BoxFit.cover),
                   ),
-                  Positioned(
-                    left: 102.78,
-                    top: 333.94,
-                    width: 244.789,
-                    height: 125.55,
-                    child: SvgPicture.asset(imgVector8, fit: BoxFit.fill),
-                  ),
+
 
 
                   // 2. 별 장식들 (SVG) - React 코드 기반 완벽 동기화
@@ -339,8 +332,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             dayBuilder: (context, date, isOutsideMonth) {
               final isAttended = !isOutsideMonth && _attendedDays.contains(date.day);
               final isToday = !isOutsideMonth && date.day == _today.day;
-              // 7일, 14일, 21일 등 특정 일자에 리워드 뱃지 표시 로직
-              final isRewardDay = !isOutsideMonth && (date.day % 7 == 0); 
               
               return Stack(
                 alignment: Alignment.center,
@@ -359,12 +350,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       ),
                     ),
                   // 스탬프 오버레이
-                  if (!isOutsideMonth && (isAttended || isRewardDay || isToday))
+                  if (!isOutsideMonth && (isAttended || isToday))
                     CalendarStamp(
                       isAttended: isAttended,
                       showToday: isToday,
-                      showReward: isRewardDay && !isAttended, // 미출석인 보상날짜에만 뱃지 표시(예시)
-                      rewardPoint: (date.day ~/ 7) * 100,
+                      showReward: isAttended && isToday,
+                      rewardPoint: 100,
                     ),
                 ],
               );
