@@ -3,6 +3,7 @@ import '../../core/widgets/popup_header.dart';
 import '../../core/widgets/calendar_grid.dart';
 import '../../core/widgets/calendar_stamp.dart';
 import '../../core/widgets/bullit_text.dart';
+import '../../core/widgets/edge_button_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/reward_milestone_stamp.dart';
 
@@ -388,8 +389,19 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('출석이 완료되었습니다!')),
+              showDialog(
+                context: context,
+                builder: (context) => EdgeButtonDialog(
+                  title: '일일 출석체크가 완료되었어요!',
+                  confirmText: '확인',
+                  onConfirm: () {},
+                  topWidget: Image.asset(
+                    'assets/images/ic_pet_foot.png',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               );
             },
             child: const Center(
