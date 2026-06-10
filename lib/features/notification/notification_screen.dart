@@ -60,46 +60,30 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Page Header with back button and settings gear
+            // Page Header with back button and '모두읽음' button on the right
             NurimPageHeader(
               title: '알림 센터',
               onBackPressed: () => Navigator.of(context).pop(),
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined, color: Color(0xFF30343C)),
-                  onPressed: () {
-                    // Navigate to settings if needed
-                  },
-                ),
-              ],
-            ),
-
-            // 모두읽음 버튼 영역
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: _markAllAsRead,
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      '모두읽음',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400, // Regular
-                        color: Color(0xFF87909E),
-                        letterSpacing: -0.66,
-                      ),
+                TextButton(
+                  onPressed: _markAllAsRead,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text(
+                    '모두읽음',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400, // Regular
+                      color: Color(0xFF87909E),
+                      letterSpacing: -0.66,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
 
             // 알림 목록 영역

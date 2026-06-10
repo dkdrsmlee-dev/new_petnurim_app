@@ -75,13 +75,15 @@ class NurimTextCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
                           child: icon ??
-                              SvgPicture.asset(
-                                'assets/images/icon_bell.svg',
+                              SizedBox(
                                 width: 24,
                                 height: 24,
-                                colorFilter: const ColorFilter.mode(
-                                  Color(0xFF30343C),
-                                  BlendMode.srcIn,
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/images/icon_bell_solid.svg',
+                                    width: 16,
+                                    height: 14.43,
+                                  ),
                                 ),
                               ),
                         ),

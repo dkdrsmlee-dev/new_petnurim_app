@@ -32,20 +32,21 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
         color: Colors.white,
         border: Border(
           bottom: BorderSide(
-            color: Color(0xFFE8EBF1), // Figma border-b Gray 30: #E8EBF1
+            color: Color(0xFFD6DBE4), // Figma line/default: #D6DBE4
             width: 1.0,
           ),
         ),
       ),
       child: AppBar(
+        toolbarHeight: 48, // Figma Page_header height is 48px (py-12 + icon 24px)
         title: Text(
           title,
           style: const TextStyle(
             fontFamily: 'Pretendard',
             fontSize: 18,
-            fontWeight: FontWeight.w600, // SemiBold
+            fontWeight: FontWeight.w700, // Bold (700)
             height: 1.4,
-            letterSpacing: -0.66,
+            letterSpacing: -0.54, // Figma tracking: -0.54px
             color: Color(0xFF30343C), // strong text color
           ),
         ),
@@ -70,5 +71,5 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(56.0);
+  Size get preferredSize => const Size.fromHeight(48.0);
 }
