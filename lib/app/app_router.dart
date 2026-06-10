@@ -12,6 +12,7 @@ import '../features/signup/terms_screen.dart';
 import '../features/signup/verify_screen.dart';
 import '../features/splash/splash_screen.dart';
 import '../features/webview/address_webview_screen.dart';
+import '../features/member/my/customer_center_screen.dart';
 import 'app_routes.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -72,6 +73,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.addressWebView,
         name: AppRouteNames.addressWebView,
         builder: (context, state) => const AddressWebViewScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.customerCenter,
+        name: AppRouteNames.customerCenter,
+        builder: (context, state) => const CustomerCenterScreen(),
       ),
     ],
   );

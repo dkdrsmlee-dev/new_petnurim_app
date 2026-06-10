@@ -10,6 +10,7 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.onBackPressed,
     this.showBackButton = true,
+    this.actions,
   });
 
   /// 헤더 중앙에 표시될 타이틀 텍스트
@@ -20,6 +21,9 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
 
   /// 뒤로가기 버튼 노출 여부 (기본값: true)
   final bool showBackButton;
+
+  /// 우측에 표시될 액션 버튼 목록
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +64,7 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
                 ),
               )
             : null,
+        actions: actions,
       ),
     );
   }

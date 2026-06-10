@@ -199,7 +199,7 @@ class _MyPageContentState extends State<_MyPageContent> {
               NurimListButton(
                 title: '고객센터',
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                onPressed: () {},
+                onPressed: () => context.push(AppRoutes.customerCenter),
               ),
               NurimListButton(
                 title: '서비스 약관',
