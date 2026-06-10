@@ -11,6 +11,7 @@ abstract final class AppRoutes {
   static const myWithdraw = '/my/withdraw';
   static const addressWebView = '/webview/address';
   static const customerCenter = '/my/customer-center';
+  static const notificationCenter = '/notification-center';
 }
 
 abstract final class AppRouteNames {
@@ -26,4 +27,5 @@ abstract final class AppRouteNames {
   static const myWithdraw = 'myWithdraw';
   static const addressWebView = 'addressWebView';
   static const customerCenter = 'customerCenter';
+  static const notificationCenter = 'notificationCenter';
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import '../../app/app_routes.dart';
 
 class MainHeader extends StatelessWidget implements PreferredSizeWidget {
   const MainHeader({Key? key, this.onTapProfile}) : super(key: key);
@@ -33,7 +35,7 @@ class MainHeader extends StatelessWidget implements PreferredSizeWidget {
               children: [
                 // Bell Icon with notification dot (Figma Node: Icon/Bell/24)
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () => context.push(AppRoutes.notificationCenter),
                   child: SizedBox(
                     width: 24,
                     height: 24,
