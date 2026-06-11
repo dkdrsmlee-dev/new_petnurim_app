@@ -22,7 +22,8 @@
 - **나의 정보 및 회원탈퇴**: 나의 정보 화면에서의 생년월일(CupertinoDatePicker)/주소 변경, 로그아웃 확인 및 회원탈퇴(WithdrawScreen) 사유 선택/동의/서버 연동 플로우 완료
 - **로그인 후 홈 구조**: 홈, 진료, 반려동물, 마이 하단 내비게이션
 - **메인 커스텀 헤더 (MainHeader)**: 피그마 원본 SVG(로고, 알림 종, 프로필) 연동 및 아이콘 사이즈 제약 최적화, 마이페이지 및 알림 센터 라우팅 연결
-- **고객센터 (CustomerCenterScreen)**: 아코디언 확장형 공지사항 목록 및 자주 묻는 질문/1:1문의 탭바 기반 화면 연동
+- **고객센터 (CustomerCenterScreen)**: 아코디언 확장형 공지사항 목록 및 자주 묻는 질문/1:1문의 탭바 기반 화면 연동. 특히 **1:1 문의**는 피그마 Node 644:10773 ("1:1문의_목록")에 기반하여 답변준비/답변완료 배지 구분, Cursor 기반 무한 스크롤 페이지네이션 연동 완료.
+- **1:1 문의 등록 (QnaCreateScreen)**: 문의 유형 선택, 제목/내용 입력을 통한 신규 1:1 문의 등록 API 연동 완료.
 - **알림 센터 (NotificationScreen)**: 공통 알림 카드 위젯(`NurimTextCard`)을 활용한 Short/Truncated/Expanded 상태 지원 및 모두읽음 처리 기능 탑재
 
 ## 초기 구조
@@ -89,7 +90,8 @@ flutter run \
   - 소셜 로그인 연동(Kakao/Naver) 및 신규 가입 흐름 진입 검증
   - 회원가입 1~3단계(약관 동의 -> 본인인증 -> 주소검색 WebView/생년월일 입력 프로필 저장) 검증 완료
   - 회원 정보 조회(`MyInfoScreen`), 날짜 휠 피커(한국어 대응), 로그아웃 및 회원탈퇴(WithdrawScreen) 실서버 통신 및 토큰 제거 전체 라이프사이클 동작 검증 완료
-  - 고객센터(`CustomerCenterScreen`) 아코디언 목록 연동 및 마이페이지 버튼 라우팅 연동 검증 완료
+  - 고객센터(`CustomerCenterScreen`) 공지사항 아코디언 목록 및 1:1 문의 목록 API(Cursor Pagination) 연동 검증 완료
+  - 1:1 문의 등록(`QnaCreateScreen`) API 연동 및 성공 시 리스트 갱신 검증 완료
   - 알림 센터(`NotificationScreen`) 및 공통 카드 위젯(`NurimTextCard`)의 피그마 스펙(종 색상, 모두읽음 헤더 액션 등) 동기화 및 동적 접기/펼치기 반응형 검증 완료
 - **플랫폼 빌드**: Android 실단말 디버그 실행(`SM G991N`) 및 iOS 빌드 확인 (`flutter build ios --no-codesign`) 완료
 
