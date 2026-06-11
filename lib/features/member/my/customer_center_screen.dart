@@ -115,6 +115,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
         _qnaIsLoading = false;
       });
     } catch (e) {
+      debugPrint('[CustomerCenter] QnA 로딩 실패 에러: $e');
       setState(() {
         _qnaError = '문의 내역을 불러오는데 실패했습니다.';
         _qnaIsLoading = false;
@@ -377,16 +378,16 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
   }
 
   Widget _buildQnaTab() {
+    Widget body;
+
     if (_qnaIsLoading && _qnaItems.isEmpty) {
-      return const Center(
+      body = const Center(
         child: CircularProgressIndicator(
           color: Color(0xFF7F4FFF),
         ),
       );
-    }
-
-    if (_qnaError != null && _qnaItems.isEmpty) {
-      return Center(
+    } else if (_qnaError != null && _qnaItems.isEmpty) {
+      body = Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -409,45 +410,39 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
           ],
         ),
       );
+    } else {
+      body = RefreshIndicator(
+        onRefresh: () => _fetchQnas(isRefresh: true),
+        color: const Color(0xFF7F4FFF),
+        child: _qnaItems.isEmpty
+            ? _buildEmptyQnaState()
+            : ListView.builder(
+                controller: _qnaScrollController,
+                padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 24),
+                itemCount: _qnaItems.length + (_qnaHasNext ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == _qnaItems.length) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF7F4FFF),
+                        ),
+                      ),
+                    );
+                  }
+
+                  final qna = _qnaItems[index];
+                  return _buildQnaCard(qna);
+                },
+              ),
+      );
     }
 
-    return Stack(
+    return Column(
       children: [
-        Positioned.fill(
-          child: RefreshIndicator(
-            onRefresh: () => _fetchQnas(isRefresh: true),
-            color: const Color(0xFF7F4FFF),
-            child: _qnaItems.isEmpty
-                ? _buildEmptyQnaState()
-                : ListView.builder(
-                    controller: _qnaScrollController,
-                    padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 90),
-                    itemCount: _qnaItems.length + (_qnaHasNext ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == _qnaItems.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Color(0xFF7F4FFF),
-                            ),
-                          ),
-                        );
-                      }
-
-                      final qna = _qnaItems[index];
-                      return _buildQnaCard(qna);
-                    },
-                  ),
-          ),
-        ),
-        // Bottom Action Button Area
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: _buildBottomActionButton(),
-        ),
+        Expanded(child: body),
+        _buildBottomActionButton(),
       ],
     );
   }
@@ -570,38 +565,40 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
   Widget _buildBottomActionButton() {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(
+      padding: const EdgeInsets.only(
         left: 16,
         right: 16,
         top: 8,
-        bottom: MediaQuery.of(context).padding.bottom + 8,
+        bottom: 12,
       ),
-      child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const QnaCreateScreen(),
-            ),
-          ).then((value) {
-            if (value == true) {
-              _fetchQnas(isRefresh: true);
-            }
-          });
-        },
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            color: const Color(0xFF7F4FFF),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          alignment: Alignment.center,
-          child: const Text(
-            '1:1 문의하기',
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 18,
-              fontWeight: FontWeight.w600, // SemiBold
-              color: Colors.white,
+      child: Container(
+        height: 56,
+        decoration: BoxDecoration(
+          color: const Color(0xFF7F4FFF),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const QnaCreateScreen(),
+              ),
+            ).then((value) {
+              if (value == true) {
+                _fetchQnas(isRefresh: true);
+              }
+            });
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: const Center(
+            child: Text(
+              '1:1 문의하기',
+              style: TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
