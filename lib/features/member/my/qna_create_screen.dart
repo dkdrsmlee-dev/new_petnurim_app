@@ -15,15 +15,16 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   
-  String _selectedTypeCode = 'SERVICE';
+  String? _selectedTypeCode;
   bool _isLoading = false;
   String? _errorMessage;
 
   final List<Map<String, String>> _qnaTypes = [
+    {'code': 'ACCOUNT', 'label': '회원정보'},
+    {'code': 'PAYMENT', 'label': '결제'},
+    {'code': 'MEMBERSHIP', 'label': '멤버십/결제'},
     {'code': 'SERVICE', 'label': '서비스 이용'},
-    {'code': 'ACCOUNT', 'label': '계정/로그인'},
     {'code': 'BUG', 'label': '오류 신고'},
-    {'code': 'OTHER', 'label': '기타'},
   ];
 
   @override
@@ -33,11 +34,113 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     super.dispose();
   }
 
+  String? _getSelectedTypeLabel() {
+    if (_selectedTypeCode == null) return null;
+    final type = _qnaTypes.firstWhere((element) => element['code'] == _selectedTypeCode);
+    return type['label'];
+  }
+
+  void _showTypeBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setSheetState) {
+            return SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          '문의 유형',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF30343C),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, color: Color(0xFF30343C), size: 24),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: _qnaTypes.map((type) {
+                          final isSelected = _selectedTypeCode == type['code'];
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedTypeCode = type['code'];
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: 56,
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Color(0xFFE8EBF1),
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    type['label']!,
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 16,
+                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                                      color: const Color(0xFF30343C),
+                                    ),
+                                  ),
+                                  if (isSelected)
+                                    const Icon(
+                                      Icons.check_rounded,
+                                      color: Color(0xFF7F4FFF),
+                                      size: 20,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _submitQna() async {
     final title = _titleController.text.trim();
     final content = _contentController.text.trim();
 
-    if (title.isEmpty || content.isEmpty) return;
+    if (_selectedTypeCode == null || title.isEmpty || content.isEmpty) return;
 
     setState(() {
       _isLoading = true;
@@ -47,7 +150,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     try {
       final repository = ref.read(boardRepositoryProvider);
       await repository.createQna(
-        qnaTypeCode: _selectedTypeCode,
+        qnaTypeCode: _selectedTypeCode!,
         title: title,
         content: content,
       );
@@ -70,7 +173,8 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
   Widget build(BuildContext context) {
     final titleText = _titleController.text.trim();
     final contentText = _contentController.text.trim();
-    final isSubmitEnabled = titleText.isNotEmpty && contentText.isNotEmpty && !_isLoading;
+    final isSubmitEnabled = _selectedTypeCode != null && titleText.isNotEmpty && contentText.isNotEmpty && !_isLoading;
+    final selectedLabel = _getSelectedTypeLabel();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -78,7 +182,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
         child: Column(
           children: [
             NurimPageHeader(
-              title: '1:1 문의하기',
+              title: '문의하기',
               onBackPressed: () => Navigator.of(context).pop(),
             ),
             Expanded(
@@ -88,7 +192,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '문의 유형',
+                      '문의유형',
                       style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 16,
@@ -97,39 +201,39 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: _qnaTypes.map((type) {
-                        final isSelected = _selectedTypeCode == type['code'];
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              _selectedTypeCode = type['code']!;
-                            });
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: isSelected ? const Color(0xFF7F4FFF) : Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: isSelected ? const Color(0xFF7F4FFF) : const Color(0xFFE8EBF1),
-                                width: 1,
-                              ),
-                            ),
-                            child: Text(
-                              type['label']!,
+                    InkWell(
+                      onTap: _showTypeBottomSheet,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        height: 56,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF8F9FB),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: const Color(0xFFE8EBF1),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              selectedLabel ?? '문의 유형을 선택해 주세요.',
                               style: TextStyle(
                                 fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                                color: isSelected ? Colors.white : const Color(0xFF6C737F),
+                                fontSize: 15,
+                                color: selectedLabel != null ? const Color(0xFF30343C) : const Color(0xFFA2ADBE),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                            const Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: Color(0xFF87909E),
+                              size: 24,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 32),
                     const Text(
@@ -147,7 +251,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       onChanged: (text) => setState(() {}),
                       maxLength: 50,
                       decoration: InputDecoration(
-                        hintText: '제목을 입력해주세요.',
+                        hintText: '제목을 입력해 주세요.',
                         hintStyle: const TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 15,
@@ -174,7 +278,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                     ),
                     const SizedBox(height: 32),
                     const Text(
-                      '문의 내용',
+                      '내용',
                       style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 16,
@@ -183,35 +287,127 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    TextField(
-                      controller: _contentController,
-                      onChanged: (text) => setState(() {}),
-                      maxLines: 8,
-                      minLines: 6,
-                      decoration: InputDecoration(
-                        hintText: '문의하실 내용을 상세히 적어주세요.',
-                        hintStyle: const TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 15,
-                          color: Color(0xFFA2ADBE),
+                    Stack(
+                      children: [
+                        TextField(
+                          controller: _contentController,
+                          onChanged: (text) => setState(() {}),
+                          maxLines: 8,
+                          minLines: 6,
+                          maxLength: 100,
+                          decoration: InputDecoration(
+                            hintText: '내용을 입력해 주세요.',
+                            hintStyle: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 15,
+                              color: Color(0xFFA2ADBE),
+                            ),
+                            counterText: '',
+                            filled: true,
+                            fillColor: const Color(0xFFF8F9FB),
+                            contentPadding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color: Color(0xFFE8EBF1)),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(color: Color(0xFF7F4FFF)),
+                            ),
+                          ),
+                          style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 15,
+                            color: Color(0xFF30343C),
+                          ),
                         ),
-                        filled: true,
-                        fillColor: const Color(0xFFF8F9FB),
-                        contentPadding: const EdgeInsets.all(16),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFFE8EBF1)),
+                        Positioned(
+                          right: 16,
+                          bottom: 16,
+                          child: Text(
+                            '${_contentController.text.length}/100',
+                            style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFA2ADBE),
+                            ),
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF7F4FFF)),
-                        ),
-                      ),
-                      style: const TextStyle(
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    const Text(
+                      '첨부파일',
+                      style: TextStyle(
                         fontFamily: 'Pretendard',
-                        fontSize: 15,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                         color: Color(0xFF30343C),
                       ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: const Color(0xFF7F4FFF),
+                          width: 1,
+                        ),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          // File attachment logic placeholder
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: const Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '파일 첨부',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF7F4FFF),
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(
+                                Icons.add,
+                                color: Color(0xFF7F4FFF),
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: Color(0xFF87909E),
+                          size: 16,
+                        ),
+                        SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            '첨부파일은 최대 3개, 30MB까지 등록 가능합니다.',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFF87909E),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 16),
@@ -228,13 +424,12 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                 ),
               ),
             ),
-            // Bottom Sticky Submit Button
             Padding(
               padding: EdgeInsets.only(
                 left: 16,
                 right: 16,
                 top: 8,
-                bottom: MediaQuery.of(context).padding.bottom + 16,
+                bottom: MediaQuery.of(context).padding.bottom + 12,
               ),
               child: SizedBox(
                 width: double.infinity,
