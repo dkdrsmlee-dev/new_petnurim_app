@@ -140,14 +140,6 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
             NurimPageHeader(
               title: '고객센터',
               onBackPressed: () => Navigator.of(context).pop(),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined, color: Color(0xFF30343C)),
-                  onPressed: () {
-                    // Navigate to settings page if needed
-                  },
-                ),
-              ],
             ),
             // Custom TabBar
             TabBar(
