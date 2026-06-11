@@ -18,6 +18,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
   String? _selectedTypeCode;
   bool _isLoading = false;
   String? _errorMessage;
+  final List<Map<String, String>> _attachedFiles = [];
 
   final List<Map<String, String>> _qnaTypes = [
     {'code': 'ACCOUNT', 'label': '회원정보'},
@@ -133,6 +134,140 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
           },
         );
       },
+    );
+  }
+
+  void _addMockFile(String type) {
+    if (_attachedFiles.length >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('첨부파일은 최대 3개까지 등록 가능합니다.')),
+      );
+      return;
+    }
+
+    setState(() {
+      if (type == 'camera') {
+        _attachedFiles.add({
+          'name': 'camera_image_${_attachedFiles.length + 1}.jpg',
+          'size': '2.4 MB',
+          'type': 'image',
+        });
+      } else if (type == 'gallery') {
+        _attachedFiles.add({
+          'name': 'gallery_photo_${_attachedFiles.length + 1}.png',
+          'size': '4.8 MB',
+          'type': 'image',
+        });
+      } else if (type == 'file') {
+        _attachedFiles.add({
+          'name': 'document_file_${_attachedFiles.length + 1}.pdf',
+          'size': '1.2 MB',
+          'type': 'file',
+        });
+      }
+    });
+  }
+
+  void _showAttachmentBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 16),
+              Center(
+                child: Container(
+                  width: 52,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD6DBE4),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    _buildAttachmentItem(
+                      icon: Icons.photo_camera_outlined,
+                      label: '사진 촬영',
+                      onTap: () {
+                        Navigator.pop(context);
+                        _addMockFile('camera');
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    _buildAttachmentItem(
+                      icon: Icons.photo_outlined,
+                      label: '앨범 선택',
+                      onTap: () {
+                        Navigator.pop(context);
+                        _addMockFile('gallery');
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    _buildAttachmentItem(
+                      icon: Icons.insert_drive_file_outlined,
+                      label: '파일 선택',
+                      onTap: () {
+                        Navigator.pop(context);
+                        _addMockFile('file');
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAttachmentItem({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        height: 44,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: const Color(0xFF87909E),
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF51565F),
+                letterSpacing: -0.66,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -358,9 +493,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         ),
                       ),
                       child: InkWell(
-                        onTap: () {
-                          // File attachment logic placeholder
-                        },
+                        onTap: _showAttachmentBottomSheet,
                         borderRadius: BorderRadius.circular(12),
                         child: const Center(
                           child: Row(
@@ -386,6 +519,82 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         ),
                       ),
                     ),
+                    if (_attachedFiles.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Column(
+                        children: _attachedFiles.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final file = entry.value;
+                          final isImage = file['type'] == 'image';
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8F9FB),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: const Color(0xFFE8EBF1),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  isImage ? Icons.image_outlined : Icons.insert_drive_file_outlined,
+                                  color: const Color(0xFF87909E),
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        file['name']!,
+                                        style: const TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF30343C),
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        file['size']!,
+                                        style: const TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 11,
+                                          color: Color(0xFF87909E),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _attachedFiles.removeAt(index);
+                                    });
+                                  },
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(4),
+                                    child: Icon(
+                                      Icons.close,
+                                      color: Color(0xFF87909E),
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                     const SizedBox(height: 8),
                     const Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
