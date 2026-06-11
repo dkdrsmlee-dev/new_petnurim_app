@@ -148,12 +148,12 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               unselectedLabelColor: const Color(0xFF6C737F),
               labelStyle: const TextStyle(
                 fontFamily: 'Pretendard',
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
               unselectedLabelStyle: const TextStyle(
                 fontFamily: 'Pretendard',
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w500,
               ),
               indicatorColor: const Color(0xFF7F4FFF),
