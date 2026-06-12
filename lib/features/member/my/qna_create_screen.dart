@@ -23,11 +23,12 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
   final List<Map<String, String>> _attachedFiles = [];
 
   final List<Map<String, String>> _qnaTypes = [
-    {'code': 'ACCOUNT', 'label': '회원정보'},
     {'code': 'PAYMENT', 'label': '결제'},
-    {'code': 'MEMBERSHIP', 'label': '멤버십/결제'},
-    {'code': 'SERVICE', 'label': '서비스 이용'},
-    {'code': 'BUG', 'label': '오류 신고'},
+    {'code': 'QUESTIONNAIRE', 'label': '문진'},
+    {'code': 'REWARD', 'label': '리워드'},
+    {'code': 'SUGGESTION', 'label': '제안'},
+    {'code': 'USER', 'label': '회원'},
+    {'code': 'ETC', 'label': '기타'},
   ];
 
   @override

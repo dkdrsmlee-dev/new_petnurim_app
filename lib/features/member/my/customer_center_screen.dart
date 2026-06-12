@@ -5,6 +5,7 @@ import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
 import '../domain/qna_models.dart';
 import 'qna_create_screen.dart';
+import 'qna_detail_screen.dart';
 
 class CustomerCenterScreen extends ConsumerStatefulWidget {
   const CustomerCenterScreen({super.key});
@@ -494,7 +495,11 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
       ),
       child: InkWell(
         onTap: () {
-          // Navigate to detail page if implemented
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => QnaDetailScreen(boardQnaId: qna.boardQnaId),
+            ),
+          );
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
