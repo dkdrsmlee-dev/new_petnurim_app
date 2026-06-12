@@ -236,6 +236,71 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     }
   }
 
+  Future<void> _pickImageFromGallery() async {
+    if (_attachedFiles.length >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('첨부파일은 최대 3개까지 등록 가능합니다.')),
+      );
+      return;
+    }
+
+    final ImagePicker picker = ImagePicker();
+    try {
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _isLoading = true;
+        });
+
+        final bytes = await image.readAsBytes();
+        
+        final fileRepository = ref.read(fileRepositoryProvider);
+        final fileResponse = await fileRepository.uploadFile(
+          fileBytes: bytes,
+          filename: image.name,
+        );
+
+        final String? fileId = fileResponse['fileId'];
+        
+        if (fileId != null) {
+          final sizeInMb = bytes.length / (1024 * 1024);
+          final sizeText = '${sizeInMb.toStringAsFixed(1)} MB';
+
+          setState(() {
+            _attachedFiles.add({
+              'fileId': fileId,
+              'name': image.name,
+              'path': image.path,
+              'size': sizeText,
+              'type': 'image',
+            });
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      debugPrint('Gallery pick & upload error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('사진 업로드에 실패했습니다: $e')),
+        );
+      }
+    }
+  }
+
   void _showAttachmentBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -281,7 +346,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       label: '앨범 선택',
                       onTap: () {
                         Navigator.pop(context);
-                        _addMockFile('gallery');
+                        _pickImageFromGallery();
                       },
                     ),
                     const SizedBox(height: 8),
