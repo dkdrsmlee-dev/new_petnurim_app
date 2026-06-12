@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
+import '../data/file_repository.dart';
+import 'package:image_picker/image_picker.dart';
 
 class QnaCreateScreen extends ConsumerStatefulWidget {
   const QnaCreateScreen({super.key});
@@ -168,6 +170,71 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     });
   }
 
+  Future<void> _pickImageFromCamera() async {
+    if (_attachedFiles.length >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('첨부파일은 최대 3개까지 등록 가능합니다.')),
+      );
+      return;
+    }
+
+    final ImagePicker picker = ImagePicker();
+    try {
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1920,
+        maxHeight: 1920,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _isLoading = true;
+        });
+
+        final bytes = await image.readAsBytes();
+        
+        final fileRepository = ref.read(fileRepositoryProvider);
+        final fileResponse = await fileRepository.uploadFile(
+          fileBytes: bytes,
+          filename: image.name,
+        );
+
+        final String? fileId = fileResponse['fileId'];
+        
+        if (fileId != null) {
+          final sizeInMb = bytes.length / (1024 * 1024);
+          final sizeText = '${sizeInMb.toStringAsFixed(1)} MB';
+
+          setState(() {
+            _attachedFiles.add({
+              'fileId': fileId,
+              'name': image.name,
+              'path': image.path,
+              'size': sizeText,
+              'type': 'image',
+            });
+            _isLoading = false;
+          });
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      debugPrint('Camera pick & upload error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('사진 업로드에 실패했습니다: $e')),
+        );
+      }
+    }
+  }
+
   void _showAttachmentBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -204,7 +271,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       label: '사진 촬영',
                       onTap: () {
                         Navigator.pop(context);
-                        _addMockFile('camera');
+                        _pickImageFromCamera();
                       },
                     ),
                     const SizedBox(height: 8),
@@ -283,11 +350,17 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     });
 
     try {
+      final fileIds = _attachedFiles
+          .map((file) => file['fileId'])
+          .whereType<String>()
+          .toList();
+
       final repository = ref.read(boardRepositoryProvider);
       await repository.createQna(
         qnaTypeCode: _selectedTypeCode!,
         title: title,
         content: content,
+        fileIds: fileIds.isEmpty ? null : fileIds,
       );
 
       if (mounted) {
@@ -314,6 +387,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             NurimPageHeader(
@@ -573,8 +647,23 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                     ],
                                   ),
                                 ),
-                                InkWell(
-                                  onTap: () {
+                                 InkWell(
+                                  onTap: () async {
+                                    final fileId = file['fileId'];
+                                    if (fileId != null) {
+                                      try {
+                                        setState(() {
+                                          _isLoading = true;
+                                        });
+                                        await ref.read(fileRepositoryProvider).deleteFile(fileId);
+                                      } catch (e) {
+                                        debugPrint('File delete error: $e');
+                                      } finally {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
+                                    }
                                     setState(() {
                                       _attachedFiles.removeAt(index);
                                     });
@@ -633,12 +722,15 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                 ),
               ),
             ),
-            Padding(
+            Container(
+              color: Colors.white,
               padding: EdgeInsets.only(
                 left: 16,
                 right: 16,
-                top: 8,
-                bottom: MediaQuery.of(context).padding.bottom + 12,
+                top: 4,
+                bottom: MediaQuery.of(context).padding.bottom > 0
+                    ? MediaQuery.of(context).padding.bottom + 12
+                    : 24,
               ),
               child: SizedBox(
                 width: double.infinity,

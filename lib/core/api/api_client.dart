@@ -79,6 +79,92 @@ class ApiClient {
     );
   }
 
+  Future<Object?> deleteJson(
+    String path, {
+    Map<String, String>? headers,
+    String? bearerToken,
+    String fallbackMessage = '요청 처리에 실패했습니다.',
+  }) {
+    return _requestJson(
+      method: 'DELETE',
+      path: path,
+      headers: headers,
+      bearerToken: bearerToken,
+      fallbackMessage: fallbackMessage,
+    );
+  }
+
+  Future<Object?> uploadFile(
+    String path, {
+    required List<int> fileBytes,
+    required String filename,
+    required String fieldName,
+    Map<String, String>? headers,
+    String? bearerToken,
+    String fallbackMessage = '파일 업로드에 실패했습니다.',
+  }) async {
+    final requestUri = uri(path);
+    
+    Future<http.Response> sendMultipartRequest(String? token) async {
+      final request = http.MultipartRequest('POST', requestUri);
+      request.headers['Accept'] = 'application/json';
+      if (token != null && token.trim().isNotEmpty) {
+        request.headers['Authorization'] = 'Bearer ${token.trim()}';
+      }
+      if (headers != null) {
+        request.headers.addAll(headers);
+      }
+      
+      final multipartFile = http.MultipartFile.fromBytes(
+        fieldName,
+        fileBytes,
+        filename: filename,
+      );
+      request.files.add(multipartFile);
+      
+      final streamedResponse = await _httpClient.send(request);
+      return http.Response.fromStream(streamedResponse);
+    }
+
+    var response = await sendMultipartRequest(bearerToken);
+
+    if (response.statusCode == 401 && path != '/api/v1/auth/refresh' && tokenStorage != null) {
+      final success = await _refreshToken();
+      if (success) {
+        final newAccessToken = await tokenStorage!.readAccessToken();
+        if (newAccessToken != null && newAccessToken.trim().isNotEmpty) {
+          response = await sendMultipartRequest(newAccessToken);
+        }
+      }
+    }
+
+    final payload = _decodeJson(response.body, fallbackMessage);
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      _debugLogFailure(
+        method: 'POST(Multipart)',
+        path: path,
+        statusCode: response.statusCode,
+        payload: payload,
+      );
+
+      if (response.statusCode == 401) {
+        onUnauthorized?.call();
+      }
+
+      throw ApiException(
+        extractEnvelopeMessage(payload, fallbackMessage),
+        statusCode: response.statusCode,
+        code: _readString(payload, 'code'),
+        data: _readData(payload),
+      );
+    }
+
+    ensureEnvelopeSuccess(payload, fallbackMessage);
+    return unwrapEnvelopeData(payload);
+  }
+
+
   Future<Object?> _requestJson({
     required String method,
     required String path,
@@ -216,6 +302,8 @@ class ApiClient {
         return _httpClient.post(uri, headers: headers, body: body);
       case 'PATCH':
         return _httpClient.patch(uri, headers: headers, body: body);
+      case 'DELETE':
+        return _httpClient.delete(uri, headers: headers);
       default:
         throw ArgumentError.value(method, 'method', '지원하지 않는 HTTP 메서드입니다.');
     }
