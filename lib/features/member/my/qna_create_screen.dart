@@ -503,7 +503,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                           onChanged: (text) => setState(() {}),
                           maxLines: 8,
                           minLines: 6,
-                          maxLength: 100,
+                          maxLength: 1200,
                           decoration: InputDecoration(
                             hintText: '내용을 입력해 주세요.',
                             hintStyle: const TextStyle(
@@ -534,7 +534,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                           right: 16,
                           bottom: 16,
                           child: Text(
-                            '${_contentController.text.length}/100',
+                            '${_contentController.text.length}/1200',
                             style: const TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 13,
