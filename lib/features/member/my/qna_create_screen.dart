@@ -1,3 +1,4 @@
+import 'dart:io' as io;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,6 +6,7 @@ import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
 import '../data/file_repository.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
 class QnaCreateScreen extends ConsumerStatefulWidget {
   const QnaCreateScreen({super.key});
@@ -140,37 +142,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     );
   }
 
-  void _addMockFile(String type) {
-    if (_attachedFiles.length >= 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('첨부파일은 최대 3개까지 등록 가능합니다.')),
-      );
-      return;
-    }
-
-    setState(() {
-      if (type == 'camera') {
-        _attachedFiles.add({
-          'name': 'camera_image_${_attachedFiles.length + 1}.jpg',
-          'size': '2.4 MB',
-          'type': 'image',
-        });
-      } else if (type == 'gallery') {
-        _attachedFiles.add({
-          'name': 'gallery_photo_${_attachedFiles.length + 1}.png',
-          'size': '4.8 MB',
-          'type': 'image',
-        });
-      } else if (type == 'file') {
-        _attachedFiles.add({
-          'name': 'document_file_${_attachedFiles.length + 1}.pdf',
-          'size': '1.2 MB',
-          'type': 'file',
-        });
-      }
-    });
-  }
-
   Future<void> _pickImageFromCamera() async {
     if (_attachedFiles.length >= 3) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -301,6 +272,86 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     }
   }
 
+  Future<void> _pickFile() async {
+    if (_attachedFiles.length >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('첨부파일은 최대 3개까지 등록 가능합니다.')),
+      );
+      return;
+    }
+
+    try {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.any,
+        withData: false,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final platformFile = result.files.first;
+        final path = platformFile.path;
+        
+        if (path != null) {
+          setState(() {
+            _isLoading = true;
+          });
+
+          final file = io.File(path);
+          final bytes = await file.readAsBytes();
+
+          final double sizeInMb = bytes.length / (1024 * 1024);
+          if (sizeInMb > 30.0) {
+            setState(() {
+              _isLoading = false;
+            });
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('첨부파일은 최대 30MB까지 등록 가능합니다.')),
+              );
+            }
+            return;
+          }
+
+          final fileRepository = ref.read(fileRepositoryProvider);
+          final fileResponse = await fileRepository.uploadFile(
+            fileBytes: bytes,
+            filename: platformFile.name,
+          );
+
+          final String? fileId = fileResponse['fileId'];
+
+          if (fileId != null) {
+            final sizeText = '${sizeInMb.toStringAsFixed(1)} MB';
+
+            setState(() {
+              _attachedFiles.add({
+                'fileId': fileId,
+                'name': platformFile.name,
+                'path': path,
+                'size': sizeText,
+                'type': 'file',
+              });
+              _isLoading = false;
+            });
+          } else {
+            setState(() {
+              _isLoading = false;
+            });
+          }
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      debugPrint('File pick & upload error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('파일 업로드에 실패했습니다: $e')),
+        );
+      }
+    }
+  }
+
   void _showAttachmentBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -355,7 +406,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       label: '파일 선택',
                       onTap: () {
                         Navigator.pop(context);
-                        _addMockFile('file');
+                        _pickFile();
                       },
                     ),
                   ],
