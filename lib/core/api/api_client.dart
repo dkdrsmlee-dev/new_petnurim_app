@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 import '../config/app_config.dart';
 import '../storage/token_storage.dart';
@@ -115,10 +117,20 @@ class ApiClient {
         request.headers.addAll(headers);
       }
       
+      final mimeType = lookupMimeType(filename);
+      MediaType? mediaType;
+      if (mimeType != null) {
+        final split = mimeType.split('/');
+        if (split.length == 2) {
+          mediaType = MediaType(split[0], split[1]);
+        }
+      }
+
       final multipartFile = http.MultipartFile.fromBytes(
         fieldName,
         fileBytes,
         filename: filename,
+        contentType: mediaType,
       );
       request.files.add(multipartFile);
       
@@ -149,7 +161,10 @@ class ApiClient {
       );
 
       if (response.statusCode == 401) {
-        onUnauthorized?.call();
+        final code = _readString(payload, 'code');
+        if (code != 'AUTH.INVALID_PARAMS') {
+          onUnauthorized?.call();
+        }
       }
 
       throw ApiException(
@@ -219,7 +234,10 @@ class ApiClient {
       );
 
       if (response.statusCode == 401) {
-        onUnauthorized?.call();
+        final code = _readString(payload, 'code');
+        if (code != 'AUTH.INVALID_PARAMS') {
+          onUnauthorized?.call();
+        }
       }
 
       throw ApiException(

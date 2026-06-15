@@ -498,7 +498,10 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
   Widget build(BuildContext context) {
     final titleText = _titleController.text.trim();
     final contentText = _contentController.text.trim();
-    final isSubmitEnabled = _selectedTypeCode != null && titleText.isNotEmpty && contentText.isNotEmpty && !_isLoading;
+    final isSubmitEnabled = _selectedTypeCode != null &&
+        titleText.length >= 2 &&
+        contentText.length >= 5 &&
+        !_isLoading;
     final selectedLabel = _getSelectedTypeLabel();
 
     return Scaffold(
