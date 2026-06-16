@@ -1,4 +1,4 @@
-# new_petnurim_app
+# web3.0_petnurim_app
 
 펫누림 플러터앱
 
