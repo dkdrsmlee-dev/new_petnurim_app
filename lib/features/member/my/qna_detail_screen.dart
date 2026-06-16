@@ -324,10 +324,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                           letterSpacing: -0.66,
                         ),
                       ),
-                      if (qna.files.isNotEmpty) ...[
-                        const SizedBox(height: 24),
-                        _buildAttachmentList(qna.files),
-                      ],
                     ],
                   ),
                 ),
