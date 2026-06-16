@@ -2,6 +2,7 @@ import 'dart:io' as io;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/api/api_exception.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
@@ -540,6 +541,17 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
         }
       }
     } catch (e) {
+      if (e is ApiException) {
+        debugPrint('====================================');
+        debugPrint('[QnA Error] ${widget.qnaToEdit != null ? "수정" : "등록"} 실패');
+        debugPrint('HTTP 상태 코드: ${e.statusCode}');
+        debugPrint('에러 코드: ${e.code}');
+        debugPrint('에러 메시지: ${e.message}');
+        debugPrint('상세 데이터: ${e.data}');
+        debugPrint('====================================');
+      } else {
+        debugPrint('[QnA Error] 일반 예외 발생: $e');
+      }
       setState(() {
         _errorMessage = widget.qnaToEdit != null
             ? '문의 수정에 실패했습니다. 다시 시도해 주세요.'

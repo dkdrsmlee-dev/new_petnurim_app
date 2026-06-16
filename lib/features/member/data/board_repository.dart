@@ -116,7 +116,7 @@ class BackendBoardRepository implements BoardRepository {
         'qnaTypeCode': qnaTypeCode,
         'title': title,
         'content': content,
-        if (fileDtos != null && fileDtos.isNotEmpty) 'files': fileDtos,
+        'files': fileDtos ?? [],
       },
       fallbackMessage: '1:1 문의 등록에 실패했습니다.',
     );
@@ -152,7 +152,7 @@ class BackendBoardRepository implements BoardRepository {
         'qnaTypeCode': qnaTypeCode,
         'title': title,
         'content': content,
-        if (fileDtos != null && fileDtos.isNotEmpty) 'files': fileDtos,
+        'files': fileDtos ?? [],
       },
       fallbackMessage: '1:1 문의 수정에 실패했습니다.',
     );

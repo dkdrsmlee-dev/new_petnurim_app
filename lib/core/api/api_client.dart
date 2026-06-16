@@ -384,6 +384,8 @@ class ApiClient {
         return _httpClient.get(uri, headers: headers);
       case 'POST':
         return _httpClient.post(uri, headers: headers, body: body);
+      case 'PUT':
+        return _httpClient.put(uri, headers: headers, body: body);
       case 'PATCH':
         return _httpClient.patch(uri, headers: headers, body: body);
       case 'DELETE':
