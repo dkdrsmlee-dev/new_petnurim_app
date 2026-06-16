@@ -554,8 +554,8 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     final titleText = _titleController.text.trim();
     final contentText = _contentController.text.trim();
     final isSubmitEnabled = _selectedTypeCode != null &&
-        titleText.length >= 2 &&
-        contentText.length >= 5 &&
+        titleText.isNotEmpty &&
+        contentText.isNotEmpty &&
         !_isLoading;
     final selectedLabel = _getSelectedTypeLabel();
 
