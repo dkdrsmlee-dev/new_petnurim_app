@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Figma `Toast box` (node-id: 698:12326) 스펙 기반의 공통 토스트 위젯.
+/// Figma `Toast box` (node-id: 698:12443) 스펙 기반의 공통 토스트 위젯.
 ///
 /// 아래에서 위로 가볍게 올라오며 서서히 나타나는 애니메이션을 내포하고 있습니다.
 class NurimToast extends StatelessWidget {
