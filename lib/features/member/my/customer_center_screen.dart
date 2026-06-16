@@ -494,12 +494,15 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
         ),
       ),
       child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(
+        onTap: () async {
+          final refreshNeeded = await Navigator.of(context).push<bool>(
             MaterialPageRoute(
               builder: (_) => QnaDetailScreen(boardQnaId: qna.boardQnaId),
             ),
           );
+          if (refreshNeeded == true) {
+            _fetchQnas(isRefresh: true);
+          }
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),

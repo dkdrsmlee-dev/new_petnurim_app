@@ -2,14 +2,17 @@ import 'dart:io' as io;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
 import '../data/file_repository.dart';
+import '../domain/qna_models.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 
 class QnaCreateScreen extends ConsumerStatefulWidget {
-  const QnaCreateScreen({super.key});
+  final QnaDetail? qnaToEdit;
+  const QnaCreateScreen({super.key, this.qnaToEdit});
 
   @override
   ConsumerState<QnaCreateScreen> createState() => _QnaCreateScreenState();
@@ -32,6 +35,36 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
     {'code': 'USER', 'label': '회원'},
     {'code': 'ETC', 'label': '기타'},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.qnaToEdit != null) {
+      _titleController.text = widget.qnaToEdit!.title;
+      _contentController.text = widget.qnaToEdit!.content;
+      _selectedTypeCode = widget.qnaToEdit!.qnaTypeCode;
+      for (final file in widget.qnaToEdit!.files) {
+        _attachedFiles.add({
+          'fileId': file.fileId,
+          'name': file.originName,
+          'size': file.fileSize,
+          'type': _detectFileType(file.originName),
+        });
+      }
+    }
+  }
+
+  String _detectFileType(String filename) {
+    final lower = filename.toLowerCase();
+    if (lower.endsWith('.png') ||
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.gif') ||
+        lower.endsWith('.webp')) {
+      return 'image';
+    }
+    return 'file';
+  }
 
   @override
   void dispose() {
@@ -188,6 +221,9 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
             });
             _isLoading = false;
           });
+          if (mounted) {
+            ToastUtil.show(context, '파일이 첨부되었습니다.');
+          }
         } else {
           setState(() {
             _isLoading = false;
@@ -253,6 +289,9 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
             });
             _isLoading = false;
           });
+          if (mounted) {
+            ToastUtil.show(context, '파일이 첨부되었습니다.');
+          }
         } else {
           setState(() {
             _isLoading = false;
@@ -332,6 +371,9 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
               });
               _isLoading = false;
             });
+            if (mounted) {
+              ToastUtil.show(context, '파일이 첨부되었습니다.');
+            }
           } else {
             setState(() {
               _isLoading = false;
@@ -473,22 +515,35 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
           .toList();
 
       final repository = ref.read(boardRepositoryProvider);
-      await repository.createQna(
-        qnaTypeCode: _selectedTypeCode!,
-        title: title,
-        content: content,
-        fileIds: fileIds.isEmpty ? null : fileIds,
-      );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('1:1 문의가 성공적으로 등록되었습니다.')),
+      if (widget.qnaToEdit != null) {
+        await repository.updateQna(
+          id: widget.qnaToEdit!.boardQnaId,
+          qnaTypeCode: _selectedTypeCode!,
+          title: title,
+          content: content,
+          fileIds: fileIds.isEmpty ? null : fileIds,
         );
-        Navigator.of(context).pop(true);
+        if (mounted) {
+          ToastUtil.show(context, '1:1 문의가 성공적으로 수정되었습니다.');
+          Navigator.of(context).pop(true);
+        }
+      } else {
+        await repository.createQna(
+          qnaTypeCode: _selectedTypeCode!,
+          title: title,
+          content: content,
+          fileIds: fileIds.isEmpty ? null : fileIds,
+        );
+        if (mounted) {
+          ToastUtil.show(context, '1:1 문의가 성공적으로 등록되었습니다.');
+          Navigator.of(context).pop(true);
+        }
       }
     } catch (e) {
       setState(() {
-        _errorMessage = '문의 등록에 실패했습니다. 다시 시도해 주세요.';
+        _errorMessage = widget.qnaToEdit != null
+            ? '문의 수정에 실패했습니다. 다시 시도해 주세요.'
+            : '문의 등록에 실패했습니다. 다시 시도해 주세요.';
         _isLoading = false;
       });
     }
@@ -511,7 +566,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
         child: Column(
           children: [
             NurimPageHeader(
-              title: '문의하기',
+              title: widget.qnaToEdit != null ? '1:1 문의 수정' : '문의하기',
               onBackPressed: () => Navigator.of(context).pop(),
             ),
             Expanded(

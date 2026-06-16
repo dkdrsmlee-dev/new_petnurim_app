@@ -64,6 +64,23 @@ class ApiClient {
     );
   }
 
+  Future<Object?> putJson(
+    String path, {
+    Object? body,
+    Map<String, String>? headers,
+    String? bearerToken,
+    String fallbackMessage = '요청 처리에 실패했습니다.',
+  }) {
+    return _requestJson(
+      method: 'PUT',
+      path: path,
+      body: body,
+      headers: headers,
+      bearerToken: bearerToken,
+      fallbackMessage: fallbackMessage,
+    );
+  }
+
   Future<Object?> patchJson(
     String path, {
     Object? body,
@@ -96,6 +113,52 @@ class ApiClient {
     );
   }
 
+  Future<Uint8List> getBytes(
+    String path, {
+    Map<String, String>? headers,
+    String? bearerToken,
+    String fallbackMessage = '파일 다운로드에 실패했습니다.',
+  }) async {
+    Future<http.Response> sendRequest(String? token) async {
+      final requestHeaders = <String, String>{
+        'Accept': '*/*',
+        if (token != null && token.trim().isNotEmpty) ...{
+          'Authorization': 'Bearer ${token.trim()}',
+          'access-token': token.trim(),
+        },
+        ...?headers,
+      };
+      return _httpClient.get(uri(path), headers: requestHeaders);
+    }
+
+    var response = await sendRequest(bearerToken);
+
+    if (response.statusCode == 401 && path != '/api/v1/auth/refresh' && tokenStorage != null) {
+      final success = await _refreshToken();
+      if (success) {
+        final newAccessToken = await tokenStorage!.readAccessToken();
+        if (newAccessToken != null && newAccessToken.trim().isNotEmpty) {
+          response = await sendRequest(newAccessToken);
+        }
+      }
+    }
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      _debugLogFailure(
+        method: 'GET(Bytes)',
+        path: path,
+        statusCode: response.statusCode,
+        payload: response.body,
+      );
+      throw ApiException(
+        fallbackMessage,
+        statusCode: response.statusCode,
+      );
+    }
+
+    return response.bodyBytes;
+  }
+
   Future<Object?> uploadFile(
     String path, {
     required List<int> fileBytes,
@@ -112,6 +175,7 @@ class ApiClient {
       request.headers['Accept'] = 'application/json';
       if (token != null && token.trim().isNotEmpty) {
         request.headers['Authorization'] = 'Bearer ${token.trim()}';
+        request.headers['access-token'] = token.trim();
       }
       if (headers != null) {
         request.headers.addAll(headers);
@@ -191,8 +255,10 @@ class ApiClient {
     final requestHeaders = <String, String>{
       'Accept': 'application/json',
       if (body != null) 'Content-Type': 'application/json',
-      if (bearerToken != null && bearerToken.trim().isNotEmpty)
+      if (bearerToken != null && bearerToken.trim().isNotEmpty) ...{
         'Authorization': 'Bearer ${bearerToken.trim()}',
+        'access-token': bearerToken.trim(),
+      },
       ...?headers,
     };
 

@@ -1,16 +1,12 @@
 class QnaFile {
   final String boardFileId;
   final String fileId;
-  final String fileTypeCode;
-  final double sortNo;
   final String originName;
   final String fileSize;
 
   QnaFile({
     required this.boardFileId,
     required this.fileId,
-    required this.fileTypeCode,
-    required this.sortNo,
     required this.originName,
     required this.fileSize,
   });
@@ -19,8 +15,6 @@ class QnaFile {
     return QnaFile(
       boardFileId: json['boardFileId'] as String,
       fileId: json['fileId'] as String,
-      fileTypeCode: json['fileTypeCode'] as String,
-      sortNo: (json['sortNo'] as num).toDouble(),
       originName: json['originName'] as String,
       fileSize: json['fileSize'] as String,
     );

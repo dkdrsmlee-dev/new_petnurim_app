@@ -1,11 +1,12 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/config/app_config.dart';
-import '../../../core/storage/token_storage.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
 import '../domain/qna_models.dart';
+import 'qna_create_screen.dart';
 
 class QnaDetailScreen extends ConsumerStatefulWidget {
   final String boardQnaId;
@@ -16,24 +17,41 @@ class QnaDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
-  late Future<QnaDetail> _detailFuture;
-  String? _token;
+  QnaDetail? _qnaDetail;
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _detailFuture = ref.read(boardRepositoryProvider).getQnaDetail(widget.boardQnaId);
-    _loadToken();
+    _loadData();
   }
 
-  Future<void> _loadToken() async {
-    final token = await ref.read(tokenStorageProvider).readAccessToken();
-    if (mounted) {
+  Future<void> _loadData() async {
+    try {
+      if (!mounted) return;
       setState(() {
-        _token = token;
+        _isLoading = true;
+        _error = null;
       });
+      final data = await ref.read(boardRepositoryProvider).getQnaDetail(widget.boardQnaId);
+      if (mounted) {
+        setState(() {
+          _qnaDetail = data;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
     }
   }
+
+
 
   String _formatDate(String rawDate) {
     if (rawDate.length >= 10) {
@@ -61,190 +79,269 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
     }
   }
 
-  String _getFileUrl(String fileId) {
-    final config = ref.read(appConfigProvider);
-    return config.apiUri('/api/v1/files/$fileId').toString();
+
+
+  Future<void> _deleteQna() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          '문의 삭제',
+          style: TextStyle(fontFamily: 'Pretendard', fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          '정말 이 1:1 문의를 삭제하시겠습니까?',
+          style: TextStyle(fontFamily: 'Pretendard'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소', style: TextStyle(fontFamily: 'Pretendard', color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('삭제', style: TextStyle(fontFamily: 'Pretendard', color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        await ref.read(boardRepositoryProvider).deleteQna(widget.boardQnaId);
+        if (mounted) {
+          ToastUtil.show(context, '1:1 문의가 삭제되었습니다.');
+          Navigator.of(context).pop(true);
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('삭제에 실패했습니다: $e')),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _editQna() async {
+    if (_qnaDetail == null) return;
+    
+    final updated = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => QnaCreateScreen(qnaToEdit: _qnaDetail),
+      ),
+    );
+
+    if (updated == true) {
+      _loadData();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final showActions = _qnaDetail != null && _qnaDetail!.processStatusCode != 'COMPLETE';
+    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: NurimPageHeader(
         title: '1:1 문의',
         onBackPressed: () => Navigator.of(context).pop(),
+        actions: showActions
+            ? [
+                PopupMenuButton<String>(
+                  onSelected: (value) {
+                    if (value == 'edit') {
+                      _editQna();
+                    } else if (value == 'delete') {
+                      _deleteQna();
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Text('수정하기', style: TextStyle(fontFamily: 'Pretendard')),
+                    ),
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Text('삭제하기', style: TextStyle(fontFamily: 'Pretendard', color: Colors.red)),
+                    ),
+                  ],
+                  icon: const Icon(Icons.more_vert, color: Color(0xFF30343C)),
+                ),
+              ]
+            : null,
       ),
       body: SafeArea(
-        child: FutureBuilder<QnaDetail>(
-          future: _detailFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        child: _buildBody(),
+      ),
+    );
+  }
 
-            if (snapshot.hasError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
+  Widget _buildBody() {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '오류: $_error',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 15,
+                  color: Colors.red,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _loadData,
+                child: const Text('다시 시도'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final qna = _qnaDetail;
+    if (qna == null) {
+      return const Center(
+        child: Text(
+          '문의 상세 내역이 없습니다.',
+          style: TextStyle(
+            fontFamily: 'Pretendard',
+            fontSize: 15,
+            color: Color(0xFF87909E),
+          ),
+        ),
+      );
+    }
+
+    final isComplete = qna.processStatusCode == 'COMPLETE';
+
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Question Header
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color(0xFFE8EBF1),
+                        width: 1,
+                      ),
+                    ),
+                  ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        children: [
+                          // Status Badge
+                          _buildStatusBadge(isComplete),
+                          const SizedBox(width: 8),
+                          // Type & Date
+                          Text(
+                            _getTypeLabel(qna.qnaTypeCode),
+                            style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFFA2ADBE),
+                              letterSpacing: -0.66,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            '|',
+                            style: TextStyle(
+                              color: Color(0xFFE8EBF1),
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            _formatDate(qna.regDt),
+                            style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFA2ADBE),
+                              letterSpacing: -0.66,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      // Title
                       Text(
-                        '오류: ${snapshot.error}',
-                        textAlign: TextAlign.center,
+                        qna.title,
                         style: const TextStyle(
                           fontFamily: 'Pretendard',
-                          fontSize: 15,
-                          color: Colors.red,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF30343C),
+                          height: 1.4,
+                          letterSpacing: -0.66,
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _detailFuture = ref
-                                .read(boardRepositoryProvider)
-                                .getQnaDetail(widget.boardQnaId);
-                          });
-                        },
-                        child: const Text('다시 시도'),
                       ),
                     ],
                   ),
                 ),
-              );
-            }
-
-            final qna = snapshot.data;
-            if (qna == null) {
-              return const Center(
-                child: Text(
-                  '문의 상세 내역이 없습니다.',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 15,
-                    color: Color(0xFF87909E),
-                  ),
-                ),
-              );
-            }
-
-            final isComplete = qna.processStatusCode == 'COMPLETE';
-
-            return Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Question Header
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Color(0xFFE8EBF1),
-                                width: 1,
-                              ),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  // Status Badge
-                                  _buildStatusBadge(isComplete),
-                                  const SizedBox(width: 8),
-                                  // Type & Date
-                                  Text(
-                                    _getTypeLabel(qna.qnaTypeCode),
-                                    style: const TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFFA2ADBE),
-                                      letterSpacing: -0.66,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Text(
-                                    '|',
-                                    style: TextStyle(
-                                      color: Color(0xFFE8EBF1),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    _formatDate(qna.regDt),
-                                    style: const TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFFA2ADBE),
-                                      letterSpacing: -0.66,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              // Title
-                              Text(
-                                qna.title,
-                                style: const TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF30343C),
-                                  height: 1.4,
-                                  letterSpacing: -0.66,
-                                ),
-                              ),
-                            ],
-                          ),
+                // Question Content
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        qna.content,
+                        style: const TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF6C737F),
+                          height: 1.4,
+                          letterSpacing: -0.66,
                         ),
-                        // Question Content
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                qna.content,
-                                style: const TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xFF6C737F),
-                                  height: 1.4,
-                                  letterSpacing: -0.66,
-                                ),
-                              ),
-                              if (qna.files.isNotEmpty) ...[
-                                const SizedBox(height: 24),
-                                _buildAttachmentList(qna.files),
-                              ],
-                            ],
-                          ),
-                        ),
-                        // Answer Box
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: _buildAnswerBox(qna),
-                        ),
+                      ),
+                      if (qna.files.isNotEmpty) ...[
                         const SizedBox(height: 24),
+                        _buildAttachmentList(qna.files),
                       ],
-                    ),
+                    ],
                   ),
                 ),
+                // Answer Box
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: _buildAnswerBox(qna),
+                ),
+                const SizedBox(height: 24),
               ],
-            );
-          },
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -305,6 +402,21 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
         file.originName.toLowerCase().endsWith('.gif') ||
         file.originName.toLowerCase().endsWith('.webp');
 
+    if (!isImage) {
+      return Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8F9FB),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFE8EBF1), width: 1),
+        ),
+        child: const Center(
+          child: Icon(Icons.insert_drive_file_outlined, color: Color(0xFF87909E), size: 32),
+        ),
+      );
+    }
+
     return Container(
       width: 100,
       height: 100,
@@ -314,21 +426,24 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
         border: Border.all(color: const Color(0xFFE8EBF1), width: 1),
       ),
       clipBehavior: Clip.antiAlias,
-      child: isImage
-          ? _token != null
-              ? Image.network(
-                  _getFileUrl(file.fileId),
-                  headers: {'Authorization': 'Bearer $_token'},
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Center(child: Icon(Icons.broken_image_outlined, color: Color(0xFF87909E))),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-                  },
-                )
-              : const Center(child: CircularProgressIndicator(strokeWidth: 2))
-          : const Center(child: Icon(Icons.insert_drive_file_outlined, color: Color(0xFF87909E), size: 32)),
+      child: FutureBuilder<Uint8List>(
+        future: ref.read(boardRepositoryProvider).downloadFile(file.fileId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+          }
+          if (snapshot.hasError || !snapshot.hasData) {
+            debugPrint('[ImageDownloadError] fileId: ${file.fileId}, Error: ${snapshot.error}');
+            return const Center(
+              child: Icon(Icons.broken_image_outlined, color: Color(0xFF87909E)),
+            );
+          }
+          return Image.memory(
+            snapshot.data!,
+            fit: BoxFit.cover,
+          );
+        },
+      ),
     );
   }
 

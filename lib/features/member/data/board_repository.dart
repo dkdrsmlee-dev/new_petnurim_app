@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/api/api_client.dart';
@@ -19,6 +20,18 @@ abstract interface class BoardRepository {
     required String content,
     List<String>? fileIds,
   });
+
+  Future<void> deleteQna(String id);
+
+  Future<void> updateQna({
+    required String id,
+    required String qnaTypeCode,
+    required String title,
+    required String content,
+    List<String>? fileIds,
+  });
+
+  Future<Uint8List> downloadFile(String fileId);
 }
 
 class BackendBoardRepository implements BoardRepository {
@@ -90,7 +103,11 @@ class BackendBoardRepository implements BoardRepository {
     required String content,
     List<String>? fileIds,
   }) async {
-    final fileDtos = fileIds?.map((id) => {'fileId': id}).toList();
+    final fileDtos = fileIds?.map((id) {
+      return {
+        'fileId': id,
+      };
+    }).toList();
 
     await _apiClient.postJson(
       '/api/v1/board/qnas',
@@ -102,6 +119,51 @@ class BackendBoardRepository implements BoardRepository {
         if (fileDtos != null && fileDtos.isNotEmpty) 'files': fileDtos,
       },
       fallbackMessage: '1:1 문의 등록에 실패했습니다.',
+    );
+  }
+
+  @override
+  Future<void> deleteQna(String id) async {
+    await _apiClient.deleteJson(
+      '/api/v1/board/qnas/$id',
+      bearerToken: await _readAccessToken('로그인 정보가 없어 1:1 문의를 삭제할 수 없습니다.'),
+      fallbackMessage: '1:1 문의 삭제에 실패했습니다.',
+    );
+  }
+
+  @override
+  Future<void> updateQna({
+    required String id,
+    required String qnaTypeCode,
+    required String title,
+    required String content,
+    List<String>? fileIds,
+  }) async {
+    final fileDtos = fileIds?.map((id) {
+      return {
+        'fileId': id,
+      };
+    }).toList();
+
+    await _apiClient.putJson(
+      '/api/v1/board/qnas/$id',
+      bearerToken: await _readAccessToken('로그인 정보가 없어 1:1 문의를 수정할 수 없습니다.'),
+      body: {
+        'qnaTypeCode': qnaTypeCode,
+        'title': title,
+        'content': content,
+        if (fileDtos != null && fileDtos.isNotEmpty) 'files': fileDtos,
+      },
+      fallbackMessage: '1:1 문의 수정에 실패했습니다.',
+    );
+  }
+
+  @override
+  Future<Uint8List> downloadFile(String fileId) async {
+    return await _apiClient.getBytes(
+      '/api/v1/files/$fileId/thumb',
+      bearerToken: await _readAccessToken('로그인 정보가 없어 파일을 다운로드할 수 없습니다.'),
+      fallbackMessage: '파일 다운로드에 실패했습니다.',
     );
   }
 
