@@ -372,77 +372,138 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
   }
 
   Widget _buildAttachmentList(List<QnaFile> files) {
+    final imageFiles = files.where((file) => _isImageFile(file.originName)).toList();
+    final docFiles = files.where((file) => !_isImageFile(file.originName)).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '첨부파일',
-          style: TextStyle(
-            fontFamily: 'Pretendard',
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF30343C),
-            letterSpacing: -0.66,
+        if (imageFiles.isNotEmpty) ...[
+          ...imageFiles.map((file) => _buildImageAttachment(file)),
+          if (docFiles.isNotEmpty) const SizedBox(height: 24),
+        ],
+        if (docFiles.isNotEmpty) ...[
+          Text(
+            '첨부파일 ${docFiles.length}',
+            style: const TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF51565F),
+              letterSpacing: -0.66,
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: files.map((file) => _buildAttachmentCard(file)).toList(),
-        ),
+          const SizedBox(height: 12),
+          Column(
+            children: docFiles.map((file) => _buildDocAttachmentCard(file)).toList(),
+          ),
+        ],
       ],
     );
   }
 
-  Widget _buildAttachmentCard(QnaFile file) {
-    final isImage = file.originName.toLowerCase().endsWith('.png') ||
-        file.originName.toLowerCase().endsWith('.jpg') ||
-        file.originName.toLowerCase().endsWith('.jpeg') ||
-        file.originName.toLowerCase().endsWith('.gif') ||
-        file.originName.toLowerCase().endsWith('.webp');
+  bool _isImageFile(String filename) {
+    final lower = filename.toLowerCase();
+    return lower.endsWith('.png') ||
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.gif') ||
+        lower.endsWith('.webp');
+  }
 
-    if (!isImage) {
-      return Container(
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8F9FB),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFFE8EBF1), width: 1),
-        ),
-        child: const Center(
-          child: Icon(Icons.insert_drive_file_outlined, color: Color(0xFF87909E), size: 32),
-        ),
-      );
-    }
-
+  Widget _buildImageAttachment(QnaFile file) {
     return Container(
-      width: 100,
-      height: 100,
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FB),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE8EBF1), width: 1),
+        borderRadius: BorderRadius.circular(12),
       ),
       clipBehavior: Clip.antiAlias,
       child: FutureBuilder<Uint8List>(
         future: ref.read(boardRepositoryProvider).downloadFile(file.fileId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(strokeWidth: 2));
+            return Container(
+              height: 200,
+              color: const Color(0xFFF8F9FB),
+              child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            );
           }
           if (snapshot.hasError || !snapshot.hasData) {
             debugPrint('[ImageDownloadError] fileId: ${file.fileId}, Error: ${snapshot.error}');
-            return const Center(
-              child: Icon(Icons.broken_image_outlined, color: Color(0xFF87909E)),
+            return Container(
+              height: 200,
+              color: const Color(0xFFF8F9FB),
+              child: const Center(
+                child: Icon(Icons.broken_image_outlined, color: Color(0xFF87909E)),
+              ),
             );
           }
           return Image.memory(
             snapshot.data!,
-            fit: BoxFit.cover,
+            fit: BoxFit.fitWidth,
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildDocAttachmentCard(QnaFile file) {
+    final sizeText = file.fileSize.isNotEmpty ? file.fileSize : '0.0 MB';
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE8EBF1), width: 1),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  file.originName,
+                  style: const TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF30343C),
+                    letterSpacing: -0.66,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  sizeText,
+                  style: const TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 11,
+                    color: Color(0xFF87909E),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          IconButton(
+            onPressed: () {
+              ToastUtil.show(context, '파일 다운로드를 시작합니다.');
+            },
+            icon: const Icon(
+              Icons.file_download_outlined,
+              color: Color(0xFF87909E),
+              size: 24,
+            ),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
       ),
     );
   }
