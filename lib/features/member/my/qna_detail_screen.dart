@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../core/utils/toast_util.dart';
+import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
 import '../domain/qna_models.dart';
@@ -85,118 +86,41 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
 
 
   Future<void> _deleteQna() async {
-    final confirmed = await showDialog<bool>(
+    showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                '문의 삭제',
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF30343C),
-                  letterSpacing: -0.66,
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                '정말 이 1:1 문의를 삭제하시겠습니까?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Pretendard',
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF6C737F),
-                  height: 1.4,
-                  letterSpacing: -0.66,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: const Color(0xFF7F4FFF),
-                        side: BorderSide.none,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: const Text(
-                        '취소',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: Color(0xFFD6DBE4), width: 1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: const Text(
-                        '삭제',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFF15A5A),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+      builder: (dialogContext) => EdgeButtonDialog(
+        title: '문의 삭제',
+        content: '정말 이 1:1 문의를 삭제하시겠습니까?',
+        cancelText: '취소',
+        confirmText: '삭제',
+        cancelBgColor: const Color(0xFF7F4FFF),
+        cancelTextColor: Colors.white,
+        confirmBgColor: const Color(0xFFE8EBF1),
+        confirmTextColor: const Color(0xFFF15A5A),
+        onCancel: () => Navigator.of(dialogContext).pop(),
+        onConfirm: () async {
+          try {
+            setState(() {
+              _isLoading = true;
+            });
+            await ref.read(boardRepositoryProvider).deleteQna(widget.boardQnaId);
+            if (mounted) {
+              ToastUtil.show(context, '1:1 문의가 삭제되었습니다.');
+              Navigator.of(context).pop(true);
+            }
+          } catch (e) {
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('삭제에 실패했습니다: $e')),
+              );
+            }
+          }
+        },
       ),
     );
-
-    if (confirmed == true) {
-      try {
-        setState(() {
-          _isLoading = true;
-        });
-        await ref.read(boardRepositoryProvider).deleteQna(widget.boardQnaId);
-        if (mounted) {
-          ToastUtil.show(context, '1:1 문의가 삭제되었습니다.');
-          Navigator.of(context).pop(true);
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('삭제에 실패했습니다: $e')),
-          );
-        }
-      }
-    }
   }
 
   Future<void> _editQna() async {

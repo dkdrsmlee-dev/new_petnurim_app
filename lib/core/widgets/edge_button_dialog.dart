@@ -10,6 +10,10 @@ class EdgeButtonDialog extends StatelessWidget {
     this.onCancel,
     required this.onConfirm,
     this.topWidget,
+    this.cancelBgColor,
+    this.cancelTextColor,
+    this.confirmBgColor,
+    this.confirmTextColor,
   });
 
   final String title;
@@ -19,6 +23,10 @@ class EdgeButtonDialog extends StatelessWidget {
   final VoidCallback? onCancel;
   final VoidCallback onConfirm;
   final Widget? topWidget;
+  final Color? cancelBgColor;
+  final Color? cancelTextColor;
+  final Color? confirmBgColor;
+  final Color? confirmTextColor;
 
   @override
   Widget build(BuildContext context) {
@@ -81,8 +89,8 @@ class EdgeButtonDialog extends StatelessWidget {
                       child: TextButton(
                         onPressed: onCancel ?? () => Navigator.of(context).pop(),
                         style: TextButton.styleFrom(
-                          backgroundColor: const Color(0xFFE8EBF1),
-                          foregroundColor: const Color(0xFF6C737F),
+                          backgroundColor: cancelBgColor ?? const Color(0xFFE8EBF1),
+                          foregroundColor: cancelTextColor ?? const Color(0xFF6C737F),
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero,
                           ),
@@ -90,9 +98,10 @@ class EdgeButtonDialog extends StatelessWidget {
                         ),
                         child: Text(
                           cancelText!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
+                            color: cancelTextColor ?? const Color(0xFF6C737F),
                           ),
                         ),
                       ),
@@ -107,8 +116,8 @@ class EdgeButtonDialog extends StatelessWidget {
                         onConfirm();
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: const Color(0xFF7F4FFF),
-                        foregroundColor: Colors.white,
+                        backgroundColor: confirmBgColor ?? const Color(0xFF7F4FFF),
+                        foregroundColor: confirmTextColor ?? Colors.white,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
                         ),
@@ -116,9 +125,10 @@ class EdgeButtonDialog extends StatelessWidget {
                       ),
                       child: Text(
                         confirmText,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
+                          color: confirmTextColor ?? Colors.white,
                         ),
                       ),
                     ),
