@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/page_header.dart';
@@ -84,25 +85,92 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
   Future<void> _deleteQna() async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text(
-          '문의 삭제',
-          style: TextStyle(fontFamily: 'Pretendard', fontWeight: FontWeight.bold),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
-        content: const Text(
-          '정말 이 1:1 문의를 삭제하시겠습니까?',
-          style: TextStyle(fontFamily: 'Pretendard'),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '문의 삭제',
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF30343C),
+                  letterSpacing: -0.66,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                '정말 이 1:1 문의를 삭제하시겠습니까?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF6C737F),
+                  height: 1.4,
+                  letterSpacing: -0.66,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: const Color(0xFF7F4FFF),
+                        side: BorderSide.none,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text(
+                        '취소',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Color(0xFFD6DBE4), width: 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text(
+                        '삭제',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFF15A5A),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소', style: TextStyle(fontFamily: 'Pretendard', color: Colors.grey)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('삭제', style: TextStyle(fontFamily: 'Pretendard', color: Colors.red)),
-          ),
-        ],
       ),
     );
 
@@ -146,37 +214,11 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final showActions = _qnaDetail != null && _qnaDetail!.processStatusCode != 'COMPLETE';
-    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: NurimPageHeader(
         title: '1:1 문의',
         onBackPressed: () => Navigator.of(context).pop(),
-        actions: showActions
-            ? [
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    if (value == 'edit') {
-                      _editQna();
-                    } else if (value == 'delete') {
-                      _deleteQna();
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: Text('수정하기', style: TextStyle(fontFamily: 'Pretendard')),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Text('삭제하기', style: TextStyle(fontFamily: 'Pretendard', color: Colors.red)),
-                    ),
-                  ],
-                  icon: const Icon(Icons.more_vert, color: Color(0xFF30343C)),
-                ),
-              ]
-            : null,
       ),
       body: SafeArea(
         child: _buildBody(),
@@ -255,40 +297,155 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Status Badge
-                          _buildStatusBadge(isComplete),
-                          const SizedBox(width: 8),
-                          // Type & Date
-                          Text(
-                            _getTypeLabel(qna.qnaTypeCode),
-                            style: const TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFFA2ADBE),
-                              letterSpacing: -0.66,
-                            ),
+                          Row(
+                            children: [
+                              // Status Badge
+                              _buildStatusBadge(isComplete),
+                              const SizedBox(width: 8),
+                              // Type & Date
+                              Text(
+                                _getTypeLabel(qna.qnaTypeCode),
+                                style: const TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFFA2ADBE),
+                                  letterSpacing: -0.66,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                '|',
+                                style: TextStyle(
+                                  color: Color(0xFFE8EBF1),
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _formatDate(qna.regDt),
+                                style: const TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFFA2ADBE),
+                                  letterSpacing: -0.66,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 8),
-                          const Text(
-                            '|',
-                            style: TextStyle(
-                              color: Color(0xFFE8EBF1),
-                              fontSize: 12,
+                          if (!isComplete)
+                            Theme(
+                              data: Theme.of(context).copyWith(
+                                hoverColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                              ),
+                              child: PopupMenuButton<String>(
+                                offset: const Offset(-8, 28),
+                                elevation: 6,
+                                shadowColor: const Color(0x1A51565F),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  side: const BorderSide(color: Color(0xFFD6DBE4), width: 1),
+                                ),
+                                color: Colors.white,
+                                onSelected: (_) {},
+                                itemBuilder: (context) => [
+                                  PopupMenuItem<String>(
+                                    enabled: false, // Disables standard tap behavior to use custom InkWell taps inside
+                                    padding: EdgeInsets.zero,
+                                    height: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              _editQna();
+                                            },
+                                            child: Container(
+                                              width: double.infinity,
+                                              padding: const EdgeInsets.symmetric(vertical: 4),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  const Text(
+                                                    '수정하기',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w500,
+                                                      color: Color(0xFF30343C),
+                                                      letterSpacing: -0.66,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 12),
+                                                  SvgPicture.asset(
+                                                    'assets/images/ic_edit.svg',
+                                                    width: 16,
+                                                    height: 16,
+                                                    colorFilter: const ColorFilter.mode(
+                                                      Color(0xFF87909E),
+                                                      BlendMode.srcIn,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          InkWell(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              _deleteQna();
+                                            },
+                                            child: Container(
+                                              width: double.infinity,
+                                              padding: const EdgeInsets.symmetric(vertical: 4),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  const Text(
+                                                    '삭제하기',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Pretendard',
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w500,
+                                                      color: Color(0xFF30343C),
+                                                      letterSpacing: -0.66,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 12),
+                                                  SvgPicture.asset(
+                                                    'assets/images/ic_delete.svg',
+                                                    width: 16,
+                                                    height: 16,
+                                                    colorFilter: const ColorFilter.mode(
+                                                      Color(0xFF87909E),
+                                                      BlendMode.srcIn,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                                icon: const Icon(Icons.more_vert, color: Color(0xFF87909E)),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            _formatDate(qna.regDt),
-                            style: const TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFFA2ADBE),
-                              letterSpacing: -0.66,
-                            ),
-                          ),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -324,6 +481,12 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                           letterSpacing: -0.66,
                         ),
                       ),
+                      if (qna.files.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        ...qna.files
+                            .where((file) => _isImageFile(file.originName))
+                            .map((file) => _buildImageAttachment(file)),
+                      ],
                     ],
                   ),
                 ),
