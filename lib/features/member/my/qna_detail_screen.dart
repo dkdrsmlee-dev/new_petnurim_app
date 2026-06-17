@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/page_header.dart';
@@ -209,6 +211,49 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
 
     if (updated == true) {
       _loadData();
+    }
+  }
+
+  Future<void> _downloadFileToDevice(QnaFile file) async {
+    try {
+      if (!mounted) return;
+      ToastUtil.show(context, '다운로드를 시작합니다.');
+
+      final bytes = await ref.read(boardRepositoryProvider).downloadFile(file.fileId);
+      
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = await getDownloadsDirectory();
+      } else {
+        directory = await getApplicationDocumentsDirectory();
+      }
+      
+      directory ??= await getApplicationDocumentsDirectory();
+
+      String filePath = "${directory.path}/${file.originName}";
+      File f = File(filePath);
+      
+      int counter = 1;
+      final extensionIndex = file.originName.lastIndexOf('.');
+      final nameWithoutExt = extensionIndex != -1 ? file.originName.substring(0, extensionIndex) : file.originName;
+      final ext = extensionIndex != -1 ? file.originName.substring(extensionIndex) : '';
+      
+      while (await f.exists()) {
+        filePath = "${directory.path}/${nameWithoutExt}_$counter$ext";
+        f = File(filePath);
+        counter++;
+      }
+
+      await f.writeAsBytes(bytes);
+
+      if (mounted) {
+        ToastUtil.show(context, '다운로드가 완료되었습니다.\n저장 경로: ${f.path}');
+      }
+    } catch (e) {
+      debugPrint('[FileDownloadError] error: $e');
+      if (mounted) {
+        ToastUtil.show(context, '다운로드에 실패했습니다: $e');
+      }
     }
   }
 
@@ -651,9 +696,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
           ),
           const SizedBox(width: 16),
           IconButton(
-            onPressed: () {
-              ToastUtil.show(context, '파일 다운로드를 시작합니다.');
-            },
+            onPressed: () => _downloadFileToDevice(file),
             icon: const Icon(
               Icons.file_download_outlined,
               color: Color(0xFF87909E),
