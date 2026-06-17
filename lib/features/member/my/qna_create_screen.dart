@@ -10,6 +10,7 @@ import '../data/file_repository.dart';
 import '../domain/qna_models.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class QnaCreateScreen extends ConsumerStatefulWidget {
   final QnaDetail? qnaToEdit;
@@ -427,7 +428,15 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                 child: Column(
                   children: [
                     _buildAttachmentItem(
-                      icon: Icons.photo_camera_outlined,
+                      icon: SvgPicture.asset(
+                        'assets/images/ic_camera.svg',
+                        width: 24,
+                        height: 24,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF87909E),
+                          BlendMode.srcIn,
+                        ),
+                      ),
                       label: '사진 촬영',
                       onTap: () {
                         Navigator.pop(context);
@@ -436,7 +445,15 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                     ),
                     const SizedBox(height: 8),
                     _buildAttachmentItem(
-                      icon: Icons.photo_outlined,
+                      icon: SvgPicture.asset(
+                        'assets/images/ic_album.svg',
+                        width: 24,
+                        height: 24,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF87909E),
+                          BlendMode.srcIn,
+                        ),
+                      ),
                       label: '앨범 선택',
                       onTap: () {
                         Navigator.pop(context);
@@ -445,7 +462,15 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                     ),
                     const SizedBox(height: 8),
                     _buildAttachmentItem(
-                      icon: Icons.insert_drive_file_outlined,
+                      icon: SvgPicture.asset(
+                        'assets/images/ic_file_attach.svg',
+                        width: 24,
+                        height: 24,
+                        colorFilter: const ColorFilter.mode(
+                          Color(0xFF87909E),
+                          BlendMode.srcIn,
+                        ),
+                      ),
                       label: '파일 선택',
                       onTap: () {
                         Navigator.pop(context);
@@ -464,7 +489,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
   }
 
   Widget _buildAttachmentItem({
-    required IconData icon,
+    required Widget icon,
     required String label,
     required VoidCallback onTap,
   }) {
@@ -476,10 +501,10 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: const Color(0xFF87909E),
-              size: 24,
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: Center(child: icon),
             ),
             const SizedBox(width: 8),
             Text(
