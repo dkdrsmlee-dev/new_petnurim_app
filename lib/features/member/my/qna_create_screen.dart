@@ -24,6 +24,9 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   
+  final _tooltipLayerLink = LayerLink();
+  OverlayEntry? _tooltipOverlayEntry;
+  
   String? _selectedTypeCode;
   bool _isLoading = false;
   String? _errorMessage;
@@ -70,9 +73,100 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
 
   @override
   void dispose() {
+    _hideTooltip();
     _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  void _showTooltip() {
+    if (_tooltipOverlayEntry != null) return;
+
+    _tooltipOverlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: _hideTooltip,
+            child: const SizedBox.expand(),
+          ),
+          CompositedTransformFollower(
+            link: _tooltipLayerLink,
+            showWhenUnlinked: false,
+            targetAnchor: Alignment.bottomCenter,
+            followerAnchor: Alignment.topCenter,
+            offset: const Offset(0, 8),
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                width: 280,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFD6DBE4), width: 1),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x1A51565F),
+                      blurRadius: 8,
+                      offset: Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          '첨부파일 형식',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF30343C),
+                            letterSpacing: -0.66,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: _hideTooltip,
+                          child: const Icon(
+                            Icons.close,
+                            color: Color(0xFF51565F),
+                            size: 18,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'jpg, jpeg, png, gif, pdf, xls, xlsx, txt,\ndoc, docx, ppt, pptx, zip, hwp, hwpx',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF87909E),
+                        height: 1.4,
+                        letterSpacing: -0.66,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    Overlay.of(context).insert(_tooltipOverlayEntry!);
+  }
+
+  void _hideTooltip() {
+    _tooltipOverlayEntry?.remove();
+    _tooltipOverlayEntry = null;
   }
 
   String? _getSelectedTypeLabel() {
@@ -758,13 +852,43 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    const Text(
-                      '첨부파일',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF30343C),
+                    CompositedTransformTarget(
+                      link: _tooltipLayerLink,
+                      child: Row(
+                        children: [
+                          const Text(
+                            '첨부파일',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF30343C),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: _showTooltip,
+                            child: Container(
+                              width: 18,
+                              height: 18,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFE8EBF1),
+                                shape: BoxShape.circle,
+                              ),
+                              alignment: Alignment.center,
+                              child: const Text(
+                                '?',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF87909E),
+                                  height: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 12),
