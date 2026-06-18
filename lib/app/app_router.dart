@@ -13,6 +13,7 @@ import '../features/signup/verify_screen.dart';
 import '../features/splash/splash_screen.dart';
 import '../features/webview/address_webview_screen.dart';
 import '../features/member/my/customer_center_screen.dart';
+import '../features/member/my/my_pet_list_screen.dart';
 import '../features/notification/notification_screen.dart';
 import 'app_routes.dart';
 
@@ -79,6 +80,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.customerCenter,
         name: AppRouteNames.customerCenter,
         builder: (context, state) => const CustomerCenterScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.myPetList,
+        name: AppRouteNames.myPetList,
+        builder: (context, state) => const MyPetListScreen(),
       ),
       GoRoute(
         path: AppRoutes.notificationCenter,

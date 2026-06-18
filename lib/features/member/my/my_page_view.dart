@@ -74,6 +74,45 @@ class _MyPageContentState extends State<_MyPageContent> {
         ? widget.myPage.email
         : 'example@example.com';
 
+    final pets = [
+      const NurimPetCardData(
+        name: '콩두리',
+        breed: '웰시코기',
+        ageText: '2살',
+        genderText: '남아',
+        membershipTier: '브론즈',
+        rewardText: '28,000P',
+        isPrimary: true,
+        imageProvider: NetworkImage(
+          'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=150&h=150&fit=crop',
+        ),
+      ),
+      const NurimPetCardData(
+        name: '초코',
+        breed: '푸들',
+        ageText: '3살',
+        genderText: '여아',
+        membershipTier: '실버',
+        rewardText: '15,000P',
+        isPrimary: false,
+        imageProvider: NetworkImage(
+          'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=150&h=150&fit=crop',
+        ),
+      ),
+      const NurimPetCardData(
+        name: '크림이',
+        breed: '포메라니안',
+        ageText: '1살',
+        genderText: '남아',
+        membershipTier: '프렌드',
+        rewardText: '5,000P',
+        isPrimary: false,
+        imageProvider: NetworkImage(
+          'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=150&h=150&fit=crop',
+        ),
+      ),
+    ];
+
     return Column(
       children: [
         // 1. 고정 상단 헤더
@@ -134,11 +173,12 @@ class _MyPageContentState extends State<_MyPageContent> {
               const SizedBox(height: 24),
 
               // 마이 펫 타이틀 영역 (NurimSectionTitle)
-              const NurimSectionTitle(
+              NurimSectionTitle(
                 title: '마이 펫',
                 actionLabel: '전체보기',
-                showAction: true,
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                showAction: pets.length >= 2,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                onActionPressed: () => context.push(AppRoutes.myPetList),
               ),
               const SizedBox(height: 12),
 
@@ -146,44 +186,7 @@ class _MyPageContentState extends State<_MyPageContent> {
               // (상위 패딩 20px이 리스트뷰에 적용되도록 padding 인자 전달)
               NurimMyPetSection(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                pets: [
-                  const NurimPetCardData(
-                    name: '콩두리',
-                    breed: '웰시코기',
-                    ageText: '2살',
-                    genderText: '남아',
-                    membershipTier: '브론즈',
-                    rewardText: '28,000P',
-                    isPrimary: true,
-                    imageProvider: NetworkImage(
-                      'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=150&h=150&fit=crop',
-                    ),
-                  ),
-                  const NurimPetCardData(
-                    name: '초코',
-                    breed: '푸들',
-                    ageText: '3살',
-                    genderText: '여아',
-                    membershipTier: '실버',
-                    rewardText: '15,000P',
-                    isPrimary: false,
-                    imageProvider: NetworkImage(
-                      'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=150&h=150&fit=crop',
-                    ),
-                  ),
-                  const NurimPetCardData(
-                    name: '크림이',
-                    breed: '포메라니안',
-                    ageText: '1살',
-                    genderText: '남아',
-                    membershipTier: '프렌드',
-                    rewardText: '5,000P',
-                    isPrimary: false,
-                    imageProvider: NetworkImage(
-                      'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=150&h=150&fit=crop',
-                    ),
-                  ),
-                ],
+                pets: pets,
                 onPetPressed: (_) {},
                 onAddPressed: () {},
               ),

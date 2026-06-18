@@ -411,27 +411,42 @@ class _MembershipChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isJoinPrompt = label == '멤버십 가입하기';
+
     return Container(
       height: 24,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.symmetric(horizontal: isJoinPrompt ? 6 : 8),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: const Color(0xFFF2EFFF),
+        color: isJoinPrompt ? Colors.white : const Color(0xFFF2EFFF),
         border: Border.all(color: const Color(0xFFC6BAFF)),
         borderRadius: BorderRadius.circular(100),
       ),
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          fontFamily: 'Pretendard',
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          height: 1.2,
-          letterSpacing: -0.66,
-          color: NurimPetCard._primaryColor,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: 'Pretendard',
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              height: 1.2,
+              letterSpacing: -0.66,
+              color: NurimPetCard._primaryColor,
+            ),
+          ),
+          if (isJoinPrompt) ...[
+            const SizedBox(width: 2),
+            const Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: NurimPetCard._primaryColor,
+            ),
+          ],
+        ],
       ),
     );
   }

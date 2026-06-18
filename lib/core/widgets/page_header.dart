@@ -11,6 +11,7 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.showBackButton = true,
     this.actions,
+    this.showDivider = true,
   });
 
   /// 헤더 중앙에 표시될 타이틀 텍스트
@@ -25,17 +26,22 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
   /// 우측에 표시될 액션 버튼 목록
   final List<Widget>? actions;
 
+  /// 하단 구분선 노출 여부 (기본값: true)
+  final bool showDivider;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          bottom: BorderSide(
-            color: Color(0xFFD6DBE4), // Figma line/default: #D6DBE4
-            width: 1.0,
-          ),
-        ),
+        border: showDivider
+            ? const Border(
+                bottom: BorderSide(
+                  color: Color(0xFFD6DBE4), // Figma line/default: #D6DBE4
+                  width: 1.0,
+                ),
+              )
+            : null,
       ),
       child: AppBar(
         toolbarHeight: 48, // Figma Page_header height is 48px (py-12 + icon 24px)
