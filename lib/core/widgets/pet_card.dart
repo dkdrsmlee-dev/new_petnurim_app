@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class NurimPetCardData {
   const NurimPetCardData({
@@ -265,26 +266,36 @@ class NurimMyPetSection extends StatefulWidget {
     this.onPetPressed,
     this.onAddPressed,
     this.padding = const EdgeInsets.symmetric(horizontal: 16),
+    this.viewportFraction = 0.9,
   });
 
   final List<NurimPetCardData> pets;
   final ValueChanged<NurimPetCardData>? onPetPressed;
   final VoidCallback? onAddPressed;
   final EdgeInsetsGeometry padding;
+  final double viewportFraction;
 
   @override
   State<NurimMyPetSection> createState() => _NurimMyPetSectionState();
 }
 
 class _NurimMyPetSectionState extends State<NurimMyPetSection> {
-  late final PageController _pageController;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    // 390 너비 기준으로 약 56px의 여백(좌우 28px)을 갖게 되어,
-    // 카드 간 간격(16)을 제외하면 양옆 카드가 약 20px씩 노출됩니다.
-    _pageController = PageController(viewportFraction: 0.85);
+    // 기존 0.85에서 기본값 0.90으로 변경하여 좌우 크기를 키웠습니다.
+    _pageController = PageController(viewportFraction: widget.viewportFraction);
+  }
+
+  @override
+  void didUpdateWidget(covariant NurimMyPetSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.viewportFraction != widget.viewportFraction) {
+      _pageController.dispose();
+      _pageController = PageController(viewportFraction: widget.viewportFraction);
+    }
   }
 
   @override
@@ -445,38 +456,44 @@ class _AddPetButton extends StatelessWidget {
           child: CustomPaint(
             painter: _DashedRoundedRectPainter(
               color: enabled
-                  ? NurimPetCard._primaryColor
-                  : NurimPetCard._borderColor,
+                  ? NurimPetCard._borderColor
+                  : const Color(0xFFE8EBF1),
             ),
             child: SizedBox(
-              height: 40,
-              child: Center(
+              height: 48,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Text(
                       '마이 펫 추가',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      height: 1.4,
-                      letterSpacing: -0.66,
-                      color: enabled
-                          ? NurimPetCard._primaryColor
-                          : NurimPetCard._mutedColor,
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        height: 1.4,
+                        letterSpacing: -0.66,
+                        color: enabled
+                            ? const Color(0xFF51565F)
+                            : NurimPetCard._mutedColor,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.add,
-                    size: 16,
-                    color: enabled
-                        ? NurimPetCard._primaryColor
-                        : NurimPetCard._mutedColor,
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 4),
+                    SvgPicture.asset(
+                      'assets/images/ic_add.svg',
+                      width: 16,
+                      height: 16,
+                      colorFilter: enabled
+                          ? null
+                          : const ColorFilter.mode(
+                              NurimPetCard._mutedColor,
+                              BlendMode.srcIn,
+                            ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
