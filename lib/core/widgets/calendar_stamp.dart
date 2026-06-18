@@ -28,7 +28,7 @@ class CalendarStamp extends StatelessWidget {
             SvgPicture.asset(
               'assets/images/banner/paw.svg',
               width: 24,
-              height: 24,
+              height: 18,
             ),
           
           // 오늘 표시 (우측 상단 빨간 점)
