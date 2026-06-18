@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// 하단 카메라 촬영 버튼 바 (촬영 전)
 class CameraControlBar extends StatelessWidget {
@@ -95,23 +96,24 @@ class CameraButtonBar extends StatelessWidget {
               onTap: onCancel,
               child: Container(
                 height: 56,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: const Color(0xFFD6DBE4)),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.close, color: Color(0xFF51565F), size: 20),
-                    SizedBox(width: 6),
+                    const Icon(Icons.close, color: Color(0xFF51565F), size: 24),
+                    const SizedBox(width: 6),
                     Text(
                       '취소',
                       style: TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF51565F),
+                        color: const Color(0xFF51565F),
                         letterSpacing: -0.66,
                       ),
                     ),
@@ -126,16 +128,21 @@ class CameraButtonBar extends StatelessWidget {
               onTap: onSave,
               child: Container(
                 height: 56,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: const Color(0xFF7F4FFF),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.download, color: Colors.white, size: 20),
-                    SizedBox(width: 6),
-                    Text(
+                    SvgPicture.asset(
+                      'assets/images/ic_download.svg',
+                      width: 24,
+                      height: 24,
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
                       '저장',
                       style: TextStyle(
                         fontFamily: 'Pretendard',
