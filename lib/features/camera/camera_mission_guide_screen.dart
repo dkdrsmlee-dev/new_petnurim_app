@@ -234,9 +234,28 @@ class CameraMissionGuideScreen extends StatelessWidget {
                                     child: SizedBox(
                                       width: double.infinity,
                                       height: 92,
-                                      child: Image.asset(
-                                        'assets/images/banner/fangs_guide.png',
-                                        fit: BoxFit.cover,
+                                      child: LayoutBuilder(
+                                        builder: (context, constraints) {
+                                          final parentWidth = constraints.maxWidth;
+                                          final imgSize = 358.069;
+                                          final leftPos = (parentWidth - imgSize) / 2 - 7.47;
+                                          final topPos = (92 - imgSize) / 2 - 22.61;
+                                          return Stack(
+                                            clipBehavior: Clip.none,
+                                            children: [
+                                              Positioned(
+                                                left: leftPos,
+                                                top: topPos,
+                                                width: imgSize,
+                                                height: imgSize,
+                                                child: Image.asset(
+                                                  'assets/images/banner/fangs_guide.png',
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       ),
                                     ),
                                   ),
