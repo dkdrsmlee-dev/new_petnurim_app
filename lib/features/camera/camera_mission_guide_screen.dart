@@ -615,7 +615,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               color: const Color(0xFFF4F6F8), // var(--color/gray/20)
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -645,7 +645,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
               ),
             ),
             
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
           ],
         ),
       ),
