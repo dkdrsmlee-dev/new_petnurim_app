@@ -71,17 +71,17 @@ class CameraMissionGuideScreen extends StatelessWidget {
                               
                               // 1. 카메라 (Figma Node 327:12193)
                               Positioned(
-                                left: baselineX + 111.42,
-                                top: 172.64,
-                                width: 159.12,
-                                height: 142.947,
+                                left: baselineX + 119.1,
+                                top: 178.67,
+                                width: 143.21,
+                                height: 128.65,
                                 child: Center(
                                   child: Transform.rotate(
                                     angle: -5.39 * (3.14159 / 180),
                                     child: Image.asset(
                                       'assets/images/banner/camera1.png',
-                                      width: 147.587,
-                                      height: 129.648,
+                                      width: 132.83,
+                                      height: 116.68,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -90,17 +90,17 @@ class CameraMissionGuideScreen extends StatelessWidget {
                               
                               // 2. 강아지 (Figma Node 327:12194)
                               Positioned(
-                                left: baselineX + 79.13,
-                                top: 222.59,
-                                width: 55.353,
-                                height: 69.323,
+                                left: baselineX + 90.04,
+                                top: 223.63,
+                                width: 49.82,
+                                height: 62.39,
                                 child: Center(
                                   child: Transform.rotate(
                                     angle: -2.45 * (3.14159 / 180),
                                     child: Image.asset(
                                       'assets/images/banner/dog11.png',
-                                      width: 52.534,
-                                      height: 67.141,
+                                      width: 47.28,
+                                      height: 60.43,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -109,17 +109,17 @@ class CameraMissionGuideScreen extends StatelessWidget {
                               
                               // 3. 고양이 (Figma Node 327:12195)
                               Positioned(
-                                left: baselineX + 237.32,
-                                top: 197.69,
-                                width: 69.796,
-                                height: 70.324,
+                                left: baselineX + 232.41,
+                                top: 201.22,
+                                width: 62.82,
+                                height: 63.29,
                                 child: Center(
                                   child: Transform.rotate(
                                     angle: -24.02 * (3.14159 / 180),
                                     child: Image.asset(
                                       'assets/images/banner/cat41.png',
-                                      width: 52.534,
-                                      height: 53.578,
+                                      width: 47.28,
+                                      height: 48.22,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -128,17 +128,17 @@ class CameraMissionGuideScreen extends StatelessWidget {
                               
                               // 4. 동전 5 (Figma Node 551:6819)
                               Positioned(
-                                left: baselineX + 93.15,
-                                top: 179.42,
-                                width: 29.078,
-                                height: 30.107,
+                                left: baselineX + 102.65,
+                                top: 184.78,
+                                width: 26.17,
+                                height: 27.1,
                                 child: Center(
                                   child: Transform.rotate(
                                     angle: -30.5 * (3.14159 / 180),
                                     child: Image.asset(
                                       'assets/images/banner/coin51.png',
-                                      width: 20.161,
-                                      height: 23.066,
+                                      width: 18.14,
+                                      height: 20.76,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -147,17 +147,17 @@ class CameraMissionGuideScreen extends StatelessWidget {
                               
                               // 5. 동전 4 (Figma Node 551:6844)
                               Positioned(
-                                left: baselineX + 223.36,
-                                top: 273.34,
-                                width: 48.274,
-                                height: 50.653,
+                                left: baselineX + 219.84,
+                                top: 269.3,
+                                width: 43.45,
+                                height: 45.59,
                                 child: Center(
                                   child: Transform.rotate(
                                     angle: 22.84 * (3.14159 / 180),
                                     child: Image.asset(
                                       'assets/images/banner/coin42.png',
-                                      width: 35.536,
-                                      height: 39.996,
+                                      width: 31.98,
+                                      height: 36.0,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -166,17 +166,17 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 6. 꽃 8 (Figma Node 338:12544)
                               Positioned(
-                                left: baselineX + 83.44,
-                                top: 305.9,
-                                width: 16.032,
-                                height: 16.249,
+                                left: baselineX + 93.92,
+                                top: 298.61,
+                                width: 14.43,
+                                height: 14.62,
                                 child: Center(
                                   child: Transform.rotate(
                                     angle: 28.87 * (3.14159 / 180),
                                     child: Image.asset(
                                       'assets/images/banner/flower8.png',
-                                      width: 11.604,
-                                      height: 12.157,
+                                      width: 10.44,
+                                      height: 10.94,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -185,17 +185,17 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 7. 꽃 7 (Figma Node 338:12545)
                               Positioned(
-                                left: baselineX + 65.65,
-                                top: 298.19,
-                                width: 16.351,
-                                height: 17.39,
+                                left: baselineX + 77.9,
+                                top: 291.67,
+                                width: 14.72,
+                                height: 15.65,
                                 child: Center(
                                   child: Transform.rotate(
                                     angle: -11.55 * (3.14159 / 180),
                                     child: Image.asset(
                                       'assets/images/banner/flower7.png',
-                                      width: 13.63,
-                                      height: 14.964,
+                                      width: 12.27,
+                                      height: 13.47,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -204,17 +204,17 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 8. 꽃 6 (Figma Node 338:12546)
                               Positioned(
-                                left: baselineX + 315.99,
-                                top: 203.3,
-                                width: 13.006,
-                                height: 13.468,
+                                left: baselineX + 303.21,
+                                top: 206.27,
+                                width: 11.71,
+                                height: 12.12,
                                 child: Center(
                                   child: Transform.rotate(
                                     angle: 20.94 * (3.14159 / 180),
                                     child: Image.asset(
                                       'assets/images/banner/flower6.png',
-                                      width: 9.85,
-                                      height: 10.652,
+                                      width: 8.87,
+                                      height: 9.59,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -223,10 +223,10 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 9. 데코레이션 원형 1591 (Figma Node 338:12549)
                               Positioned(
-                                left: baselineX + 311.42,
-                                top: 287.63,
-                                width: 2,
-                                height: 2,
+                                left: baselineX + 299.1,
+                                top: 282.16,
+                                width: 1.8,
+                                height: 1.8,
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     color: Colors.white,
@@ -237,10 +237,10 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 10. 데코레이션 원형 1592 (Figma Node 338:12550)
                               Positioned(
-                                left: baselineX + 335.4,
-                                top: 194.44,
-                                width: 4,
-                                height: 4,
+                                left: baselineX + 320.68,
+                                top: 198.29,
+                                width: 3.6,
+                                height: 3.6,
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     color: Colors.white,
@@ -251,10 +251,10 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 11. 데코레이션 원형 1590 (Figma Node 484:26023)
                               Positioned(
-                                left: baselineX + 66.45,
-                                top: 183.24,
-                                width: 3,
-                                height: 3,
+                                left: baselineX + 78.62,
+                                top: 188.21,
+                                width: 2.7,
+                                height: 2.7,
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     color: Colors.white,
@@ -265,12 +265,14 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 12. 그린 플러스 Union 1 (Figma Node 338:12559)
                               Positioned(
-                                left: baselineX + 36.98,
-                                top: 206.35,
-                                width: 12,
-                                height: 12,
+                                left: baselineX + 52.1,
+                                top: 209.01,
+                                width: 10.8,
+                                height: 10.8,
                                 child: SvgPicture.asset(
                                   'assets/images/banner/union_plus_1.svg',
+                                  width: 10.8,
+                                  height: 10.8,
                                   colorFilter: const ColorFilter.mode(
                                     Color(0xFF79FFAE),
                                     BlendMode.srcIn,
@@ -280,12 +282,14 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 13. 그린 플러스 Union 2 (Figma Node 338:12560)
                               Positioned(
-                                left: baselineX + 294.08,
-                                top: 295.0,
-                                width: 8.93,
-                                height: 8.93,
+                                left: baselineX + 283.49,
+                                top: 288.8,
+                                width: 8.04,
+                                height: 8.04,
                                 child: SvgPicture.asset(
                                   'assets/images/banner/union_plus_2.svg',
+                                  width: 8.04,
+                                  height: 8.04,
                                   colorFilter: const ColorFilter.mode(
                                     Color(0xFF79FFAE),
                                     BlendMode.srcIn,
@@ -299,11 +303,11 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 14. 하단 배지 (리워드 받아요!)
                               Positioned(
-                                top: 91.25,
+                                top: 97.25,
                                 child: Transform.rotate(
                                   angle: -4.6 * (3.14159 / 180),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFF423F99).withValues(alpha: 0.5),
                                       borderRadius: BorderRadius.circular(9999),
@@ -335,9 +339,9 @@ class CameraMissionGuideScreen extends StatelessWidget {
                                 child: Transform.rotate(
                                   angle: 2.58 * (3.14159 / 180),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.2),
+                                      color: const Color(0xFF7C83EE),
                                       borderRadius: BorderRadius.circular(9999),
                                       boxShadow: [
                                         BoxShadow(
@@ -367,17 +371,17 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
                               // 16. 하트 벌룬 (Figma Node 484:25976 - 배지 위로 올라와야 함)
                               Positioned(
-                                left: baselineX + 251.68,
+                                left: baselineX + 248.0,
                                 top: 141.96,
-                                width: 26.46,
-                                height: 24.652,
+                                width: 23.81,
+                                height: 22.19,
                                 child: Center(
                                   child: Transform.rotate(
                                     angle: 15.62 * (3.14159 / 180),
                                     child: Image.asset(
                                       'assets/images/banner/heart2.png',
-                                      width: 22.042,
-                                      height: 19.436,
+                                      width: 19.84,
+                                      height: 17.49,
                                       fit: BoxFit.contain,
                                     ),
                                   ),
