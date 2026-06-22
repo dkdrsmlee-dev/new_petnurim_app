@@ -9,6 +9,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double baselineX = MediaQuery.of(context).size.width / 2 - 187.5;
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F8), // var(--color/gray/20)
       appBar: PopupHeader(
@@ -56,78 +57,330 @@ class CameraMissionGuideScreen extends StatelessWidget {
                       children: [
                         const SizedBox(height: 34), // Figma top-[34px]
 
-                        // A. 상단 타이틀 배지
-                        Transform.rotate(
-                          angle: 2.58 * (3.14159 / 180),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(9999),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.2),
-                                  offset: const Offset(2, 4),
-                                  blurRadius: 0,
-                                ),
-                              ],
-                            ),
-                            child: const Text(
-                              '마이 펫 촬영하고',
-                              style: TextStyle(
-                                fontFamily: 'Gmarket Sans',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Transform.rotate(
-                          angle: -4.6 * (3.14159 / 180),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF423F99).withValues(alpha: 0.5),
-                              borderRadius: BorderRadius.circular(9999),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.2),
-                                  offset: const Offset(2, 4),
-                                  blurRadius: 0,
-                                ),
-                              ],
-                            ),
-                            child: const Text(
-                              '리워드 받아요!',
-                              style: TextStyle(
-                                fontFamily: 'Gmarket Sans',
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // B. 일러스트 그래픽 영역 (Figma Node 484:26020 - 배지 2 하단 Y:148.09에서 텍스트 Y:344까지 197.4px 영역 확보)
+                        // A. 타이틀 배지 및 일러스트 그래픽 영역 (Figma absolute positioning 및 개별 레이어 재구성)
                         SizedBox(
-                          width: 263.15,
-                          height: 197.4,
+                          height: 330,
+                          width: double.infinity,
                           child: Stack(
+                            alignment: Alignment.topCenter,
                             clipBehavior: Clip.none,
                             children: [
+                              // ----------------------------------------------------
+                              // I. 배경 일러스트 레이어 (배지 뒤에 위치하는 요소들)
+                              // ----------------------------------------------------
+                              
+                              // 1. 카메라 (Figma Node 327:12193)
                               Positioned(
-                                left: 0,
-                                top: -9.56, // 피그마 Y:138.53 -> 배지2 하단 Y:148.09 대비 오프셋
-                                width: 263.15,
-                                height: 213.2,
-                                child: Image.asset(
-                                  'assets/images/banner/illust_banner.png',
-                                  fit: BoxFit.contain,
+                                left: baselineX + 111.42,
+                                top: 172.64,
+                                width: 159.12,
+                                height: 142.947,
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: -5.39 * (3.14159 / 180),
+                                    child: Image.asset(
+                                      'assets/images/banner/camera1.png',
+                                      width: 147.587,
+                                      height: 129.648,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              
+                              // 2. 강아지 (Figma Node 327:12194)
+                              Positioned(
+                                left: baselineX + 79.13,
+                                top: 222.59,
+                                width: 55.353,
+                                height: 69.323,
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: -2.45 * (3.14159 / 180),
+                                    child: Image.asset(
+                                      'assets/images/banner/dog11.png',
+                                      width: 52.534,
+                                      height: 67.141,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              
+                              // 3. 고양이 (Figma Node 327:12195)
+                              Positioned(
+                                left: baselineX + 237.32,
+                                top: 197.69,
+                                width: 69.796,
+                                height: 70.324,
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: -24.02 * (3.14159 / 180),
+                                    child: Image.asset(
+                                      'assets/images/banner/cat41.png',
+                                      width: 52.534,
+                                      height: 53.578,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              
+                              // 4. 동전 5 (Figma Node 551:6819)
+                              Positioned(
+                                left: baselineX + 93.15,
+                                top: 179.42,
+                                width: 29.078,
+                                height: 30.107,
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: -30.5 * (3.14159 / 180),
+                                    child: Image.asset(
+                                      'assets/images/banner/coin51.png',
+                                      width: 20.161,
+                                      height: 23.066,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              
+                              // 5. 동전 4 (Figma Node 551:6844)
+                              Positioned(
+                                left: baselineX + 223.36,
+                                top: 273.34,
+                                width: 48.274,
+                                height: 50.653,
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: 22.84 * (3.14159 / 180),
+                                    child: Image.asset(
+                                      'assets/images/banner/coin42.png',
+                                      width: 35.536,
+                                      height: 39.996,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // 6. 꽃 8 (Figma Node 338:12544)
+                              Positioned(
+                                left: baselineX + 83.44,
+                                top: 305.9,
+                                width: 16.032,
+                                height: 16.249,
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: 28.87 * (3.14159 / 180),
+                                    child: Image.asset(
+                                      'assets/images/banner/flower8.png',
+                                      width: 11.604,
+                                      height: 12.157,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // 7. 꽃 7 (Figma Node 338:12545)
+                              Positioned(
+                                left: baselineX + 65.65,
+                                top: 298.19,
+                                width: 16.351,
+                                height: 17.39,
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: -11.55 * (3.14159 / 180),
+                                    child: Image.asset(
+                                      'assets/images/banner/flower7.png',
+                                      width: 13.63,
+                                      height: 14.964,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // 8. 꽃 6 (Figma Node 338:12546)
+                              Positioned(
+                                left: baselineX + 315.99,
+                                top: 203.3,
+                                width: 13.006,
+                                height: 13.468,
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: 20.94 * (3.14159 / 180),
+                                    child: Image.asset(
+                                      'assets/images/banner/flower6.png',
+                                      width: 9.85,
+                                      height: 10.652,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // 9. 데코레이션 원형 1591 (Figma Node 338:12549)
+                              Positioned(
+                                left: baselineX + 311.42,
+                                top: 287.63,
+                                width: 2,
+                                height: 2,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+
+                              // 10. 데코레이션 원형 1592 (Figma Node 338:12550)
+                              Positioned(
+                                left: baselineX + 335.4,
+                                top: 194.44,
+                                width: 4,
+                                height: 4,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+
+                              // 11. 데코레이션 원형 1590 (Figma Node 484:26023)
+                              Positioned(
+                                left: baselineX + 66.45,
+                                top: 183.24,
+                                width: 3,
+                                height: 3,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+
+                              // 12. 그린 플러스 Union 1 (Figma Node 338:12559)
+                              Positioned(
+                                left: baselineX + 36.98,
+                                top: 206.35,
+                                width: 12,
+                                height: 12,
+                                child: SvgPicture.asset(
+                                  'assets/images/banner/union_plus_1.svg',
+                                  colorFilter: const ColorFilter.mode(
+                                    Color(0xFF79FFAE),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+
+                              // 13. 그린 플러스 Union 2 (Figma Node 338:12560)
+                              Positioned(
+                                left: baselineX + 294.08,
+                                top: 295.0,
+                                width: 8.93,
+                                height: 8.93,
+                                child: SvgPicture.asset(
+                                  'assets/images/banner/union_plus_2.svg',
+                                  colorFilter: const ColorFilter.mode(
+                                    Color(0xFF79FFAE),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+
+                              // ----------------------------------------------------
+                              // II. 중간 타이틀 배지 레이어 (중간 높이)
+                              // ----------------------------------------------------
+
+                              // 14. 하단 배지 (리워드 받아요!)
+                              Positioned(
+                                top: 91.25,
+                                child: Transform.rotate(
+                                  angle: -4.6 * (3.14159 / 180),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF423F99).withValues(alpha: 0.5),
+                                      borderRadius: BorderRadius.circular(9999),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.2),
+                                          offset: const Offset(2, 4),
+                                          blurRadius: 0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Text(
+                                      '리워드 받아요!',
+                                      style: TextStyle(
+                                        fontFamily: 'Gmarket Sans',
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                        letterSpacing: -0.96,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              
+                              // 15. 상단 배지 (마이 펫 촬영하고)
+                              Positioned(
+                                top: 34,
+                                child: Transform.rotate(
+                                  angle: 2.58 * (3.14159 / 180),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(9999),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.2),
+                                          offset: const Offset(2, 4),
+                                          blurRadius: 0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: const Text(
+                                      '마이 펫 촬영하고',
+                                      style: TextStyle(
+                                        fontFamily: 'Gmarket Sans',
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                        letterSpacing: -0.96,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // ----------------------------------------------------
+                              // III. 전경 일러스트 레이어 (배지 위에 위치하는 요소)
+                              // ----------------------------------------------------
+
+                              // 16. 하트 벌룬 (Figma Node 484:25976 - 배지 위로 올라와야 함)
+                              Positioned(
+                                left: baselineX + 251.68,
+                                top: 141.96,
+                                width: 26.46,
+                                height: 24.652,
+                                child: Center(
+                                  child: Transform.rotate(
+                                    angle: 15.62 * (3.14159 / 180),
+                                    child: Image.asset(
+                                      'assets/images/banner/heart2.png',
+                                      width: 22.042,
+                                      height: 19.436,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
