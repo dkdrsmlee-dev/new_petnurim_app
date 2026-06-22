@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/widgets/popup_header.dart';
 import '../../core/widgets/bullit_text.dart';
 import 'camera_screen.dart';
@@ -23,31 +24,28 @@ class CameraMissionGuideScreen extends StatelessWidget {
               width: double.infinity,
               color: const Color(0xFF5B64EA), // Figma 파란색배경
               child: Stack(
+                clipBehavior: Clip.none,
                 children: [
-                  // 그라데이션 동그라미 데코레이션 1
+                  // 그라데이션 동그라미 데코레이션 1 (Figma Ellipse 1595)
                   Positioned(
-                    left: -130,
-                    top: 267,
-                    child: Container(
+                    left: MediaQuery.of(context).size.width / 2 - 325,
+                    top: 267.25,
+                    child: SvgPicture.asset(
+                      'assets/images/banner/ellipse1595.svg',
                       width: 650,
                       height: 360,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.05),
-                      ),
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  // 그라데이션 동그라미 데코레이션 2
+                  // 그라데이션 동그라미 데코레이션 2 (Figma Ellipse 1593)
                   Positioned(
-                    left: MediaQuery.of(context).size.width / 2 - 141.5,
-                    top: 73,
-                    child: Container(
-                      width: 283,
-                      height: 283,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.05),
-                      ),
+                    left: MediaQuery.of(context).size.width / 2 - 225.5,
+                    top: -10.6,
+                    child: SvgPicture.asset(
+                      'assets/images/banner/ellipse1593.svg',
+                      width: 451,
+                      height: 451,
+                      fit: BoxFit.fill,
                     ),
                   ),
 
