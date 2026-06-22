@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/app_routes.dart';
 
 class MainHeader extends StatelessWidget implements PreferredSizeWidget {
-  const MainHeader({Key? key, this.onTapProfile}) : super(key: key);
+  const MainHeader({super.key, this.onTapProfile});
 
   final VoidCallback? onTapProfile;
 

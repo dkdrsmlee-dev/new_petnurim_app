@@ -7,18 +7,19 @@ class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onClosePressed;
 
   const PopupHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.showBackButton = true,
     this.onBackPressed,
     this.onClosePressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
+      scrolledUnderElevation: 0.0,
       centerTitle: true,
       automaticallyImplyLeading: false,
       leading: showBackButton

@@ -6,11 +6,11 @@ class BullitText extends StatelessWidget {
   final Color? bulletColor;
 
   const BullitText({
-    Key? key,
+    super.key,
     required this.text,
     this.textStyle,
     this.bulletColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

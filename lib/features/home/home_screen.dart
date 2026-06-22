@@ -10,7 +10,7 @@ import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
 import '../../core/widgets/section_title.dart';
 import '../attendance/attendance_screen.dart';
-import '../camera/camera_screen.dart';
+import '../camera/camera_mission_guide_screen.dart';
 import '../member/my/my_page_view.dart';
 import 'widgets/home_event_carousel.dart';
 
@@ -182,7 +182,7 @@ class _HomeOverview extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const CameraScreen()),
+                    MaterialPageRoute(builder: (context) => const CameraMissionGuideScreen()),
                   );
                 },
               ),
