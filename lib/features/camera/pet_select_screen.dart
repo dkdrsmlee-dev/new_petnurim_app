@@ -18,7 +18,7 @@ class PetSelectScreen extends StatelessWidget {
       appBar: PopupHeader(
         title: '마이 펫 촬영',
         showBackButton: true,
-        onClosePressed: () => Navigator.of(context).pop(),
+        showCloseButton: false,
       ),
       body: SafeArea(
         child: Padding(

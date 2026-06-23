@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool showBackButton;
+  final bool showCloseButton;
   final VoidCallback? onBackPressed;
   final VoidCallback? onClosePressed;
 
@@ -10,6 +11,7 @@ class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.title,
     this.showBackButton = true,
+    this.showCloseButton = true,
     this.onBackPressed,
     this.onClosePressed,
   });
@@ -39,12 +41,14 @@ class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
           height: 1.4,
         ),
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.close, size: 24, color: Color(0xFF30343C)),
-          onPressed: onClosePressed ?? () => Navigator.of(context).pop(),
-        ),
-      ],
+      actions: showCloseButton
+          ? [
+              IconButton(
+                icon: const Icon(Icons.close, size: 24, color: Color(0xFF30343C)),
+                onPressed: onClosePressed ?? () => Navigator.of(context).pop(),
+              ),
+            ]
+          : null,
     );
   }
 
