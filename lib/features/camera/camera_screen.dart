@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/widgets/camera_widgets.dart';
+import 'shooting_history_screen.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
@@ -150,9 +151,14 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
           Navigator.pop(this.context); // 화면 닫기
         },
         onViewHistory: () {
-          // TODO: 촬영 내역 화면으로 이동
+          // 촬영 완료 팝업 닫고 내역 화면으로 유도
           Navigator.pop(context); // 팝업 닫기
-          Navigator.pop(this.context); // 화면 닫기
+          Navigator.pushReplacement(
+            this.context,
+            MaterialPageRoute(
+              builder: (_) => const ShootingHistoryScreen(),
+            ),
+          );
         },
       ),
     );

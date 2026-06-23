@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/widgets/popup_header.dart';
 import '../../core/widgets/pet_select_card.dart';
 import 'camera_screen.dart';
+import 'shooting_history_screen.dart';
 
 /// 등록된 펫이 2마리 이상일 때 표시되는 펫 선택 화면 (Figma USR-EVT-018 - 마이펫 있을 때)
 ///
@@ -59,11 +60,11 @@ class PetSelectScreen extends StatelessWidget {
                         );
                       },
                       onHistoryTap: () {
-                        // TODO: 해당 펫의 촬영 내역 화면으로 이동 (추후 구현)
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('${pet.name}의 촬영 내역 화면으로 이동 (추후 구현)'),
-                            duration: const Duration(seconds: 1),
+                        // 촬영 내역 화면으로 펫 데이터를 동반하여 이동
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ShootingHistoryScreen(petData: pet),
                           ),
                         );
                       },
