@@ -60,6 +60,12 @@ class PetSelectScreen extends StatelessWidget {
                       },
                       onHistoryTap: () {
                         // TODO: 해당 펫의 촬영 내역 화면으로 이동 (추후 구현)
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${pet.name}의 촬영 내역 화면으로 이동 (추후 구현)'),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
                       },
                     );
                   },

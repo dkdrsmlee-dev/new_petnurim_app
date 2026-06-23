@@ -118,27 +118,30 @@ class PetSelectCard extends StatelessWidget {
                         GestureDetector(
                           onTap: onHistoryTap,
                           behavior: HitTestBehavior.opaque,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '촬영 내역',
-                                style: const TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.4,
-                                  letterSpacing: -0.66,
-                                  color: _historyColor,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '촬영 내역',
+                                  style: const TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.4,
+                                    letterSpacing: -0.66,
+                                    color: _historyColor,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 2),
-                              const Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                size: 12,
-                                color: _mutedColor,
-                              ),
-                            ],
+                                const SizedBox(width: 2),
+                                const Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  size: 12,
+                                  color: _mutedColor,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
