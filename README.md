@@ -30,6 +30,12 @@
   - **인증 예외 방어**: 짧은 글자 수 등 백엔드 유효성 검사 실패(`AUTH.INVALID_PARAMS`) 시 401 상태 코드가 수신되어도 로그아웃 및 로그인 화면으로 튕기지 않도록 `ApiClient` 예외 필터링 추가.
   - **유효성 검증 강화**: 프론트엔드단에서 제목 최소 2자, 내용 최소 5자 이상일 경우에만 제출할 수 있도록 검증 강화.
 - **알림 센터 (NotificationScreen)**: 공통 알림 카드 위젯(`NurimTextCard`)을 활용한 Short/Truncated/Expanded 상태 지원 및 모두읽음 처리 기능 탑재
+- **마이 펫 촬영 및 촬영 내역 (Camera & Shooting History)**:
+  - **카메라 미션 가이드 화면 (`CameraMissionGuideScreen`)**: 미션 안내 및 펫 보유 현황별 동적 촬영 프로세스 분기 처리 (0마리: 등록 화면 / 1마리: 바로 촬영 / 2마리 이상: 펫 선택).
+  - **펫 선택 화면 (`PetSelectScreen`)**: 마이펫 촬영 미션 참여 시 등록된 반려동물이 2마리 이상일 때 특정 반려동물을 선택하는 화면(Figma USR-EVT-018) 연동.
+  - **촬영 내역 화면 (`ShootingHistoryScreen`)**: 반려동물별 이번 달 촬영 참여 횟수, 누적 리워드 조회 및 내역이 없는 빈 화면(Empty State) 레이아웃(Figma USR-EVT-019) 구현.
+  - **공통 반려동물 요약 카드 (`CameraHistoryCard`)**: 펫의 대표 즐겨찾기 상태, 기본 정보(이름, 품종, 나이, 성별) 및 획득 리워드를 깔끔하게 표현하는 카드 위젯.
+  - **디자인 디테일 / 커스텀 SVG 아이콘**: 피그마 원본 벡터에 최적화된 굴뚝 모양의 홈 버튼(`_homeIconSvg`), 긴 화살표 모양의 뒤로가기 버튼(`_backIconSvg`), 즐겨찾기 별 배지, 출석/기록 달력 체크, 3D 누적 리워드 코인 아이콘 등을 커스텀 SVG로 정밀 적용.
 
 ## 초기 구조
 
@@ -49,6 +55,7 @@ lib/
     home/
     notification/       알림 센터 화면
     webview/           Daum 우편번호 검색 WebView 화면
+    camera/            마이 펫 촬영, 펫 선택, 촬영 내역 화면
   native/              Kakao, Naver, PASS, 플랫폼 브리지
 ```
 
