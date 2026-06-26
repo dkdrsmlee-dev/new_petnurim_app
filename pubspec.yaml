@@ -39,6 +39,7 @@ dev_dependencies:
 
   # Flutter 권장 린트 규칙을 적용합니다.
   flutter_lints: ^6.0.0
+  flutter_native_splash: ^2.4.4
 
 flutter:
   uses-material-design: true
@@ -46,3 +47,11 @@ flutter:
     - assets/images/
     - assets/images/home/
     - assets/images/banner/
+
+flutter_native_splash:
+  color: "#7F4FFF"
+  image: assets/images/splash_logo_fill.png
+
+  android_12:
+    color: "#7F4FFF"
+    image: assets/images/splash_logo_android12.png
