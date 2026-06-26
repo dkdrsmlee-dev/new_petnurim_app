@@ -1,5 +1,8 @@
 plugins {
     id("com.android.application")
+    // START: FlutterFire Configuration
+    id("com.google.gms.google-services")
+    // END: FlutterFire Configuration
     id("kotlin-android")
     // Flutter Gradle 플러그인은 Android/Kotlin 플러그인 뒤에 적용합니다.
     id("dev.flutter.flutter-gradle-plugin")

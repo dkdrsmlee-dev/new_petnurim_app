@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "840547817589",
+    "project_id": "web3-petnurim",
+    "storage_bucket": "web3-petnurim.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:840547817589:android:42f6129b6888888d59803c",
+        "android_client_info": {
+          "package_name": "com.dkdr.newpetnurim"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBf52TLPE4zCrJvvondnap1JLhPjxelA4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
