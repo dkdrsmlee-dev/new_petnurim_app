@@ -79,19 +79,21 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
     }
   }
 
-  Future<void> _fetchNotices({bool isRefresh = false}) async {
-    if (_noticeIsLoading) return;
+  Future<void> _fetchNotices({bool isRefresh = false, int retryCount = 0}) async {
+    if (_noticeIsLoading && retryCount == 0) return;
 
-    setState(() {
-      _noticeIsLoading = true;
-      _noticeError = null;
-      if (isRefresh) {
-        _noticeItems.clear();
-        _noticeNextCursor = null;
-        _noticeHasNext = true;
-        _expandedIndex = -1;
-      }
-    });
+    if (retryCount == 0) {
+      setState(() {
+        _noticeIsLoading = true;
+        _noticeError = null;
+        if (isRefresh) {
+          _noticeItems.clear();
+          _noticeNextCursor = null;
+          _noticeHasNext = true;
+          _expandedIndex = -1;
+        }
+      });
+    }
 
     try {
       final repository = ref.read(boardRepositoryProvider);
@@ -107,7 +109,11 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
         _noticeIsLoading = false;
       });
     } catch (e) {
-      debugPrint('[CustomerCenter] Notice 로딩 실패 에러: $e');
+      debugPrint('[CustomerCenter] Notice 로딩 실패 에러: $e (retry: $retryCount)');
+      if (retryCount < 1) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        return _fetchNotices(isRefresh: isRefresh, retryCount: retryCount + 1);
+      }
       setState(() {
         _noticeError = '공지사항 목록을 불러오는데 실패했습니다.';
         _noticeIsLoading = false;
@@ -180,18 +186,20 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
     }
   }
 
-  Future<void> _fetchQnas({bool isRefresh = false}) async {
-    if (_qnaIsLoading) return;
+  Future<void> _fetchQnas({bool isRefresh = false, int retryCount = 0}) async {
+    if (_qnaIsLoading && retryCount == 0) return;
 
-    setState(() {
-      _qnaIsLoading = true;
-      _qnaError = null;
-      if (isRefresh) {
-        _qnaItems.clear();
-        _qnaNextCursor = null;
-        _qnaHasNext = true;
-      }
-    });
+    if (retryCount == 0) {
+      setState(() {
+        _qnaIsLoading = true;
+        _qnaError = null;
+        if (isRefresh) {
+          _qnaItems.clear();
+          _qnaNextCursor = null;
+          _qnaHasNext = true;
+        }
+      });
+    }
 
     try {
       final repository = ref.read(boardRepositoryProvider);
@@ -207,7 +215,11 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
         _qnaIsLoading = false;
       });
     } catch (e) {
-      debugPrint('[CustomerCenter] QnA 로딩 실패 에러: $e');
+      debugPrint('[CustomerCenter] QnA 로딩 실패 에러: $e (retry: $retryCount)');
+      if (retryCount < 1) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        return _fetchQnas(isRefresh: isRefresh, retryCount: retryCount + 1);
+      }
       setState(() {
         _qnaError = '문의 내역을 불러오는데 실패했습니다.';
         _qnaIsLoading = false;
