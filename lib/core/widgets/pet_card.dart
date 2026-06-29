@@ -40,12 +40,18 @@ class NurimPetCard extends StatelessWidget {
     this.onPressed,
     this.width,
     this.height = 204,
+    this.showSelectionControl = false,
+    this.isSelected = false,
+    this.onSelectionChanged,
   });
 
   final NurimPetCardData pet;
   final VoidCallback? onPressed;
   final double? width;
   final double height;
+  final bool showSelectionControl;
+  final bool isSelected;
+  final VoidCallback? onSelectionChanged;
 
   static const Color _backgroundColor = Colors.white;
   static const Color _borderColor = Color(0xFFD6DBE4);
@@ -105,139 +111,180 @@ class NurimPetCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: _backgroundColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _borderColor),
+        border: Border.all(
+          color: isSelected ? _primaryColor : _borderColor,
+          width: isSelected ? 1.5 : 1.0,
+        ),
       ),
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _PetAvatar(imageProvider: pet.imageProvider),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            pet.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontFamily: 'Pretendard',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              height: 1.4,
-                              letterSpacing: -0.66,
-                              color: _nameColor,
-                            ),
+          if (showSelectionControl) ...[
+            GestureDetector(
+              onTap: onSelectionChanged,
+              child: Container(
+                width: 21,
+                height: 21,
+                margin: const EdgeInsets.only(top: 13.5),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  border: Border.all(
+                    color: isSelected ? _primaryColor : const Color(0xFFD6DBE4),
+                    width: 1.05,
+                  ),
+                ),
+                child: isSelected
+                    ? Center(
+                        child: Container(
+                          width: 11,
+                          height: 11,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _primaryColor,
                           ),
                         ),
-                        if (pet.isPrimary) ...[
-                          const SizedBox(width: 4),
-                          const _PrimaryPetBadge(),
+                      )
+                    : null,
+              ),
+            ),
+            const SizedBox(width: 16),
+          ],
+          Expanded(
+            child: Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _PetAvatar(imageProvider: pet.imageProvider),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  pet.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.4,
+                                    letterSpacing: -0.66,
+                                    color: _nameColor,
+                                  ),
+                                ),
+                              ),
+                              if (pet.isPrimary) ...[
+                                const SizedBox(width: 4),
+                                const _PrimaryPetBadge(),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          _buildDescription(),
                         ],
-                      ],
+                      ),
                     ),
-                    const SizedBox(height: 4),
-                    _buildDescription(),
+                    const SizedBox(width: 16),
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: Color(0xFF909AA9),
+                    ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 16),
-              const Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Color(0xFF909AA9),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: _softBackgroundColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      const _CrownIcon(
-                        size: 20,
-                        color: Color(0xFF87909E),
-                      ),
-                      const SizedBox(width: 6),
-                      const Expanded(
-                        child: Text(
-                          '멤버십',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            height: 1.4,
-                            letterSpacing: -0.66,
-                            color: Color(0xFF87909E),
-                          ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: _softBackgroundColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            const _CrownIcon(
+                              size: 20,
+                              color: Color(0xFF87909E),
+                            ),
+                            const SizedBox(width: 6),
+                            const Expanded(
+                              child: Text(
+                                '멤버십',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.4,
+                                  letterSpacing: -0.66,
+                                  color: Color(0xFF87909E),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            _MembershipChip(label: pet.membershipTier),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      _MembershipChip(label: pet.membershipTier),
-                    ],
+                        const SizedBox(height: 12),
+                        const Divider(height: 1, thickness: 1, color: _dividerColor),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const _CoinStackIcon(
+                              size: 20,
+                              color: Color(0xFF87909E),
+                              bgColor: _softBackgroundColor,
+                            ),
+                            const SizedBox(width: 6),
+                            const Expanded(
+                              child: Text(
+                                '리워드',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.4,
+                                  letterSpacing: -0.66,
+                                  color: Color(0xFF87909E),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              pet.rewardText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                height: 1.4,
+                                letterSpacing: -0.66,
+                                color: _rewardColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  const Divider(height: 1, thickness: 1, color: _dividerColor),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      const _CoinStackIcon(
-                        size: 20,
-                        color: Color(0xFF87909E),
-                        bgColor: _softBackgroundColor,
-                      ),
-                      const SizedBox(width: 6),
-                      const Expanded(
-                        child: Text(
-                          '리워드',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            height: 1.4,
-                            letterSpacing: -0.66,
-                            color: Color(0xFF87909E),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        pet.rewardText,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.right,
-                        style: const TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          height: 1.4,
-                          letterSpacing: -0.66,
-                          color: _rewardColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
