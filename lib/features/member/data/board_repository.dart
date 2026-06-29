@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../auth/domain/auth_exception.dart';
+import '../domain/notice_models.dart';
 import '../domain/qna_models.dart';
 
 abstract interface class BoardRepository {
@@ -13,6 +14,14 @@ abstract interface class BoardRepository {
   });
 
   Future<QnaDetail> getQnaDetail(String id);
+
+  Future<CursorPaginationResponse<NoticeItem>> getNoticeList({
+    String? cursor,
+    int? limit,
+    String? title,
+  });
+
+  Future<NoticeDetail> getNoticeDetail(String id);
 
   Future<void> createQna({
     required String qnaTypeCode,
@@ -165,6 +174,52 @@ class BackendBoardRepository implements BoardRepository {
       bearerToken: await _readAccessToken('로그인 정보가 없어 파일을 다운로드할 수 없습니다.'),
       fallbackMessage: '파일 다운로드에 실패했습니다.',
     );
+  }
+
+  @override
+  Future<CursorPaginationResponse<NoticeItem>> getNoticeList({
+    String? cursor,
+    int? limit,
+    String? title,
+  }) async {
+    final queryParameters = <String, String>{};
+    if (cursor != null) queryParameters['cursor'] = cursor;
+    if (limit != null) queryParameters['limit'] = limit.toString();
+    if (title != null) queryParameters['title'] = title;
+
+    final uri = Uri(
+      path: '/api/v1/board/notices',
+      queryParameters: queryParameters.isEmpty ? null : queryParameters,
+    );
+    final path = '${uri.path}${uri.hasQuery ? '?${uri.query}' : ''}';
+
+    final payload = await _apiClient.getJson(
+      path,
+      fallbackMessage: '공지사항 목록을 불러오지 못했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return CursorPaginationResponse<NoticeItem>.fromJson(
+        payload,
+        (json) => NoticeItem.fromJson(json),
+      );
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
+  }
+
+  @override
+  Future<NoticeDetail> getNoticeDetail(String id) async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/board/notices/$id',
+      fallbackMessage: '공지사항 상세를 불러오지 못했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return NoticeDetail.fromJson(payload);
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
   }
 
   Future<String> _readAccessToken(String emptyMessage) async {

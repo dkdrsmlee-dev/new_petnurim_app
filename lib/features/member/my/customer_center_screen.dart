@@ -1,8 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:path_provider/path_provider.dart';
 
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
+import '../domain/notice_models.dart';
 import '../domain/qna_models.dart';
 import 'qna_create_screen.dart';
 import 'qna_detail_screen.dart';
@@ -26,58 +31,35 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
   String? _qnaError;
   final ScrollController _qnaScrollController = ScrollController();
 
-  // Mock Notices Data matching the Figma design details
-  final List<Map<String, dynamic>> _notices = [
-    {
-      'title': '멤버십 신규 상품 출시',
-      'date': '2026.04.12',
-      'isNew': true,
-      'content': '고객님의 더 나은 service 이용과 다양한 혜택 제공을 위해 새로운 멤버십 상품이 출시되었습니다.\n\n'
-          '[신규 멤버십 상품 안내]\n'
-          '이번에 새롭게 선보이는 멤버십은 이용 패턴에 따라 선택하실 수 있도록 구성되어있습니다.\n'
-          '• Bronze\n   기본 혜택 중심의 입문형 멤버십\n'
-          '• Silver\n   실속형 혜택과 다양한 리워드 제공\n'
-          '• Gold\n   프리미엄 혜택과 차별화된 service 제공\n\n'
-          '[주요 혜택]\n'
-          '• service 이용 시 리워드 적립\n'
-          '• 멤버십 전용 이벤트 참여 기회 제공\n'
-          '• 다양한 할인 및 혜택제공\n'
-          '• 개인 맞춤형 service 추천\n\n'
-          '[출시 일정]\n'
-          '• 출시일: 2026년 00월 00일\n\n'
-          '[이용 안내]\n'
-          '• 멤버십은 마이페이지>멤버십 메뉴에서 가입하실 수 있습니다.\n'
-          '• 멤버십은 마이페이지>멤버십 메뉴에서 가입하실 수 있습니다.\n\n'
-          '앞으로도 더 나은 service와 다양한 혜택을 제공할 수 있도록 노력하겠습니다.\n감사합니다.',
-      'fileName': '점검안내_0419.pdf',
-      'fileSize': '1.2MB',
-    },
-    {
-      'title': '멤버십 신규 상품 출시멤버십 신규 상품 출시 버전 멤버십 멤버십 제목 두줄 표기까지 가능합니다.',
-      'date': '2026.04.12',
-      'isNew': true,
-      'content': '고객님의 더 나은 service 이용과 다양한 혜택 제공을 위해 새로운 멤버십 상품이 출시되었습니다.',
-      'fileName': null,
-      'fileSize': null,
-    }
-  ];
+  // Notice List and Pagination State
+  final List<NoticeItem> _noticeItems = [];
+  bool _noticeIsLoading = false;
+  bool _noticeHasNext = true;
+  String? _noticeNextCursor;
+  String? _noticeError;
+  final ScrollController _noticeScrollController = ScrollController();
+
+  // Notice Details Cache and Loading States
+  final Map<String, NoticeDetail> _noticeDetails = {};
+  final Set<String> _loadingDetails = {};
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     
-    // Fetch QnAs on init
-    _fetchQnas();
-
-    // Listen for pagination scroll events
+    // Fetch QnAs & Notices on init
     _qnaScrollController.addListener(_onQnaScroll);
+    _noticeScrollController.addListener(_onNoticeScroll);
+    _fetchQnas();
+    _fetchNotices();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     _qnaScrollController.dispose();
+    _noticeScrollController.dispose();
     super.dispose();
   }
 
@@ -85,6 +67,115 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
     if (_qnaScrollController.position.pixels >= _qnaScrollController.position.maxScrollExtent - 200) {
       if (!_qnaIsLoading && _qnaHasNext) {
         _fetchQnas();
+      }
+    }
+  }
+
+  void _onNoticeScroll() {
+    if (_noticeScrollController.position.pixels >= _noticeScrollController.position.maxScrollExtent - 200) {
+      if (!_noticeIsLoading && _noticeHasNext) {
+        _fetchNotices();
+      }
+    }
+  }
+
+  Future<void> _fetchNotices({bool isRefresh = false}) async {
+    if (_noticeIsLoading) return;
+
+    setState(() {
+      _noticeIsLoading = true;
+      _noticeError = null;
+      if (isRefresh) {
+        _noticeItems.clear();
+        _noticeNextCursor = null;
+        _noticeHasNext = true;
+        _expandedIndex = -1;
+      }
+    });
+
+    try {
+      final repository = ref.read(boardRepositoryProvider);
+      final response = await repository.getNoticeList(
+        cursor: _noticeNextCursor,
+        limit: 20,
+      );
+
+      setState(() {
+        _noticeItems.addAll(response.items);
+        _noticeHasNext = response.hasNext;
+        _noticeNextCursor = response.nextCursor;
+        _noticeIsLoading = false;
+      });
+    } catch (e) {
+      debugPrint('[CustomerCenter] Notice 로딩 실패 에러: $e');
+      setState(() {
+        _noticeError = '공지사항 목록을 불러오는데 실패했습니다.';
+        _noticeIsLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchNoticeDetail(String boardId) async {
+    if (_loadingDetails.contains(boardId)) return;
+
+    setState(() {
+      _loadingDetails.add(boardId);
+    });
+
+    try {
+      final repository = ref.read(boardRepositoryProvider);
+      final detail = await repository.getNoticeDetail(boardId);
+      setState(() {
+        _noticeDetails[boardId] = detail;
+        _loadingDetails.remove(boardId);
+      });
+    } catch (e) {
+      debugPrint('[CustomerCenter] 공지 상세 로딩 실패: $e');
+      setState(() {
+        _loadingDetails.remove(boardId);
+      });
+    }
+  }
+
+  Future<void> _downloadFileToDevice(NoticeFile file) async {
+    try {
+      if (!mounted) return;
+      ToastUtil.show(context, '다운로드를 시작합니다.');
+
+      final bytes = await ref.read(boardRepositoryProvider).downloadFile(file.fileId);
+      
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = await getDownloadsDirectory();
+      } else {
+        directory = await getApplicationDocumentsDirectory();
+      }
+      
+      directory ??= await getApplicationDocumentsDirectory();
+
+      String filePath = "${directory.path}/${file.originName}";
+      File f = File(filePath);
+      
+      int counter = 1;
+      final extensionIndex = file.originName.lastIndexOf('.');
+      final nameWithoutExt = extensionIndex != -1 ? file.originName.substring(0, extensionIndex) : file.originName;
+      final ext = extensionIndex != -1 ? file.originName.substring(extensionIndex) : '';
+      
+      while (await f.exists()) {
+        filePath = "${directory.path}/${nameWithoutExt}_$counter$ext";
+        f = File(filePath);
+        counter++;
+      }
+
+      await f.writeAsBytes(bytes);
+
+      if (mounted) {
+        ToastUtil.show(context, '다운로드가 완료되었습니다.\n저장 경로: ${f.path}');
+      }
+    } catch (e) {
+      debugPrint('[FileDownloadError] error: $e');
+      if (mounted) {
+        ToastUtil.show(context, '다운로드에 실패했습니다: $e');
       }
     }
   }
@@ -187,195 +278,339 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
   }
 
   Widget _buildNoticeTabList() {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      itemCount: _notices.length,
-      itemBuilder: (context, index) {
-        final notice = _notices[index];
-        final isExpanded = _expandedIndex == index;
+    if (_noticeIsLoading && _noticeItems.isEmpty) {
+      return const Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFF7F4FFF),
+        ),
+      );
+    }
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x1A51565F), // #51565F1A
-                offset: Offset(0, 0),
-                blurRadius: 8,
+    if (_noticeError != null && _noticeItems.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _noticeError!,
+              style: const TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 16,
+                color: Color(0xFF6C737F),
               ),
-            ],
-          ),
-          child: Column(
-            children: [
-              // Header area
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    _expandedIndex = isExpanded ? -1 : index;
-                  });
-                },
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    notice['title'] as String,
-                                    maxLines: isExpanded ? 5 : 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600, // SemiBold
-                                      color: Color(0xFF30343C),
-                                      height: 1.4,
-                                      letterSpacing: -0.66,
-                                    ),
-                                  ),
-                                ),
-                                if (notice['isNew'] == true) ...[
-                                  const SizedBox(width: 6),
-                                  Container(
-                                    width: 18,
-                                    height: 18,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF7F4FFF),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        'N',
-                                        style: TextStyle(
-                                          fontFamily: 'Pretendard',
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white,
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => _fetchNotices(isRefresh: true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF7F4FFF),
+              ),
+              child: const Text('다시 시도', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_noticeItems.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: () => _fetchNotices(isRefresh: true),
+        color: const Color(0xFF7F4FFF),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+            const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.notifications_none_rounded,
+                    size: 48,
+                    color: Color(0xFFA2ADBE),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    '등록된 공지사항이 없습니다.',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF6C737F),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => _fetchNotices(isRefresh: true),
+      color: const Color(0xFF7F4FFF),
+      child: ListView.builder(
+        controller: _noticeScrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        itemCount: _noticeItems.length + (_noticeHasNext ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == _noticeItems.length) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF7F4FFF),
+                ),
+              ),
+            );
+          }
+
+          final notice = _noticeItems[index];
+          final isExpanded = _expandedIndex == index;
+          final detail = _noticeDetails[notice.boardId];
+          final isDetailLoading = _loadingDetails.contains(notice.boardId);
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x1A51565F), // #51565F1A
+                  offset: Offset(0, 0),
+                  blurRadius: 8,
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // Header area
+                InkWell(
+                  onTap: () {
+                    if (isExpanded) {
+                      setState(() {
+                        _expandedIndex = -1;
+                      });
+                    } else {
+                      setState(() {
+                        _expandedIndex = index;
+                      });
+                      if (detail == null) {
+                        _fetchNoticeDetail(notice.boardId);
+                      }
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(text: notice.title),
+                                  if (_isRecentNotice(notice.regDt)) ...[
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 6),
+                                        child: Container(
+                                          width: 18,
+                                          height: 18,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFF7F4FFF),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              'N',
+                                              style: TextStyle(
+                                                fontFamily: 'Pretendard',
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white,
+                                                height: 1.0,
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ],
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              notice['date'] as String,
+                              ),
+                              maxLines: isExpanded ? 5 : 2,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontFamily: 'Pretendard',
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400, // Regular
-                                color: Color(0xFFA2ADBE),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600, // SemiBold
+                                color: Color(0xFF30343C),
+                                height: 1.4,
+                                letterSpacing: -0.66,
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Icon(
-                        isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                        color: const Color(0xFF6C737F),
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // Body area (visible when expanded)
-              if (isExpanded) ...[
-                // Divider
-                Container(height: 1, color: const Color(0xFFE8EBF1)),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        notice['content'] as String,
-                        style: const TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400, // Regular
-                          color: Color(0xFF51565F),
-                          height: 1.4,
-                          letterSpacing: -0.66,
-                        ),
-                      ),
-                      if (notice['fileName'] != null) ...[
-                        const SizedBox(height: 24),
-                        const Text(
-                          '첨부파일 1',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF51565F),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF8F9FB),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      notice['fileName'] as String,
-                                      style: const TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF51565F),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      notice['fileSize'] as String,
-                                      style: const TextStyle(
-                                        fontFamily: 'Pretendard',
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xFF6C737F),
-                                      ),
-                                    ),
-                                  ],
+                              const SizedBox(height: 6),
+                              Text(
+                                _formatDate(notice.regDt),
+                                style: const TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400, // Regular
+                                  color: Color(0xFFA2ADBE),
                                 ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.download, color: Color(0xFF6C737F)),
-                                onPressed: () {
-                                  // Download action logic
-                                },
                               ),
                             ],
                           ),
                         ),
+                        const SizedBox(width: 12),
+                        Icon(
+                          isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                          color: const Color(0xFF6C737F),
+                          size: 20,
+                        ),
                       ],
-                    ],
+                    ),
                   ),
                 ),
+                // Body area (visible when expanded)
+                if (isExpanded) ...[
+                  // Divider
+                  Container(height: 1, color: const Color(0xFFE8EBF1)),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Builder(
+                      builder: (context) {
+                        if (isDetailLoading) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24),
+                              child: CircularProgressIndicator(
+                                color: Color(0xFF7F4FFF),
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          );
+                        }
+
+                        if (detail == null) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24),
+                              child: Text(
+                                '내용을 불러오지 못했습니다.',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  color: Color(0xFF87909E),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            HtmlWidget(
+                              detail.content,
+                              textStyle: const TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400, // Regular
+                                color: Color(0xFF51565F),
+                                height: 1.4,
+                                letterSpacing: -0.66,
+                              ),
+                            ),
+                            if (detail.files.isNotEmpty) ...[
+                              const SizedBox(height: 24),
+                              Text(
+                                '첨부파일 ${detail.files.length}',
+                                style: const TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF51565F),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              ...detail.files.map((file) => Container(
+                                    margin: const EdgeInsets.only(bottom: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF8F9FB),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                file.originName,
+                                                style: const TextStyle(
+                                                  fontFamily: 'Pretendard',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color(0xFF51565F),
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                file.fileSize,
+                                                style: const TextStyle(
+                                                  fontFamily: 'Pretendard',
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Color(0xFF6C737F),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.file_download_outlined, color: Color(0xFF6C737F)),
+                                          onPressed: () => _downloadFileToDevice(file),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ],
-            ],
-          ),
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
+  }
+
+  bool _isRecentNotice(String regDtString) {
+    try {
+      final regDt = DateTime.parse(regDtString.replaceAll(' ', 'T'));
+      final now = DateTime.now();
+      final difference = now.difference(regDt).inDays;
+      return difference < 3; // "New" badge for 3 days
+    } catch (e) {
+      return false;
+    }
   }
 
   Widget _buildQnaTab() {
