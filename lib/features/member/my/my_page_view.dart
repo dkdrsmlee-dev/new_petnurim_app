@@ -188,7 +188,7 @@ class _MyPageContentState extends State<_MyPageContent> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 pets: pets,
                 onPetPressed: (_) {},
-                onAddPressed: () {},
+                onAddPressed: () => context.push(AppRoutes.myPetAdd),
               ),
               const SizedBox(height: 24),
 

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../app/app_routes.dart';
 
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
@@ -227,9 +230,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                       ),
                     )
                   : ElevatedButton(
-                      onPressed: () {
-                        // 마이 펫 추가 페이지 연결 예정
-                      },
+                      onPressed: () => context.push(AppRoutes.myPetAdd),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF7F4FFF),
                         foregroundColor: Colors.white,
