@@ -14,6 +14,8 @@ abstract final class AppRoutes {
   static const myPetDetailForm = '/my/pets/add/details';
   static const myPetBreedSelect = '/my/pets/add/breed-select';
   static const myPetStoryForm = '/my/pets/add/story';
+  static const myPetHealthForm = '/my/pets/add/health';
+  static const myPetAddComplete = '/my/pets/add/complete';
   static const addressWebView = '/webview/address';
   static const customerCenter = '/my/customer-center';
   static const notificationCenter = '/notification-center';
@@ -35,6 +37,8 @@ abstract final class AppRouteNames {
   static const myPetDetailForm = 'myPetDetailForm';
   static const myPetBreedSelect = 'myPetBreedSelect';
   static const myPetStoryForm = 'myPetStoryForm';
+  static const myPetHealthForm = 'myPetHealthForm';
+  static const myPetAddComplete = 'myPetAddComplete';
   static const addressWebView = 'addressWebView';
   static const customerCenter = 'customerCenter';
   static const notificationCenter = 'notificationCenter';

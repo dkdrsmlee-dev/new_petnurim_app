@@ -425,17 +425,27 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // 확인 버튼
+                  // 다음 버튼
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _isConfirmButtonEnabled
                           ? () {
-                              // 마이 펫 등록 최종 완료 처리 및 리스트 메인으로 복귀
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('새로운 마이 펫이 성공적으로 추가되었습니다!')),
+                              context.push(
+                                Uri(
+                                  path: AppRoutes.myPetHealthForm,
+                                  queryParameters: {
+                                    'petType': widget.petType,
+                                    'name': widget.name,
+                                    'breed': widget.breed,
+                                    'profileImagePath': widget.profileImagePath,
+                                    'age': _selectedAge.toString(),
+                                    'dateBecameFamily': _selectedDate != null
+                                        ? '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}'
+                                        : null,
+                                    'gender': _selectedGender,
+                                  },
+                                ).toString(),
                               );
-                              // 마이펫 목록 화면으로 되돌아감 (GoRoutes.myPetList)
-                              context.go(AppRoutes.myPetList);
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
@@ -451,7 +461,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       ),
                       child: const Text(
-                        '확인',
+                        '다음',
                         style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 18,
