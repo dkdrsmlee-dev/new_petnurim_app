@@ -10,6 +10,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
   final String petType;
   final String name;
   final String? breed;
+  final String? breedId;
   final String? profileImagePath;
   final int age;
   final String? dateBecameFamily;
@@ -24,6 +25,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
     required this.petType,
     required this.name,
     this.breed,
+    this.breedId,
     this.profileImagePath,
     required this.age,
     this.dateBecameFamily,

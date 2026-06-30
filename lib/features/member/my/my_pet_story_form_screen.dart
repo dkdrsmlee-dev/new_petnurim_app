@@ -11,6 +11,7 @@ class MyPetStoryFormScreen extends ConsumerStatefulWidget {
   final String petType;
   final String name;
   final String? breed;
+  final String? breedId;
   final String? profileImagePath;
 
   const MyPetStoryFormScreen({
@@ -18,6 +19,7 @@ class MyPetStoryFormScreen extends ConsumerStatefulWidget {
     required this.petType,
     required this.name,
     this.breed,
+    this.breedId,
     this.profileImagePath,
   });
 
@@ -453,6 +455,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     'petType': widget.petType,
                                     'name': widget.name,
                                     'breed': widget.breed,
+                                    'breedId': widget.breedId,
                                     'profileImagePath': widget.profileImagePath,
                                     'age': _selectedAge.toString(),
                                     'dateBecameFamily': _selectedDate != null

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
+import '../domain/pet_breed.dart';
 
 class MyPetDetailFormScreen extends ConsumerStatefulWidget {
   final String petType; // 'DOG' 또는 'CAT'
@@ -25,6 +26,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
   final TextEditingController _nameController = TextEditingController();
   String? _profileImagePath;
   String? _selectedBreed;
+  String? _selectedBreedId;
   bool _isNextButtonEnabled = false;
 
   static const Color _primaryColor = Color(0xFF7F4FFF);
@@ -167,7 +169,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
 
   // 품종 선택 화면 이동
   Future<void> _navigateToBreedSelect() async {
-    final selected = await context.push<String>(
+    final selected = await context.push<PetBreed>(
       Uri(
         path: AppRoutes.myPetBreedSelect,
         queryParameters: {'petType': widget.petType},
@@ -175,7 +177,8 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
     );
     if (selected != null && mounted) {
       setState(() {
-        _selectedBreed = selected;
+        _selectedBreed = selected.breedNameKor;
+        _selectedBreedId = selected.petBreedId;
       });
     }
   }
@@ -470,6 +473,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                     'petType': widget.petType,
                                     'name': _nameController.text.trim(),
                                     'breed': _selectedBreed,
+                                    'breedId': _selectedBreedId,
                                     'profileImagePath': _profileImagePath,
                                   },
                                 ).toString(),

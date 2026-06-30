@@ -1,6 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import '../data/pet_repository.dart';
+import '../domain/pet_breed.dart';
 
 class MyPetBreedSelectScreen extends ConsumerStatefulWidget {
   final String petType; // 'DOG' 또는 'CAT'
@@ -16,8 +20,17 @@ class MyPetBreedSelectScreen extends ConsumerStatefulWidget {
 
 class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  
   String _searchQuery = '';
   String _selectedTab = '전체'; // '전체', 'ㄱ~ㄴ', 'ㄷ~ㅂ', 'ㅅ~ㅊ', 'ㅋ~ㅎ'
+  
+  List<PetBreed> _breeds = [];
+  bool _isLoading = false;
+  bool _hasNext = true;
+  String? _nextCursor;
+  String? _errorMessage;
+  Timer? _debounce;
 
   static const Color _primaryColor = Color(0xFF7F4FFF);
   static const Color _borderColor = Color(0xFFD6DBE4);
@@ -27,155 +40,105 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
   static const Color _bgGrayColor = Color(0xFFF4F6F8);
   static const Color _dividerColor = Color(0xFFE8EBF1);
 
-  // 품종 데이터 마스터 리스트
-  static const List<String> _dogBreeds = [
-    '믹스견 [Mix]',
-    '골든 리트리버 [Golden Retriever]',
-    '그레이 하운드 [Grey Hound]',
-    '그레이트 데인 [Great Dane]',
-    '그레이트 피레니즈 [Great Pyrenees]',
-    '기슈 이누 [Kishu Inu]',
-    '노르웨이언 엘크하운드 [Norwegian Elkhound]',
-    '노리치 테리어 [Norwich Terrier]',
-    '노르포크 테리어 [Norfolk Terrier]',
-    '뉴펀들랜드 [Newfoundland]',
-    '닥스훈트 [Dachshund]',
-    '도베르만 [Doberman]',
-    '말티즈 [Maltese]',
-    '미니어처 핀셔 [Miniature Pinscher]',
-    '바셋 하운드 [Basset Hound]',
-    '베들링턴 테리어 [Bedlington Terrier]',
-    '보스턴 테리어 [Boston Terrier]',
-    '보더 콜리 [Border Collie]',
-    '비숑 프리제 [Bichon Frise]',
-    '사모예드 [Samoyed]',
-    '샤페이 [Shar Pei]',
-    '시바견 [Shiba Inu]',
-    '시베리안 허스키 [Siberian Husky]',
-    '시츄 [Shih Tzu]',
-    '아프간 하운드 [Afghan Hound]',
-    '웰시 코기 [Welsh Corgi]',
-    '진돗개 [Jindo Dog]',
-    '치와와 [Chihuahua]',
-    '코카 스파니엘 [Cocker Spaniel]',
-    '콜리 [Collie]',
-    '퍼그 [Pug]',
-    '페키니즈 [Pekingese]',
-    '포메라니안 [Pomeranian]',
-    '푸들 [Poodle]',
-    '풍산개 [Poongsan Dog]',
-    '프렌치 불독 [French Bulldog]',
-    '화이트 테리어 [White Terrier]'
-  ];
-
-  static const List<String> _catBreeds = [
-    '믹스묘 [Mix]',
-    '네벨룽 [Nebelung]',
-    '노르웨이 숲 [Norwegian Forest Cat]',
-    '데본렉스 [Devon Rex]',
-    '라가머핀 [Ragamuffin]',
-    '러시안 블루 [Russian Blue]',
-    '렉돌 [Ragdoll]',
-    '맹크스 [Manx]',
-    '메인쿤 [Maine Coon]',
-    '발리네즈 [Balinese]',
-    '버만 [Birman]',
-    '버미즈 [Burmese]',
-    '뱅갈 [Bengal]',
-    '봄베이 [Bombay]',
-    '브리티시 숏헤어 [British Shorthair]',
-    '사바나캣 [Savannah Cat]',
-    '샤트룩스 [Chartreux]',
-    '샴 [Siamese]',
-    '셀커크 렉스 [Selkirk Rex]',
-    '소말리 [Somali]',
-    '스코티시 폴드 [Scottish Fold]',
-    '스노우슈 [Snowshoe]',
-    '스핑크스 [Sphynx]',
-    '싱가퓨라 [Singapura]',
-    '아메리칸 숏헤어 [American Shorthair]',
-    '아메리칸 와이어헤어 [American Wirehair]',
-    '아메리칸 컬 [American Curl]',
-    '아비시니안 [Abyssinian]',
-    '오시캣 [Ocicat]',
-    '요크 초콜릿 [York Chocolate]',
-    '재패니즈 밥테일 [Japanese Bobtail]',
-    '터키시 앙고라 [Turkish Angora]',
-    '터키시 반 [Turkish Van]',
-    '토이거 [Toyger]',
-    '페르시안 [Persian]',
-    '하바나 브라운 [Havana Brown]'
-  ];
-
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    _scrollController.addListener(_onScroll);
+    Future.microtask(() => _fetchBreeds(reset: true));
   }
 
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
   void _onSearchChanged() {
-    setState(() {
-      _searchQuery = _searchController.text.trim();
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      final query = _searchController.text.trim();
+      if (query != _searchQuery) {
+        setState(() {
+          _searchQuery = query;
+        });
+        _fetchBreeds(reset: true);
+      }
     });
   }
 
-  // 한글 한 글자의 초성 추출 도우미 함수
-  String _getInitialConsonant(String text) {
-    if (text.isEmpty) return '';
-    final firstCode = text.codeUnitAt(0);
-    // 한글 음절 범위 (가 ~ 힣: 0xAC00 ~ 0xD7A3)
-    if (firstCode >= 0xAC00 && firstCode <= 0xD7A3) {
-      final index = (firstCode - 0xAC00) ~/ 588;
-      const consonants = [
-        'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ',
-        'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
-      ];
-      return consonants[index];
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      _fetchBreeds();
     }
-    return text[0];
   }
 
-  // 초성 그룹 탭 매칭 검증
-  bool _matchesTabGroup(String breedName) {
-    if (_selectedTab == '전체') return true;
+  Future<void> _fetchBreeds({bool reset = false}) async {
+    if (_isLoading) return;
+    if (!reset && !_hasNext) return;
 
-    final initial = _getInitialConsonant(breedName);
-    if (initial.isEmpty) return false;
+    setState(() {
+      _isLoading = true;
+      if (reset) {
+        _breeds = [];
+        _hasNext = true;
+        _nextCursor = null;
+        _errorMessage = null;
+      }
+    });
 
-    if (_selectedTab == 'ㄱ~ㄴ') {
-      return const ['ㄱ', 'ㄲ', 'ㄴ'].contains(initial);
-    } else if (_selectedTab == 'ㄷ~ㅂ') {
-      return const ['ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ'].contains(initial);
-    } else if (_selectedTab == 'ㅅ~ㅊ') {
-      return const ['ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ'].contains(initial);
-    } else if (_selectedTab == 'ㅋ~ㅎ') {
-      return const ['ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'].contains(initial);
+    try {
+      final choseongCodeMap = {
+        'ㄱ~ㄴ': 'GN',
+        'ㄷ~ㅂ': 'DB',
+        'ㅅ~ㅊ': 'SC',
+        'ㅋ~ㅎ': 'KH',
+      };
+      final choseong = choseongCodeMap[_selectedTab];
+
+      final repository = ref.read(petRepositoryProvider);
+      final response = await repository.searchBreeds(
+        petTypeCode: widget.petType,
+        choseongCode: choseong,
+        keyword: _searchQuery.isEmpty ? null : _searchQuery,
+        cursor: _nextCursor,
+        limit: 20,
+      );
+
+      if (mounted) {
+        setState(() {
+          _breeds.addAll(response.items);
+          _hasNext = response.hasNext;
+          _nextCursor = response.nextCursor;
+          _isLoading = false;
+          _errorMessage = null;
+        });
+      }
+    } catch (e) {
+      debugPrint('Breed API failed: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          if (reset) {
+            final errStr = e.toString();
+            if (errStr.contains('로그인 정보')) {
+              _errorMessage = '로그인 정보가 유효하지 않습니다.\n다시 로그인해 주세요.';
+            } else {
+              _errorMessage = '품종 목록을 불러오지 못했습니다.\n네트워크 연결 상태를 확인해 주세요.';
+            }
+          }
+        });
+      }
     }
-    return false;
-  }
-
-  // 검색어 매칭 검증
-  bool _matchesSearch(String breedName) {
-    if (_searchQuery.isEmpty) return true;
-    final normalizedSearch = _searchQuery.toLowerCase();
-    final normalizedBreed = breedName.toLowerCase();
-    return normalizedBreed.contains(normalizedSearch);
   }
 
   @override
   Widget build(BuildContext context) {
-    final breeds = widget.petType == 'DOG' ? _dogBreeds : _catBreeds;
-    // 필터링 적용 리스트
-    final filteredBreeds = breeds.where((breed) {
-      return _matchesTabGroup(breed) && _matchesSearch(breed);
-    }).toList();
+    final listCount = _breeds.length + (_isLoading ? 1 : 0);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -278,9 +241,12 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                   final isSelected = _selectedTab == tabName;
                   return GestureDetector(
                     onTap: () {
-                      setState(() {
-                        _selectedTab = tabName;
-                      });
+                      if (_selectedTab != tabName) {
+                        setState(() {
+                          _selectedTab = tabName;
+                        });
+                        _fetchBreeds(reset: true);
+                      }
                     },
                     child: Container(
                       margin: const EdgeInsets.only(right: 8),
@@ -307,49 +273,125 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
             ),
             // 3. 품종 리스트 영역
             Expanded(
-              child: filteredBreeds.isEmpty
-                  ? const Center(
-                      child: Text(
-                        '검색 결과에 맞는 품종이 없습니다.',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 16,
-                          color: _placeholderColor,
-                        ),
-                      ),
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: filteredBreeds.length,
-                      separatorBuilder: (context, index) => const Divider(
-                        color: _dividerColor,
-                        height: 1,
-                        thickness: 1,
-                      ),
-                      itemBuilder: (context, index) {
-                        final breed = filteredBreeds[index];
-                        return GestureDetector(
-                          onTap: () {
-                            context.pop(breed); // 선택값을 넘겨주며 뒤로가기
-                          },
-                          child: Container(
-                            height: 54,
-                            alignment: Alignment.centerLeft,
-                            color: Colors.transparent,
-                            child: Text(
-                              breed,
-                              style: const TextStyle(
+              child: _errorMessage != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            color: Color(0xFFFA6262),
+                            size: 48,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            _errorMessage!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              color: _textMutedColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () => _fetchBreeds(reset: true),
+                            icon: const Icon(Icons.refresh, size: 18),
+                            label: const Text(
+                              '다시 시도',
+                              style: TextStyle(
                                 fontFamily: 'Pretendard',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500, // Medium
-                                color: _textMutedColor,
-                                letterSpacing: -0.66,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _primaryColor,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
                           ),
-                        );
-                      },
-                    ),
+                        ],
+                      ),
+                    )
+                  : _breeds.isEmpty && !_isLoading
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.search_off,
+                                color: _placeholderColor,
+                                size: 48,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                _searchQuery.isNotEmpty
+                                    ? '입력하신 검색어와 일치하는 품종이 없습니다.'
+                                    : '등록된 품종 정보가 없습니다.',
+                                style: const TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  color: _placeholderColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.separated(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: listCount,
+                          separatorBuilder: (context, index) {
+                            if (index == _breeds.length - 1 && _isLoading) {
+                              return const SizedBox.shrink();
+                            }
+                            return const Divider(
+                              color: _dividerColor,
+                              height: 1,
+                              thickness: 1,
+                            );
+                          },
+                          itemBuilder: (context, index) {
+                            if (index == _breeds.length) {
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: _primaryColor,
+                                  ),
+                                ),
+                              );
+                            }
+
+                            final breed = _breeds[index];
+                            return GestureDetector(
+                              onTap: () {
+                                context.pop(breed); // 선택 품종 객체를 넘겨주며 뒤로가기
+                              },
+                              child: Container(
+                                height: 54,
+                                alignment: Alignment.centerLeft,
+                                color: Colors.transparent,
+                                child: Text(
+                                  breed.breedNameKor,
+                                  style: const TextStyle(
+                                    fontFamily: 'Pretendard',
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500, // Medium
+                                    color: _textMutedColor,
+                                    letterSpacing: -0.66,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
             ),
           ],
         ),

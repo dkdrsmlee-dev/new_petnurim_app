@@ -11,6 +11,7 @@ class MyPetHealthFormScreen extends ConsumerStatefulWidget {
   final String petType;
   final String name;
   final String? breed;
+  final String? breedId;
   final String? profileImagePath;
   final int age;
   final String? dateBecameFamily;
@@ -21,6 +22,7 @@ class MyPetHealthFormScreen extends ConsumerStatefulWidget {
     required this.petType,
     required this.name,
     this.breed,
+    this.breedId,
     this.profileImagePath,
     required this.age,
     this.dateBecameFamily,
@@ -449,6 +451,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                     'petType': widget.petType,
                                     'name': widget.name,
                                     'breed': widget.breed,
+                                    'breedId': widget.breedId,
                                     'profileImagePath': widget.profileImagePath,
                                     'age': widget.age.toString(),
                                     'dateBecameFamily': widget.dateBecameFamily,
