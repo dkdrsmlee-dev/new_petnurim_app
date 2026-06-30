@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
 
 class MyPetDetailFormScreen extends ConsumerStatefulWidget {
@@ -179,13 +180,40 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
     }
   }
 
+  void _showCancelDialog() {
+    final isDirty = _nameController.text.trim().isNotEmpty ||
+        _profileImagePath != null ||
+        _selectedBreed != null;
+
+    if (!isDirty) {
+      context.pop();
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return EdgeButtonDialog(
+          title: '등록을 중단하시겠어요?',
+          content: '지금까지 입력한 정보는\n저장되지 않아요.',
+          cancelText: '취소',
+          confirmText: '확인',
+          onConfirm: () {
+            context.go(AppRoutes.myPetList);
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const NurimPageHeader(
+      appBar: NurimPageHeader(
         title: '마이 펫 추가',
         showDivider: false,
+        onBackPressed: _showCancelDialog,
       ),
       body: SafeArea(
         child: Column(
@@ -406,9 +434,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                   // 취소 버튼
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                        context.pop();
-                      },
+                      onPressed: _showCancelDialog,
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.white,
                         side: const BorderSide(color: _borderColor),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 
@@ -135,6 +136,23 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
         _selectedDate = selected;
       });
     }
+  }
+
+  void _showCancelDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return EdgeButtonDialog(
+          title: '등록을 중단하시겠어요?',
+          content: '지금까지 입력한 정보는\n저장되지 않아요.',
+          cancelText: '취소',
+          confirmText: '확인',
+          onConfirm: () {
+            context.go(AppRoutes.myPetList);
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -399,9 +417,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                   // 취소 버튼
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                        context.pop();
-                      },
+                      onPressed: _showCancelDialog,
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.white,
                         side: const BorderSide(color: _borderColor),
