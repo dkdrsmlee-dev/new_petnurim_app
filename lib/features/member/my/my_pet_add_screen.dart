@@ -88,9 +88,9 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
                 style: TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 16,
-                  fontWeight: FontWeight.w600, // SemiBold
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                   letterSpacing: -0.66,
-                  color: isSelected ? _primaryColor : _labelMutedColor,
+                  color: isSelected ? const Color(0xFF30343C) : _labelMutedColor,
                   height: 1.4,
                 ),
               ),
