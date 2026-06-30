@@ -93,12 +93,13 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
 
     try {
       final choseongCodeMap = {
+        '전체': 'ALL',
         'ㄱ~ㄴ': 'GN',
         'ㄷ~ㅂ': 'DB',
         'ㅅ~ㅊ': 'SC',
         'ㅋ~ㅎ': 'KH',
       };
-      final choseong = choseongCodeMap[_selectedTab];
+      final choseong = choseongCodeMap[_selectedTab] ?? 'ALL';
 
       final repository = ref.read(petRepositoryProvider);
       final response = await repository.searchBreeds(

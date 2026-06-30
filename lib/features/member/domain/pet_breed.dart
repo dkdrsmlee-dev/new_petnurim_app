@@ -18,8 +18,10 @@ class PetBreed {
   factory PetBreed.fromJson(Map<String, dynamic> json) {
     return PetBreed(
       petBreedId: json['petBreedId']?.toString() ?? '',
-      breedNameKor: json['breedNameKor']?.toString() ?? '',
-      breedNameEng: json['breedNameEng']?.toString() ?? '',
+      // Support both 'breedName' and 'breedNameKor' from API response variations
+      breedNameKor: json['breedName']?.toString() ?? json['breedNameKor']?.toString() ?? '',
+      // Support both 'breedNameEn' and 'breedNameEng' from API response variations
+      breedNameEng: json['breedNameEn']?.toString() ?? json['breedNameEng']?.toString() ?? '',
       petTypeCode: json['petTypeCode']?.toString() ?? '',
       mixedBreedCode: json['mixedBreedCode']?.toString() ?? '',
       displayCode: json['displayCode']?.toString() ?? '',

@@ -54,7 +54,7 @@ class BackendPetRepository implements PetRepository {
     final queryParameters = <String, String>{
       'petTypeCode': petTypeCode,
     };
-    if (choseongCode != null && choseongCode != 'ALL') {
+    if (choseongCode != null) {
       queryParameters['choseongCode'] = choseongCode;
     }
     if (keyword != null && keyword.trim().isNotEmpty) {
