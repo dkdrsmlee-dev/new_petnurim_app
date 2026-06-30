@@ -19,7 +19,7 @@ abstract interface class PetRepository {
   Future<CreateMyPetResponse> createMyPet({
     required String petTypeCode,
     required String petName,
-    required int petBreedId,
+    int? petBreedId,
     required int petAge,
     required String familyDt,
     required String genderCode,
@@ -94,7 +94,7 @@ class BackendPetRepository implements PetRepository {
   Future<CreateMyPetResponse> createMyPet({
     required String petTypeCode,
     required String petName,
-    required int petBreedId,
+    int? petBreedId,
     required int petAge,
     required String familyDt,
     required String genderCode,
@@ -107,7 +107,6 @@ class BackendPetRepository implements PetRepository {
     final body = <String, dynamic>{
       'petTypeCode': petTypeCode,
       'petName': petName,
-      'petBreedId': petBreedId,
       'petAge': petAge,
       'familyDt': familyDt,
       'genderCode': genderCode,
@@ -116,6 +115,9 @@ class BackendPetRepository implements PetRepository {
       'weightMeasureDt': weightMeasureDt,
       'representYn': representYn,
     };
+    if (petBreedId != null) {
+      body['petBreedId'] = petBreedId;
+    }
     if (profileFileId != null) {
       body['profileFileId'] = profileFileId;
     }

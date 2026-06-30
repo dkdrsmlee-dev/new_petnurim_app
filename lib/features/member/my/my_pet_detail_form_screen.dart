@@ -57,7 +57,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
   void _validateForm() {
     final name = _nameController.text.trim();
     setState(() {
-      _isNextButtonEnabled = name.isNotEmpty && _selectedBreedId != null;
+      _isNextButtonEnabled = name.isNotEmpty;
     });
   }
 
@@ -381,33 +381,19 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                       ],
                     ),
                     const SizedBox(height: 24),
-                    // 품종 선택 필드 (필수)
+                    // 품종 선택 필드 (선택)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const Text(
-                              '품종',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF51565F),
-                                letterSpacing: -0.66,
-                              ),
-                            ),
-                            const SizedBox(width: 2),
-                            // 필수 마커 (빨간 점)
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFFF3D3D),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
+                        const Text(
+                          '품종',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF51565F),
+                            letterSpacing: -0.66,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         GestureDetector(

@@ -107,10 +107,9 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
         }
       }
 
-      final breedIdVal = widget.breedId != null ? int.tryParse(widget.breedId!) : null;
-      if (breedIdVal == null) {
-        throw const FormatException('선택된 품종 정보가 올바르지 않습니다.');
-      }
+      final breedIdVal = (widget.breedId != null && widget.breedId != 'null')
+          ? int.tryParse(widget.breedId!)
+          : null;
 
       final weightVal = double.tryParse(_weightController.text.trim()) ?? 0.0;
 
