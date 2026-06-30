@@ -87,7 +87,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: 20,
+                  itemCount: 30,
                   itemBuilder: (context, index) {
                     final ageVal = index + 1;
                     final isSelected = _selectedAge == ageVal;
