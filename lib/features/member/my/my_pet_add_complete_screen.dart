@@ -1,39 +1,23 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/api/api_client.dart';
+import '../data/pet_repository.dart';
+import '../domain/pet_models.dart';
+
+final myPetDetailProvider = FutureProvider.family.autoDispose<MyPetDetailResponse, String>((ref, myPetId) {
+  return ref.read(petRepositoryProvider).getMyPetDetail(myPetId);
+});
 
 class MyPetAddCompleteScreen extends ConsumerWidget {
-  final String petType;
-  final String name;
-  final String? breed;
-  final String? breedId;
-  final String? profileImagePath;
-  final int age;
-  final String? dateBecameFamily;
-  final String gender;
-  final bool neutered;
-  final String weight;
-  final String? weightDate;
-  final bool isPrimary;
+  final String myPetId;
 
   const MyPetAddCompleteScreen({
     super.key,
-    required this.petType,
-    required this.name,
-    this.breed,
-    this.breedId,
-    this.profileImagePath,
-    required this.age,
-    this.dateBecameFamily,
-    required this.gender,
-    required this.neutered,
-    required this.weight,
-    this.weightDate,
-    required this.isPrimary,
+    required this.myPetId,
   });
 
   static const Color _primaryColor = Color(0xFF7F4FFF);
@@ -56,7 +40,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hasImage = profileImagePath != null && profileImagePath!.isNotEmpty;
+    final detailAsync = ref.watch(myPetDetailProvider(myPetId));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -102,112 +86,174 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
         ),
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 1. 상단 서브 타이틀
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        '등록이 완료되었어요!\n이제 맞춤 케어를 시작해볼까요?',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.66,
-                          color: _textStrongColor,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    // 2. 프로필 이미지 중앙 배치 (100px)
-                    Center(
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFFF4F6F8),
-                          border: Border.all(color: const Color(0xFFF0F2F5), width: 1),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: hasImage
-                            ? Image.file(
-                                File(profileImagePath!),
-                                fit: BoxFit.cover,
-                              )
-                            : Center(
-                                child: SvgPicture.asset(
-                                  'assets/images/ic_pet_foot_default.svg',
-                                  width: 60,
-                                  fit: BoxFit.fitWidth,
-                                ),
-                              ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    // 3. 마이펫 등록 정보 요약 카드 (Round 16px)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: _borderColor),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        children: [
-                          _buildInfoRow('이름', name),
-                          _buildInfoRow('품종', breed ?? '믹스'),
-                          _buildInfoRow('나이', '$age살'),
-                          _buildInfoRow('가족이 된 날', _formatDate(dateBecameFamily)),
-                          _buildInfoRow('성별', gender == 'MALE' ? '남아' : '여아'),
-                          _buildInfoRow('중성화', neutered ? '했어요' : '안했어요'),
-                          _buildInfoRow('체중', '${weight}Kg'),
-                          _buildInfoRow('체중 측정일', _formatDate(weightDate), isLast: true),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+        child: detailAsync.when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: _primaryColor),
+          ),
+          error: (err, stack) => Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  color: Color(0xFFFA6262),
+                  size: 48,
                 ),
-              ),
-            ),
-            // 4. 하단 확인 버튼
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  context.go(AppRoutes.myPetList);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _primaryColor,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size.fromHeight(56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: const Text(
-                  '확인',
+                const SizedBox(height: 12),
+                const Text(
+                  '등록 정보를 불러오지 못했습니다.',
                   style: TextStyle(
                     fontFamily: 'Pretendard',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.66,
+                    fontSize: 16,
+                    color: _textMutedColor,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  onPressed: () => ref.refresh(myPetDetailProvider(myPetId)),
+                  icon: const Icon(Icons.refresh, size: 18),
+                  label: const Text(
+                    '다시 시도',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _primaryColor,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
+          data: (detail) {
+            final imageUrl = detail.profileFileId != null
+                ? ref.read(apiClientProvider).uri('/api/v1/files/${detail.profileFileId}').toString()
+                : null;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 1. 상단 서브 타이틀
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            '등록이 완료되었어요!\n이제 맞춤 케어를 시작해볼까요?',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.66,
+                              color: _textStrongColor,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // 2. 프로필 이미지 중앙 배치 (100px)
+                        Center(
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFFF4F6F8),
+                              border: Border.all(color: const Color(0xFFF0F2F5), width: 1),
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: imageUrl != null
+                                ? Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => Center(
+                                      child: SvgPicture.asset(
+                                        'assets/images/ic_pet_foot_default.svg',
+                                        width: 60,
+                                        fit: BoxFit.fitWidth,
+                                      ),
+                                    ),
+                                  )
+                                : Center(
+                                    child: SvgPicture.asset(
+                                      'assets/images/ic_pet_foot_default.svg',
+                                      width: 60,
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        // 3. 마이펫 등록 정보 요약 카드 (Round 16px)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: _borderColor),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: Column(
+                            children: [
+                              _buildInfoRow('이름', detail.petName),
+                              _buildInfoRow('품종', detail.breedNameKor ?? '믹스'),
+                              _buildInfoRow('나이', '${detail.petAge}살'),
+                              _buildInfoRow('가족이 된 날', _formatDate(detail.familyDt)),
+                              _buildInfoRow('성별', detail.genderCodeNm ?? (detail.genderCode == 'MALE' ? '남아' : '여아')),
+                              _buildInfoRow('중성화', detail.neuteredYn == 'Y' ? '했어요' : '안했어요'),
+                              _buildInfoRow('체중', '${detail.weightKg}Kg'),
+                              _buildInfoRow('체중 측정일', _formatDate(detail.weightMeasureDt), isLast: true),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ),
+                // 4. 하단 확인 버튼
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      context.go(AppRoutes.myPetList);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _primaryColor,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(56),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: const Text(
+                      '확인',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.66,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

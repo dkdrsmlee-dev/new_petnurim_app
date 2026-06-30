@@ -4,6 +4,7 @@ import '../../../core/api/api_client.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../auth/domain/auth_exception.dart';
 import '../domain/pet_breed.dart';
+import '../domain/pet_models.dart';
 import '../domain/qna_models.dart'; // For CursorPaginationResponse
 
 abstract interface class PetRepository {
@@ -14,6 +15,22 @@ abstract interface class PetRepository {
     String? cursor,
     int? limit,
   });
+
+  Future<CreateMyPetResponse> createMyPet({
+    required String petTypeCode,
+    required String petName,
+    required int petBreedId,
+    required int petAge,
+    required String familyDt,
+    required String genderCode,
+    required String neuteredYn,
+    required double weightKg,
+    required String weightMeasureDt,
+    required String representYn,
+    int? profileFileId,
+  });
+
+  Future<MyPetDetailResponse> getMyPetDetail(String myPetId);
 }
 
 class BackendPetRepository implements PetRepository {
@@ -68,6 +85,65 @@ class BackendPetRepository implements PetRepository {
         payload,
         (json) => PetBreed.fromJson(json),
       );
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
+  }
+
+  @override
+  Future<CreateMyPetResponse> createMyPet({
+    required String petTypeCode,
+    required String petName,
+    required int petBreedId,
+    required int petAge,
+    required String familyDt,
+    required String genderCode,
+    required String neuteredYn,
+    required double weightKg,
+    required String weightMeasureDt,
+    required String representYn,
+    int? profileFileId,
+  }) async {
+    final body = <String, dynamic>{
+      'petTypeCode': petTypeCode,
+      'petName': petName,
+      'petBreedId': petBreedId,
+      'petAge': petAge,
+      'familyDt': familyDt,
+      'genderCode': genderCode,
+      'neuteredYn': neuteredYn,
+      'weightKg': weightKg,
+      'weightMeasureDt': weightMeasureDt,
+      'representYn': representYn,
+    };
+    if (profileFileId != null) {
+      body['profileFileId'] = profileFileId;
+    }
+
+    final payload = await _apiClient.postJson(
+      '/api/v1/users/my-pets',
+      body: body,
+      bearerToken: await _readAccessToken('로그인 정보가 없어 마이펫을 등록할 수 없습니다.'),
+      fallbackMessage: '마이펫 등록에 실패했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return CreateMyPetResponse.fromJson(payload);
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
+  }
+
+  @override
+  Future<MyPetDetailResponse> getMyPetDetail(String myPetId) async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/users/my-pets/$myPetId',
+      bearerToken: await _readAccessToken('로그인 정보가 없어 마이펫 상세를 조회할 수 없습니다.'),
+      fallbackMessage: '마이펫 상세 정보를 불러오지 못했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return MyPetDetailResponse.fromJson(payload);
     } else {
       throw const FormatException('잘못된 응답 형식입니다.');
     }

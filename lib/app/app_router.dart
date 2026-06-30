@@ -159,32 +159,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.myPetAddComplete,
         name: AppRouteNames.myPetAddComplete,
         builder: (context, state) {
-          final petType = state.uri.queryParameters['petType'] ?? 'DOG';
-          final name = state.uri.queryParameters['name'] ?? '';
-          final breed = state.uri.queryParameters['breed'];
-          final breedId = state.uri.queryParameters['breedId'];
-          final profileImagePath = state.uri.queryParameters['profileImagePath'];
-          final age = int.tryParse(state.uri.queryParameters['age'] ?? '1') ?? 1;
-          final dateBecameFamily = state.uri.queryParameters['dateBecameFamily'];
-          final gender = state.uri.queryParameters['gender'] ?? 'MALE';
-          final neutered = state.uri.queryParameters['neutered'] == 'true';
-          final weight = state.uri.queryParameters['weight'] ?? '0.0';
-          final weightDate = state.uri.queryParameters['weightDate'];
-          final isPrimary = state.uri.queryParameters['isPrimary'] == 'true';
-          return MyPetAddCompleteScreen(
-            petType: petType,
-            name: name,
-            breed: breed,
-            breedId: breedId,
-            profileImagePath: profileImagePath,
-            age: age,
-            dateBecameFamily: dateBecameFamily,
-            gender: gender,
-            neutered: neutered,
-            weight: weight,
-            weightDate: weightDate,
-            isPrimary: isPrimary,
-          );
+          final myPetId = state.uri.queryParameters['myPetId'] ?? '';
+          return MyPetAddCompleteScreen(myPetId: myPetId);
         },
       ),
       GoRoute(

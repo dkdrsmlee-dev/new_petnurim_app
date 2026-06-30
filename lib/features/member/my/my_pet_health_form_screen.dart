@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,8 @@ import '../../../app/app_routes.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
+import '../data/file_repository.dart';
+import '../data/pet_repository.dart';
 
 class MyPetHealthFormScreen extends ConsumerStatefulWidget {
   final String petType;
@@ -39,6 +42,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
   DateTime? _selectedWeightDate; // 체중 측정일
   bool _isPrimary = false; // 대표 펫으로 설정
   bool _isConfirmButtonEnabled = false;
+  bool _isSubmitting = false;
 
   static const Color _primaryColor = Color(0xFF7F4FFF);
   static const Color _borderColor = Color(0xFFD6DBE4);
@@ -77,6 +81,79 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
       setState(() {
         _selectedWeightDate = selected;
       });
+    }
+  }
+
+  Future<void> _submitMyPet() async {
+    if (_isSubmitting) return;
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      int? profileFileId;
+      if (widget.profileImagePath != null && widget.profileImagePath!.isNotEmpty) {
+        final file = File(widget.profileImagePath!);
+        if (await file.exists()) {
+          final fileBytes = await file.readAsBytes();
+          final uploadResult = await ref.read(fileRepositoryProvider).uploadFile(
+            fileBytes: fileBytes,
+            filename: widget.profileImagePath!.split('/').last,
+          );
+          final rawFileId = uploadResult['fileId'];
+          if (rawFileId != null) {
+            profileFileId = int.tryParse(rawFileId.toString());
+          }
+        }
+      }
+
+      final breedIdVal = widget.breedId != null ? int.tryParse(widget.breedId!) : null;
+      if (breedIdVal == null) {
+        throw const FormatException('선택된 품종 정보가 올바르지 않습니다.');
+      }
+
+      final weightVal = double.tryParse(_weightController.text.trim()) ?? 0.0;
+
+      final weightDateStr = _selectedWeightDate != null
+          ? '${_selectedWeightDate!.year}-${_selectedWeightDate!.month.toString().padLeft(2, '0')}-${_selectedWeightDate!.day.toString().padLeft(2, '0')}'
+          : widget.dateBecameFamily!;
+
+      final response = await ref.read(petRepositoryProvider).createMyPet(
+        petTypeCode: widget.petType,
+        petName: widget.name,
+        petBreedId: breedIdVal,
+        petAge: widget.age,
+        familyDt: widget.dateBecameFamily!,
+        genderCode: widget.gender,
+        neuteredYn: _selectedNeutered == true ? 'Y' : 'N',
+        weightKg: weightVal,
+        weightMeasureDt: weightDateStr,
+        representYn: _isPrimary ? 'Y' : 'N',
+        profileFileId: profileFileId,
+      );
+
+      if (mounted) {
+        context.push(
+          Uri(
+            path: AppRoutes.myPetAddComplete,
+            queryParameters: {
+              'myPetId': response.myPetId,
+            },
+          ).toString(),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('마이펫 등록에 실패했습니다: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -442,30 +519,8 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                   // 다음 버튼
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: _isConfirmButtonEnabled
-                          ? () {
-                              context.push(
-                                Uri(
-                                  path: AppRoutes.myPetAddComplete,
-                                  queryParameters: {
-                                    'petType': widget.petType,
-                                    'name': widget.name,
-                                    'breed': widget.breed,
-                                    'breedId': widget.breedId,
-                                    'profileImagePath': widget.profileImagePath,
-                                    'age': widget.age.toString(),
-                                    'dateBecameFamily': widget.dateBecameFamily,
-                                    'gender': widget.gender,
-                                    'neutered': _selectedNeutered.toString(),
-                                    'weight': _weightController.text.trim(),
-                                    'weightDate': _selectedWeightDate != null
-                                        ? '${_selectedWeightDate!.year}-${_selectedWeightDate!.month.toString().padLeft(2, '0')}-${_selectedWeightDate!.day.toString().padLeft(2, '0')}'
-                                        : null,
-                                    'isPrimary': _isPrimary.toString(),
-                                  },
-                                ).toString(),
-                              );
-                            }
+                      onPressed: (_isConfirmButtonEnabled && !_isSubmitting)
+                          ? _submitMyPet
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _primaryColor,
@@ -479,15 +534,24 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                       ),
-                      child: const Text(
-                        '다음',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.66,
-                        ),
-                      ),
+                      child: _isSubmitting
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.0,
+                              ),
+                            )
+                          : const Text(
+                              '다음',
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.66,
+                              ),
+                            ),
                     ),
                   ),
                 ],
