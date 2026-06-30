@@ -15,6 +15,8 @@ import '../features/webview/address_webview_screen.dart';
 import '../features/member/my/customer_center_screen.dart';
 import '../features/member/my/my_pet_list_screen.dart';
 import '../features/member/my/my_pet_add_screen.dart';
+import '../features/member/my/my_pet_detail_form_screen.dart';
+import '../features/member/my/my_pet_breed_select_screen.dart';
 import '../features/notification/notification_screen.dart';
 import 'app_routes.dart';
 
@@ -91,6 +93,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.myPetAdd,
         name: AppRouteNames.myPetAdd,
         builder: (context, state) => const MyPetAddScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.myPetDetailForm,
+        name: AppRouteNames.myPetDetailForm,
+        builder: (context, state) {
+          final petType = state.uri.queryParameters['petType'] ?? 'DOG';
+          return MyPetDetailFormScreen(petType: petType);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.myPetBreedSelect,
+        name: AppRouteNames.myPetBreedSelect,
+        builder: (context, state) {
+          final petType = state.uri.queryParameters['petType'] ?? 'DOG';
+          return MyPetBreedSelectScreen(petType: petType);
+        },
       ),
       GoRoute(
         path: AppRoutes.notificationCenter,

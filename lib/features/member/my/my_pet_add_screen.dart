@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/app_routes.dart';
 import '../../../core/widgets/page_header.dart';
 
 class MyPetAddScreen extends ConsumerStatefulWidget {
@@ -155,7 +157,12 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
                 onPressed: _selectedPetType == null
                     ? null
                     : () {
-                        // 다음 마이 펫 상세 정보 입력 단계로 라우팅 연동 예정
+                        context.push(
+                          Uri(
+                            path: AppRoutes.myPetDetailForm,
+                            queryParameters: {'petType': _selectedPetType!},
+                          ).toString(),
+                        );
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _primaryColor,

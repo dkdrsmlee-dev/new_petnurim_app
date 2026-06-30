@@ -11,6 +11,8 @@ abstract final class AppRoutes {
   static const myWithdraw = '/my/withdraw';
   static const myPetList = '/my/pets';
   static const myPetAdd = '/my/pets/add';
+  static const myPetDetailForm = '/my/pets/add/details';
+  static const myPetBreedSelect = '/my/pets/add/breed-select';
   static const addressWebView = '/webview/address';
   static const customerCenter = '/my/customer-center';
   static const notificationCenter = '/notification-center';
@@ -29,6 +31,8 @@ abstract final class AppRouteNames {
   static const myWithdraw = 'myWithdraw';
   static const myPetList = 'myPetList';
   static const myPetAdd = 'myPetAdd';
+  static const myPetDetailForm = 'myPetDetailForm';
+  static const myPetBreedSelect = 'myPetBreedSelect';
   static const addressWebView = 'addressWebView';
   static const customerCenter = 'customerCenter';
   static const notificationCenter = 'notificationCenter';
