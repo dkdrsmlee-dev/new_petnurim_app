@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/widgets/nurim_date_picker.dart';
 import '../../app/app_routes.dart';
 import '../auth/domain/readable_auth_error.dart';
 import '../auth/domain/social_provider.dart';
@@ -65,7 +65,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  void _selectBirthDate() {
+  Future<void> _selectBirthDate() async {
     DateTime initialDate = DateTime(2000, 1, 1);
     if (_birthDateController.text.isNotEmpty) {
       try {
@@ -80,84 +80,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       } catch (_) {}
     }
 
-    showModalBottomSheet(
+    final selected = await NurimDatePickerBottomSheet.show(
       context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext context) {
-        DateTime tempDate = initialDate;
-        return SizedBox(
-          height: 300,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.black, size: 22),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    const Text(
-                      '생년월일',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                      ),
-                    ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        minimumSize: Size.zero,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          final year = tempDate.year.toString();
-                          final month = tempDate.month.toString().padLeft(2, '0');
-                          final day = tempDate.day.toString().padLeft(2, '0');
-                          _birthDateController.text = '$year-$month-$day';
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        '완료',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1, color: Color(0xFFE2E8F0)),
-              Expanded(
-                child: CupertinoTheme(
-                  data: const CupertinoThemeData(
-                    brightness: Brightness.light,
-                  ),
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: initialDate,
-                    minimumYear: 1900,
-                    maximumDate: DateTime.now(),
-                    onDateTimeChanged: (DateTime newDate) {
-                      tempDate = newDate;
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      title: '생년월일',
+      initialDate: initialDate,
+      minimumDate: DateTime(1900),
+      maximumDate: DateTime.now(),
     );
+
+    if (selected != null && mounted) {
+      setState(() {
+        final year = selected.year.toString();
+        final month = selected.month.toString().padLeft(2, '0');
+        final day = selected.day.toString().padLeft(2, '0');
+        _birthDateController.text = '$year-$month-$day';
+      });
+    }
   }
 
   Future<void> _submitProfile() async {

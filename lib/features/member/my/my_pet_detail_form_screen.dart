@@ -437,9 +437,16 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                     child: ElevatedButton(
                       onPressed: _isNextButtonEnabled
                           ? () {
-                              // 다음 등록 단계로 라우팅 (추후 연동)
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('${_nameController.text} 프로필 정보 등록 완료!')),
+                              context.push(
+                                Uri(
+                                  path: AppRoutes.myPetStoryForm,
+                                  queryParameters: {
+                                    'petType': widget.petType,
+                                    'name': _nameController.text.trim(),
+                                    'breed': _selectedBreed,
+                                    'profileImagePath': _profileImagePath,
+                                  },
+                                ).toString(),
                               );
                             }
                           : null,

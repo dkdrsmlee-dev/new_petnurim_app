@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app_bootstrap.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/storage/token_storage.dart';
+import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/member_repository.dart';
 
@@ -222,7 +222,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   }
 
   // CupertinoDatePicker Bottom Sheet (Wheel Picker 방식)
-  void _showBirthDatePicker(String apiBirthDate) {
+  Future<void> _showBirthDatePicker(String apiBirthDate) async {
     DateTime initialDate = DateTime(2010, 3, 7);
     if (_customBirthDate != null) {
       initialDate = _parseDisplayBirthDate(_customBirthDate!);
@@ -230,85 +230,20 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
       initialDate = _parseApiBirthDate(apiBirthDate);
     }
 
-    DateTime selectedDate = initialDate;
-
-    showModalBottomSheet(
+    final selected = await NurimDatePickerBottomSheet.show(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (context) {
-        return Container(
-          height: 320,
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.black),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    const Text(
-                      '생년월일',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        minimumSize: Size.zero,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _customBirthDate =
-                              "${selectedDate.year}년 ${selectedDate.month}월 ${selectedDate.day}일";
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        '완료',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              Expanded(
-                child: CupertinoTheme(
-                  data: const CupertinoThemeData(
-                    brightness: Brightness.light,
-                  ),
-                  child: CupertinoDatePicker(
-                    mode: CupertinoDatePickerMode.date,
-                    initialDateTime: initialDate,
-                    maximumDate: DateTime.now(),
-                    minimumYear: 1900,
-                    maximumYear: DateTime.now().year,
-                    onDateTimeChanged: (date) {
-                      selectedDate = date;
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      title: '생년월일',
+      initialDate: initialDate,
+      minimumDate: DateTime(1900),
+      maximumDate: DateTime.now(),
     );
+
+    if (selected != null && mounted) {
+      setState(() {
+        _customBirthDate =
+            "${selected.year}년 ${selected.month}월 ${selected.day}일";
+      });
+    }
   }
 
   DateTime _parseDisplayBirthDate(String displayStr) {

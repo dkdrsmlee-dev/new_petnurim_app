@@ -17,6 +17,7 @@ import '../features/member/my/my_pet_list_screen.dart';
 import '../features/member/my/my_pet_add_screen.dart';
 import '../features/member/my/my_pet_detail_form_screen.dart';
 import '../features/member/my/my_pet_breed_select_screen.dart';
+import '../features/member/my/my_pet_story_form_screen.dart';
 import '../features/notification/notification_screen.dart';
 import 'app_routes.dart';
 
@@ -108,6 +109,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final petType = state.uri.queryParameters['petType'] ?? 'DOG';
           return MyPetBreedSelectScreen(petType: petType);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.myPetStoryForm,
+        name: AppRouteNames.myPetStoryForm,
+        builder: (context, state) {
+          final petType = state.uri.queryParameters['petType'] ?? 'DOG';
+          final name = state.uri.queryParameters['name'] ?? '';
+          final breed = state.uri.queryParameters['breed'];
+          final profileImagePath = state.uri.queryParameters['profileImagePath'];
+          return MyPetStoryFormScreen(
+            petType: petType,
+            name: name,
+            breed: breed,
+            profileImagePath: profileImagePath,
+          );
         },
       ),
       GoRoute(
