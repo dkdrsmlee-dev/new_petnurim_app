@@ -7,192 +7,190 @@ class NurimPetInfoDetail extends StatelessWidget {
     super.key,
     required this.pet,
     this.actionLabel = '관리',
-    this.onPressed,
     this.onActionPressed,
-    this.enabled = true,
+    this.showActionButton = true,
     this.padding = EdgeInsets.zero,
   });
 
   final NurimPetCardData pet;
   final String actionLabel;
-  final VoidCallback? onPressed;
   final VoidCallback? onActionPressed;
-  final bool enabled;
+  final bool showActionButton;
   final EdgeInsetsGeometry padding;
 
-  static const Color _titleColor = Color(0xFF30343C);
-  static const Color _mutedColor = Color(0xFF87909E);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _disabledColor = Color(0xFFA2ADBE);
+  static const Color _titleColor = Color(0xFF51565F); // var(--text-color/primary)
+  static const Color _mutedColor = Color(0xFF909AA9); // var(--color/gray/70)
+  static const Color _dotColor = Color(0xFFB4C0D3); // var(--color/gray/50)
+  static const Color _borderColor = Color(0xFFD6DBE4); // var(--line/default)
   static const Color _badgeColor = Color(0xFFF4C21B);
 
   @override
   Widget build(BuildContext context) {
-    final content = Padding(
+    return Padding(
       padding: padding,
-      child: SizedBox(
-        height: 48,
-        child: Row(
-          children: [
-            _PetInfoAvatar(imageProvider: pet.imageProvider),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          pet.name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                            height: 1.35,
-                            letterSpacing: -0.66,
-                            color: enabled ? _titleColor : _disabledColor,
-                          ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Pet Photo (Avatar, diameter 48px)
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFFF1F3F5),
+              border: Border.all(color: _borderColor, width: 1),
+              image: pet.imageProvider != null
+                  ? DecorationImage(
+                      image: pet.imageProvider!,
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+            ),
+            child: pet.imageProvider == null
+                ? const Icon(
+                    Icons.pets,
+                    color: _mutedColor,
+                    size: 24,
+                  )
+                : null,
+          ),
+          const SizedBox(width: 10),
+          // Pet Info Text Column
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title (Name + Primary Star Icon)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        pet.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600, // SemiBold
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                          color: _titleColor,
                         ),
                       ),
-                      if (pet.isPrimary) ...[
-                        const SizedBox(width: 4),
-                        const _PetInfoPrimaryBadge(),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 1),
-                  Text(
-                    _detailText,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      height: 1.35,
-                      letterSpacing: -0.66,
-                      color: enabled ? _mutedColor : _disabledColor,
                     ),
-                  ),
-                ],
+                    if (pet.isPrimary) ...[
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.star_rounded,
+                        color: _badgeColor,
+                        size: 24,
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 2),
+                // Description (Age · Breed · Gender)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (pet.ageText.isNotEmpty) ...[
+                      Text(
+                        pet.ageText,
+                        style: const TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500, // Medium
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                          color: _mutedColor,
+                        ),
+                      ),
+                    ],
+                    if (pet.ageText.isNotEmpty && pet.breed.isNotEmpty) ...[
+                      const SizedBox(width: 4),
+                      const _DotSeparator(),
+                      const SizedBox(width: 4),
+                    ],
+                    if (pet.breed.isNotEmpty) ...[
+                      Text(
+                        pet.breed,
+                        style: const TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                          color: _mutedColor,
+                        ),
+                      ),
+                    ],
+                    if (pet.breed.isNotEmpty && pet.genderText.isNotEmpty) ...[
+                      const SizedBox(width: 4),
+                      const _DotSeparator(),
+                      const SizedBox(width: 4),
+                    ],
+                    if (pet.genderText.isNotEmpty) ...[
+                      Text(
+                        pet.genderText,
+                        style: const TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                          color: _mutedColor,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+          if (showActionButton) ...[
+            const SizedBox(width: 12),
+            // Edit Button (Outline Button, height 32px)
+            OutlinedButton(
+              onPressed: onActionPressed,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: _borderColor, width: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                minimumSize: const Size(0, 32),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                actionLabel,
+                style: const TextStyle(
+                  fontFamily: 'Pretendard',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600, // SemiBold
+                  color: Color(0xFF51565F), // var(--color/gray/100)
+                ),
               ),
             ),
-            const SizedBox(width: 12),
-            _PetInfoActionButton(
-              label: actionLabel,
-              onPressed: enabled ? onActionPressed : null,
-              enabled: enabled,
-            ),
           ],
-        ),
+        ],
       ),
     );
-
-    if (onPressed == null) {
-      return content;
-    }
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(onTap: enabled ? onPressed : null, child: content),
-    );
-  }
-
-  String get _detailText {
-    return [
-      pet.ageText,
-      pet.breed,
-      pet.genderText,
-    ].where((value) => value.trim().isNotEmpty).join(' · ');
   }
 }
 
-class _PetInfoAvatar extends StatelessWidget {
-  const _PetInfoAvatar({required this.imageProvider});
-
-  final ImageProvider? imageProvider;
+class _DotSeparator extends StatelessWidget {
+  const _DotSeparator();
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: 18,
-      backgroundColor: const Color(0xFFF0F2F5),
-      backgroundImage: imageProvider,
-      child: imageProvider == null
-          ? const Icon(
-              Icons.pets,
-              size: 18,
-              color: NurimPetInfoDetail._mutedColor,
-            )
-          : null,
-    );
-  }
-}
-
-class _PetInfoPrimaryBadge extends StatelessWidget {
-  const _PetInfoPrimaryBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    return const CircleAvatar(
-      radius: 9,
-      backgroundColor: NurimPetInfoDetail._badgeColor,
-      child: Icon(Icons.star_rounded, size: 11, color: Colors.white),
-    );
-  }
-}
-
-class _PetInfoActionButton extends StatelessWidget {
-  const _PetInfoActionButton({
-    required this.label,
-    required this.onPressed,
-    required this.enabled,
-  });
-
-  final String label;
-  final VoidCallback? onPressed;
-  final bool enabled;
-
-  @override
-  Widget build(BuildContext context) {
-    final effectiveEnabled = enabled && onPressed != null;
-
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: effectiveEnabled ? onPressed : null,
-      child: Container(
-        constraints: const BoxConstraints(minWidth: 42),
-        height: 26,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: enabled
-                ? NurimPetInfoDetail._borderColor
-                : const Color(0xFFE8EBF1),
-          ),
-        ),
-        child: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontFamily: 'Pretendard',
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            height: 1.4,
-            letterSpacing: -0.66,
-            color: enabled
-                ? NurimPetInfoDetail._titleColor
-                : NurimPetInfoDetail._disabledColor,
-          ),
-        ),
+    return Container(
+      width: 3,
+      height: 3,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: NurimPetInfoDetail._dotColor,
       ),
     );
   }

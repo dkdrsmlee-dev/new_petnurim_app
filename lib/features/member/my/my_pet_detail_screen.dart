@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../../core/widgets/pet_card.dart';
+import '../../../core/widgets/pet_info_detail.dart';
 import '../domain/pet_models.dart';
 import '../data/pet_repository.dart';
 
@@ -21,12 +23,15 @@ class MyPetDetailScreen extends ConsumerWidget {
   final String myPetId;
 
   static const Color _primaryColor = Color(0xFF7F4FFF);
+  static const Color _primaryStrongColor = Color(0xFF7025FF);
   static const Color _textStrongColor = Color(0xFF30343C);
   static const Color _textMutedColor = Color(0xFF51565F);
+  static const Color _textSecondaryColor = Color(0xFF87909E);
   static const Color _placeholderColor = Color(0xFFA2ADBE);
   static const Color _borderColor = Color(0xFFD6DBE4);
+  static const Color _badgeTextColor = Color(0xFF6C737F);
+  static const Color _badgeBackgroundColor = Color(0xFFF4F6F8);
   static const Color _sectionDividerColor = Color(0xFFF4F6F8);
-  static const Color _badgeBackgroundColor = Color(0xFFF4EFFE);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -106,91 +111,27 @@ class MyPetDetailScreen extends ConsumerWidget {
             // Calculate mock next payment date (1 month from today)
             final now = DateTime.now();
             final nextPaymentDate = DateTime(now.year, now.month + 1, now.day);
-            final nextPaymentStr = '${nextPaymentDate.year}-${nextPaymentDate.month.toString().padLeft(2, '0')}-${nextPaymentDate.day.toString().padLeft(2, '0')}';
+            final nextPaymentStr = '${nextPaymentDate.year}.${nextPaymentDate.month.toString().padLeft(2, '0')}.${nextPaymentDate.day.toString().padLeft(2, '0')}';
 
             return ListView(
               children: [
-                // 1. Pet Profile Card Section
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      // Pet Photo
-                      Container(
-                        width: 72,
-                        height: 72,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFFF1F3F5),
-                          border: Border.all(color: _borderColor, width: 1),
-                          image: imageUrl != null
-                              ? DecorationImage(
-                                  image: NetworkImage(imageUrl),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                        ),
-                        child: imageUrl == null
-                            ? const Icon(
-                                Icons.pets,
-                                color: _placeholderColor,
-                                size: 36,
-                              )
-                            : null,
-                      ),
-                      const SizedBox(width: 16),
-                      // Pet Specs
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              pet.petName,
-                              style: const TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: _textStrongColor,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '$ageText · $breedText · $genderText',
-                              style: const TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                color: _textMutedColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Edit button
-                      OutlinedButton(
-                        onPressed: () {
-                          // 상세 정보 수정 흐름 진입 (3단계-2에서 구현 예정)
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: _borderColor, width: 1),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text(
-                          '수정',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: _textMutedColor,
-                          ),
-                        ),
-                      ),
-                    ],
+                // 1. Pet Profile Card Section (Figma node: 234:21712)
+                NurimPetInfoDetail(
+                  pet: NurimPetCardData(
+                    name: pet.petName,
+                    breed: breedText,
+                    ageText: ageText,
+                    genderText: genderText,
+                    imageProvider: imageUrl != null ? NetworkImage(imageUrl) : null,
+                    isPrimary: isPrimary,
+                    membershipTier: '-',
+                    rewardText: '28,000PR',
                   ),
+                  actionLabel: '관리',
+                  onActionPressed: () {
+                    // 상세 정보 수정 흐름 진입 (3단계-2에서 구현 예정)
+                  },
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 ),
 
                 // Section Divider
@@ -198,10 +139,10 @@ class MyPetDetailScreen extends ConsumerWidget {
                   height: 6,
                   color: _sectionDividerColor,
                 ),
-
+                
                 // 2. Membership Info Section
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -210,140 +151,182 @@ class MyPetDetailScreen extends ConsumerWidget {
                         style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: _textStrongColor,
+                          fontWeight: FontWeight.w600,
+                          color: _textSecondaryColor,
                         ),
                       ),
                       const SizedBox(height: 16),
                       if (isPrimary) ...[
-                        // Subscribed Membership View
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: _borderColor),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  // Bronze icon or circle
-                                  Container(
-                                    width: 24,
-                                    height: 24,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Color(0xFFF4C21B), // Bronze color
-                                    ),
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.star,
-                                        color: Colors.white,
-                                        size: 14,
+                        // Subscribed Membership View (Figma node: 231:19551)
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    // Bronze icon or circle
+                                    Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Color(0xFFF4C21B), // Bronze color
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.star,
+                                          color: Colors.white,
+                                          size: 14,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Text(
-                                    '브론즈',
-                                    style: TextStyle(
-                                      fontFamily: 'Pretendard',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: _textStrongColor,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: _badgeBackgroundColor,
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: const Text(
-                                      '현재 이용 중',
+                                    const SizedBox(width: 6),
+                                    const Text(
+                                      '브론즈',
                                       style: TextStyle(
                                         fontFamily: 'Pretendard',
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: _primaryColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: _textStrongColor,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: _badgeBackgroundColor,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: const Text(
+                                        '현재 이용 중',
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: _badgeTextColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    // 결제 내역 화면 연동
+                                  },
+                                  child: const Row(
+                                    children: [
+                                      Text(
+                                        '결제 내역',
+                                        style: TextStyle(
+                                          fontFamily: 'Pretendard',
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                          color: _textSecondaryColor,
+                                        ),
+                                      ),
+                                      SizedBox(width: 2),
+                                      Icon(
+                                        Icons.chevron_right,
+                                        color: _textSecondaryColor,
+                                        size: 16,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: _borderColor),
+                              ),
+                              child: Column(
+                                children: [
+                                  _buildKeyValueRow('다음 결제일', nextPaymentStr),
+                                  const SizedBox(height: 16),
+                                  _buildKeyValueRow('월 구독료', '10,000원'),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // 멤버십 관리 페이지 연동
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFF7F6FF), // violet/10
+                                      foregroundColor: _primaryColor,
+                                      minimumSize: const Size.fromHeight(48),
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      '멤버십 관리',
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
-                              const Divider(color: Color(0xFFE8EBF1), height: 1),
-                              const SizedBox(height: 16),
-                              _buildRowWithArrow('결제 내역', () {}),
-                              const SizedBox(height: 16),
-                              _buildKeyValueRow('다음 결제일', nextPaymentStr),
-                              const SizedBox(height: 16),
-                              _buildKeyValueRow('월 구독료', '10,000원'),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ] else ...[
-                        // No Membership View
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF8F9FB),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: _borderColor),
-                          ),
-                          child: Column(
-                            children: [
-                              const Icon(
-                                Icons.stars_outlined,
+                        // No Membership View (Figma node: 541:9055)
+                        Column(
+                          children: [
+                            const SizedBox(height: 24),
+                            const Text(
+                              '이용 중인 멤버십이 없어요.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
                                 color: _placeholderColor,
-                                size: 36,
                               ),
-                              const SizedBox(height: 12),
-                              const Text(
-                                '이용 중인 멤버십이 없어요.',
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              '멤버십을 구독하고 혜택을 받아보세요.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: _placeholderColor,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            OutlinedButton(
+                              onPressed: () {
+                                // 멤버십 구독하기 페이지 연동
+                              },
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                side: const BorderSide(color: _primaryColor, width: 1.0),
+                                minimumSize: const Size.fromHeight(48),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                '멤버십 구독하기',
                                 style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: _textStrongColor,
+                                  fontWeight: FontWeight.w600,
+                                  color: _primaryStrongColor,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                '멤버십을 구독하고 혜택을 받아보세요.',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 14,
-                                  color: _textMutedColor,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: () {
-                                  // 멤버십 구독하기 페이지 연동
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: _primaryColor,
-                                  foregroundColor: Colors.white,
-                                  minimumSize: const Size.fromHeight(48),
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: const Text(
-                                  '멤버십 구독하기',
-                                  style: TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ],
@@ -358,7 +341,7 @@ class MyPetDetailScreen extends ConsumerWidget {
 
                 // 3. Reward Info Section
                 Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -367,29 +350,79 @@ class MyPetDetailScreen extends ConsumerWidget {
                         style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: _textStrongColor,
+                          fontWeight: FontWeight.w600,
+                          color: _textSecondaryColor,
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: _borderColor),
-                        ),
-                        child: Column(
-                          children: [
-                            _buildRowWithArrow('리워드 내역', () {}),
-                            const SizedBox(height: 16),
-                            const Divider(color: Color(0xFFE8EBF1), height: 1),
-                            const SizedBox(height: 16),
-                            _buildKeyValueRow('이번 달 적립', '28,000P'),
-                            const SizedBox(height: 16),
-                            _buildKeyValueRow('이번 달 사용', '10,000원'),
-                          ],
-                        ),
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  // Coin Icon
+                                  Image.asset(
+                                    'assets/images/ic_coin.png',
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Text(
+                                    '28,000PR',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: _textStrongColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  // 리워드 내역 화면 연동
+                                },
+                                child: const Row(
+                                  children: [
+                                    Text(
+                                      '리워드 내역',
+                                      style: TextStyle(
+                                        fontFamily: 'Pretendard',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: _textSecondaryColor,
+                                      ),
+                                    ),
+                                    SizedBox(width: 2),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      color: _textSecondaryColor,
+                                      size: 16,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: _borderColor),
+                            ),
+                            child: Column(
+                              children: [
+                                _buildKeyValueRow('이번 달 적립', '6,000PR'),
+                                const SizedBox(height: 16),
+                                _buildKeyValueRow('이번 달 사용', '10,000원'),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -402,31 +435,6 @@ class MyPetDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildRowWithArrow(String title, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: _textStrongColor,
-            ),
-          ),
-          const Icon(
-            Icons.chevron_right,
-            color: _placeholderColor,
-            size: 20,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildKeyValueRow(String key, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -435,17 +443,18 @@ class MyPetDetailScreen extends ConsumerWidget {
           key,
           style: const TextStyle(
             fontFamily: 'Pretendard',
-            fontSize: 14,
-            color: _textMutedColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: _textSecondaryColor,
           ),
         ),
         Text(
           value,
           style: const TextStyle(
             fontFamily: 'Pretendard',
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: _textStrongColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: _textMutedColor,
           ),
         ),
       ],
