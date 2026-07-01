@@ -153,52 +153,56 @@ class NurimPetCard extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _PetAvatar(imageProvider: pet.imageProvider),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  pet.name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontFamily: 'Pretendard',
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.4,
-                                    letterSpacing: -0.66,
-                                    color: _nameColor,
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: onPressed,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _PetAvatar(imageProvider: pet.imageProvider),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    pet.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.4,
+                                      letterSpacing: -0.66,
+                                      color: _nameColor,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              if (pet.isPrimary) ...[
-                                const SizedBox(width: 4),
-                                const _PrimaryPetBadge(),
+                                if (pet.isPrimary) ...[
+                                  const SizedBox(width: 4),
+                                  const _PrimaryPetBadge(),
+                                ],
                               ],
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          _buildDescription(),
-                        ],
+                            ),
+                            const SizedBox(height: 4),
+                            _buildDescription(),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      size: 16,
-                      color: Color(0xFF909AA9),
-                    ),
-                  ],
+                      const SizedBox(width: 16),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Color(0xFF909AA9),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Expanded(
@@ -291,18 +295,7 @@ class NurimPetCard extends StatelessWidget {
       ),
     );
 
-    if (onPressed == null) {
-      return card;
-    }
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onPressed,
-        child: card,
-      ),
-    );
+    return card;
   }
 }
 

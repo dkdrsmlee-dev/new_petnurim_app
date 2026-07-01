@@ -14,6 +14,7 @@ import '../features/splash/splash_screen.dart';
 import '../features/webview/address_webview_screen.dart';
 import '../features/member/my/customer_center_screen.dart';
 import '../features/member/my/my_pet_list_screen.dart';
+import '../features/member/my/my_pet_detail_screen.dart';
 import '../features/member/my/my_pet_add_screen.dart';
 import '../features/member/my/my_pet_detail_form_screen.dart';
 import '../features/member/my/my_pet_breed_select_screen.dart';
@@ -161,6 +162,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final myPetId = state.uri.queryParameters['myPetId'] ?? '';
           return MyPetAddCompleteScreen(myPetId: myPetId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.myPetDetail,
+        name: AppRouteNames.myPetDetail,
+        builder: (context, state) {
+          final myPetId = state.pathParameters['myPetId'] ?? '';
+          return MyPetDetailScreen(myPetId: myPetId);
         },
       ),
       GoRoute(

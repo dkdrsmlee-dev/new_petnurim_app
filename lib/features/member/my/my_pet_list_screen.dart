@@ -275,7 +275,14 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                                     _selectedPetIndex = index;
                                   });
                                 } else {
-                                  // 일반 모드에서의 상세조회/수정 진입 (추후 구현 예정)
+                                  if (_serverPets != null && index < _serverPets!.length) {
+                                    final petItem = _serverPets![index];
+                                    debugPrint('MyPetListScreen -> Tapped pet index: $index, myPetId: ${petItem.myPetId}');
+                                    context.pushNamed(
+                                      AppRouteNames.myPetDetail,
+                                      pathParameters: {'myPetId': petItem.myPetId},
+                                    );
+                                  }
                                 }
                               },
                             );

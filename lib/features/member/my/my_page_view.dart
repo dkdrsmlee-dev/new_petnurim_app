@@ -12,6 +12,7 @@ import '../../../core/widgets/pet_card.dart';
 import '../../../core/widgets/section_title.dart';
 import '../data/member_repository.dart';
 import '../domain/member_my_page.dart';
+import '../domain/pet_models.dart';
 import 'my_pet_list_screen.dart';
 
 class MyPageView extends ConsumerWidget {
@@ -67,6 +68,7 @@ class MyPageView extends ConsumerWidget {
           return _MyPageContent(
             myPage: myPage,
             pets: mappedPets,
+            serverPets: serverPets,
             isLoggingOut: isLoggingOut,
             onLogout: onLogout,
             onBackToHome: onBackToHome,
@@ -81,6 +83,7 @@ class _MyPageContent extends StatefulWidget {
   const _MyPageContent({
     required this.myPage,
     required this.pets,
+    required this.serverPets,
     required this.isLoggingOut,
     required this.onLogout,
     this.onBackToHome,
@@ -88,6 +91,7 @@ class _MyPageContent extends StatefulWidget {
 
   final MemberMyPage myPage;
   final List<NurimPetCardData> pets;
+  final List<MyPetListItem> serverPets;
   final bool isLoggingOut;
   final VoidCallback onLogout;
   final VoidCallback? onBackToHome;
@@ -185,7 +189,17 @@ class _MyPageContentState extends State<_MyPageContent> {
               NurimMyPetSection(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 pets: pets,
-                onPetPressed: (_) {},
+                onPetPressed: (pet) {
+                  final index = pets.indexOf(pet);
+                  if (index >= 0 && index < widget.serverPets.length) {
+                    final petItem = widget.serverPets[index];
+                    debugPrint('MyPage -> Tapped pet index: $index, myPetId: ${petItem.myPetId}');
+                    context.pushNamed(
+                      AppRouteNames.myPetDetail,
+                      pathParameters: {'myPetId': petItem.myPetId},
+                    );
+                  }
+                },
                 onAddPressed: () => context.push(AppRoutes.myPetAdd),
               ),
               const SizedBox(height: 24),
