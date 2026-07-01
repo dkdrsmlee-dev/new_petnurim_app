@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
@@ -363,8 +364,8 @@ class MyPetDetailScreen extends ConsumerWidget {
                               Row(
                                 children: [
                                   // Coin Icon
-                                  Image.asset(
-                                    'assets/images/ic_coin.png',
+                                  SvgPicture.asset(
+                                    'assets/images/ic_coin.svg',
                                     width: 24,
                                     height: 24,
                                   ),
