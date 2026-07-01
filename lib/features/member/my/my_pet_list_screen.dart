@@ -105,9 +105,16 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const NurimPageHeader(
+      appBar: NurimPageHeader(
         title: '마이 펫',
         showDivider: false,
+        onBackPressed: () {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go(AppRoutes.home);
+          }
+        },
       ),
       body: SafeArea(
         child: Column(
