@@ -31,6 +31,11 @@ abstract interface class PetRepository {
   });
 
   Future<MyPetDetailResponse> getMyPetDetail(String myPetId);
+
+  Future<CursorPaginationResponse<MyPetListItem>> getMyPetsList({
+    String? cursor,
+    int? limit,
+  });
 }
 
 class BackendPetRepository implements PetRepository {
@@ -146,6 +151,41 @@ class BackendPetRepository implements PetRepository {
 
     if (payload is Map<String, dynamic>) {
       return MyPetDetailResponse.fromJson(payload);
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
+  }
+
+  @override
+  Future<CursorPaginationResponse<MyPetListItem>> getMyPetsList({
+    String? cursor,
+    int? limit,
+  }) async {
+    final queryParameters = <String, String>{};
+    if (cursor != null) {
+      queryParameters['cursor'] = cursor;
+    }
+    if (limit != null) {
+      queryParameters['limit'] = limit.toString();
+    }
+
+    final uri = Uri(
+      path: '/api/v1/users/my-pets',
+      queryParameters: queryParameters.isEmpty ? null : queryParameters,
+    );
+    final path = '${uri.path}${uri.hasQuery ? '?${uri.query}' : ''}';
+
+    final payload = await _apiClient.getJson(
+      path,
+      bearerToken: await _readAccessToken('로그인 정보가 없어 마이펫 목록을 불러올 수 없습니다.'),
+      fallbackMessage: '마이펫 목록을 불러오지 못했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return CursorPaginationResponse<MyPetListItem>.fromJson(
+        payload,
+        (json) => MyPetListItem.fromJson(json),
+      );
     } else {
       throw const FormatException('잘못된 응답 형식입니다.');
     }
