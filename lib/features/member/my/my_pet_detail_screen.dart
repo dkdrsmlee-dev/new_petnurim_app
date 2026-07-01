@@ -307,7 +307,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                             const SizedBox(height: 24),
                             OutlinedButton(
                               onPressed: () {
-                                // 멤버십 구독하기 페이지 연동
+                                // 멤버십 혜택 보기 페이지 연동
                               },
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: Colors.white,
@@ -317,14 +317,25 @@ class MyPetDetailScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                              child: const Text(
-                                '멤버십 구독하기',
-                                style: TextStyle(
-                                  fontFamily: 'Pretendard',
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: _primaryStrongColor,
-                                ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '멤버십 혜택 보기',
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: _primaryStrongColor,
+                                    ),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    color: _primaryStrongColor,
+                                    size: 16,
+                                  ),
+                                ],
                               ),
                             ),
                           ],
