@@ -36,6 +36,21 @@ abstract interface class PetRepository {
     String? cursor,
     int? limit,
   });
+
+  Future<void> updateMyPet({
+    required String myPetId,
+    required String petTypeCode,
+    required String petName,
+    required int petAge,
+    required String genderCode,
+    required String neuteredYn,
+    required double weightKg,
+    required String representYn,
+    int? petBreedId,
+    int? profileFileId,
+    String? familyDt,
+    String? weightMeasureDt,
+  });
 }
 
 class BackendPetRepository implements PetRepository {
@@ -189,6 +204,51 @@ class BackendPetRepository implements PetRepository {
     } else {
       throw const FormatException('잘못된 응답 형식입니다.');
     }
+  }
+
+  @override
+  Future<void> updateMyPet({
+    required String myPetId,
+    required String petTypeCode,
+    required String petName,
+    required int petAge,
+    required String genderCode,
+    required String neuteredYn,
+    required double weightKg,
+    required String representYn,
+    int? petBreedId,
+    int? profileFileId,
+    String? familyDt,
+    String? weightMeasureDt,
+  }) async {
+    final body = <String, dynamic>{
+      'petTypeCode': petTypeCode,
+      'petName': petName,
+      'petAge': petAge,
+      'genderCode': genderCode,
+      'neuteredYn': neuteredYn,
+      'weightKg': weightKg,
+      'representYn': representYn,
+    };
+    if (petBreedId != null) {
+      body['petBreedId'] = petBreedId;
+    }
+    if (profileFileId != null) {
+      body['profileFileId'] = profileFileId;
+    }
+    if (familyDt != null) {
+      body['familyDt'] = familyDt;
+    }
+    if (weightMeasureDt != null) {
+      body['weightMeasureDt'] = weightMeasureDt;
+    }
+
+    await _apiClient.patchJson(
+      '/api/v1/users/my-pets/$myPetId',
+      body: body,
+      bearerToken: await _readAccessToken('로그인 정보가 없어 마이펫 정보를 수정할 수 없습니다.'),
+      fallbackMessage: '마이펫 정보를 수정하지 못했습니다.',
+    );
   }
 
   Future<String> _readAccessToken(String emptyMessage) async {

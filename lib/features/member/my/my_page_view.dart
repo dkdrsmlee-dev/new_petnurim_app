@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/api/api_client.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/widgets/list_button.dart';
 import '../../../core/widgets/my_info_row.dart';
@@ -11,6 +12,7 @@ import '../../../core/widgets/pet_card.dart';
 import '../../../core/widgets/section_title.dart';
 import '../data/member_repository.dart';
 import '../domain/member_my_page.dart';
+import 'my_pet_list_screen.dart';
 
 class MyPageView extends ConsumerWidget {
   const MyPageView({
@@ -27,6 +29,7 @@ class MyPageView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final myPageState = ref.watch(memberMyPageProvider);
+    final petsState = ref.watch(myPetsListProvider);
 
     return myPageState.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -34,11 +37,41 @@ class MyPageView extends ConsumerWidget {
         message: '마이페이지 정보를 불러오지 못했습니다.',
         onRetry: () => ref.invalidate(memberMyPageProvider),
       ),
-      data: (myPage) => _MyPageContent(
-        myPage: myPage,
-        isLoggingOut: isLoggingOut,
-        onLogout: onLogout,
-        onBackToHome: onBackToHome,
+      data: (myPage) => petsState.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stackTrace) => _MyPageErrorView(
+          message: '마이페이지 정보를 불러오지 못했습니다.',
+          onRetry: () {
+            ref.invalidate(memberMyPageProvider);
+            ref.invalidate(myPetsListProvider);
+          },
+        ),
+        data: (serverPets) {
+          final mappedPets = serverPets.map((item) {
+            final imageUrl = item.profileFileId != null
+                ? ref.read(apiClientProvider).uri('/api/v1/files/${item.profileFileId}').toString()
+                : null;
+
+            return NurimPetCardData(
+              name: item.petName,
+              breed: item.breedNameKor ?? '믹스',
+              ageText: '${item.petAge}살',
+              genderText: item.genderCodeNm ?? (item.genderCode == 'MALE' ? '남아' : '여아'),
+              membershipTier: item.representYn == 'Y' ? '브론즈' : '멤버십 가입하기',
+              rewardText: '28,000P',
+              isPrimary: item.representYn == 'Y',
+              imageProvider: imageUrl != null ? NetworkImage(imageUrl) : null,
+            );
+          }).toList();
+
+          return _MyPageContent(
+            myPage: myPage,
+            pets: mappedPets,
+            isLoggingOut: isLoggingOut,
+            onLogout: onLogout,
+            onBackToHome: onBackToHome,
+          );
+        },
       ),
     );
   }
@@ -47,12 +80,14 @@ class MyPageView extends ConsumerWidget {
 class _MyPageContent extends StatefulWidget {
   const _MyPageContent({
     required this.myPage,
+    required this.pets,
     required this.isLoggingOut,
     required this.onLogout,
     this.onBackToHome,
   });
 
   final MemberMyPage myPage;
+  final List<NurimPetCardData> pets;
   final bool isLoggingOut;
   final VoidCallback onLogout;
   final VoidCallback? onBackToHome;
@@ -74,44 +109,7 @@ class _MyPageContentState extends State<_MyPageContent> {
         ? widget.myPage.email
         : 'example@example.com';
 
-    final pets = [
-      const NurimPetCardData(
-        name: '콩두리',
-        breed: '웰시코기',
-        ageText: '2살',
-        genderText: '남아',
-        membershipTier: '브론즈',
-        rewardText: '28,000P',
-        isPrimary: true,
-        imageProvider: NetworkImage(
-          'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=150&h=150&fit=crop',
-        ),
-      ),
-      const NurimPetCardData(
-        name: '초코',
-        breed: '푸들',
-        ageText: '3살',
-        genderText: '여아',
-        membershipTier: '실버',
-        rewardText: '15,000P',
-        isPrimary: false,
-        imageProvider: NetworkImage(
-          'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=150&h=150&fit=crop',
-        ),
-      ),
-      const NurimPetCardData(
-        name: '크림이',
-        breed: '포메라니안',
-        ageText: '1살',
-        genderText: '남아',
-        membershipTier: '프렌드',
-        rewardText: '5,000P',
-        isPrimary: false,
-        imageProvider: NetworkImage(
-          'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=150&h=150&fit=crop',
-        ),
-      ),
-    ];
+    final pets = widget.pets;
 
     return Column(
       children: [

@@ -28,42 +28,56 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
   bool _isEditMode = false;
   int? _selectedPetIndex;
   List<NurimPetCardData>? _customPetList;
+  List<MyPetListItem>? _serverPets;
 
   static const Color _primaryColor = Color(0xFF7F4FFF);
   static const Color _textMutedColor = Color(0xFF51565F);
   static const Color _placeholderColor = Color(0xFFA2ADBE);
-  void _updatePrimaryPet() {
-    if (_selectedPetIndex == null || _customPetList == null) return;
-    final selectedPet = _customPetList![_selectedPetIndex!];
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => EdgeButtonDialog(
-        title: '${selectedPet.name}가 대표 펫으로\n설정되었어요.',
-        confirmText: '확인',
-        onConfirm: () {
-          setState(() {
-            for (int i = 0; i < _customPetList!.length; i++) {
-              final pet = _customPetList![i];
-              _customPetList![i] = NurimPetCardData(
-                name: pet.name,
-                breed: pet.breed,
-                ageText: pet.ageText,
-                genderText: pet.genderText,
-                membershipTier: pet.membershipTier,
-                rewardText: pet.rewardText,
-                isPrimary: i == _selectedPetIndex,
-                imageProvider: pet.imageProvider,
-              );
-            }
-            // 대표 펫 설정 완료 확인 팝업 확인 터치 후, 편집 모드 자동 종료 및 인덱스 초기화
-            _isEditMode = false;
-            _selectedPetIndex = null;
-          });
-        },
-      ),
-    );
+  Future<void> _updatePrimaryPet() async {
+    if (_selectedPetIndex == null || _serverPets == null) return;
+    final selectedPetItem = _serverPets![_selectedPetIndex!];
+
+    try {
+      await ref.read(petRepositoryProvider).updateMyPet(
+        myPetId: selectedPetItem.myPetId,
+        petTypeCode: selectedPetItem.petTypeCode,
+        petName: selectedPetItem.petName,
+        petAge: selectedPetItem.petAge,
+        genderCode: selectedPetItem.genderCode,
+        neuteredYn: selectedPetItem.neuteredYn,
+        weightKg: selectedPetItem.weightKg,
+        representYn: 'Y',
+        petBreedId: int.tryParse(selectedPetItem.petBreedId),
+        profileFileId: selectedPetItem.profileFileId,
+        familyDt: selectedPetItem.familyDt,
+        weightMeasureDt: selectedPetItem.weightMeasureDt,
+      );
+
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) => EdgeButtonDialog(
+          title: '${selectedPetItem.petName}가 대표 펫으로\n설정되었어요.',
+          confirmText: '확인',
+          onConfirm: () {
+            Navigator.of(dialogContext).pop();
+            setState(() {
+              _customPetList = null;
+              _isEditMode = false;
+              _selectedPetIndex = null;
+            });
+            ref.invalidate(myPetsListProvider);
+          },
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('대표 펫 설정에 실패했습니다: $e')),
+      );
+    }
   }
 
   @override
@@ -138,6 +152,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
             ),
           ),
           data: (serverPets) {
+            _serverPets = serverPets;
             _customPetList ??= serverPets.map((item) {
                 final imageUrl = item.profileFileId != null
                     ? ref.read(apiClientProvider).uri('/api/v1/files/${item.profileFileId}').toString()
