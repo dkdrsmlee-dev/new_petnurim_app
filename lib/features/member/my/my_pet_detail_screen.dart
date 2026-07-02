@@ -130,7 +130,10 @@ class MyPetDetailScreen extends ConsumerWidget {
                   ),
                   actionLabel: '관리',
                   onActionPressed: () {
-                    // 상세 정보 수정 흐름 진입 (3단계-2에서 구현 예정)
+                    context.pushNamed(
+                      AppRouteNames.myPetEdit,
+                      pathParameters: {'myPetId': myPetId},
+                    );
                   },
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 ),
