@@ -221,6 +221,15 @@ class BackendPetRepository implements PetRepository {
     String? familyDt,
     String? weightMeasureDt,
   }) async {
+    String? formattedFamilyDt = familyDt;
+    if (familyDt != null && familyDt.length >= 10) {
+      formattedFamilyDt = familyDt.substring(0, 10);
+    }
+    String? formattedWeightMeasureDt = weightMeasureDt;
+    if (weightMeasureDt != null && weightMeasureDt.length >= 10) {
+      formattedWeightMeasureDt = weightMeasureDt.substring(0, 10);
+    }
+
     final body = <String, dynamic>{
       'petTypeCode': petTypeCode,
       'petName': petName,
@@ -236,11 +245,11 @@ class BackendPetRepository implements PetRepository {
     if (profileFileId != null) {
       body['profileFileId'] = profileFileId;
     }
-    if (familyDt != null) {
-      body['familyDt'] = familyDt;
+    if (formattedFamilyDt != null) {
+      body['familyDt'] = formattedFamilyDt;
     }
-    if (weightMeasureDt != null) {
-      body['weightMeasureDt'] = weightMeasureDt;
+    if (formattedWeightMeasureDt != null) {
+      body['weightMeasureDt'] = formattedWeightMeasureDt;
     }
 
     await _apiClient.patchJson(
