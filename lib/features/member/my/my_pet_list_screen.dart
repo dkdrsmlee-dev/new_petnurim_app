@@ -39,19 +39,21 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
     final selectedPetItem = _serverPets![_selectedPetIndex!];
 
     try {
+      final petDetail = await ref.read(petRepositoryProvider).getMyPetDetail(selectedPetItem.myPetId);
+
       await ref.read(petRepositoryProvider).updateMyPet(
         myPetId: selectedPetItem.myPetId,
-        petTypeCode: selectedPetItem.petTypeCode,
-        petName: selectedPetItem.petName,
-        petAge: selectedPetItem.petAge,
-        genderCode: selectedPetItem.genderCode,
-        neuteredYn: selectedPetItem.neuteredYn,
-        weightKg: selectedPetItem.weightKg,
+        petTypeCode: petDetail.petTypeCode,
+        petName: petDetail.petName,
+        petAge: petDetail.petAge,
+        genderCode: petDetail.genderCode,
+        neuteredYn: petDetail.neuteredYn,
+        weightKg: petDetail.weightKg,
         representYn: 'Y',
-        petBreedId: int.tryParse(selectedPetItem.petBreedId),
-        profileFileId: selectedPetItem.profileFileId,
-        familyDt: selectedPetItem.familyDt,
-        weightMeasureDt: selectedPetItem.weightMeasureDt,
+        petBreedId: int.tryParse(petDetail.petBreedId),
+        profileFileId: petDetail.profileFileId,
+        familyDt: petDetail.familyDt,
+        weightMeasureDt: petDetail.weightMeasureDt,
       );
 
       if (!mounted) return;
