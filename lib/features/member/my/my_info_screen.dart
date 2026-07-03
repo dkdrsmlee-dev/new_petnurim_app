@@ -5,9 +5,24 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app_bootstrap.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/storage/token_storage.dart';
+import '../../../core/widgets/address_card.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/member_repository.dart';
+import '../domain/member_info.dart';
+
+class AddressNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void updateAddress(String? address) {
+    state = address;
+  }
+}
+
+final addressOverrideProvider = NotifierProvider<AddressNotifier, String?>(
+  AddressNotifier.new,
+);
 
 class MyInfoScreen extends ConsumerStatefulWidget {
   const MyInfoScreen({super.key});
@@ -22,6 +37,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   @override
   Widget build(BuildContext context) {
     final memberInfoAsync = ref.watch(memberInfoProvider);
+    final addressOverride = ref.watch(addressOverrideProvider);
 
     return Scaffold(
       appBar: NurimPageHeader(
@@ -132,25 +148,21 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: const Color(0xFFD6DBE4)),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: _CustomAddressRow(
-                          address: memberInfo.address.isNotEmpty
-                              ? memberInfo.address
-                              : '주소를 등록해 주세요.',
-                          hasAddress: memberInfo.address.isNotEmpty,
-                          onPressed: () {
-                            context.push(AppRoutes.addressWebView);
-                          },
-                          onEditPressed: () {
-                            context.push(AppRoutes.addressWebView);
-                          },
-                          onDeletePressed: _showDeleteAddressDialog,
-                        ),
+                      NurimAddressCard(
+                        title: '현재 주소',
+                        address: addressOverride ??
+                            (memberInfo.address.isNotEmpty
+                                ? memberInfo.address
+                                : '주소를 등록해 주세요.'),
+                        onPressed: () async {
+                          final result = await context.push<Map<String, dynamic>>(AppRoutes.addressWebView);
+                          if (result != null && mounted) {
+                            final baseAddress = result['address'] as String? ?? '';
+                            if (baseAddress.isNotEmpty) {
+                              _showDetailAddressInputBottomSheet(memberInfo, baseAddress);
+                            }
+                          }
+                        },
                       ),
                       const SizedBox(height: 50),
                       OutlinedButton(
@@ -388,113 +400,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   }
 
 
-  // 주소 삭제 확인 다이얼로그
-  Future<void> _showDeleteAddressDialog() async {
-    final shouldDelete = await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          backgroundColor: Colors.white,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      '주소 삭제',
-                      style: TextStyle(
-                        fontFamily: 'Pretendard',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E2024),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () => Navigator.of(context).pop(false),
-                      child: const Icon(
-                        Icons.close,
-                        color: Color(0xFF87909E),
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  '등록된 주소를 삭제하시겠습니까?',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF51565F),
-                  ),
-                ),
-                const SizedBox(height: 28),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF51565F),
-                          side: const BorderSide(color: Color(0xFFD6DBE4)),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          textStyle: const TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        child: const Text('취소'),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF7F4FFF),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          textStyle: const TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        child: const Text('삭제'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (shouldDelete == true) {
-      _showMockDialog('주소 삭제', '주소가 성공적으로 삭제되었습니다.');
-    }
-  }
-
   // 변경 안내 목업 다이얼로그
   void _showMockDialog(String title, String message) {
     showDialog(
@@ -513,6 +418,230 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
         );
       },
     );
+  }
+
+  Future<void> _showDetailAddressInputBottomSheet(MemberInfo memberInfo, String baseAddress) async {
+    final controller = TextEditingController();
+    
+    final detailAddress = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: const Icon(Icons.arrow_back, color: Color(0xFF1E2024)),
+                    ),
+                    const Expanded(
+                      child: Center(
+                        child: Text(
+                          '주소 설정',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1E2024),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  baseAddress,
+                  style: const TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1E2024),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0F5FF),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        '도로명',
+                        style: TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2B66FF),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        baseAddress,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Pretendard',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF87909E),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  '상세 주소를 입력해 주세요.',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1E2024),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: controller,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: '상세 주소 입력',
+                    hintStyle: const TextStyle(color: Color(0xFFA2ADBE)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Color(0xFFD6DBE4)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Color(0xFF7F4FFF), width: 1.5),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                ElevatedButton(
+                  onPressed: () {
+                    final detail = controller.text.trim();
+                    Navigator.pop(context, detail);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF7F4FFF),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    minimumSize: const Size.fromHeight(52),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    textStyle: const TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  child: const Text('확인'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (detailAddress != null && mounted) {
+      final finalCombinedAddress = detailAddress.isEmpty ? baseAddress : '$baseAddress $detailAddress';
+      
+      final confirm = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            backgroundColor: Colors.white,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 12),
+                  const Text(
+                    '주소가 저장되었습니다.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1E2024),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7F4FFF),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      textStyle: const TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    child: const Text('확인'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      if (confirm == true && mounted) {
+        try {
+          await ref.read(memberRepositoryProvider).updateMemberInfo(
+            name: memberInfo.name,
+            email: memberInfo.email,
+            address: finalCombinedAddress,
+          );
+          
+          ref.read(addressOverrideProvider.notifier).updateAddress(finalCombinedAddress);
+          
+          ref.invalidate(memberInfoProvider);
+          ref.invalidate(memberMyPageProvider);
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('주소 저장 중 오류가 발생했습니다: $e')),
+            );
+          }
+        }
+      }
+    }
   }
 }
 
@@ -611,113 +740,3 @@ class _CustomInfoRow extends StatelessWidget {
   }
 }
 
-class _CustomAddressRow extends StatelessWidget {
-  const _CustomAddressRow({
-    required this.address,
-    required this.hasAddress,
-    required this.onPressed,
-    required this.onEditPressed,
-    required this.onDeletePressed,
-  });
-
-  final String address;
-  final bool hasAddress;
-  final VoidCallback onPressed;
-  final VoidCallback onEditPressed;
-  final VoidCallback onDeletePressed;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget child = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  '주소',
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF51565F),
-                    letterSpacing: -0.66,
-                  ),
-                ),
-              ),
-              if (hasAddress) ...[
-                OutlinedButton(
-                  onPressed: onEditPressed,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF51565F),
-                    side: const BorderSide(color: Color(0xFFD6DBE4)),
-                    minimumSize: const Size(48, 28),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    textStyle: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  child: const Text('수정'),
-                ),
-                const SizedBox(width: 8),
-                OutlinedButton(
-                  onPressed: onDeletePressed,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF51565F),
-                    side: const BorderSide(color: Color(0xFFD6DBE4)),
-                    minimumSize: const Size(48, 28),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    textStyle: const TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  child: const Text('삭제'),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  address,
-                  style: TextStyle(
-                    fontFamily: 'Pretendard',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: hasAddress ? const Color(0xFF87909E) : const Color(0xFFA2ADBE),
-                    letterSpacing: -0.66,
-                  ),
-                ),
-              ),
-              if (!hasAddress)
-                const Icon(Icons.chevron_right, size: 16, color: Color(0xFF87909E)),
-            ],
-          ),
-        ],
-      ),
-    );
-
-    if (!hasAddress) {
-      child = InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(16),
-        child: child,
-      );
-    }
-    return child;
-  }
-}

@@ -46,6 +46,13 @@ class _FakeMemberRepository implements MemberRepository {
       effectiveDt: '2026-05-26 12:00:00',
     );
   }
+
+  @override
+  Future<void> updateMemberInfo({
+    required String name,
+    required String email,
+    required String address,
+  }) async {}
 }
 
 void main() {

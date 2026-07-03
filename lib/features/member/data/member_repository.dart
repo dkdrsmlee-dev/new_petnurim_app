@@ -16,6 +16,12 @@ abstract interface class MemberRepository {
     required String reasonCode,
     String? reasonText,
   });
+
+  Future<void> updateMemberInfo({
+    required String name,
+    required String email,
+    required String address,
+  });
 }
 
 class BackendMemberRepository implements MemberRepository {
@@ -48,6 +54,27 @@ class BackendMemberRepository implements MemberRepository {
     );
 
     return MemberInfo.fromJson(payload);
+  }
+
+  @override
+  Future<void> updateMemberInfo({
+    required String name,
+    required String email,
+    required String address,
+  }) async {
+    await _apiClient.putJson(
+      '/api/v1/member/myinfo',
+      bearerToken: await _readAccessToken('로그인 정보가 없어 내 정보를 수정할 수 없습니다.'),
+      body: {
+        'name': name,
+        'email': email,
+        'address': address,
+        'address1': address,
+        'address2': '',
+        'zipCode': '',
+      },
+      fallbackMessage: '내 정보를 수정하지 못했습니다.',
+    );
   }
 
   @override
