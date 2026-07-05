@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/api/api_client.dart';
 import '../../../app/app_routes.dart';
+import '../../../app/app_bootstrap.dart';
 import '../../../core/widgets/list_button.dart';
 import '../../../core/widgets/my_info_row.dart';
 import '../../../core/widgets/mypage_name.dart';
@@ -31,6 +32,7 @@ class MyPageView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final myPageState = ref.watch(memberMyPageProvider);
     final petsState = ref.watch(myPetsListProvider);
+    final token = ref.watch(accessTokenProvider);
 
     return myPageState.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -50,7 +52,7 @@ class MyPageView extends ConsumerWidget {
         data: (serverPets) {
           final mappedPets = serverPets.map((item) {
             final imageUrl = item.profileFileId != null
-                ? ref.read(apiClientProvider).uri('/api/v1/files/${item.profileFileId}').toString()
+                ? ref.read(apiClientProvider).uri('/api/v1/files/${item.profileFileId}/download').toString()
                 : null;
 
             return NurimPetCardData(
@@ -61,7 +63,12 @@ class MyPageView extends ConsumerWidget {
               membershipTier: item.representYn == 'Y' ? '브론즈' : '멤버십 가입하기',
               rewardText: '28,000P',
               isPrimary: item.representYn == 'Y',
-              imageProvider: imageUrl != null ? NetworkImage(imageUrl) : null,
+              imageProvider: imageUrl != null
+                  ? NetworkImage(
+                      imageUrl,
+                      headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+                    )
+                  : null,
             );
           }).toList();
 

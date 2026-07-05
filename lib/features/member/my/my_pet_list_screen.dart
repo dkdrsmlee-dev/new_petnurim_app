@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/api/api_client.dart';
 import '../../../app/app_routes.dart';
+import '../../../app/app_bootstrap.dart';
 
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
@@ -85,6 +86,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
   @override
   Widget build(BuildContext context) {
     final petsAsync = ref.watch(myPetsListProvider);
+    final token = ref.watch(accessTokenProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -157,7 +159,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
             _serverPets = serverPets;
             _customPetList ??= serverPets.map((item) {
                 final imageUrl = item.profileFileId != null
-                    ? ref.read(apiClientProvider).uri('/api/v1/files/${item.profileFileId}').toString()
+                    ? ref.read(apiClientProvider).uri('/api/v1/files/${item.profileFileId}/download').toString()
                     : null;
 
                 return NurimPetCardData(
@@ -168,7 +170,12 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                   membershipTier: item.representYn == 'Y' ? '브론즈' : '멤버십 가입하기',
                   rewardText: '28,000P',
                   isPrimary: item.representYn == 'Y',
-                  imageProvider: imageUrl != null ? NetworkImage(imageUrl) : null,
+                  imageProvider: imageUrl != null
+                      ? NetworkImage(
+                          imageUrl,
+                          headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+                        )
+                      : null,
                 );
               }).toList();
 

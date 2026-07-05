@@ -75,3 +75,8 @@ final appBootstrapServiceProvider = Provider<AppBootstrapService>((ref) {
 final appBootstrapStateProvider = FutureProvider<AppBootstrapState>((ref) {
   return ref.watch(appBootstrapServiceProvider).load();
 });
+
+final accessTokenProvider = Provider<String?>((ref) {
+  final state = ref.watch(appBootstrapStateProvider);
+  return state.value?.accessToken;
+});

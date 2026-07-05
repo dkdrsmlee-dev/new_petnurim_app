@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../app/app_bootstrap.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
@@ -37,6 +38,7 @@ class MyPetDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final petDetailAsync = ref.watch(myPetDetailProvider(myPetId));
+    final token = ref.watch(accessTokenProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -102,7 +104,7 @@ class MyPetDetailScreen extends ConsumerWidget {
           ),
           data: (pet) {
             final imageUrl = pet.profileFileId != null
-                ? ref.read(apiClientProvider).uri('/api/v1/files/${pet.profileFileId}').toString()
+                ? ref.read(apiClientProvider).uri('/api/v1/files/${pet.profileFileId}/download').toString()
                 : null;
             final isPrimary = pet.representYn == 'Y';
             final ageText = '${pet.petAge}살';
@@ -123,7 +125,12 @@ class MyPetDetailScreen extends ConsumerWidget {
                     breed: breedText,
                     ageText: ageText,
                     genderText: genderText,
-                    imageProvider: imageUrl != null ? NetworkImage(imageUrl) : null,
+                    imageProvider: imageUrl != null
+                        ? NetworkImage(
+                            imageUrl,
+                            headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+                          )
+                        : null,
                     isPrimary: isPrimary,
                     membershipTier: '-',
                     rewardText: '28,000PR',
