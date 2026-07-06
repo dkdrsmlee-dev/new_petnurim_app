@@ -524,8 +524,20 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                       ? DecorationImage(image: imageProv, fit: BoxFit.cover)
                                       : null,
                                 ),
-                                child: imageProv == null
-                                    ? const Icon(Icons.pets, color: _placeholderColor, size: 48)
+                                 child: imageProv == null
+                                    ? Stack(
+                                        children: [
+                                          Positioned(
+                                            left: 20,
+                                            top: 22.37,
+                                            width: 60,
+                                            child: SvgPicture.asset(
+                                              'assets/images/ic_pet_foot_default.svg',
+                                              fit: BoxFit.fitWidth,
+                                            ),
+                                          ),
+                                        ],
+                                      )
                                     : null,
                               ),
                               Positioned(

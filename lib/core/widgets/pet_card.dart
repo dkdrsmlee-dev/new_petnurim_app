@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class NurimPetCardData {
   const NurimPetCardData({
@@ -454,10 +453,10 @@ class _PetAvatar extends StatelessWidget {
       backgroundColor: const Color(0xFFF0F2F5),
       backgroundImage: imageProvider,
       child: imageProvider == null
-          ? SvgPicture.asset(
-              'assets/images/ic_pet_foot_default.svg',
-              width: 24,
-              height: 24,
+          ? const Icon(
+              Icons.pets,
+              size: 24,
+              color: NurimPetCard._mutedColor,
             )
           : null,
     );
