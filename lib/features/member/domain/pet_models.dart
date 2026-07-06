@@ -24,7 +24,7 @@ class MyPetDetailResponse {
   final String? breedNameKor;
   final String? breedNameEng;
   final String petName;
-  final int? profileFileId;
+  final String? profileFileId;
   final int petAge;
   final String familyDt;
   final String genderCode;
@@ -70,16 +70,8 @@ class MyPetDetailResponse {
       }
     }
 
-    // Parse profileFileId safely as int
     final rawFileId = json['profileFileId'];
-    int? parsedFileId;
-    if (rawFileId != null) {
-      if (rawFileId is num) {
-        parsedFileId = rawFileId.toInt();
-      } else {
-        parsedFileId = int.tryParse(rawFileId.toString());
-      }
-    }
+    final parsedFileId = rawFileId?.toString();
 
     return MyPetDetailResponse(
       myPetId: (json['myPetId'] ?? json['id'] ?? json['petId'])?.toString() ?? '',
@@ -113,7 +105,7 @@ class MyPetListItem {
   final String? breedNameKor;
   final String? breedNameEng;
   final String petName;
-  final int? profileFileId;
+  final String? profileFileId;
   final int petAge;
   final String familyDt;
   final String genderCode;
@@ -156,14 +148,7 @@ class MyPetListItem {
     }
 
     final rawFileId = json['profileFileId'] ?? json['PROFILE_FILE_ID'];
-    int? parsedFileId;
-    if (rawFileId != null) {
-      if (rawFileId is num) {
-        parsedFileId = rawFileId.toInt();
-      } else {
-        parsedFileId = int.tryParse(rawFileId.toString());
-      }
-    }
+    final parsedFileId = rawFileId?.toString();
 
     return MyPetListItem(
       myPetId: (json['myPetId'] ?? json['MY_PET_ID'] ?? json['id'] ?? json['petId'])?.toString() ?? '',

@@ -38,7 +38,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
 
   String? _petType; // 'DOG' or 'CAT'
   String? _profileImagePath; // Local picked path if modified
-  int? _profileFileId; // Existing profile file ID
+  String? _profileFileId; // Existing profile file ID
   String? _selectedBreed;
   int? _selectedBreedId;
   int? _selectedAge;
@@ -359,7 +359,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     });
 
     try {
-      int? profileFileId = _profileFileId;
+      String? profileFileId = _profileFileId;
       if (_profileImagePath != null && _profileImagePath!.isNotEmpty) {
         final file = File(_profileImagePath!);
         if (await file.exists()) {
@@ -370,7 +370,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
           );
           final rawFileId = uploadResult['fileId'];
           if (rawFileId != null) {
-            profileFileId = int.tryParse(rawFileId.toString());
+            profileFileId = rawFileId.toString();
           }
         }
       }
