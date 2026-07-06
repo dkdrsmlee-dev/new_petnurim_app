@@ -5,6 +5,7 @@ class MemberInfo {
     required this.phoneNumber,
     required this.address,
     required this.birthDate,
+    this.snsFlatform,
   });
 
   factory MemberInfo.fromJson(Object? json) {
@@ -24,6 +25,7 @@ class MemberInfo {
       phoneNumber: _readString(json['phoneNumber'], ''),
       address: _readString(json['address'], ''),
       birthDate: _readString(json['birthDate'], ''),
+      snsFlatform: _readString(json['snsFlatform'], ''),
     );
   }
 
@@ -32,6 +34,7 @@ class MemberInfo {
   final String phoneNumber;
   final String address;
   final String birthDate;
+  final String? snsFlatform;
 
   static String _readString(Object? value, String fallback) {
     if (value is String && value.trim().isNotEmpty) {

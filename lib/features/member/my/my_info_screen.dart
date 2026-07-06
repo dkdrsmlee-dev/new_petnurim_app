@@ -100,7 +100,11 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                             _CustomInfoRow(
                               title: '계정',
                               infoText: memberInfo.email,
-                              subText: '(카카오)',
+                              subText: memberInfo.snsFlatform?.toUpperCase() == 'NAVER'
+                                  ? '(네이버)'
+                                  : memberInfo.snsFlatform?.toUpperCase() == 'KAKAO'
+                                      ? '(카카오)'
+                                      : '',
                             ),
                             _CustomInfoRow(
                               title: '이름',
