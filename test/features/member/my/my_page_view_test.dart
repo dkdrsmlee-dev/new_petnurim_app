@@ -53,6 +53,13 @@ class _FakeMemberRepository implements MemberRepository {
     required String email,
     required String address,
   }) async {}
+
+  @override
+  Future<void> updateMemberAddress({
+    required String zipCode,
+    required String address1,
+    required String address2,
+  }) async {}
 }
 
 void main() {

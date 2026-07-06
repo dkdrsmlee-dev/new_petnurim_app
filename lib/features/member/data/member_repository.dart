@@ -22,6 +22,12 @@ abstract interface class MemberRepository {
     required String email,
     required String address,
   });
+
+  Future<void> updateMemberAddress({
+    required String zipCode,
+    required String address1,
+    required String address2,
+  });
 }
 
 class BackendMemberRepository implements MemberRepository {
@@ -74,6 +80,24 @@ class BackendMemberRepository implements MemberRepository {
         'zipCode': '',
       },
       fallbackMessage: '내 정보를 수정하지 못했습니다.',
+    );
+  }
+
+  @override
+  Future<void> updateMemberAddress({
+    required String zipCode,
+    required String address1,
+    required String address2,
+  }) async {
+    await _apiClient.patchJson(
+      '/api/v1/member/address',
+      bearerToken: await _readAccessToken('로그인 정보가 없어 주소를 수정할 수 없습니다.'),
+      body: {
+        'zipCode': zipCode,
+        'address1': address1,
+        'address2': address2,
+      },
+      fallbackMessage: '주소를 수정하지 못했습니다.',
     );
   }
 

@@ -162,8 +162,9 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                           final result = await context.push<Map<String, dynamic>>(AppRoutes.addressWebView);
                           if (result != null && mounted) {
                             final baseAddress = result['address'] as String? ?? '';
+                            final zipCode = result['zonecode'] as String? ?? '';
                             if (baseAddress.isNotEmpty) {
-                              _showDetailAddressInputBottomSheet(memberInfo, baseAddress);
+                              _showDetailAddressInputBottomSheet(memberInfo, baseAddress, zipCode);
                             }
                           }
                         },
@@ -424,7 +425,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     );
   }
 
-  Future<void> _showDetailAddressInputBottomSheet(MemberInfo memberInfo, String baseAddress) async {
+  Future<void> _showDetailAddressInputBottomSheet(MemberInfo memberInfo, String baseAddress, String zipCode) async {
     final controller = TextEditingController();
     
     final detailAddress = await showModalBottomSheet<String>(
@@ -627,10 +628,10 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
 
       if (confirm == true && mounted) {
         try {
-          await ref.read(memberRepositoryProvider).updateMemberInfo(
-            name: memberInfo.name,
-            email: memberInfo.email,
-            address: finalCombinedAddress,
+          await ref.read(memberRepositoryProvider).updateMemberAddress(
+            zipCode: zipCode,
+            address1: baseAddress,
+            address2: detailAddress,
           );
           
           ref.read(addressOverrideProvider.notifier).updateAddress(finalCombinedAddress);
