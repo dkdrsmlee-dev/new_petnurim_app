@@ -52,7 +52,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
         weightKg: petDetail.weightKg,
         representYn: 'Y',
         petBreedId: int.tryParse(petDetail.petBreedId),
-        profileFileId: petDetail.profileFileId,
+        profileFileId: petDetail.profileFileId != null ? int.tryParse(petDetail.profileFileId!) : null,
         familyDt: petDetail.familyDt,
         weightMeasureDt: petDetail.weightMeasureDt,
       );

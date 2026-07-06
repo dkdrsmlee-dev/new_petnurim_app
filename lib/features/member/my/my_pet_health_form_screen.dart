@@ -91,7 +91,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
     });
 
     try {
-      String? profileFileId;
+      int? profileFileId;
       if (widget.profileImagePath != null && widget.profileImagePath!.isNotEmpty) {
         final file = File(widget.profileImagePath!);
         if (await file.exists()) {
@@ -102,7 +102,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
           );
           final rawFileId = uploadResult['fileId'];
           if (rawFileId != null) {
-            profileFileId = rawFileId.toString();
+            profileFileId = int.tryParse(rawFileId.toString());
           }
         }
       }

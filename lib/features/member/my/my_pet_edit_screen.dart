@@ -38,7 +38,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
 
   String? _petType; // 'DOG' or 'CAT'
   String? _profileImagePath; // Local picked path if modified
-  String? _profileFileId; // Existing profile file ID
+  int? _profileFileId; // Existing profile file ID
   String? _selectedBreed;
   int? _selectedBreedId;
   int? _selectedAge;
@@ -85,7 +85,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
         setState(() {
           _petType = pet.petTypeCode;
           _nameController.text = pet.petName;
-          _profileFileId = pet.profileFileId;
+          _profileFileId = pet.profileFileId != null ? int.tryParse(pet.profileFileId!) : null;
           _selectedBreed = pet.breedNameKor;
           _selectedBreedId = int.tryParse(pet.petBreedId);
           _selectedAge = pet.petAge;
@@ -359,7 +359,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     });
 
     try {
-      String? profileFileId = _profileFileId;
+      int? profileFileId = _profileFileId;
       if (_profileImagePath != null && _profileImagePath!.isNotEmpty) {
         final file = File(_profileImagePath!);
         if (await file.exists()) {
@@ -370,7 +370,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
           );
           final rawFileId = uploadResult['fileId'];
           if (rawFileId != null) {
-            profileFileId = rawFileId.toString();
+            profileFileId = int.tryParse(rawFileId.toString());
           }
         }
       }

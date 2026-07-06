@@ -27,7 +27,7 @@ abstract interface class PetRepository {
     required double weightKg,
     required String weightMeasureDt,
     required String representYn,
-    String? profileFileId,
+    int? profileFileId,
   });
 
   Future<MyPetDetailResponse> getMyPetDetail(String myPetId);
@@ -47,7 +47,7 @@ abstract interface class PetRepository {
     required double weightKg,
     required String representYn,
     int? petBreedId,
-    String? profileFileId,
+    int? profileFileId,
     String? familyDt,
     String? weightMeasureDt,
   });
@@ -122,21 +122,25 @@ class BackendPetRepository implements PetRepository {
     required double weightKg,
     required String weightMeasureDt,
     required String representYn,
-    String? profileFileId,
+    int? profileFileId,
   }) async {
     final body = <String, dynamic>{
       'petTypeCode': petTypeCode,
       'petName': petName,
       'petAge': petAge,
-      'familyDt': familyDt,
       'genderCode': genderCode,
       'neuteredYn': neuteredYn,
       'weightKg': weightKg,
-      'weightMeasureDt': weightMeasureDt,
       'representYn': representYn,
     };
     if (petBreedId != null) {
       body['petBreedId'] = petBreedId;
+    }
+    if (familyDt.isNotEmpty) {
+      body['familyDt'] = familyDt;
+    }
+    if (weightMeasureDt.isNotEmpty) {
+      body['weightMeasureDt'] = weightMeasureDt;
     }
     if (profileFileId != null) {
       body['profileFileId'] = profileFileId;
@@ -217,7 +221,7 @@ class BackendPetRepository implements PetRepository {
     required double weightKg,
     required String representYn,
     int? petBreedId,
-    String? profileFileId,
+    int? profileFileId,
     String? familyDt,
     String? weightMeasureDt,
   }) async {
