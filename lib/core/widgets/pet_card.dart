@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 class NurimPetCardData {
   const NurimPetCardData({
     required this.name,
@@ -448,15 +448,32 @@ class _PetAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: 24,
-      backgroundColor: const Color(0xFFF0F2F5),
-      backgroundImage: imageProvider,
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: const Color(0xFFF0F2F5),
+        image: imageProvider != null
+            ? DecorationImage(
+                image: imageProvider!,
+                fit: BoxFit.cover,
+              )
+            : null,
+      ),
       child: imageProvider == null
-          ? const Icon(
-              Icons.pets,
-              size: 24,
-              color: NurimPetCard._mutedColor,
+          ? Stack(
+              children: [
+                Positioned(
+                  left: 9.6,
+                  top: 10.74,
+                  width: 28.8,
+                  child: SvgPicture.asset(
+                    'assets/images/ic_pet_foot_default.svg',
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+              ],
             )
           : null,
     );

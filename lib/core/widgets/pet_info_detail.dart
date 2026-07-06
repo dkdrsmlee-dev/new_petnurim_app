@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'pet_card.dart';
 
 class NurimPetInfoDetail extends StatelessWidget {
@@ -37,7 +39,7 @@ class NurimPetInfoDetail extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFFF1F3F5),
+              color: const Color(0xFFF0F2F5),
               border: Border.all(color: _borderColor, width: 1),
               image: pet.imageProvider != null
                   ? DecorationImage(
@@ -47,10 +49,18 @@ class NurimPetInfoDetail extends StatelessWidget {
                   : null,
             ),
             child: pet.imageProvider == null
-                ? const Icon(
-                    Icons.pets,
-                    color: _mutedColor,
-                    size: 24,
+                ? Stack(
+                    children: [
+                      Positioned(
+                        left: 9.6,
+                        top: 10.74,
+                        width: 28.8,
+                        child: SvgPicture.asset(
+                          'assets/images/ic_pet_foot_default.svg',
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                    ],
                   )
                 : null,
           ),
