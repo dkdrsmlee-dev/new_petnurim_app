@@ -90,9 +90,9 @@ flutter run
 flutter run \
   --dart-define=NURIM_API_BASE_URL=http://192.168.0.147:4011 \
   --dart-define=KAKAO_NATIVE_APP_KEY=930bf238e56cb22cf6484fa8af790a5a \
-  --dart-define=NAVER_CLIENT_ID=rOPP7lBMsxvpvDDFcrwF \
-  --dart-define=NAVER_CLIENT_SECRET=Jdxpqldi9t \
-  --dart-define=NAVER_CLIENT_NAME=DKDOCTOR
+  --dart-define=NAVER_CLIENT_ID=ls2RTw_ovGeS7ZB1Zs3F \
+  --dart-define=NAVER_CLIENT_SECRET=tNMaYJSMRd \
+  --dart-define=NAVER_CLIENT_NAME=펫누림
 ```
 
 ## 현재 검증 상태

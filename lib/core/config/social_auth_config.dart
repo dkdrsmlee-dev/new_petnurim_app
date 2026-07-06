@@ -26,8 +26,8 @@ class SocialAuthConfig {
   });
 
   static const defaultKakaoNativeAppKey = '930bf238e56cb22cf6484fa8af790a5a';
-  static const defaultNaverClientId = 'rOPP7lBMsxvpvDDFcrwF';
-  static const defaultNaverClientName = 'web3_네이버로그인';
+  static const defaultNaverClientId = 'ls2RTw_ovGeS7ZB1Zs3F';
+  static const defaultNaverClientName = '펫누림';
   static const defaultNaverIosUrlScheme = 'com.dkdr.newpetnurim';
 
   final String kakaoNativeAppKey;

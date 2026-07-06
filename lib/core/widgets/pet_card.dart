@@ -346,7 +346,50 @@ class _NurimMyPetSectionState extends State<NurimMyPetSection> {
 
   @override
   Widget build(BuildContext context) {
-    final visiblePets = widget.pets.isEmpty ? [_emptyPet] : widget.pets;
+    if (widget.pets.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            height: 80,
+            alignment: Alignment.center,
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '등록된 펫 정보가 없어요.',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    height: 1.4,
+                    letterSpacing: -0.66,
+                    color: Color(0xFFA2ADBE),
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  '펫 정보를 등록해 주세요 :)',
+                  style: TextStyle(
+                    fontFamily: 'Pretendard',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    height: 1.4,
+                    letterSpacing: -0.66,
+                    color: Color(0xFFA2ADBE),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          Padding(
+            padding: widget.padding,
+            child: _AddPetButton(onPressed: widget.onAddPressed),
+          ),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -356,16 +399,16 @@ class _NurimMyPetSectionState extends State<NurimMyPetSection> {
           child: PageView.builder(
             controller: _pageController,
             physics: const BouncingScrollPhysics(),
-            itemCount: visiblePets.length,
+            itemCount: widget.pets.length,
             itemBuilder: (context, index) {
-              final pet = visiblePets[index];
+              final pet = widget.pets[index];
               return Padding(
                 // 뷰포트 간 간격을 만들기 위해 양쪽에 8px씩 패딩을 줍니다 (총 간격 16px)
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: NurimPetCard(
                   width: double.infinity, // PageView가 너비를 제어하므로 최대 확장
                   pet: pet,
-                  onPressed: widget.pets.isEmpty || widget.onPetPressed == null
+                  onPressed: widget.onPetPressed == null
                       ? null
                       : () => widget.onPetPressed!(pet),
                 ),
@@ -380,20 +423,6 @@ class _NurimMyPetSectionState extends State<NurimMyPetSection> {
         ),
       ],
     );
-  }
-
-  static const NurimPetCardData _emptyPet = NurimPetCardData(
-    name: '마이 펫',
-    breed: '등록된 펫 정보가 없습니다',
-    ageText: '',
-    genderText: '',
-    membershipTier: '-',
-    rewardText: '0P',
-  );
-
-  static double _horizontalInsetFor(EdgeInsetsGeometry geometry) {
-    final edgeInsets = geometry.resolve(TextDirection.ltr);
-    return edgeInsets.left + edgeInsets.right;
   }
 }
 
@@ -425,7 +454,15 @@ class _PetAvatar extends StatelessWidget {
       backgroundColor: const Color(0xFFF0F2F5),
       backgroundImage: imageProvider,
       child: imageProvider == null
-          ? const Icon(Icons.pets, size: 24, color: NurimPetCard._mutedColor)
+          ? SvgPicture.asset(
+              'assets/images/ic_pet_foot_default.svg',
+              width: 24,
+              height: 24,
+              colorFilter: const ColorFilter.mode(
+                NurimPetCard._mutedColor,
+                BlendMode.srcIn,
+              ),
+            )
           : null,
     );
   }
@@ -452,10 +489,12 @@ class _MembershipChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isJoinPrompt = label == '멤버십 가입하기';
+    final isNone = label == '-';
 
     return Container(
+      width: isNone ? 24 : null,
       height: 24,
-      padding: EdgeInsets.symmetric(horizontal: isJoinPrompt ? 6 : 8),
+      padding: isNone ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: isJoinPrompt ? 6 : 8),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: isJoinPrompt ? Colors.white : const Color(0xFFF2EFFF),
@@ -464,6 +503,7 @@ class _MembershipChip extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             label,
@@ -531,21 +571,22 @@ class _AddPetButton extends StatelessWidget {
                         height: 1.4,
                         letterSpacing: -0.66,
                         color: enabled
-                            ? const Color(0xFF51565F)
+                            ? const Color(0xFF30343C)
                             : NurimPetCard._mutedColor,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    SvgPicture.asset(
-                      'assets/images/ic_add.svg',
-                      width: 16,
-                      height: 16,
-                      colorFilter: enabled
-                          ? null
-                          : const ColorFilter.mode(
-                              NurimPetCard._mutedColor,
-                              BlendMode.srcIn,
-                            ),
+                    Text(
+                      ' +',
+                      style: TextStyle(
+                        fontFamily: 'Pretendard',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        height: 1.4,
+                        letterSpacing: -0.66,
+                        color: enabled
+                            ? NurimPetCard._primaryColor
+                            : NurimPetCard._mutedColor,
+                      ),
                     ),
                   ],
                 ),
