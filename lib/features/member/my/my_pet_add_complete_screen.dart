@@ -184,20 +184,32 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                                     imageUrl,
                                     headers: token != null ? {'Authorization': 'Bearer $token'} : null,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) => Center(
-                                      child: SvgPicture.asset(
-                                        'assets/images/ic_pet_foot_default.svg',
-                                        width: 60,
-                                        fit: BoxFit.fitWidth,
-                                      ),
+                                    errorBuilder: (context, error, stackTrace) => Stack(
+                                      children: [
+                                        Positioned(
+                                          left: 20,
+                                          top: 22.37,
+                                          width: 60,
+                                          child: SvgPicture.asset(
+                                            'assets/images/ic_pet_foot_default.svg',
+                                            fit: BoxFit.fitWidth,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   )
-                                : Center(
-                                    child: SvgPicture.asset(
-                                      'assets/images/ic_pet_foot_default.svg',
-                                      width: 60,
-                                      fit: BoxFit.fitWidth,
-                                    ),
+                                : Stack(
+                                    children: [
+                                      Positioned(
+                                        left: 20,
+                                        top: 22.37,
+                                        width: 60,
+                                        child: SvgPicture.asset(
+                                          'assets/images/ic_pet_foot_default.svg',
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                           ),
                         ),
