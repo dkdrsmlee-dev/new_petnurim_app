@@ -516,6 +516,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                               Container(
                                 width: 100,
                                 height: 100,
+                                clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: _bgGrayColor,

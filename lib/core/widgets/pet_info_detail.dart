@@ -37,6 +37,7 @@ class NurimPetInfoDetail extends StatelessWidget {
           Container(
             width: 48,
             height: 48,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: const Color(0xFFF0F2F5),
