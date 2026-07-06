@@ -32,6 +32,7 @@ class MyPageView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final myPageState = ref.watch(memberMyPageProvider);
     final petsState = ref.watch(myPetsListProvider);
+    final memberInfoState = ref.watch(memberInfoProvider);
     final token = ref.watch(accessTokenProvider);
 
     return myPageState.when(
@@ -72,6 +73,8 @@ class MyPageView extends ConsumerWidget {
             );
           }).toList();
 
+          final snsFlatform = memberInfoState.asData?.value.snsFlatform;
+
           return _MyPageContent(
             myPage: myPage,
             pets: mappedPets,
@@ -79,6 +82,7 @@ class MyPageView extends ConsumerWidget {
             isLoggingOut: isLoggingOut,
             onLogout: onLogout,
             onBackToHome: onBackToHome,
+            snsFlatform: snsFlatform,
           );
         },
       ),
@@ -86,7 +90,7 @@ class MyPageView extends ConsumerWidget {
   }
 }
 
-class _MyPageContent extends StatefulWidget {
+ class _MyPageContent extends StatefulWidget {
   const _MyPageContent({
     required this.myPage,
     required this.pets,
@@ -94,6 +98,7 @@ class _MyPageContent extends StatefulWidget {
     required this.isLoggingOut,
     required this.onLogout,
     this.onBackToHome,
+    this.snsFlatform,
   });
 
   final MemberMyPage myPage;
@@ -102,6 +107,7 @@ class _MyPageContent extends StatefulWidget {
   final bool isLoggingOut;
   final VoidCallback onLogout;
   final VoidCallback? onBackToHome;
+  final String? snsFlatform;
 
   @override
   State<_MyPageContent> createState() => _MyPageContentState();
@@ -155,7 +161,11 @@ class _MyPageContentState extends State<_MyPageContent> {
                       NurimMyInfoRow(
                         labelText: '내 정보 관리',
                         primaryValue: email,
-                        secondaryValue: '(카카오)',
+                        secondaryValue: widget.snsFlatform?.toUpperCase() == 'NAVER'
+                            ? '(네이버)'
+                            : widget.snsFlatform?.toUpperCase() == 'KAKAO'
+                                ? '(카카오)'
+                                : '',
                         actionLabel: '관리',
                         onActionPressed: () => context.push(AppRoutes.myInfo),
                         showDivider: true,
