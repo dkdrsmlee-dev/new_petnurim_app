@@ -458,10 +458,6 @@ class _PetAvatar extends StatelessWidget {
               'assets/images/ic_pet_foot_default.svg',
               width: 24,
               height: 24,
-              colorFilter: const ColorFilter.mode(
-                NurimPetCard._mutedColor,
-                BlendMode.srcIn,
-              ),
             )
           : null,
     );

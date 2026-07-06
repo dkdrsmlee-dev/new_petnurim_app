@@ -6,8 +6,10 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app_routes.dart';
 import '../../../app/app_bootstrap.dart';
 import '../../../core/api/api_client.dart';
+import '../data/member_repository.dart';
 import '../data/pet_repository.dart';
 import '../domain/pet_models.dart';
+import 'my_pet_list_screen.dart';
 
 final myPetDetailProvider = FutureProvider.family.autoDispose<MyPetDetailResponse, String>((ref, myPetId) {
   return ref.read(petRepositoryProvider).getMyPetDetail(myPetId);
@@ -231,7 +233,9 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      context.go(AppRoutes.myPetList);
+                      ref.invalidate(myPetsListProvider);
+                      ref.invalidate(memberMyPageProvider);
+                      context.go('${AppRoutes.home}?tab=5');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _primaryColor,

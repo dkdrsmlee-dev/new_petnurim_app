@@ -15,15 +15,36 @@ import '../member/my/my_page_view.dart';
 import 'widgets/home_event_carousel.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({
+    super.key,
+    this.initialTab,
+  });
+
+  final int? initialTab;
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
   bool _isLoggingOut = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialTab ?? 0;
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialTab != null && widget.initialTab != oldWidget.initialTab) {
+      setState(() {
+        _selectedIndex = widget.initialTab!;
+      });
+    }
+  }
   
   @override
   Widget build(BuildContext context) {

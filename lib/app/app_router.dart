@@ -67,7 +67,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.home,
         name: AppRouteNames.home,
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) {
+          final tabStr = state.uri.queryParameters['tab'];
+          final initialTab = tabStr != null ? int.tryParse(tabStr) : null;
+          return HomeScreen(initialTab: initialTab);
+        },
       ),
       GoRoute(
         path: AppRoutes.myInfo,
