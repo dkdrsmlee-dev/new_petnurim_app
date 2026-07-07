@@ -452,18 +452,47 @@ class _PetAvatar extends StatelessWidget {
       width: 48,
       height: 48,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        color: const Color(0xFFF0F2F5),
-        image: imageProvider != null
-            ? DecorationImage(
-                image: imageProvider!,
-                fit: BoxFit.cover,
-              )
-            : null,
+        color: Color(0xFFF0F2F5),
       ),
-      child: imageProvider == null
-          ? Stack(
+      child: imageProvider != null
+          ? Image(
+              image: imageProvider!,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) {
+                  return child;
+                }
+                return Stack(
+                  children: [
+                    Positioned(
+                      left: 9.6,
+                      top: 10.74,
+                      width: 28.8,
+                      child: SvgPicture.asset(
+                        'assets/images/ic_pet_foot_default.svg',
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                  ],
+                );
+              },
+              errorBuilder: (context, error, stackTrace) => Stack(
+                children: [
+                  Positioned(
+                    left: 9.6,
+                    top: 10.74,
+                    width: 28.8,
+                    child: SvgPicture.asset(
+                      'assets/images/ic_pet_foot_default.svg',
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Stack(
               children: [
                 Positioned(
                   left: 9.6,
@@ -475,8 +504,7 @@ class _PetAvatar extends StatelessWidget {
                   ),
                 ),
               ],
-            )
-          : null,
+            ),
     );
   }
 }

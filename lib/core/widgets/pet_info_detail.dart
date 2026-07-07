@@ -42,15 +42,44 @@ class NurimPetInfoDetail extends StatelessWidget {
               shape: BoxShape.circle,
               color: const Color(0xFFF0F2F5),
               border: Border.all(color: _borderColor, width: 1),
-              image: pet.imageProvider != null
-                  ? DecorationImage(
-                      image: pet.imageProvider!,
-                      fit: BoxFit.cover,
-                    )
-                  : null,
             ),
-            child: pet.imageProvider == null
-                ? Stack(
+            child: pet.imageProvider != null
+                ? Image(
+                    image: pet.imageProvider!,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+                      return Stack(
+                        children: [
+                          Positioned(
+                            left: 9.6,
+                            top: 10.74,
+                            width: 28.8,
+                            child: SvgPicture.asset(
+                              'assets/images/ic_pet_foot_default.svg',
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) => Stack(
+                      children: [
+                        Positioned(
+                          left: 9.6,
+                          top: 10.74,
+                          width: 28.8,
+                          child: SvgPicture.asset(
+                            'assets/images/ic_pet_foot_default.svg',
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Stack(
                     children: [
                       Positioned(
                         left: 9.6,
@@ -62,8 +91,7 @@ class NurimPetInfoDetail extends StatelessWidget {
                         ),
                       ),
                     ],
-                  )
-                : null,
+                  ),
           ),
           const SizedBox(width: 10),
           // Pet Info Text Column

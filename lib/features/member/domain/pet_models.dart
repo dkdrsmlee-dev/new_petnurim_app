@@ -71,7 +71,7 @@ class MyPetDetailResponse {
     }
 
     final rawFileId = json['profileFileId'];
-    final parsedFileId = rawFileId?.toString();
+    final parsedFileId = _parseFileId(rawFileId);
 
     return MyPetDetailResponse(
       myPetId: (json['myPetId'] ?? json['id'] ?? json['petId'])?.toString() ?? '',
@@ -148,7 +148,7 @@ class MyPetListItem {
     }
 
     final rawFileId = json['profileFileId'] ?? json['PROFILE_FILE_ID'];
-    final parsedFileId = rawFileId?.toString();
+    final parsedFileId = _parseFileId(rawFileId);
 
     return MyPetListItem(
       myPetId: (json['myPetId'] ?? json['MY_PET_ID'] ?? json['id'] ?? json['petId'])?.toString() ?? '',
@@ -170,4 +170,21 @@ class MyPetListItem {
       statusCode: (json['statusCode'] ?? json['STATUS_CODE'])?.toString() ?? '',
     );
   }
+}
+
+String? _parseFileId(Object? raw) {
+  if (raw == null) return null;
+  if (raw is Map) {
+    final id = raw['id'] ?? raw['fileId'] ?? raw['file_id'] ?? raw['profileFileId'];
+    if (id != null) return id.toString();
+  }
+  if (raw is num) {
+    return raw.toString();
+  }
+  if (raw is String) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty || trimmed == 'null') return null;
+    return trimmed;
+  }
+  return null;
 }
