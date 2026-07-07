@@ -25,7 +25,7 @@ class SocialAuthConfig {
     this.naverAuthChannelName = 'petnurim/naver_auth',
   });
 
-  static const defaultKakaoNativeAppKey = '930bf238e56cb22cf6484fa8af790a5a';
+  static const defaultKakaoNativeAppKey = '34beb18e7458f8a9c0df634000099456';
   static const defaultNaverClientId = 'ls2RTw_ovGeS7ZB1Zs3F';
   static const defaultNaverClientName = '펫누림';
   static const defaultNaverIosUrlScheme = 'com.dkdr.newpetnurim';
