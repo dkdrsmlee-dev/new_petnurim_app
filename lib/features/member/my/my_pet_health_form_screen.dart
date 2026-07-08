@@ -9,6 +9,7 @@ import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/file_repository.dart';
 import '../data/pet_repository.dart';
+import 'my_pet_list_screen.dart';
 
 class MyPetHealthFormScreen extends ConsumerStatefulWidget {
   final String petType;
@@ -54,6 +55,16 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
   void initState() {
     super.initState();
     _weightController.addListener(_validateForm);
+    
+    // Check if the current pet list is empty and default _isPrimary to true
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final petsAsync = ref.read(myPetsListProvider);
+      if (petsAsync.hasValue && petsAsync.value!.isEmpty) {
+        setState(() {
+          _isPrimary = true;
+        });
+      }
+    });
   }
 
   @override
@@ -117,6 +128,22 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
           ? '${_selectedWeightDate!.year}-${_selectedWeightDate!.month.toString().padLeft(2, '0')}-${_selectedWeightDate!.day.toString().padLeft(2, '0')}'
           : widget.dateBecameFamily!;
 
+      // Check if it's the first pet to register
+      final petsAsync = ref.read(myPetsListProvider);
+      bool isFirstPet = false;
+      if (petsAsync.hasValue) {
+        isFirstPet = petsAsync.value!.isEmpty;
+      } else {
+        try {
+          final response = await ref.read(petRepositoryProvider).getMyPetsList(limit: 1);
+          isFirstPet = response.items.isEmpty;
+        } catch (_) {
+          isFirstPet = false;
+        }
+      }
+
+      final representYnValue = (isFirstPet || _isPrimary) ? 'Y' : 'N';
+
       final response = await ref.read(petRepositoryProvider).createMyPet(
         petTypeCode: widget.petType,
         petName: widget.name,
@@ -127,7 +154,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
         neuteredYn: _selectedNeutered == true ? 'Y' : 'N',
         weightKg: weightVal,
         weightMeasureDt: weightDateStr,
-        representYn: _isPrimary ? 'Y' : 'N',
+        representYn: representYnValue,
         profileFileId: profileFileId,
       );
 
