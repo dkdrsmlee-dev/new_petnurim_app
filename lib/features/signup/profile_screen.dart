@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/widgets/nurim_date_picker.dart';
+
 import '../../app/app_routes.dart';
 import '../auth/domain/readable_auth_error.dart';
 import '../auth/domain/social_provider.dart';
@@ -51,8 +51,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   bool _isFormValid() {
     return _address1Controller.text.trim().isNotEmpty &&
-        _address2Controller.text.trim().isNotEmpty &&
-        _birthDateController.text.trim().isNotEmpty;
+        _address2Controller.text.trim().isNotEmpty;
   }
 
   Future<void> _searchAddress() async {
@@ -61,39 +60,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       setState(() {
         _zipCodeController.text = result['zonecode'] ?? '';
         _address1Controller.text = result['address'] ?? '';
-      });
-    }
-  }
-
-  Future<void> _selectBirthDate() async {
-    DateTime initialDate = DateTime(2000, 1, 1);
-    if (_birthDateController.text.isNotEmpty) {
-      try {
-        final parts = _birthDateController.text.split('-');
-        if (parts.length == 3) {
-          initialDate = DateTime(
-            int.parse(parts[0]),
-            int.parse(parts[1]),
-            int.parse(parts[2]),
-          );
-        }
-      } catch (_) {}
-    }
-
-    final selected = await NurimDatePickerBottomSheet.show(
-      context: context,
-      title: '생년월일',
-      initialDate: initialDate,
-      minimumDate: DateTime(1900),
-      maximumDate: DateTime.now(),
-    );
-
-    if (selected != null && mounted) {
-      setState(() {
-        final year = selected.year.toString();
-        final month = selected.month.toString().padLeft(2, '0');
-        final day = selected.day.toString().padLeft(2, '0');
-        _birthDateController.text = '$year-$month-$day';
       });
     }
   }
@@ -165,7 +131,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (profile.address2.trim().isEmpty) {
       return '상세 주소를 입력해 주세요.';
     }
-    if (!_isValidBirthDate(profile.birthDate)) {
+    if (profile.birthDate.trim().isNotEmpty && !_isValidBirthDate(profile.birthDate)) {
       return '생년월일은 YYYY-MM-DD 형식으로 입력해 주세요.';
     }
 
@@ -190,95 +156,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       readAuthErrorMessage(error, fallbackMessage);
 
   String _formatBirthDate(String yyyymmdd) {
-    if (yyyymmdd.isEmpty) return '';
-    try {
-      final parts = yyyymmdd.trim().split('-');
-      if (parts.length == 3) {
-        final year = int.parse(parts[0]);
-        final month = int.parse(parts[1]);
-        final day = int.parse(parts[2]);
-        return '$year년 $month월 $day일';
-      }
-    } catch (_) {}
-    return yyyymmdd;
-  }
-
-  Widget _buildRowInfo(String label, String value, {SocialProvider? socialProvider}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF64748B),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Row(
-            children: [
-              if (socialProvider != null) ...[
-                _buildSocialLogoIcon(socialProvider),
-                const SizedBox(width: 6),
-              ],
-              Text(
-                value.trim().isEmpty ? '-' : value,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSocialLogoIcon(SocialProvider provider) {
-    if (provider == SocialProvider.kakao) {
-      return Container(
-        width: 18,
-        height: 18,
-        decoration: const BoxDecoration(
-          color: Color(0xFFFEE500),
-          shape: BoxShape.circle,
-        ),
-        child: const Center(
-          child: Text(
-            'K',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-      );
-    } else if (provider == SocialProvider.naver) {
-      return Container(
-        width: 18,
-        height: 18,
-        decoration: const BoxDecoration(
-          color: Color(0xFF03C75A),
-          shape: BoxShape.circle,
-        ),
-        child: const Center(
-          child: Text(
-            'N',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-      );
-    }
-    return const SizedBox.shrink();
+    if (yyyymmdd.isEmpty) return '2004.01.01';
+    return yyyymmdd.replaceAll('-', '.');
   }
 
   @override
@@ -287,6 +166,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       final signupState = ref.watch(signupFlowProvider);
       final profile = signupState.profile;
       final formValid = _isFormValid();
+
+      // Dynamic email construction based on provider
+      final emailDomain = profile.provider == SocialProvider.kakao ? 'kakao.com' : 'naver.com';
+      final emailName = profile.name.contains(RegExp(r'[a-zA-Z]'))
+          ? profile.name.replaceAll(' ', '').toLowerCase()
+          : 'abcd';
+      final emailText = '$emailName@$emailDomain';
+      final snsText = '(${profile.providerLabel.isNotEmpty ? profile.providerLabel : (profile.provider == SocialProvider.kakao ? "카카오" : "네이버")})';
 
       return Scaffold(
         backgroundColor: Colors.white,
@@ -299,11 +186,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onPressed: _saving ? null : () => context.go(AppRoutes.signupVerify),
           ),
           title: const Text(
-            '회원정보 입력',
+            '회원 정보 입력',
             style: TextStyle(
-              color: Colors.black,
+              fontFamily: 'Pretendard',
+              color: Color(0xFF30343C),
               fontSize: 18,
               fontWeight: FontWeight.w700,
+              letterSpacing: -0.54,
             ),
           ),
           centerTitle: true,
@@ -313,173 +202,204 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   children: [
                     const Text(
-                      '자동입력',
+                      '추가 정보를 입력하고\n회원가입을 완료해 주세요.',
                       style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8FAFC),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        children: [
-                          _buildRowInfo('이름', profile.name.trim().isEmpty ? '인증 회원' : profile.name),
-                          const Divider(color: Color(0xFFE2E8F0)),
-                          _buildRowInfo(
-                            '연결계정',
-                            profile.providerLabel.trim().isEmpty ? '소셜 계정' : profile.providerLabel,
-                            socialProvider: profile.provider,
-                          ),
-                          const Divider(color: Color(0xFFE2E8F0)),
-                          _buildRowInfo('휴대폰번호', profile.phone.trim().isEmpty ? '010-0000-0000' : profile.phone),
-                        ],
+                        fontFamily: 'Pretendard',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        height: 1.4,
+                        color: Color(0xFF30343C),
+                        letterSpacing: -0.66,
                       ),
                     ),
                     const SizedBox(height: 32),
-                    const Text(
-                      '추가 등록 정보(필수)',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      '회원가입에 필요한 필수정보를 입력하신 후 회원가입을 완료해 주세요.',
-                      style: TextStyle(
-                        color: Color(0xFF64748B),
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      '주소',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
+                    // 연결계정
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Container(
-                            height: 48,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: const Color(0xFFCBD5E1)),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: TextField(
-                              controller: _address1Controller,
-                              readOnly: true,
-                              onTap: _searchAddress,
-                              style: const TextStyle(fontSize: 14, color: Colors.black),
-                              decoration: const InputDecoration(
-                                hintText: '주소 검색으로 주소를 입력해 주세요.',
-                                hintStyle: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                border: InputBorder.none,
-                              ),
-                              enabled: !_saving,
-                            ),
+                        const Text(
+                          '연결계정',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF51565F),
+                            letterSpacing: -0.66,
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        SizedBox(
-                          width: 96,
-                          height: 48,
-                          child: OutlinedButton(
-                            onPressed: _saving ? null : _searchAddress,
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.black,
-                              side: const BorderSide(color: Colors.black),
-                              fixedSize: const Size(96, 48),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                        const SizedBox(height: 8),
+                        Container(
+                          height: 52,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF4F6F8),
+                            border: Border.all(color: const Color(0xFFD6DBE4)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                emailText,
+                                style: const TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF909AA9),
+                                  letterSpacing: -0.66,
+                                ),
                               ),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: const Text(
-                              '주소찾기',
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                              const SizedBox(width: 2),
+                              Text(
+                                snsText,
+                                style: const TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF909AA9),
+                                  letterSpacing: -0.66,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    // 생년월일
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '생년월일',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF51565F),
+                            letterSpacing: -0.66,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          height: 52,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF4F6F8),
+                            border: Border.all(color: const Color(0xFFD6DBE4)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              _formatBirthDate(_birthDateController.text),
+                              style: const TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF909AA9),
+                                letterSpacing: -0.66,
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 48,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFFCBD5E1)),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextField(
-                        controller: _address2Controller,
-                        style: const TextStyle(fontSize: 14, color: Colors.black),
-                        decoration: const InputDecoration(
-                          hintText: '상세 주소를 입력해 주세요.',
-                          hintStyle: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                          border: InputBorder.none,
-                        ),
-                        enabled: !_saving,
-                        onChanged: (_) => setState(() {}),
-                      ),
-                    ),
                     const SizedBox(height: 24),
-                    const Text(
-                      '생년월일',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    GestureDetector(
-                      onTap: _saving ? null : _selectBirthDate,
-                      child: Container(
-                        height: 48,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFCBD5E1)),
-                          borderRadius: BorderRadius.circular(8),
+                    // 주소
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '주소',
+                          style: TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF51565F),
+                            letterSpacing: -0.66,
+                          ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              _birthDateController.text.isEmpty
-                                  ? '생년월일을 선택해 주세요.'
-                                  : _formatBirthDate(_birthDateController.text),
-                              style: TextStyle(
-                                color: _birthDateController.text.isEmpty
-                                    ? const Color(0xFF94A3B8)
-                                    : Colors.black,
-                                fontSize: 14,
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: _saving ? null : _searchAddress,
+                          child: Container(
+                            height: 52,
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: const Color(0xFFD6DBE4)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    _address1Controller.text.isEmpty
+                                        ? '주소를 검색해 주세요.'
+                                        : _address1Controller.text,
+                                    style: TextStyle(
+                                      fontFamily: 'Pretendard',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: _address1Controller.text.isEmpty
+                                          ? const Color(0xFFA2ADBE)
+                                          : const Color(0xFF30343C),
+                                      letterSpacing: -0.66,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.search,
+                                  size: 24,
+                                  color: Color(0xFF909AA9),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          height: 52,
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: const Color(0xFFD6DBE4)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: TextField(
+                            controller: _address2Controller,
+                            style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF30343C),
+                            ),
+                            decoration: const InputDecoration(
+                              hintText: '상세주소를 입력해 주세요.',
+                              hintStyle: TextStyle(
+                                color: Color(0xFFA2ADBE),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Pretendard',
                               ),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
                             ),
-                            const Icon(
-                              Icons.chevron_right,
-                              color: Color(0xFF94A3B8),
-                              size: 20,
-                            ),
-                          ],
+                            enabled: !_saving,
+                            onChanged: (_) => setState(() {}),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 20),
@@ -489,17 +409,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                 child: SizedBox(
                   width: double.infinity,
-                  height: 54,
+                  height: 56,
                   child: ElevatedButton(
                     onPressed: formValid && !_saving ? _submitProfile : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
+                      backgroundColor: const Color(0xFF7F4FFF),
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor: const Color(0xFFE2E8F0),
-                      disabledForegroundColor: const Color(0xFF94A3B8),
+                      disabledBackgroundColor: const Color(0xFFE8EBF1),
+                      disabledForegroundColor: const Color(0xFFA2ADBE),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -514,10 +434,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                           )
                         : const Text(
-                            '저장',
+                            '다음',
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Pretendard',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.66,
                             ),
                           ),
                   ),
