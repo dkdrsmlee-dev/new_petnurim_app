@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'dart:async';
 
 class _BannerData {
   final Color bgColor;
@@ -31,6 +32,8 @@ class HomeEventCarousel extends StatefulWidget {
 class _HomeEventCarouselState extends State<HomeEventCarousel> {
   late final PageController _pageController;
   int _currentIndex = 0;
+  Timer? _timer;
+  bool _isPlaying = true;
 
   final List<_BannerData> _banners = [
     _BannerData(
@@ -101,12 +104,33 @@ class _HomeEventCarouselState extends State<HomeEventCarousel> {
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.9413);
+    _startTimer();
   }
 
   @override
   void dispose() {
+    _stopTimer();
     _pageController.dispose();
     super.dispose();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_pageController.hasClients) {
+        final nextPage = (_currentIndex + 1) % _banners.length;
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
   }
 
   @override
@@ -119,6 +143,9 @@ class _HomeEventCarouselState extends State<HomeEventCarousel> {
           setState(() {
             _currentIndex = index;
           });
+          if (_isPlaying) {
+            _startTimer();
+          }
         },
         itemCount: _banners.length,
         itemBuilder: (context, index) {
@@ -219,21 +246,38 @@ class _HomeEventCarouselState extends State<HomeEventCarousel> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Pause button
-                Container(
-                  width: 21,
-                  height: 21,
-                  decoration: const BoxDecoration(
-                    color: Color(0x99000000), // rgba(0,0,0,0.6)
-                    shape: BoxShape.circle,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(width: 2, height: 8, color: Colors.white),
-                      const SizedBox(width: 2),
-                      Container(width: 2, height: 8, color: Colors.white),
-                    ],
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isPlaying = !_isPlaying;
+                      if (_isPlaying) {
+                        _startTimer();
+                      } else {
+                        _stopTimer();
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 21,
+                    height: 21,
+                    decoration: const BoxDecoration(
+                      color: Color(0x99000000), // rgba(0,0,0,0.6)
+                      shape: BoxShape.circle,
+                    ),
+                    child: _isPlaying
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(width: 2, height: 8, color: Colors.white),
+                              const SizedBox(width: 2),
+                              Container(width: 2, height: 8, color: Colors.white),
+                            ],
+                          )
+                        : const Icon(
+                            Icons.play_arrow,
+                            size: 11,
+                            color: Colors.white,
+                          ),
                   ),
                 ),
                 const SizedBox(width: 6), // gap-[6px]
