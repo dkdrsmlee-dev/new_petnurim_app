@@ -120,6 +120,7 @@ flutter run \
   - 회원가입 1~3단계(약관 동의 -> 본인인증 -> 주소검색 WebView/생년월일 입력 프로필 저장) 검증 완료
   - **회원 정보 입력 화면 리뉴얼 및 파라미터 에러 조치 (`ProfileScreen`)**: 피그마 시안(`USR-AUT-090-회원정보 입력(SNS)`) 스펙에 맞추어 연결계정 및 생년월일 필드(비활성화 읽기 전용 연동), 주소 검색/상세 입력 필드 및 다음 버튼 디자인 개편 완료. 생년월일이 비어 있을 때 화면의 기본 표시와 동기화되도록 기본값 `'2004-01-01'`을 자동 대입하여 백엔드 파라미터 유효성 검사 에러(`AUTH.INVALID_PARAMS`) 해결 완료
   - **회원가입 완료 화면 리뉴얼 (`CompleteScreen`)**: 피그마 시안(`USR-AUT-094-회원가입 완료`)에 부합하는 일러스트 및 하단 듀얼 버튼("마이펫 등록" 및 "홈으로") 개편 완료. 마이펫 등록 선택 시 앱 전역 로그인 세션 상태를 안전하게 갱신(invalidate)한 뒤 마이펫 추가 화면(`MyPetAddScreen`)으로 부드럽고 정밀하게 라우팅되도록 연동 완료
+  - **마이펫 프로필 이미지 다운로드 인증 헤더 오류 조치 (`MyPage`, `MyPetList`, `MyPetDetail`, `MyPetEdit`, `MyPetAddComplete`)**: 백엔드의 파일 다운로드 API가 `access-token` 헤더를 필수로 인가 검증함에 따라, 이미지 뷰어들의 `NetworkImage` / `Image.network` 구성 요소에서 `Authorization` 헤더와 함께 `access-token` 헤더를 공동 전송하도록 전면 개편하여 사진 등록 및 변경 시 즉각 반영되도록 조치 완료
   - 회원 정보 조회(`MyInfoScreen`), 날짜 휠 피커(한국어 대응), 로그아웃 및 회원탈퇴(WithdrawScreen) 실서버 통신 및 토큰 제거 전체 라이프사이클 동작 검증 완료
   - 고객센터(`CustomerCenterScreen`) 공지사항 아코디언 목록 및 1:1 문의 목록 API(Cursor Pagination) 연동 검증 완료
   - 1:1 문의 등록(`QnaCreateScreen`) 첨부파일 실물(사진/파일) 업로드 연동 및 유효성 검증 예외 방어 기능 검증 완료

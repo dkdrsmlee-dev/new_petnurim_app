@@ -101,7 +101,12 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
           imageProvider: imageUrl != null
               ? NetworkImage(
                   imageUrl,
-                  headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+                  headers: token != null
+                      ? {
+                          'Authorization': 'Bearer $token',
+                          'access-token': token,
+                        }
+                      : null,
                 )
               : null,
         );

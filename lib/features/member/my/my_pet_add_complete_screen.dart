@@ -182,7 +182,12 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                             child: imageUrl != null
                                 ? Image.network(
                                     imageUrl,
-                                    headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+                                    headers: token != null
+                                        ? {
+                                            'Authorization': 'Bearer $token',
+                                            'access-token': token,
+                                          }
+                                        : null,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) => Stack(
                                       children: [
