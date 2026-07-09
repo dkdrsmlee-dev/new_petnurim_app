@@ -125,15 +125,13 @@ class MyPetDetailScreen extends ConsumerWidget {
                     breed: breedText,
                     ageText: ageText,
                     genderText: genderText,
-                    imageProvider: imageUrl != null
+                    imageProvider: (imageUrl != null && token != null)
                         ? NetworkImage(
                             imageUrl,
-                            headers: token != null
-                                ? {
-                                    'Authorization': 'Bearer $token',
-                                    'access-token': token,
-                                  }
-                                : null,
+                            headers: {
+                              'Authorization': 'Bearer $token',
+                              'access-token': token,
+                            },
                           )
                         : null,
                     isPrimary: isPrimary,

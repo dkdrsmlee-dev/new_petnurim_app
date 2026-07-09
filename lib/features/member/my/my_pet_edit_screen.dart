@@ -471,16 +471,14 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     ImageProvider? imageProv;
     if (_profileImagePath != null) {
       imageProv = FileImage(File(_profileImagePath!));
-    } else if (_profileFileId != null) {
+    } else if (_profileFileId != null && token != null) {
       final imgUrl = ref.read(apiClientProvider).uri('/api/v1/files/$_profileFileId/download').toString();
       imageProv = NetworkImage(
         imgUrl,
-        headers: token != null
-            ? {
-                'Authorization': 'Bearer $token',
-                'access-token': token,
-              }
-            : null,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'access-token': token,
+        },
       );
     }
 

@@ -179,15 +179,13 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                               border: Border.all(color: const Color(0xFFF0F2F5), width: 1),
                             ),
                             clipBehavior: Clip.antiAlias,
-                            child: imageUrl != null
+                            child: (imageUrl != null && token != null)
                                 ? Image.network(
                                     imageUrl,
-                                    headers: token != null
-                                        ? {
-                                            'Authorization': 'Bearer $token',
-                                            'access-token': token,
-                                          }
-                                        : null,
+                                    headers: {
+                                      'Authorization': 'Bearer $token',
+                                      'access-token': token,
+                                    },
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) => Stack(
                                       children: [

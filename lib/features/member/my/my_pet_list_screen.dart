@@ -98,15 +98,13 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
           membershipTier: item.representYn == 'Y' ? '브론즈' : '멤버십 가입하기',
           rewardText: '28,000P',
           isPrimary: item.representYn == 'Y',
-          imageProvider: imageUrl != null
+          imageProvider: (imageUrl != null && token != null)
               ? NetworkImage(
                   imageUrl,
-                  headers: token != null
-                      ? {
-                          'Authorization': 'Bearer $token',
-                          'access-token': token,
-                        }
-                      : null,
+                  headers: {
+                    'Authorization': 'Bearer $token',
+                    'access-token': token,
+                  },
                 )
               : null,
         );
