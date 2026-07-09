@@ -34,7 +34,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         _zipCodeController.text = profile.zipCode;
         _address1Controller.text = profile.address1;
         _address2Controller.text = profile.address2;
-        _birthDateController.text = profile.birthDate;
+        _birthDateController.text = profile.birthDate.isNotEmpty ? profile.birthDate : '2004-01-01';
         setState(() {});
       }
     });

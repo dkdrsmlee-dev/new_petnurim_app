@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/app_bootstrap.dart';
 import '../../app/app_routes.dart';
 import '../auth/domain/readable_auth_error.dart';
 import 'application/signup_providers.dart';
@@ -21,6 +22,7 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
     final signupToken = ref.read(signupFlowProvider).signupToken;
     if (signupToken == null || signupToken.trim().isEmpty) {
       ref.read(signupFlowProvider.notifier).clear();
+      ref.invalidate(appBootstrapStateProvider);
       if (mounted) {
         context.go(targetRoute);
       }
@@ -42,6 +44,7 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
       }
 
       ref.read(signupFlowProvider.notifier).clear();
+      ref.invalidate(appBootstrapStateProvider);
 
       if (mounted) {
         setState(() {
