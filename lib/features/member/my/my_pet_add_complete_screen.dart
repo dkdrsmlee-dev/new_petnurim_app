@@ -4,8 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
-import '../../../app/app_bootstrap.dart';
-import '../../../core/api/api_client.dart';
+import '../../../core/widgets/authed_file_image.dart';
 import '../data/member_repository.dart';
 import '../data/pet_repository.dart';
 import '../domain/pet_models.dart';
@@ -44,7 +43,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final detailAsync = ref.watch(myPetDetailProvider(myPetId));
-    final token = ref.watch(accessTokenProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -139,10 +137,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
             ),
           ),
           data: (detail) {
-            final imageUrl = detail.profileFileId != null
-                ? ref.read(apiClientProvider).uri('/api/v1/files/${detail.profileFileId}/download').toString()
-                : null;
-
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -179,13 +173,9 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                               border: Border.all(color: const Color(0xFFF0F2F5), width: 1),
                             ),
                             clipBehavior: Clip.antiAlias,
-                            child: (imageUrl != null && token != null)
-                                ? Image.network(
-                                    imageUrl,
-                                    headers: {
-                                      'Authorization': 'Bearer $token',
-                                      'access-token': token,
-                                    },
+                            child: detail.profileFileId != null
+                                ? Image(
+                                    image: AuthedFileImageX.of(ref, detail.profileFileId!),
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) => Stack(
                                       children: [

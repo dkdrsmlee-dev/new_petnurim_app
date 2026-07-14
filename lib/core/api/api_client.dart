@@ -20,6 +20,7 @@ class ApiClient {
     required http.Client httpClient,
     this.tokenStorage,
     this.onUnauthorized,
+    this.onTokenRefreshed,
   })  : _config = config,
         _httpClient = httpClient;
 
@@ -27,6 +28,7 @@ class ApiClient {
   final http.Client _httpClient;
   final TokenStorage? tokenStorage;
   final VoidCallback? onUnauthorized;
+  final VoidCallback? onTokenRefreshed;
 
   Future<bool>? _refreshFuture;
 
@@ -279,6 +281,7 @@ class ApiClient {
         final newAccessToken = await tokenStorage!.readAccessToken();
         if (newAccessToken != null && newAccessToken.trim().isNotEmpty) {
           requestHeaders['Authorization'] = 'Bearer ${newAccessToken.trim()}';
+          requestHeaders['access-token'] = newAccessToken.trim();
           response = await _send(
             method: method,
             uri: uri(path),
@@ -360,6 +363,7 @@ class ApiClient {
             if (newRefresh != null && newRefresh.trim().isNotEmpty) {
               await tokenStorage!.saveRefreshToken(newRefresh);
             }
+            onTokenRefreshed?.call();
             return true;
           }
         }
@@ -451,6 +455,8 @@ class ApiClient {
 
 final unauthorizedHandlerProvider = Provider<VoidCallback?>((ref) => null);
 
+final tokenRefreshedHandlerProvider = Provider<VoidCallback?>((ref) => null);
+
 final httpClientProvider = Provider<http.Client>((ref) {
   final client = http.Client();
   ref.onDispose(client.close);
@@ -463,5 +469,6 @@ final apiClientProvider = Provider<ApiClient>((ref) {
     httpClient: ref.watch(httpClientProvider),
     tokenStorage: ref.watch(tokenStorageProvider),
     onUnauthorized: ref.watch(unauthorizedHandlerProvider),
+    onTokenRefreshed: ref.watch(tokenRefreshedHandlerProvider),
   );
 });

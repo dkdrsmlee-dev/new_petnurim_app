@@ -6,8 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../app/app_routes.dart';
-import '../../../app/app_bootstrap.dart';
-import '../../../core/api/api_client.dart';
+import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
@@ -442,8 +441,6 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final token = ref.watch(accessTokenProvider);
-
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: Colors.white,
@@ -471,15 +468,8 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     ImageProvider? imageProv;
     if (_profileImagePath != null) {
       imageProv = FileImage(File(_profileImagePath!));
-    } else if (_profileFileId != null && token != null) {
-      final imgUrl = ref.read(apiClientProvider).uri('/api/v1/files/$_profileFileId/download').toString();
-      imageProv = NetworkImage(
-        imgUrl,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'access-token': token,
-        },
-      );
+    } else if (_profileFileId != null) {
+      imageProv = AuthedFileImageX.of(ref, _profileFileId!.toString());
     }
 
     final familyDateText = _selectedDate != null

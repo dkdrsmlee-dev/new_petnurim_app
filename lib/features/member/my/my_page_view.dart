@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/api/api_client.dart';
 import '../../../app/app_routes.dart';
-import '../../../app/app_bootstrap.dart';
+import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/list_button.dart';
 import '../../../core/widgets/my_info_row.dart';
 import '../../../core/widgets/mypage_name.dart';
@@ -33,7 +32,6 @@ class MyPageView extends ConsumerWidget {
     final myPageState = ref.watch(memberMyPageProvider);
     final petsState = ref.watch(myPetsListProvider);
     final memberInfoState = ref.watch(memberInfoProvider);
-    final token = ref.watch(accessTokenProvider);
 
     return myPageState.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -52,10 +50,6 @@ class MyPageView extends ConsumerWidget {
         ),
         data: (serverPets) {
           final mappedPets = serverPets.map((item) {
-            final imageUrl = item.profileFileId != null
-                ? ref.read(apiClientProvider).uri('/api/v1/files/${item.profileFileId}/download').toString()
-                : null;
-
             return NurimPetCardData(
               name: item.petName,
               breed: item.breedNameKor ?? '믹스',
@@ -64,14 +58,8 @@ class MyPageView extends ConsumerWidget {
               membershipTier: item.representYn == 'Y' ? '브론즈' : '멤버십 가입하기',
               rewardText: '28,000P',
               isPrimary: item.representYn == 'Y',
-              imageProvider: (imageUrl != null && token != null)
-                  ? NetworkImage(
-                      imageUrl,
-                      headers: {
-                        'Authorization': 'Bearer $token',
-                        'access-token': token,
-                      },
-                    )
+              imageProvider: item.profileFileId != null
+                  ? AuthedFileImageX.of(ref, item.profileFileId!)
                   : null,
             );
           }).toList();

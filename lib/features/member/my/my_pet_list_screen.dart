@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/api/api_client.dart';
 import '../../../app/app_routes.dart';
-import '../../../app/app_bootstrap.dart';
+import '../../../core/widgets/authed_file_image.dart';
 
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
@@ -83,13 +82,9 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
     }
   }
 
-  Widget _buildContent(List<MyPetListItem> serverPets, String? token) {
+  Widget _buildContent(List<MyPetListItem> serverPets) {
     _serverPets = serverPets;
     _customPetList = serverPets.map((item) {
-        final imageUrl = item.profileFileId != null
-            ? ref.read(apiClientProvider).uri('/api/v1/files/${item.profileFileId}/download').toString()
-            : null;
-
         return NurimPetCardData(
           name: item.petName,
           breed: item.breedNameKor ?? '믹스',
@@ -98,14 +93,8 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
           membershipTier: item.representYn == 'Y' ? '브론즈' : '멤버십 가입하기',
           rewardText: '28,000P',
           isPrimary: item.representYn == 'Y',
-          imageProvider: (imageUrl != null && token != null)
-              ? NetworkImage(
-                  imageUrl,
-                  headers: {
-                    'Authorization': 'Bearer $token',
-                    'access-token': token,
-                  },
-                )
+          imageProvider: item.profileFileId != null
+              ? AuthedFileImageX.of(ref, item.profileFileId!)
               : null,
         );
       }).toList();
@@ -362,11 +351,10 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
   @override
   Widget build(BuildContext context) {
     final petsAsync = ref.watch(myPetsListProvider);
-    final token = ref.watch(accessTokenProvider);
 
     Widget bodyWidget;
     if (petsAsync.hasValue) {
-      bodyWidget = _buildContent(petsAsync.value!, token);
+      bodyWidget = _buildContent(petsAsync.value!);
     } else {
       bodyWidget = petsAsync.when(
         loading: () => const Center(

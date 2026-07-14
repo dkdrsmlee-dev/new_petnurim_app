@@ -14,7 +14,8 @@
 - **상태관리/의존성 주입**: `flutter_riverpod`
 - **Kakao 로그인**: `kakao_flutter_sdk`
 - **Naver 로그인**: Android/iOS 네이티브 채널 + Naver SDK
-- **API 통신**: `http` 기반 공통 클라이언트와 `COMMON.SUCCESS` envelope 처리 (API 요청 로깅 탑재)
+- **API 통신**: `http` 기반 공통 클라이언트와 `COMMON.SUCCESS` envelope 처리 (API 요청 로깅 탑재). 401 수신 시 refresh 토큰으로 액세스 토큰 자동 갱신 후 재시도하며, 갱신 성공 시 `onTokenRefreshed` 콜백으로 `appBootstrapStateProvider`를 invalidate하여 `accessTokenProvider`를 최신 토큰으로 동기화.
+- **인증 파일 이미지 로딩 (AuthedFileImage)**: 프로필 이미지 등 인증 토큰이 필요한 `/api/v1/files/{id}/download` 리소스를 `ApiClient.getBytes`(401 → 토큰 자동 refresh → 재시도) 기반 커스텀 `ImageProvider`로 로딩. 유휴로 액세스 토큰이 만료돼도 이미지가 자가 복구되며, Flutter ImageCache에 `fileId` 기준으로 편입되어 리빌드 시 재다운로드를 방지. 마이펫 상세/리스트/마이페이지/수정/등록완료 화면에 공통 적용.
 - **보안 저장소**: `flutter_secure_storage`
 - **다국어/로컬라이제이션**: `flutter_localizations` 설정을 추가하여 날짜 휠 피커 등 네이티브 위젯 한글화 대응
 - **앱 진입점**: `ProviderScope` + `PetnurimApp`

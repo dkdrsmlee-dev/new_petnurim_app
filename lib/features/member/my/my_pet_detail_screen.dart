@@ -4,8 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
-import '../../../app/app_bootstrap.dart';
-import '../../../core/api/api_client.dart';
+import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
 import '../../../core/widgets/pet_info_detail.dart';
@@ -38,7 +37,6 @@ class MyPetDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final petDetailAsync = ref.watch(myPetDetailProvider(myPetId));
-    final token = ref.watch(accessTokenProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -103,9 +101,6 @@ class MyPetDetailScreen extends ConsumerWidget {
             ),
           ),
           data: (pet) {
-            final imageUrl = pet.profileFileId != null
-                ? ref.read(apiClientProvider).uri('/api/v1/files/${pet.profileFileId}/download').toString()
-                : null;
             final isPrimary = pet.representYn == 'Y';
             final ageText = '${pet.petAge}살';
             final genderText = pet.genderCodeNm ?? (pet.genderCode == 'MALE' ? '남아' : '여아');
@@ -125,14 +120,8 @@ class MyPetDetailScreen extends ConsumerWidget {
                     breed: breedText,
                     ageText: ageText,
                     genderText: genderText,
-                    imageProvider: (imageUrl != null && token != null)
-                        ? NetworkImage(
-                            imageUrl,
-                            headers: {
-                              'Authorization': 'Bearer $token',
-                              'access-token': token,
-                            },
-                          )
+                    imageProvider: pet.profileFileId != null
+                        ? AuthedFileImageX.of(ref, pet.profileFileId!)
                         : null,
                     isPrimary: isPrimary,
                     membershipTier: '-',

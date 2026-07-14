@@ -93,6 +93,9 @@ void main() async {
             }
           };
         }),
+        tokenRefreshedHandlerProvider.overrideWith((ref) {
+          return () => ref.invalidate(appBootstrapStateProvider);
+        }),
       ],
       child: const PetnurimApp(),
     ),
