@@ -10,6 +10,8 @@ abstract interface class AuthRepository {
   Future<LoginConfig> fetchLoginConfig();
 
   Future<SocialLoginResult> loginWithProvider(SocialProvider provider);
+
+  Future<void> logout();
 }
 
 class BackendAuthRepository implements AuthRepository {
@@ -73,6 +75,19 @@ class BackendAuthRepository implements AuthRepository {
     }
 
     return result;
+  }
+
+  @override
+  Future<void> logout() async {
+    final token = await _tokenStorage.readAccessToken();
+    if (token == null || token.trim().isEmpty) {
+      return;
+    }
+    await _apiClient.postJson(
+      '/api/v1/auth/logout',
+      bearerToken: token.trim(),
+      fallbackMessage: '로그아웃 처리에 실패했습니다.',
+    );
   }
 
   String _fallbackName(SocialProvider provider, String? name) {

@@ -10,6 +10,7 @@ import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
 import '../../core/widgets/section_title.dart';
 import '../attendance/attendance_screen.dart';
+import '../auth/application/auth_providers.dart';
 import '../camera/camera_mission_guide_screen.dart';
 import '../member/my/my_page_view.dart';
 import 'widgets/home_event_carousel.dart';
@@ -95,6 +96,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _isLoggingOut = true;
     });
 
+    try {
+      await ref
+          .read(authRepositoryProvider)
+          .logout()
+          .timeout(const Duration(seconds: 3));
+    } catch (_) {
+      // 서버 로그아웃 실패/지연 시에도 로컬 로그아웃은 계속 진행 (best-effort)
+    }
     await ref.read(tokenStorageProvider).clearTokens();
     ref.invalidate(appBootstrapStateProvider);
 

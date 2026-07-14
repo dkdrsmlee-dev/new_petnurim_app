@@ -8,6 +8,7 @@ import '../../../core/storage/token_storage.dart';
 import '../../../core/widgets/address_card.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../auth/application/auth_providers.dart';
 import '../data/member_repository.dart';
 import '../domain/member_info.dart';
 
@@ -396,6 +397,14 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     );
 
     if (shouldLogout == true) {
+      try {
+        await ref
+            .read(authRepositoryProvider)
+            .logout()
+            .timeout(const Duration(seconds: 3));
+      } catch (_) {
+        // 서버 로그아웃 실패/지연 시에도 로컬 로그아웃은 계속 진행 (best-effort)
+      }
       await ref.read(tokenStorageProvider).clearTokens();
       ref.invalidate(appBootstrapStateProvider);
       if (mounted) {
