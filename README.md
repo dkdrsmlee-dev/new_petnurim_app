@@ -89,7 +89,7 @@ flutter run
 
 ```bash
 flutter run \
-  --dart-define=NURIM_API_BASE_URL=http://192.168.0.147:4011 \
+  --dart-define=NURIM_API_BASE_URL=http://api-dev.petnurim.kr \
   --dart-define=KAKAO_NATIVE_APP_KEY=34beb18e7458f8a9c0df634000099456 \
   --dart-define=NAVER_CLIENT_ID=ls2RTw_ovGeS7ZB1Zs3F \
   --dart-define=NAVER_CLIENT_SECRET=tNMaYJSMRd \

@@ -4,7 +4,7 @@ class AppConfig {
   const AppConfig({
     this.apiBaseUrl = const String.fromEnvironment(
       'NURIM_API_BASE_URL',
-      defaultValue: 'http://192.168.0.147:4011',
+      defaultValue: 'http://api-dev.petnurim.kr',
     ),
   });
 

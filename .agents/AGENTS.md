@@ -6,7 +6,8 @@
 - 부득이한 경우를 제외하고 커밋 메시지는 반드시 **한글**로 작성합니다.
 
 ## 백엔드 API 참고 제약 사항
-- 백엔드 API 관련 스펙(요청/응답 파라미터, 엔드포인트)은 사용자가 별도의 JSON 파일이나 설명을 업로드하지 않더라도 로컬 네트워크(`http://192.168.0.147:4011/api-test-json`)를 통해 획득하여 `/Users/smlee/.gemini/antigravity-cli/brain/51274b79-905c-46e8-8b93-f66226b3b76e/scratch/openapi_spec.json`에 저장된 OpenAPI 스펙을 직접 참고하여 구현합니다.
+- 백엔드 API 관련 스펙(요청/응답 파라미터, 엔드포인트)은 사용자가 별도의 JSON 파일이나 설명을 업로드하지 않더라도 개발 서버(`http://api-dev.petnurim.kr/api-test-json`, 구 주소 `http://192.168.0.147:4011/api-test-json`)를 통해 획득하여 `/Users/smlee/.gemini/antigravity-cli/brain/51274b79-905c-46e8-8b93-f66226b3b76e/scratch/openapi_spec.json`에 저장된 OpenAPI 스펙을 직접 참고하여 구현합니다.
+- 앱이 호출하는 백엔드 API 베이스 URL은 `http://api-dev.petnurim.kr` 입니다(구 주소 `http://192.168.0.147:4011`, HTTP 전용). `lib/core/config/app_config.dart`의 `NURIM_API_BASE_URL` 기본값으로 관리합니다.
 
 ## 피그마 디자인 분석 제약 사항
 - 피그마 MCP를 사용하여 디자인 분석을 진행할 때, 메인 레이어만 확인하는 것에 그치지 않고 반드시 하위 레이어(Sub-layers)의 세부 속성(폰트 스타일, 색상 값, 마진, 패딩, 정렬 등)까지 딥 인스펙트(Deep Inspect)하여 디테일하게 분석 및 구현합니다.
