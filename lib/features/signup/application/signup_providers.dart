@@ -8,12 +8,6 @@ import '../domain/signup_flow_state.dart';
 import '../domain/signup_profile.dart';
 import '../domain/signup_terms.dart';
 
-const signupTermsCategories = [
-  TermsCategory.signup,
-  TermsCategory.security,
-  TermsCategory.marketing,
-];
-
 final signupRepositoryProvider = Provider<SignupRepository>((ref) {
   return BackendSignupRepository(
     apiClient: ref.watch(apiClientProvider),
@@ -22,9 +16,7 @@ final signupRepositoryProvider = Provider<SignupRepository>((ref) {
 });
 
 final activeTermsProvider = FutureProvider.autoDispose<List<ActiveTerm>>((ref) {
-  return ref
-      .watch(signupRepositoryProvider)
-      .fetchActiveTerms(categories: signupTermsCategories);
+  return ref.watch(signupRepositoryProvider).fetchActiveTerms(target: 'SIGNUP');
 });
 
 class SignupFlowController extends Notifier<SignupFlowState> {

@@ -6,9 +6,7 @@ import '../domain/signup_profile.dart';
 import '../domain/signup_terms.dart';
 
 abstract interface class SignupRepository {
-  Future<List<ActiveTerm>> fetchActiveTerms({
-    List<TermsCategory> categories = const [],
-  });
+  Future<List<ActiveTerm>> fetchActiveTerms({String target = 'SIGNUP'});
 
   Future<void> submitTerms({
     required String signupToken,
@@ -38,16 +36,13 @@ class BackendSignupRepository implements SignupRepository {
   final TokenStorage _tokenStorage;
 
   @override
-  Future<List<ActiveTerm>> fetchActiveTerms({
-    List<TermsCategory> categories = const [],
-  }) async {
-    final path = _termsPath(categories);
+  Future<List<ActiveTerm>> fetchActiveTerms({String target = 'SIGNUP'}) async {
     final payload = await _apiClient.getJson(
-      path,
+      _termsPath(target),
       fallbackMessage: '약관 목록을 불러오지 못했습니다.',
     );
 
-    return _parseTermsPayload(payload, categories);
+    return _parseTermsPayload(payload);
   }
 
   @override
@@ -127,46 +122,20 @@ class BackendSignupRepository implements SignupRepository {
     return result;
   }
 
-  String _termsPath(List<TermsCategory> categories) {
-    if (categories.isEmpty) {
-      return '/api/v1/terms';
-    }
-
-    final categoryText = categories
-        .map((category) => category.apiValue)
-        .join(',');
-    return '/api/v1/terms?categories=${Uri.encodeQueryComponent(categoryText)}';
+  String _termsPath(String target) {
+    return '/api/v1/terms?target=${Uri.encodeQueryComponent(target)}';
   }
 
-  List<ActiveTerm> _parseTermsPayload(
-    Object? payload,
-    List<TermsCategory> categories,
-  ) {
+  List<ActiveTerm> _parseTermsPayload(Object? payload) {
+    // 신규 API는 envelope 해제 후 약관 배열(data)을 반환한다.
     if (payload is List) {
       return _normalizeTerms(payload);
     }
-    if (payload is! Map) {
-      throw const AuthException('약관 목록 응답 형식이 올바르지 않습니다.');
-    }
-
-    final orderedCategories = categories.isEmpty
-        ? TermsCategory.values
-        : categories;
-    final result = <ActiveTerm>[];
-
-    for (final category in orderedCategories) {
-      final rawTerms = payload[category.apiValue] ?? payload[category.name];
-      if (rawTerms is List) {
-        result.addAll(_normalizeTerms(rawTerms));
-      }
-    }
-
-    if (result.isEmpty && payload.values.every((value) => value is! List)) {
+    if (payload is Map) {
       return _normalizeTerms([payload]);
     }
 
-    result.sort((left, right) => left.sortNo.compareTo(right.sortNo));
-    return result;
+    throw const AuthException('약관 목록 응답 형식이 올바르지 않습니다.');
   }
 
   List<ActiveTerm> _normalizeTerms(List<Object?> payload) {

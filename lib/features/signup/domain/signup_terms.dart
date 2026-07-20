@@ -40,14 +40,19 @@ class ActiveTerm {
     }
 
     return ActiveTerm(
-      termsId: _readString(payload, 'termsId'),
+      // 백엔드 약관 API 개편(target 기준 조회) 대응: 신규 키 우선, 구 키 fallback
+      termsId: _readString(payload, 'termsMasterId', fallbackKey: 'termsId'),
       termsKey: _readString(payload, 'termsKey'),
-      termsName: _readString(payload, 'termsNm'),
+      termsName: _readString(payload, 'termsName', fallbackKey: 'termsNm'),
       content: _readString(payload, 'content'),
       termsCategory: TermsCategory.fromValue(
-        _readString(payload, 'termsCategory'),
+        _readString(payload, 'termsCategoryCode', fallbackKey: 'termsCategory'),
       ),
-      requiredType: _readString(payload, 'requiredType'),
+      requiredType: _readString(
+        payload,
+        'requiredTypeCode',
+        fallbackKey: 'requiredType',
+      ),
       sortNo: _readInt(payload, 'sortNo'),
       status: _readString(payload, 'status'),
     );
@@ -76,8 +81,15 @@ class ActiveTerm {
         : normalized;
   }
 
-  static String _readString(Map<dynamic, dynamic> data, String key) {
-    final value = data[key];
+  static String _readString(
+    Map<dynamic, dynamic> data,
+    String key, {
+    String? fallbackKey,
+  }) {
+    var value = data[key];
+    if (value == null && fallbackKey != null) {
+      value = data[fallbackKey];
+    }
     if (value is String) {
       return value.trim();
     }
