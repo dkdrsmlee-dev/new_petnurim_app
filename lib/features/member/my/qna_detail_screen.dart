@@ -11,6 +11,7 @@ import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
 import '../domain/qna_models.dart';
 import 'qna_create_screen.dart';
+import '../../../core/theme/app_colors.dart';
 
 class QnaDetailScreen extends ConsumerStatefulWidget {
   final String boardQnaId;
@@ -93,9 +94,9 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
         content: '정말 이 1:1 문의를 삭제하시겠습니까?',
         cancelText: '취소',
         confirmText: '삭제',
-        cancelBgColor: const Color(0xFF7F4FFF),
+        cancelBgColor: AppColors.primary,
         cancelTextColor: Colors.white,
-        confirmBgColor: const Color(0xFFE8EBF1),
+        confirmBgColor: AppColors.borderLight,
         confirmTextColor: const Color(0xFFF15A5A),
         onCancel: () => Navigator.of(dialogContext).pop(),
         onConfirm: () async {
@@ -235,7 +236,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
           style: TextStyle(
             fontFamily: 'Pretendard',
             fontSize: 15,
-            color: Color(0xFF87909E),
+            color: AppColors.textSecondary,
           ),
         ),
       );
@@ -257,7 +258,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                   decoration: const BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        color: Color(0xFFE8EBF1),
+                        color: AppColors.borderLight,
                         width: 1,
                       ),
                     ),
@@ -280,7 +281,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                   fontFamily: 'Pretendard',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFFA2ADBE),
+                                  color: AppColors.placeholder,
                                   letterSpacing: -0.66,
                                 ),
                               ),
@@ -288,7 +289,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                               const Text(
                                 '|',
                                 style: TextStyle(
-                                  color: Color(0xFFE8EBF1),
+                                  color: AppColors.borderLight,
                                   fontSize: 12,
                                 ),
                               ),
@@ -299,7 +300,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                   fontFamily: 'Pretendard',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
-                                  color: Color(0xFFA2ADBE),
+                                  color: AppColors.placeholder,
                                   letterSpacing: -0.66,
                                 ),
                               ),
@@ -318,7 +319,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                 shadowColor: const Color(0x1A51565F),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  side: const BorderSide(color: Color(0xFFD6DBE4), width: 1),
+                                  side: const BorderSide(color: AppColors.border, width: 1),
                                 ),
                                 color: Colors.white,
                                 onSelected: (_) {},
@@ -351,7 +352,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                                       fontFamily: 'Pretendard',
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.w500,
-                                                      color: Color(0xFF30343C),
+                                                      color: AppColors.textStrong,
                                                       letterSpacing: -0.66,
                                                     ),
                                                   ),
@@ -361,7 +362,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                                     width: 16,
                                                     height: 16,
                                                     colorFilter: const ColorFilter.mode(
-                                                      Color(0xFF87909E),
+                                                      AppColors.textSecondary,
                                                       BlendMode.srcIn,
                                                     ),
                                                   ),
@@ -387,7 +388,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                                       fontFamily: 'Pretendard',
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.w500,
-                                                      color: Color(0xFF30343C),
+                                                      color: AppColors.textStrong,
                                                       letterSpacing: -0.66,
                                                     ),
                                                   ),
@@ -397,7 +398,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                                     width: 16,
                                                     height: 16,
                                                     colorFilter: const ColorFilter.mode(
-                                                      Color(0xFF87909E),
+                                                      AppColors.textSecondary,
                                                       BlendMode.srcIn,
                                                     ),
                                                   ),
@@ -410,7 +411,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                     ),
                                   ),
                                 ],
-                                icon: const Icon(Icons.more_vert, color: Color(0xFF87909E)),
+                                icon: const Icon(Icons.more_vert, color: AppColors.textSecondary),
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
                               ),
@@ -425,7 +426,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF30343C),
+                          color: AppColors.textStrong,
                           height: 1.4,
                           letterSpacing: -0.66,
                         ),
@@ -445,7 +446,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
-                          color: Color(0xFF6C737F),
+                          color: AppColors.textTertiary,
                           height: 1.4,
                           letterSpacing: -0.66,
                         ),
@@ -480,10 +481,10 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
       height: 26,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: isComplete ? Colors.white : const Color(0xFFE8EBF1),
+        color: isComplete ? Colors.white : AppColors.borderLight,
         borderRadius: BorderRadius.circular(13.5),
         border: isComplete
-            ? Border.all(color: const Color(0xFF7F4FFF), width: 1)
+            ? Border.all(color: AppColors.primary, width: 1)
             : null,
       ),
       child: Text(
@@ -492,7 +493,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
           fontFamily: 'Pretendard',
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: isComplete ? const Color(0xFF7F4FFF) : const Color(0xFF87909E),
+          color: isComplete ? AppColors.primary : AppColors.textSecondary,
           height: 1.0,
         ),
       ),
@@ -517,7 +518,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
               fontFamily: 'Pretendard',
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF51565F),
+              color: AppColors.textMuted,
               letterSpacing: -0.66,
             ),
           ),
@@ -553,7 +554,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               height: 200,
-              color: const Color(0xFFF8F9FB),
+              color: AppColors.bgSoft,
               child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
             );
           }
@@ -561,9 +562,9 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
             debugPrint('[ImageDownloadError] fileId: ${file.fileId}, Error: ${snapshot.error}');
             return Container(
               height: 200,
-              color: const Color(0xFFF8F9FB),
+              color: AppColors.bgSoft,
               child: const Center(
-                child: Icon(Icons.broken_image_outlined, color: Color(0xFF87909E)),
+                child: Icon(Icons.broken_image_outlined, color: AppColors.textSecondary),
               ),
             );
           }
@@ -585,7 +586,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE8EBF1), width: 1),
+        border: Border.all(color: AppColors.borderLight, width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -600,7 +601,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                     fontFamily: 'Pretendard',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF30343C),
+                    color: AppColors.textStrong,
                     letterSpacing: -0.66,
                   ),
                   maxLines: 1,
@@ -612,7 +613,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                   style: const TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 11,
-                    color: Color(0xFF87909E),
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -623,7 +624,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
             onPressed: () => _downloadFileToDevice(file),
             icon: const Icon(
               Icons.file_download_outlined,
-              color: Color(0xFF87909E),
+              color: AppColors.textSecondary,
               size: 24,
             ),
             padding: EdgeInsets.zero,
@@ -653,7 +654,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
             decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: Color(0xFFE8EBF1),
+                  color: AppColors.borderLight,
                   width: 1,
                 ),
               ),
@@ -669,7 +670,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF7F4FFF),
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -679,7 +680,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                       ),
                     ),
                   ],
@@ -691,7 +692,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                     fontFamily: 'Pretendard',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xFFA2ADBE),
+                    color: AppColors.placeholder,
                   ),
                 ),
               ],
@@ -710,7 +711,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                       fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xFF51565F),
+                      color: AppColors.textMuted,
                       height: 1.4,
                       letterSpacing: -0.66,
                     ),
@@ -741,7 +742,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                         letterSpacing: -0.66,
                       ),
                     ),
@@ -752,7 +753,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFF6C737F),
+                        color: AppColors.textTertiary,
                         letterSpacing: -0.66,
                       ),
                     ),

@@ -7,6 +7,7 @@ import '../auth/domain/readable_auth_error.dart';
 import '../auth/domain/social_provider.dart';
 import 'application/signup_providers.dart';
 import 'domain/signup_profile.dart';
+import '../../core/theme/app_colors.dart';
 
 class VerifyScreen extends ConsumerStatefulWidget {
   const VerifyScreen({super.key});
@@ -105,7 +106,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF8FAFC),
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                        border: Border.all(color: AppColors.borderSubtle),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
@@ -152,7 +153,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE11D48), // PASS Red
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: const Color(0xFFE2E8F0),
+                        disabledBackgroundColor: AppColors.borderSubtle,
                         disabledForegroundColor: const Color(0xFF94A3B8),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -182,7 +183,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF334155), // Slate Grey
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: const Color(0xFFE2E8F0),
+                        disabledBackgroundColor: AppColors.borderSubtle,
                         disabledForegroundColor: const Color(0xFF94A3B8),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -335,7 +336,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
-                color: isSelected ? Colors.black : const Color(0xFFE2E8F0),
+                color: isSelected ? Colors.black : AppColors.borderSubtle,
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -510,7 +511,7 @@ class _InfoBox extends StatelessWidget {
       decoration: BoxDecoration(
         color: warning ? const Color(0xFFFEF2F2) : const Color(0xFFF8FAFC),
         border: Border.all(
-          color: warning ? const Color(0xFFFCA5A5) : const Color(0xFFE2E8F0),
+          color: warning ? const Color(0xFFFCA5A5) : AppColors.borderSubtle,
         ),
         borderRadius: BorderRadius.circular(8),
       ),

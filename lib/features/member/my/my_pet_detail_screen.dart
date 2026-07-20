@@ -10,6 +10,7 @@ import '../../../core/widgets/pet_card.dart';
 import '../../../core/widgets/pet_info_detail.dart';
 import '../domain/pet_models.dart';
 import '../data/pet_repository.dart';
+import '../../../core/theme/app_colors.dart';
 
 final myPetDetailProvider = FutureProvider.autoDispose.family<MyPetDetailResponse, String>((ref, myPetId) async {
   return await ref.read(petRepositoryProvider).getMyPetDetail(myPetId);
@@ -23,16 +24,6 @@ class MyPetDetailScreen extends ConsumerWidget {
 
   final String myPetId;
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _primaryStrongColor = Color(0xFF7025FF);
-  static const Color _textStrongColor = Color(0xFF30343C);
-  static const Color _textMutedColor = Color(0xFF51565F);
-  static const Color _textSecondaryColor = Color(0xFF87909E);
-  static const Color _placeholderColor = Color(0xFFA2ADBE);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _badgeTextColor = Color(0xFF6C737F);
-  static const Color _badgeBackgroundColor = Color(0xFFF4F6F8);
-  static const Color _sectionDividerColor = Color(0xFFF4F6F8);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -54,7 +45,7 @@ class MyPetDetailScreen extends ConsumerWidget {
       body: SafeArea(
         child: petDetailAsync.when(
           loading: () => const Center(
-            child: CircularProgressIndicator(color: _primaryColor),
+            child: CircularProgressIndicator(color: AppColors.primary),
           ),
           error: (err, stack) => Center(
             child: Column(
@@ -71,7 +62,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 16,
-                    color: _textMutedColor,
+                    color: AppColors.textMuted,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -88,7 +79,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _primaryColor,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -140,7 +131,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                 // Section Divider
                 Container(
                   height: 6,
-                  color: _sectionDividerColor,
+                  color: AppColors.bgGray,
                 ),
                 
                 // 2. Membership Info Section
@@ -155,7 +146,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                           fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: _textSecondaryColor,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -174,7 +165,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                                       height: 24,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Color(0xFFF4C21B), // Bronze color
+                                        color: AppColors.gold, // Bronze color
                                       ),
                                       child: const Center(
                                         child: Icon(
@@ -191,14 +182,14 @@ class MyPetDetailScreen extends ConsumerWidget {
                                         fontFamily: 'Pretendard',
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
-                                        color: _textStrongColor,
+                                        color: AppColors.textStrong,
                                       ),
                                     ),
                                     const SizedBox(width: 6),
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: _badgeBackgroundColor,
+                                        color: AppColors.bgGray,
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: const Text(
@@ -207,7 +198,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                                           fontFamily: 'Pretendard',
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
-                                          color: _badgeTextColor,
+                                          color: AppColors.textTertiary,
                                         ),
                                       ),
                                     ),
@@ -225,13 +216,13 @@ class MyPetDetailScreen extends ConsumerWidget {
                                           fontFamily: 'Pretendard',
                                           fontSize: 15,
                                           fontWeight: FontWeight.w500,
-                                          color: _textSecondaryColor,
+                                          color: AppColors.textSecondary,
                                         ),
                                       ),
                                       SizedBox(width: 2),
                                       Icon(
                                         Icons.chevron_right,
-                                        color: _textSecondaryColor,
+                                        color: AppColors.textSecondary,
                                         size: 16,
                                       ),
                                     ],
@@ -245,7 +236,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: _borderColor),
+                                border: Border.all(color: AppColors.border),
                               ),
                               child: Column(
                                 children: [
@@ -259,7 +250,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFF7F6FF), // violet/10
-                                      foregroundColor: _primaryColor,
+                                      foregroundColor: AppColors.primary,
                                       minimumSize: const Size.fromHeight(48),
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
@@ -292,7 +283,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                                 fontFamily: 'Pretendard',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: _placeholderColor,
+                                color: AppColors.placeholder,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -303,7 +294,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                                 fontFamily: 'Pretendard',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: _placeholderColor,
+                                color: AppColors.placeholder,
                               ),
                             ),
                             const SizedBox(height: 24),
@@ -313,7 +304,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                               },
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                side: const BorderSide(color: _primaryColor, width: 1.0),
+                                side: const BorderSide(color: AppColors.primary, width: 1.0),
                                 minimumSize: const Size.fromHeight(48),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -328,13 +319,13 @@ class MyPetDetailScreen extends ConsumerWidget {
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
-                                      color: _primaryStrongColor,
+                                      color: AppColors.primaryStrong,
                                     ),
                                   ),
                                   SizedBox(width: 4),
                                   Icon(
                                     Icons.chevron_right,
-                                    color: _primaryStrongColor,
+                                    color: AppColors.primaryStrong,
                                     size: 16,
                                   ),
                                 ],
@@ -350,7 +341,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                 // Section Divider
                 Container(
                   height: 6,
-                  color: _sectionDividerColor,
+                  color: AppColors.bgGray,
                 ),
 
                 // 3. Reward Info Section
@@ -365,7 +356,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                           fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: _textSecondaryColor,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -389,7 +380,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                                       fontFamily: 'Pretendard',
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
-                                      color: _textStrongColor,
+                                      color: AppColors.textStrong,
                                     ),
                                   ),
                                 ],
@@ -406,13 +397,13 @@ class MyPetDetailScreen extends ConsumerWidget {
                                         fontFamily: 'Pretendard',
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,
-                                        color: _textSecondaryColor,
+                                        color: AppColors.textSecondary,
                                       ),
                                     ),
                                     SizedBox(width: 2),
                                     Icon(
                                       Icons.chevron_right,
-                                      color: _textSecondaryColor,
+                                      color: AppColors.textSecondary,
                                       size: 16,
                                     ),
                                   ],
@@ -426,7 +417,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: _borderColor),
+                              border: Border.all(color: AppColors.border),
                             ),
                             child: Column(
                               children: [
@@ -459,7 +450,7 @@ class MyPetDetailScreen extends ConsumerWidget {
             fontFamily: 'Pretendard',
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: _textSecondaryColor,
+            color: AppColors.textSecondary,
           ),
         ),
         Text(
@@ -468,7 +459,7 @@ class MyPetDetailScreen extends ConsumerWidget {
             fontFamily: 'Pretendard',
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: _textMutedColor,
+            color: AppColors.textMuted,
           ),
         ),
       ],

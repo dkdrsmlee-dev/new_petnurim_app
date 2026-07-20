@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:async';
+import '../../../core/theme/app_colors.dart';
 
 class _BannerData {
   final Color bgColor;
@@ -42,7 +43,7 @@ class _HomeEventCarouselState extends State<HomeEventCarousel> {
       titleLine1: '친구랑 같이',
       titleLine2: '리워드 받아요!',
       subtitle: '초대할수록 혜택이 쌓여요!',
-      titleColor: const Color(0xFF30343C),
+      titleColor: AppColors.textStrong,
       customIllustration: (context) {
         return Stack(
           clipBehavior: Clip.none,
@@ -197,7 +198,7 @@ class _HomeEventCarouselState extends State<HomeEventCarousel> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF7F4FFF),
+                    color: AppColors.primary,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -232,7 +233,7 @@ class _HomeEventCarouselState extends State<HomeEventCarousel> {
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     height: 1.4,
-                    color: Color(0xFF87909E),
+                    color: AppColors.textSecondary,
                     letterSpacing: -0.66,
                   ),
                 ),

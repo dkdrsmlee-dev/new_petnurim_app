@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 
 class RouteStepScreen extends StatelessWidget {
   const RouteStepScreen({
@@ -49,7 +50,7 @@ class RouteStepScreen extends StatelessWidget {
               DecoratedBox(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  border: Border.all(color: AppColors.borderSubtle),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Padding(

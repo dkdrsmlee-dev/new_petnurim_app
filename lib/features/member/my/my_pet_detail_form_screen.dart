@@ -9,6 +9,7 @@ import '../../../app/app_routes.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
 import '../domain/pet_breed.dart';
+import '../../../core/theme/app_colors.dart';
 
 class MyPetDetailFormScreen extends ConsumerStatefulWidget {
   final String petType; // 'DOG' 또는 'CAT'
@@ -29,13 +30,6 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
   String? _selectedBreedId;
   bool _isNextButtonEnabled = false;
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _textStrongColor = Color(0xFF30343C);
-  static const Color _textMutedColor = Color(0xFF51565F);
-  static const Color _placeholderColor = Color(0xFFA2ADBE);
-  static const Color _bgGrayColor = Color(0xFFF4F6F8);
-  static const Color _buttonDisabledBgColor = Color(0xFFE8EBF1);
 
   @override
   void initState() {
@@ -86,7 +80,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                     width: 52,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFD6DBE4),
+                      color: AppColors.border,
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -97,7 +91,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                     'assets/images/ic_camera.svg',
                     width: 24,
                     height: 24,
-                    colorFilter: const ColorFilter.mode(_textMutedColor, BlendMode.srcIn),
+                    colorFilter: const ColorFilter.mode(AppColors.textMuted, BlendMode.srcIn),
                   ),
                   title: const Text(
                     '사진 촬영',
@@ -105,7 +99,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                       fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: _textMutedColor,
+                      color: AppColors.textMuted,
                       letterSpacing: -0.66,
                     ),
                   ),
@@ -121,7 +115,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                     'assets/images/ic_album.svg',
                     width: 24,
                     height: 24,
-                    colorFilter: const ColorFilter.mode(_textMutedColor, BlendMode.srcIn),
+                    colorFilter: const ColorFilter.mode(AppColors.textMuted, BlendMode.srcIn),
                   ),
                   title: const Text(
                     '앨범 선택',
@@ -129,7 +123,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                       fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: _textMutedColor,
+                      color: AppColors.textMuted,
                       letterSpacing: -0.66,
                     ),
                   ),
@@ -243,7 +237,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                           fontSize: 20,
                           fontWeight: FontWeight.w700, // Bold
                           letterSpacing: -0.66,
-                          color: _textStrongColor,
+                          color: AppColors.textStrong,
                           height: 1.4,
                         ),
                       ),
@@ -264,7 +258,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                 height: 100,
                                 decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: _bgGrayColor,
+                                  color: AppColors.bgGray,
                                 ),
                                 child: ClipOval(
                                   child: _profileImagePath != null
@@ -300,7 +294,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                     color: Colors.white,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: const Color(0xFF909AA9),
+                                      color: AppColors.textDisabled,
                                       width: 1.0,
                                     ),
                                   ),
@@ -308,7 +302,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                     child: Icon(
                                       Icons.camera_alt_outlined,
                                       size: 18,
-                                      color: _textMutedColor,
+                                      color: AppColors.textMuted,
                                     ),
                                   ),
                                 ),
@@ -331,7 +325,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                 fontFamily: 'Pretendard',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF51565F),
+                                color: AppColors.textMuted,
                                 letterSpacing: -0.66,
                               ),
                             ),
@@ -341,7 +335,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                               width: 4,
                               height: 4,
                               decoration: const BoxDecoration(
-                                color: Color(0xFFFF3D3D),
+                                color: AppColors.error,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -353,28 +347,28 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                           style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 16,
-                            color: _textStrongColor,
+                            color: AppColors.textStrong,
                           ),
                           decoration: InputDecoration(
                             hintText: '아이의 이름을 알려주세요.',
                             hintStyle: const TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 16,
-                              color: _placeholderColor,
+                              color: AppColors.placeholder,
                               letterSpacing: -0.66,
                             ),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: _borderColor),
+                              borderSide: const BorderSide(color: AppColors.border),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: _borderColor),
+                              borderSide: const BorderSide(color: AppColors.border),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: _primaryColor, width: 1.5),
+                              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                             ),
                           ),
                         ),
@@ -391,7 +385,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF51565F),
+                            color: AppColors.textMuted,
                             letterSpacing: -0.66,
                           ),
                         ),
@@ -404,7 +398,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: _borderColor),
+                              border: Border.all(color: AppColors.border),
                             ),
                             child: Row(
                               children: [
@@ -414,14 +408,14 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
-                                      color: _selectedBreed != null ? _textStrongColor : _placeholderColor,
+                                      color: _selectedBreed != null ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
                                 ),
                                 const Icon(
                                   Icons.keyboard_arrow_down,
-                                  color: Color(0xFF909AA9),
+                                  color: AppColors.textDisabled,
                                   size: 24,
                                 ),
                               ],
@@ -445,7 +439,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                       onPressed: _showCancelDialog,
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        side: const BorderSide(color: _borderColor),
+                        side: const BorderSide(color: AppColors.border),
                         minimumSize: const Size.fromHeight(56),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -459,7 +453,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600, // SemiBold
-                          color: Color(0xFF51565F),
+                          color: AppColors.textMuted,
                           letterSpacing: -0.66,
                         ),
                       ),
@@ -486,10 +480,10 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _primaryColor,
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: _buttonDisabledBgColor,
-                        disabledForegroundColor: _placeholderColor,
+                        disabledBackgroundColor: AppColors.borderLight,
+                        disabledForegroundColor: AppColors.placeholder,
                         minimumSize: const Size.fromHeight(56),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

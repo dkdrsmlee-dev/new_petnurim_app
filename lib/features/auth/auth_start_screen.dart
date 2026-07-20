@@ -13,6 +13,7 @@ import 'domain/readable_auth_error.dart';
 import 'domain/social_login_result.dart';
 import 'domain/social_provider.dart';
 import '../signup/application/signup_providers.dart';
+import '../../core/theme/app_colors.dart';
 
 class AuthStartScreen extends ConsumerStatefulWidget {
   const AuthStartScreen({super.key});
@@ -59,7 +60,7 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
                     fontWeight: FontWeight.w600,
                     height: 1.4,
                     letterSpacing: -0.66,
-                    color: Color(0xFF30343C),
+                    color: AppColors.textStrong,
                   ),
                 ),
                 const SizedBox(height: 60),
@@ -320,7 +321,7 @@ class _AuthNotice extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: AppColors.borderSubtle),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(padding: const EdgeInsets.all(14), child: Text(message)),

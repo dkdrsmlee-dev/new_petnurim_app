@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/widgets/camera_widgets.dart';
 import 'shooting_history_screen.dart';
+import '../../core/theme/app_colors.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
@@ -216,7 +217,7 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF7F4FFF),
+                              backgroundColor: AppColors.primary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),

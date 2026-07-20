@@ -9,6 +9,7 @@ import '../data/member_repository.dart';
 import '../data/pet_repository.dart';
 import '../domain/pet_models.dart';
 import 'my_pet_list_screen.dart';
+import '../../../core/theme/app_colors.dart';
 
 final myPetDetailProvider = FutureProvider.family.autoDispose<MyPetDetailResponse, String>((ref, myPetId) {
   return ref.read(petRepositoryProvider).getMyPetDetail(myPetId);
@@ -22,12 +23,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
     required this.myPetId,
   });
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _textStrongColor = Color(0xFF30343C);
-  static const Color _textMutedColor = Color(0xFF51565F);
-  static const Color _textValueColor = Color(0xFF87909E);
-  static const Color _dividerColor = Color(0xFFE8EBF1);
 
   String _formatDate(String? rawDate) {
     if (rawDate == null || rawDate.isEmpty) return '-';
@@ -67,7 +62,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.54,
-                        color: _textStrongColor,
+                        color: AppColors.textStrong,
                       ),
                     ),
                   ),
@@ -78,7 +73,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                     child: const Icon(
                       Icons.close,
                       size: 24,
-                      color: _textStrongColor,
+                      color: AppColors.textStrong,
                     ),
                   ),
                 ],
@@ -90,7 +85,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
       body: SafeArea(
         child: detailAsync.when(
           loading: () => const Center(
-            child: CircularProgressIndicator(color: _primaryColor),
+            child: CircularProgressIndicator(color: AppColors.primary),
           ),
           error: (err, stack) => Center(
             child: Column(
@@ -107,7 +102,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 16,
-                    color: _textMutedColor,
+                    color: AppColors.textMuted,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -124,7 +119,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _primaryColor,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -156,7 +151,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.66,
-                              color: _textStrongColor,
+                              color: AppColors.textStrong,
                               height: 1.4,
                             ),
                           ),
@@ -169,7 +164,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                             height: 100,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFFF4F6F8),
+                              color: AppColors.bgGray,
                               border: Border.all(color: const Color(0xFFF0F2F5), width: 1),
                             ),
                             clipBehavior: Clip.antiAlias,
@@ -212,7 +207,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: _borderColor),
+                            border: Border.all(color: AppColors.border),
                           ),
                           clipBehavior: Clip.antiAlias,
                           child: Column(
@@ -243,7 +238,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                       context.go('${AppRoutes.home}?tab=5');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _primaryColor,
+                      backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       minimumSize: const Size.fromHeight(56),
                       shape: RoundedRectangleBorder(
@@ -279,7 +274,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
         border: isLast
             ? null
             : const Border(
-                bottom: BorderSide(color: _dividerColor, width: 1),
+                bottom: BorderSide(color: AppColors.borderLight, width: 1),
               ),
       ),
       child: Row(
@@ -291,7 +286,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
               fontFamily: 'Pretendard',
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: _textMutedColor,
+              color: AppColors.textMuted,
               letterSpacing: -0.66,
             ),
           ),
@@ -304,7 +299,7 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                 fontFamily: 'Pretendard',
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
-                color: _textValueColor,
+                color: AppColors.textSecondary,
                 letterSpacing: -0.66,
               ),
             ),

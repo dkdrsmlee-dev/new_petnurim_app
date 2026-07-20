@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/app_bootstrap.dart';
 import '../../app/widgets/route_step_screen.dart';
+import '../../core/theme/app_colors.dart';
 
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
@@ -58,7 +59,7 @@ class _SplashBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // 피그마 UI 배경색: var(--primary/default, #7f4fff)
-      color: const Color(0xFF7F4FFF),
+      color: AppColors.primary,
       width: double.infinity,
       height: double.infinity,
       child: Center(

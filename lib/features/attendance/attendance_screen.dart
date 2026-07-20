@@ -6,6 +6,7 @@ import '../../core/widgets/bullit_text.dart';
 import '../../core/widgets/edge_button_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/reward_milestone_stamp.dart';
+import '../../core/theme/app_colors.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({Key? key}) : super(key: key);
@@ -158,7 +159,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF30343C),
+                          color: AppColors.textStrong,
                           borderRadius: BorderRadius.circular(9999),
                         ),
                         child: const Text(
@@ -290,13 +291,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   fontFamily: 'Pretendard',
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF30343C),
+                  color: AppColors.textStrong,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F6F8),
+                  color: AppColors.bgGray,
                   borderRadius: BorderRadius.circular(9999),
                 ),
                 child: Row(
@@ -307,7 +308,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF51565F),
+                        color: AppColors.textMuted,
                       ),
                     ),
                     Text(
@@ -316,7 +317,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF7F4FFF),
+                        color: AppColors.primary,
                       ),
                     ),
                   ],
@@ -346,8 +347,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         fontSize: 16,
                         fontWeight: isOutsideMonth ? FontWeight.w500 : FontWeight.w600,
                         color: isOutsideMonth
-                            ? const Color(0xFFD6DBE4)
-                            : const Color(0xFF6C737F),
+                            ? AppColors.border
+                            : AppColors.textTertiary,
                       ),
                     ),
                   // 스탬프 오버레이
@@ -374,7 +375,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         width: double.infinity,
         height: 56,
         decoration: BoxDecoration(
-          color: const Color(0xFF7F4FFF),
+          color: AppColors.primary,
           borderRadius: BorderRadius.circular(12),
           boxShadow: const [
             BoxShadow(
@@ -720,7 +721,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               fontFamily: 'Pretendard',
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF51565F),
+              color: AppColors.textMuted,
               height: 1.4,
               letterSpacing: -0.66,
             ),
@@ -805,7 +806,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       width: 34,
       height: 34,
       decoration: const BoxDecoration(
-        color: Color(0xFF51565F),
+        color: AppColors.textMuted,
         shape: BoxShape.circle,
       ),
       child: Center(
@@ -821,7 +822,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   Widget _buildNoticeSection() {
     return Container(
       width: double.infinity,
-      color: const Color(0xFFF4F6F8), // 회색 배경
+      color: AppColors.bgGray, // 회색 배경
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -832,7 +833,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               fontFamily: 'Pretendard',
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF30343C),
+              color: AppColors.textStrong,
               letterSpacing: -0.66,
             ),
           ),

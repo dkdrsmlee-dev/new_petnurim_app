@@ -11,6 +11,7 @@ import '../domain/qna_models.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../core/theme/app_colors.dart';
 
 class QnaCreateScreen extends ConsumerStatefulWidget {
   final QnaDetail? qnaToEdit;
@@ -104,7 +105,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFD6DBE4), width: 1),
+                  border: Border.all(color: AppColors.border, width: 1),
                   boxShadow: const [
                     BoxShadow(
                       color: Color(0x1A51565F),
@@ -126,7 +127,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                             fontFamily: 'Pretendard',
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF30343C),
+                            color: AppColors.textStrong,
                             letterSpacing: -0.66,
                           ),
                         ),
@@ -134,7 +135,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                           onTap: _hideTooltip,
                           child: const Icon(
                             Icons.close,
-                            color: Color(0xFF51565F),
+                            color: AppColors.textMuted,
                             size: 18,
                           ),
                         ),
@@ -147,7 +148,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFF87909E),
+                        color: AppColors.textSecondary,
                         height: 1.4,
                         letterSpacing: -0.66,
                       ),
@@ -203,11 +204,11 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                             fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF30343C),
+                            color: AppColors.textStrong,
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.close, color: Color(0xFF30343C), size: 24),
+                          icon: const Icon(Icons.close, color: AppColors.textStrong, size: 24),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],
@@ -231,7 +232,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               decoration: const BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
-                                    color: Color(0xFFE8EBF1),
+                                    color: AppColors.borderLight,
                                     width: 1,
                                   ),
                                 ),
@@ -245,13 +246,13 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                      color: const Color(0xFF30343C),
+                                      color: AppColors.textStrong,
                                     ),
                                   ),
                                   if (isSelected)
                                     const Icon(
                                       Icons.check_rounded,
-                                      color: Color(0xFF7F4FFF),
+                                      color: AppColors.primary,
                                       size: 20,
                                     ),
                                 ],
@@ -511,7 +512,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                   width: 52,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD6DBE4),
+                    color: AppColors.border,
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
@@ -527,7 +528,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         width: 24,
                         height: 24,
                         colorFilter: const ColorFilter.mode(
-                          Color(0xFF87909E),
+                          AppColors.textSecondary,
                           BlendMode.srcIn,
                         ),
                       ),
@@ -544,7 +545,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         width: 24,
                         height: 24,
                         colorFilter: const ColorFilter.mode(
-                          Color(0xFF87909E),
+                          AppColors.textSecondary,
                           BlendMode.srcIn,
                         ),
                       ),
@@ -561,7 +562,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         width: 24,
                         height: 24,
                         colorFilter: const ColorFilter.mode(
-                          Color(0xFF87909E),
+                          AppColors.textSecondary,
                           BlendMode.srcIn,
                         ),
                       ),
@@ -607,7 +608,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                 fontFamily: 'Pretendard',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF51565F),
+                color: AppColors.textMuted,
                 letterSpacing: -0.66,
               ),
             ),
@@ -712,7 +713,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -723,10 +724,10 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         height: 56,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF8F9FB),
+                          color: AppColors.bgSoft,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: const Color(0xFFE8EBF1),
+                            color: AppColors.borderLight,
                             width: 1,
                           ),
                         ),
@@ -738,12 +739,12 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               style: TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontSize: 15,
-                                color: selectedLabel != null ? const Color(0xFF30343C) : const Color(0xFFA2ADBE),
+                                color: selectedLabel != null ? AppColors.textStrong : AppColors.placeholder,
                               ),
                             ),
                             const Icon(
                               Icons.keyboard_arrow_down_rounded,
-                              color: Color(0xFF87909E),
+                              color: AppColors.textSecondary,
                               size: 24,
                             ),
                           ],
@@ -757,7 +758,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -770,25 +771,25 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         hintStyle: const TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 15,
-                          color: Color(0xFFA2ADBE),
+                          color: AppColors.placeholder,
                         ),
                         counterText: '',
                         filled: true,
-                        fillColor: const Color(0xFFF8F9FB),
+                        fillColor: AppColors.bgSoft,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFFE8EBF1)),
+                          borderSide: const BorderSide(color: AppColors.borderLight),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF7F4FFF)),
+                          borderSide: const BorderSide(color: AppColors.primary),
                         ),
                       ),
                       style: const TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 15,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -798,7 +799,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -815,25 +816,25 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                             hintStyle: const TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 15,
-                              color: Color(0xFFA2ADBE),
+                              color: AppColors.placeholder,
                             ),
                             counterText: '',
                             filled: true,
-                            fillColor: const Color(0xFFF8F9FB),
+                            fillColor: AppColors.bgSoft,
                             contentPadding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFFE8EBF1)),
+                              borderSide: const BorderSide(color: AppColors.borderLight),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: Color(0xFF7F4FFF)),
+                              borderSide: const BorderSide(color: AppColors.primary),
                             ),
                           ),
                           style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 15,
-                            color: Color(0xFF30343C),
+                            color: AppColors.textStrong,
                           ),
                         ),
                         Positioned(
@@ -845,7 +846,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               fontFamily: 'Pretendard',
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
-                              color: Color(0xFFA2ADBE),
+                              color: AppColors.placeholder,
                             ),
                           ),
                         ),
@@ -862,7 +863,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF30343C),
+                              color: AppColors.textStrong,
                             ),
                           ),
                           const SizedBox(width: 6),
@@ -872,7 +873,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               width: 18,
                               height: 18,
                               decoration: const BoxDecoration(
-                                color: Color(0xFFE8EBF1),
+                                color: AppColors.borderLight,
                                 shape: BoxShape.circle,
                               ),
                               alignment: Alignment.center,
@@ -882,7 +883,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                   fontFamily: 'Pretendard',
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF87909E),
+                                  color: AppColors.textSecondary,
                                   height: 1.0,
                                 ),
                               ),
@@ -898,7 +899,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: const Color(0xFF7F4FFF),
+                          color: AppColors.primary,
                           width: 1,
                         ),
                       ),
@@ -915,13 +916,13 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF7F4FFF),
+                                  color: AppColors.primary,
                                 ),
                               ),
                               SizedBox(width: 4),
                               Icon(
                                 Icons.add,
-                                color: Color(0xFF7F4FFF),
+                                color: AppColors.primary,
                                 size: 20,
                               ),
                             ],
@@ -940,10 +941,10 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                             margin: const EdgeInsets.only(bottom: 8),
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF8F9FB),
+                              color: AppColors.bgSoft,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: const Color(0xFFE8EBF1),
+                                color: AppColors.borderLight,
                                 width: 1,
                               ),
                             ),
@@ -951,7 +952,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               children: [
                                 Icon(
                                   isImage ? Icons.image_outlined : Icons.insert_drive_file_outlined,
-                                  color: const Color(0xFF87909E),
+                                  color: AppColors.textSecondary,
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
@@ -966,7 +967,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                           fontFamily: 'Pretendard',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
-                                          color: Color(0xFF30343C),
+                                          color: AppColors.textStrong,
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -977,7 +978,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                         style: const TextStyle(
                                           fontFamily: 'Pretendard',
                                           fontSize: 11,
-                                          color: Color(0xFF87909E),
+                                          color: AppColors.textSecondary,
                                         ),
                                       ),
                                     ],
@@ -1009,7 +1010,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                     padding: EdgeInsets.all(4),
                                     child: Icon(
                                       Icons.close,
-                                      color: Color(0xFF87909E),
+                                      color: AppColors.textSecondary,
                                       size: 16,
                                     ),
                                   ),
@@ -1026,7 +1027,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       children: [
                         Icon(
                           Icons.info_outline_rounded,
-                          color: Color(0xFF87909E),
+                          color: AppColors.textSecondary,
                           size: 16,
                         ),
                         SizedBox(width: 4),
@@ -1037,7 +1038,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               fontFamily: 'Pretendard',
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
-                              color: Color(0xFF87909E),
+                              color: AppColors.textSecondary,
                             ),
                           ),
                         ),
@@ -1074,8 +1075,8 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                 child: ElevatedButton(
                   onPressed: isSubmitEnabled ? _submitQna : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isSubmitEnabled ? const Color(0xFF7F4FFF) : const Color(0xFFE8EBF1),
-                    disabledBackgroundColor: const Color(0xFFE8EBF1),
+                    backgroundColor: isSubmitEnabled ? AppColors.primary : AppColors.borderLight,
+                    disabledBackgroundColor: AppColors.borderLight,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -1096,7 +1097,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                             fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: isSubmitEnabled ? Colors.white : const Color(0xFF87909E),
+                            color: isSubmitEnabled ? Colors.white : AppColors.textSecondary,
                           ),
                         ),
                 ),

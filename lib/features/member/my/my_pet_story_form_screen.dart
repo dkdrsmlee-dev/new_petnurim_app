@@ -6,6 +6,7 @@ import '../../../app/app_routes.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../../core/theme/app_colors.dart';
 
 class MyPetStoryFormScreen extends ConsumerStatefulWidget {
   final String petType;
@@ -33,11 +34,6 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
   String? _selectedGender; // 'MALE' ('남아') 또는 'FEMALE' ('여아')
   bool _isConfirmButtonEnabled = false;
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _textStrongColor = Color(0xFF30343C);
-  static const Color _placeholderColor = Color(0xFFA2ADBE);
-  static const Color _buttonDisabledBgColor = Color(0xFFE8EBF1);
 
   void _validateForm() {
     setState(() {
@@ -74,18 +70,18 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: _textStrongColor,
+                          color: AppColors.textStrong,
                         ),
                       ),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
-                      child: const Icon(Icons.close, size: 24, color: _textStrongColor),
+                      child: const Icon(Icons.close, size: 24, color: AppColors.textStrong),
                     ),
                   ],
                 ),
               ),
-              const Divider(color: _borderColor),
+              const Divider(color: AppColors.border),
               // 세로 스크롤 가능 나이 리스트뷰
               Flexible(
                 child: ListView.builder(
@@ -101,11 +97,11 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                          color: isSelected ? _primaryColor : _textStrongColor,
+                          color: isSelected ? AppColors.primary : AppColors.textStrong,
                         ),
                       ),
                       trailing: isSelected
-                          ? const Icon(Icons.check, color: _primaryColor, size: 20)
+                          ? const Icon(Icons.check, color: AppColors.primary, size: 20)
                           : null,
                       onTap: () {
                         setState(() {
@@ -185,7 +181,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.66,
-                          color: _textStrongColor,
+                          color: AppColors.textStrong,
                           height: 1.4,
                         ),
                       ),
@@ -203,7 +199,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                 fontFamily: 'Pretendard',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF51565F),
+                                color: AppColors.textMuted,
                                 letterSpacing: -0.66,
                               ),
                             ),
@@ -212,7 +208,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                               width: 4,
                               height: 4,
                               decoration: const BoxDecoration(
-                                color: Color(0xFFFF3D3D),
+                                color: AppColors.error,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -227,7 +223,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: _borderColor),
+                              border: Border.all(color: AppColors.border),
                             ),
                             child: Row(
                               children: [
@@ -237,14 +233,14 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
-                                      color: _selectedAge != null ? _textStrongColor : _placeholderColor,
+                                      color: _selectedAge != null ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
                                 ),
                                 const Icon(
                                   Icons.keyboard_arrow_down,
-                                  color: Color(0xFF909AA9),
+                                  color: AppColors.textDisabled,
                                   size: 24,
                                 ),
                               ],
@@ -264,7 +260,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF51565F),
+                            color: AppColors.textMuted,
                             letterSpacing: -0.66,
                           ),
                         ),
@@ -277,7 +273,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: _borderColor),
+                              border: Border.all(color: AppColors.border),
                             ),
                             child: Row(
                               children: [
@@ -289,14 +285,14 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
-                                      color: _selectedDate != null ? _textStrongColor : _placeholderColor,
+                                      color: _selectedDate != null ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
                                 ),
                                 const Icon(
                                   Icons.calendar_today_outlined,
-                                  color: Color(0xFF909AA9),
+                                  color: AppColors.textDisabled,
                                   size: 20,
                                 ),
                               ],
@@ -318,7 +314,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                 fontFamily: 'Pretendard',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF51565F),
+                                color: AppColors.textMuted,
                                 letterSpacing: -0.66,
                               ),
                             ),
@@ -327,7 +323,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                               width: 4,
                               height: 4,
                               decoration: const BoxDecoration(
-                                color: Color(0xFFFF3D3D),
+                                color: AppColors.error,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -351,7 +347,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: _selectedGender == 'MALE' ? _primaryColor : _borderColor,
+                                      color: _selectedGender == 'MALE' ? AppColors.primary : AppColors.border,
                                       width: _selectedGender == 'MALE' ? 1.5 : 1.0,
                                     ),
                                   ),
@@ -362,7 +358,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: _selectedGender == 'MALE' ? FontWeight.w600 : FontWeight.w500,
-                                      color: _selectedGender == 'MALE' ? _primaryColor : _placeholderColor,
+                                      color: _selectedGender == 'MALE' ? AppColors.primary : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
@@ -385,7 +381,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: _selectedGender == 'FEMALE' ? _primaryColor : _borderColor,
+                                      color: _selectedGender == 'FEMALE' ? AppColors.primary : AppColors.border,
                                       width: _selectedGender == 'FEMALE' ? 1.5 : 1.0,
                                     ),
                                   ),
@@ -396,7 +392,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: _selectedGender == 'FEMALE' ? FontWeight.w600 : FontWeight.w500,
-                                      color: _selectedGender == 'FEMALE' ? _primaryColor : _placeholderColor,
+                                      color: _selectedGender == 'FEMALE' ? AppColors.primary : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
@@ -422,7 +418,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                       onPressed: _showCancelDialog,
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        side: const BorderSide(color: _borderColor),
+                        side: const BorderSide(color: AppColors.border),
                         minimumSize: const Size.fromHeight(56),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -436,7 +432,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF51565F),
+                          color: AppColors.textMuted,
                           letterSpacing: -0.66,
                         ),
                       ),
@@ -468,10 +464,10 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _primaryColor,
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: _buttonDisabledBgColor,
-                        disabledForegroundColor: _placeholderColor,
+                        disabledBackgroundColor: AppColors.borderLight,
+                        disabledForegroundColor: AppColors.placeholder,
                         minimumSize: const Size.fromHeight(56),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

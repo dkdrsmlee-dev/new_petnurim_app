@@ -15,6 +15,7 @@ import '../data/pet_repository.dart';
 import '../domain/pet_breed.dart';
 import 'my_pet_detail_screen.dart';
 import 'my_pet_list_screen.dart';
+import '../../../core/theme/app_colors.dart';
 
 class MyPetEditScreen extends ConsumerStatefulWidget {
   final String myPetId;
@@ -61,15 +62,6 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
   DateTime? _initialWeightDate;
   bool _initialIsPrimary = false;
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _primaryStrongColor = Color(0xFF7025FF);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _textStrongColor = Color(0xFF30343C);
-  static const Color _textMutedColor = Color(0xFF51565F);
-  static const Color _textSecondaryColor = Color(0xFF87909E);
-  static const Color _placeholderColor = Color(0xFFA2ADBE);
-  static const Color _bgGrayColor = Color(0xFFF4F6F8);
-  static const Color _buttonDisabledBgColor = Color(0xFFE8EBF1);
 
   @override
   void initState() {
@@ -171,7 +163,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     width: 52,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFD6DBE4),
+                      color: AppColors.border,
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -181,7 +173,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     'assets/images/ic_camera.svg',
                     width: 24,
                     height: 24,
-                    colorFilter: const ColorFilter.mode(_textMutedColor, BlendMode.srcIn),
+                    colorFilter: const ColorFilter.mode(AppColors.textMuted, BlendMode.srcIn),
                   ),
                   title: const Text(
                     '사진 촬영',
@@ -189,7 +181,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                       fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: _textMutedColor,
+                      color: AppColors.textMuted,
                       letterSpacing: -0.66,
                     ),
                   ),
@@ -204,7 +196,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     'assets/images/ic_album.svg',
                     width: 24,
                     height: 24,
-                    colorFilter: const ColorFilter.mode(_textMutedColor, BlendMode.srcIn),
+                    colorFilter: const ColorFilter.mode(AppColors.textMuted, BlendMode.srcIn),
                   ),
                   title: const Text(
                     '앨범 선택',
@@ -212,7 +204,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                       fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: _textMutedColor,
+                      color: AppColors.textMuted,
                       letterSpacing: -0.66,
                     ),
                   ),
@@ -295,18 +287,18 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: _textStrongColor,
+                          color: AppColors.textStrong,
                         ),
                       ),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
-                      child: const Icon(Icons.close, size: 24, color: _textStrongColor),
+                      child: const Icon(Icons.close, size: 24, color: AppColors.textStrong),
                     ),
                   ],
                 ),
               ),
-              const Divider(color: _borderColor),
+              const Divider(color: AppColors.border),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -321,11 +313,11 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                          color: isSelected ? _primaryColor : _textStrongColor,
+                          color: isSelected ? AppColors.primary : AppColors.textStrong,
                         ),
                       ),
                       trailing: isSelected
-                          ? const Icon(Icons.check, color: _primaryColor, size: 20)
+                          ? const Icon(Icons.check, color: AppColors.primary, size: 20)
                           : null,
                       onTap: () {
                         setState(() {
@@ -488,7 +480,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: Colors.white,
-        body: Center(child: CircularProgressIndicator(color: _primaryColor)),
+        body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
       );
     }
 
@@ -502,7 +494,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
         body: Center(
           child: Text(
             _errorMessage!,
-            style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: _textMutedColor),
+            style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: AppColors.textMuted),
           ),
         ),
       );
@@ -556,8 +548,8 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: _bgGrayColor,
-                                  border: Border.all(color: _borderColor, width: 1),
+                                  color: AppColors.bgGray,
+                                  border: Border.all(color: AppColors.border, width: 1),
                                   image: imageProv != null
                                       ? DecorationImage(image: imageProv, fit: BoxFit.cover)
                                       : null,
@@ -587,10 +579,10 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: _borderColor, width: 1),
+                                    border: Border.all(color: AppColors.border, width: 1),
                                   ),
                                   child: const Center(
-                                    child: Icon(Icons.camera_alt_outlined, size: 18, color: _textMutedColor),
+                                    child: Icon(Icons.camera_alt_outlined, size: 18, color: AppColors.textMuted),
                                   ),
                                 ),
                               ),
@@ -606,7 +598,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _nameController,
-                      style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: _textStrongColor),
+                      style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: AppColors.textStrong),
                       decoration: _buildInputDecoration('이름을 입력해 주세요.'),
                     ),
                     const SizedBox(height: 24),
@@ -622,7 +614,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: _borderColor),
+                          border: Border.all(color: AppColors.border),
                         ),
                         child: Row(
                           children: [
@@ -632,11 +624,11 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
-                                  color: _selectedBreed != null ? _textStrongColor : _placeholderColor,
+                                  color: _selectedBreed != null ? AppColors.textStrong : AppColors.placeholder,
                                 ),
                               ),
                             ),
-                            const Icon(Icons.keyboard_arrow_down, color: _textSecondaryColor, size: 24),
+                            const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary, size: 24),
                           ],
                         ),
                       ),
@@ -654,7 +646,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: _borderColor),
+                          border: Border.all(color: AppColors.border),
                         ),
                         child: Row(
                           children: [
@@ -664,11 +656,11 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
-                                  color: _selectedAge != null ? _textStrongColor : _placeholderColor,
+                                  color: _selectedAge != null ? AppColors.textStrong : AppColors.placeholder,
                                 ),
                               ),
                             ),
-                            const Icon(Icons.keyboard_arrow_down, color: _textSecondaryColor, size: 24),
+                            const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary, size: 24),
                           ],
                         ),
                       ),
@@ -686,7 +678,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: _borderColor),
+                          border: Border.all(color: AppColors.border),
                         ),
                         child: Row(
                           children: [
@@ -696,11 +688,11 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
-                                  color: _selectedDate != null ? _textStrongColor : _placeholderColor,
+                                  color: _selectedDate != null ? AppColors.textStrong : AppColors.placeholder,
                                 ),
                               ),
                             ),
-                            const Icon(Icons.calendar_today_outlined, color: _textSecondaryColor, size: 20),
+                            const Icon(Icons.calendar_today_outlined, color: AppColors.textSecondary, size: 20),
                           ],
                         ),
                       ),
@@ -757,7 +749,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     TextFormField(
                       controller: _weightController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: _textStrongColor),
+                      style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: AppColors.textStrong),
                       decoration: _buildInputDecoration('체중을 입력해 주세요.').copyWith(
                         suffixIcon: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -767,7 +759,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                               fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: _textMutedColor,
+                              color: AppColors.textMuted,
                             ),
                           ),
                         ),
@@ -786,7 +778,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: _borderColor),
+                          border: Border.all(color: AppColors.border),
                         ),
                         child: Row(
                           children: [
@@ -796,11 +788,11 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
-                                  color: _selectedWeightDate != null ? _textStrongColor : _placeholderColor,
+                                  color: _selectedWeightDate != null ? AppColors.textStrong : AppColors.placeholder,
                                 ),
                               ),
                             ),
-                            const Icon(Icons.keyboard_arrow_down, color: _textSecondaryColor, size: 24),
+                            const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary, size: 24),
                           ],
                         ),
                       ),
@@ -818,7 +810,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                         children: [
                           Icon(
                             _isPrimary ? Icons.check_circle : Icons.check_circle_outline,
-                            color: _isPrimary ? _primaryColor : _borderColor,
+                            color: _isPrimary ? AppColors.primary : AppColors.border,
                             size: 24,
                           ),
                           const SizedBox(width: 8),
@@ -828,7 +820,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                               fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: _textStrongColor,
+                              color: AppColors.textStrong,
                             ),
                           ),
                         ],
@@ -845,10 +837,10 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
               child: ElevatedButton(
                 onPressed: (_isConfirmButtonEnabled && !_isSubmitting) ? _savePetInfo : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _primaryColor,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  disabledBackgroundColor: _buttonDisabledBgColor,
-                  disabledForegroundColor: _placeholderColor,
+                  disabledBackgroundColor: AppColors.borderLight,
+                  disabledForegroundColor: AppColors.placeholder,
                   minimumSize: const Size.fromHeight(56),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   elevation: 0,
@@ -882,7 +874,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
             fontFamily: 'Pretendard',
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: _textMutedColor,
+            color: AppColors.textMuted,
             letterSpacing: -0.66,
           ),
         ),
@@ -891,7 +883,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
           Container(
             width: 4,
             height: 4,
-            decoration: const BoxDecoration(color: Color(0xFFFF3D3D), shape: BoxShape.circle),
+            decoration: const BoxDecoration(color: AppColors.error, shape: BoxShape.circle),
           ),
         ],
       ],
@@ -908,7 +900,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isSelected ? _primaryColor : _borderColor, width: isSelected ? 1.5 : 1),
+            border: Border.all(color: isSelected ? AppColors.primary : AppColors.border, width: isSelected ? 1.5 : 1),
           ),
           child: Text(
             label,
@@ -916,7 +908,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
               fontFamily: 'Pretendard',
               fontSize: 16,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              color: isSelected ? _primaryStrongColor : _textSecondaryColor,
+              color: isSelected ? AppColors.primaryStrong : AppColors.textSecondary,
             ),
           ),
         ),
@@ -927,13 +919,13 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
   InputDecoration _buildInputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: _placeholderColor, letterSpacing: -0.66),
+      hintStyle: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: AppColors.placeholder, letterSpacing: -0.66),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: _borderColor)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: _borderColor)),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: _primaryColor, width: 1.5),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
       ),
     );
   }

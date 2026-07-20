@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'stamp_assets.dart';
+import '../../../core/theme/app_colors.dart';
 
 class RewardMilestoneStamp extends StatelessWidget {
   final String title;
@@ -71,7 +72,7 @@ class RewardMilestoneStamp extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: isCompleted ? const Color(0xFFF659E7) : const Color(0xFFB4C0D3),
+                    color: isCompleted ? const Color(0xFFF659E7) : AppColors.dot,
                     borderRadius: BorderRadius.circular(9999),
                   ),
                   child: Text(

@@ -6,6 +6,7 @@ import '../../core/widgets/pet_select_card.dart';
 import 'camera_screen.dart';
 import 'pet_empty_screen.dart';
 import 'pet_select_screen.dart';
+import '../../core/theme/app_colors.dart';
 
 class CameraMissionGuideScreen extends StatelessWidget {
   const CameraMissionGuideScreen({super.key});
@@ -13,7 +14,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F8), // var(--color/gray/20)
+      backgroundColor: AppColors.bgGray, // var(--color/gray/20)
       appBar: PopupHeader(
         title: '마이 펫 촬영',
         showBackButton: false,
@@ -462,7 +463,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF4F6F8),
+                                  color: AppColors.bgGray,
                                   borderRadius: BorderRadius.circular(9999),
                                 ),
                                 child: const Text(
@@ -471,7 +472,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
                                     fontFamily: 'Pretendard',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF6C737F),
+                                    color: AppColors.textTertiary,
                                     letterSpacing: -0.66,
                                   ),
                                 ),
@@ -484,7 +485,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
                                   fontFamily: 'Gmarket Sans',
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF51565F),
+                                  color: AppColors.textMuted,
                                   letterSpacing: -0.66,
                                 ),
                               ),
@@ -530,7 +531,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFFF5F5F),
+                                        color: AppColors.errorSoft,
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: const Text(
@@ -557,7 +558,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
                                   fontFamily: 'Pretendard',
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF87909E),
+                                  color: AppColors.textSecondary,
                                   height: 1.4,
                                   letterSpacing: -0.66,
                                 ),
@@ -587,7 +588,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
                               _onMissionParticipate(context);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF30343C), // Figma 검정/진회색 배경
+                              backgroundColor: AppColors.textStrong, // Figma 검정/진회색 배경
                               foregroundColor: Colors.white,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
@@ -619,7 +620,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
             // 2. 이벤트 유의사항 섹션 (회색 배경)
             Container(
               width: double.infinity,
-              color: const Color(0xFFF4F6F8), // var(--color/gray/20)
+              color: AppColors.bgGray, // var(--color/gray/20)
               padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 50),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -630,7 +631,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
                       fontFamily: 'Pretendard',
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF51565F),
+                      color: AppColors.textMuted,
                       letterSpacing: -0.66,
                     ),
                   ),

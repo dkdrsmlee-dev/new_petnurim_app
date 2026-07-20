@@ -11,6 +11,7 @@ import '../../../core/widgets/page_header.dart';
 import '../../auth/application/auth_providers.dart';
 import '../data/member_repository.dart';
 import '../domain/member_info.dart';
+import '../../../core/theme/app_colors.dart';
 
 class AddressNotifier extends Notifier<String?> {
   @override
@@ -86,14 +87,14 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.66,
-                          color: Color(0xFF87909E),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 12),
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(color: const Color(0xFFD6DBE4)),
+                          border: Border.all(color: AppColors.border),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
@@ -134,7 +135,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 const SizedBox(height: 24),
                 Container(
                   height: 6,
-                  color: const Color(0xFFF4F6F8),
+                  color: AppColors.bgGray,
                 ),
                 const SizedBox(height: 24),
                 Padding(
@@ -149,7 +150,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.66,
-                          color: Color(0xFF87909E),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -175,8 +176,8 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                         onPressed: _showLogoutDialog,
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF51565F),
-                          side: const BorderSide(color: Color(0xFFD6DBE4)),
+                          foregroundColor: AppColors.textMuted,
+                          side: const BorderSide(color: AppColors.border),
                           minimumSize: const Size.fromHeight(48),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -195,7 +196,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                         child: TextButton(
                           onPressed: () => context.push(AppRoutes.myWithdraw),
                           style: TextButton.styleFrom(
-                            foregroundColor: const Color(0xFF87909E),
+                            foregroundColor: AppColors.textSecondary,
                             textStyle: const TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 15,
@@ -327,7 +328,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       onTap: () => Navigator.of(context).pop(false),
                       child: const Icon(
                         Icons.close,
-                        color: Color(0xFF87909E),
+                        color: AppColors.textSecondary,
                         size: 24,
                       ),
                     ),
@@ -340,7 +341,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     fontFamily: 'Pretendard',
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF51565F),
+                    color: AppColors.textMuted,
                     height: 1.4,
                   ),
                 ),
@@ -351,8 +352,8 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(context).pop(false),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF51565F),
-                          side: const BorderSide(color: Color(0xFFD6DBE4)),
+                          foregroundColor: AppColors.textMuted,
+                          side: const BorderSide(color: AppColors.border),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -371,7 +372,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       child: ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(true),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF7F4FFF),
+                          backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -516,7 +517,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF87909E),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),
@@ -538,15 +539,15 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                   autofocus: true,
                   decoration: InputDecoration(
                     hintText: '상세 주소 입력',
-                    hintStyle: const TextStyle(color: Color(0xFFA2ADBE)),
+                    hintStyle: const TextStyle(color: AppColors.placeholder),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Color(0xFFD6DBE4)),
+                      borderSide: const BorderSide(color: AppColors.border),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: Color(0xFF7F4FFF), width: 1.5),
+                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                     ),
                   ),
                 ),
@@ -557,7 +558,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     Navigator.pop(context, detail);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7F4FFF),
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     minimumSize: const Size.fromHeight(52),
@@ -613,7 +614,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(true),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7F4FFF),
+                      backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -683,7 +684,7 @@ class _CustomInfoRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: showDivider
             ? const Border(
-                bottom: BorderSide(color: Color(0xFFE8EBF1)),
+                bottom: BorderSide(color: AppColors.borderLight),
               )
             : null,
       ),
@@ -697,7 +698,7 @@ class _CustomInfoRow extends StatelessWidget {
                 fontFamily: 'Pretendard',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF51565F),
+                color: AppColors.textMuted,
                 letterSpacing: -0.66,
               ),
             ),
@@ -715,7 +716,7 @@ class _CustomInfoRow extends StatelessWidget {
                       fontFamily: 'Pretendard',
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF87909E),
+                      color: AppColors.textSecondary,
                       letterSpacing: -0.66,
                     ),
                   ),
@@ -728,7 +729,7 @@ class _CustomInfoRow extends StatelessWidget {
                       fontFamily: 'Pretendard',
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF87909E),
+                      color: AppColors.textSecondary,
                       letterSpacing: -0.66,
                     ),
                   ),
@@ -738,7 +739,7 @@ class _CustomInfoRow extends StatelessWidget {
           ),
           if (showChevron) ...[
             const SizedBox(width: 2),
-            const Icon(Icons.chevron_right, size: 16, color: Color(0xFF87909E)),
+            const Icon(Icons.chevron_right, size: 16, color: AppColors.textSecondary),
           ],
         ],
       ),

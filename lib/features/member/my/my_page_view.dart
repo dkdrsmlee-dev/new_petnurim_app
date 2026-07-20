@@ -14,6 +14,7 @@ import '../data/member_repository.dart';
 import '../domain/member_my_page.dart';
 import '../domain/pet_models.dart';
 import 'my_pet_list_screen.dart';
+import '../../../core/theme/app_colors.dart';
 
 class MyPageView extends ConsumerWidget {
   const MyPageView({
@@ -143,7 +144,7 @@ class _MyPageContentState extends State<_MyPageContent> {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: const Color(0xFFD6DBE4)), // var(--line/default, #d6dbe4)
+                    border: Border.all(color: AppColors.border), // var(--line/default, #d6dbe4)
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -178,7 +179,7 @@ class _MyPageContentState extends State<_MyPageContent> {
               // 구분선 (Section Divider) - 화면 전체 너비
               Container(
                 height: 8,
-                color: const Color(0xFFF4F6F8), // var(--color/gray/20, #f4f6f8)
+                color: AppColors.bgGray, // var(--color/gray/20, #f4f6f8)
               ),
               const SizedBox(height: 24),
 
@@ -215,7 +216,7 @@ class _MyPageContentState extends State<_MyPageContent> {
               // 구분선 (Section Divider) - 화면 전체 너비
               Container(
                 height: 8,
-                color: const Color(0xFFF4F6F8), // var(--color/gray/20, #f4f6f8)
+                color: AppColors.bgGray, // var(--color/gray/20, #f4f6f8)
               ),
 
               // 하단 메뉴 목록 영역 (고객센터, 서비스 약관, 설정)

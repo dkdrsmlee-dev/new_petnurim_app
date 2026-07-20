@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/widgets/popup_header.dart';
+import '../../core/theme/app_colors.dart';
 
 /// 등록된 펫이 0마리일 때 표시되는 화면 (Figma USR-EVT-018 - 마이펫 없을 때)
 ///
@@ -34,7 +35,7 @@ class PetEmptyScreen extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   height: 1.4,
                   letterSpacing: -0.66,
-                  color: Color(0xFFA2ADBE),
+                  color: AppColors.placeholder,
                 ),
               ),
               const SizedBox(height: 4),
@@ -47,7 +48,7 @@ class PetEmptyScreen extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   height: 1.4,
                   letterSpacing: -0.66,
-                  color: Color(0xFFA2ADBE),
+                  color: AppColors.placeholder,
                 ),
               ),
               const SizedBox(height: 24),

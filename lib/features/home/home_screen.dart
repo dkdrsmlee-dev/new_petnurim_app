@@ -14,6 +14,7 @@ import '../auth/application/auth_providers.dart';
 import '../camera/camera_mission_guide_screen.dart';
 import '../member/my/my_page_view.dart';
 import 'widgets/home_event_carousel.dart';
+import '../../core/theme/app_colors.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({
@@ -165,7 +166,7 @@ class _HomeOverview extends StatelessWidget {
                     ],
                   ),
                 ),
-                bannerIcon: const Icon(Icons.local_fire_department, color: Color(0xFFFF5F5F), size: 20),
+                bannerIcon: const Icon(Icons.local_fire_department, color: AppColors.errorSoft, size: 20),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -373,7 +374,7 @@ class _SurfacePanel extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: AppColors.borderSubtle),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Padding(padding: padding, child: child),

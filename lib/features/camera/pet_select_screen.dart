@@ -3,6 +3,7 @@ import '../../core/widgets/popup_header.dart';
 import '../../core/widgets/pet_select_card.dart';
 import 'camera_screen.dart';
 import 'shooting_history_screen.dart';
+import '../../core/theme/app_colors.dart';
 
 /// 등록된 펫이 2마리 이상일 때 표시되는 펫 선택 화면 (Figma USR-EVT-018 - 마이펫 있을 때)
 ///
@@ -36,7 +37,7 @@ class PetSelectScreen extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   height: 1.4,
                   letterSpacing: -0.66,
-                  color: Color(0xFF30343C),
+                  color: AppColors.textStrong,
                 ),
               ),
               const SizedBox(height: 32),

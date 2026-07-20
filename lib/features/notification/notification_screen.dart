@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/widgets/nurim_text_card.dart';
 import '../../core/widgets/page_header.dart';
+import '../../core/theme/app_colors.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -78,7 +79,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       fontFamily: 'Pretendard',
                       fontSize: 13,
                       fontWeight: FontWeight.w400, // Regular
-                      color: Color(0xFF87909E),
+                      color: AppColors.textSecondary,
                       letterSpacing: -0.66,
                     ),
                   ),

@@ -11,6 +11,7 @@ import '../../../core/widgets/common_dialog.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/selection_control.dart';
 import '../data/member_repository.dart';
+import '../../../core/theme/app_colors.dart';
 
 class WithdrawScreen extends ConsumerStatefulWidget {
   const WithdrawScreen({super.key});
@@ -74,14 +75,14 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF30343C),
+                      color: AppColors.textStrong,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF8F9FB),
+                      color: AppColors.bgSoft,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Column(
@@ -105,7 +106,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF30343C),
+                      color: AppColors.textStrong,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -132,20 +133,20 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                       maxLength: 100,
                       decoration: InputDecoration(
                         hintText: '탈퇴 사유를 입력해 주세요.',
-                        hintStyle: const TextStyle(color: Color(0xFF87909E), fontSize: 14),
+                        hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
                         filled: true,
-                        fillColor: const Color(0xFFF8F9FB),
+                        fillColor: AppColors.bgSoft,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide.none,
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Color(0xFF30343C)),
+                          borderSide: const BorderSide(color: AppColors.textStrong),
                         ),
                         contentPadding: const EdgeInsets.all(16),
                       ),
-                      style: const TextStyle(fontSize: 14, color: Color(0xFF30343C)),
+                      style: const TextStyle(fontSize: 14, color: AppColors.textStrong),
                     ),
                   ],
                   const SizedBox(height: 40),
@@ -189,7 +190,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                         child: OutlinedButton(
                           onPressed: _isWithdrawing ? null : () => context.pop(),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFFE8EBF1)),
+                            side: const BorderSide(color: AppColors.borderLight),
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
@@ -200,7 +201,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF51565F),
+                              color: AppColors.textMuted,
                             ),
                           ),
                         ),
@@ -213,8 +214,8 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                         child: ElevatedButton(
                           onPressed: _agreed && !_isWithdrawing ? _handleWithdrawClick : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7F4FFF),
-                            disabledBackgroundColor: const Color(0xFFE8EBF1),
+                            backgroundColor: AppColors.primary,
+                            disabledBackgroundColor: AppColors.borderLight,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -231,7 +232,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
-                                    color: _agreed ? Colors.white : const Color(0xFFA2ADBE),
+                                    color: _agreed ? Colors.white : AppColors.placeholder,
                                   ),
                                 ),
                         ),
@@ -354,7 +355,7 @@ class _BulletItem extends StatelessWidget {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF87909E),
+            color: AppColors.textSecondary,
           ),
         ),
         Expanded(
@@ -362,7 +363,7 @@ class _BulletItem extends StatelessWidget {
             text,
             style: const TextStyle(
               fontSize: 15,
-              color: Color(0xFF87909E),
+              color: AppColors.textSecondary,
               height: 1.4,
               fontWeight: FontWeight.w500,
             ),

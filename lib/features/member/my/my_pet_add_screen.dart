@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../../core/theme/app_colors.dart';
 
 class MyPetAddScreen extends ConsumerStatefulWidget {
   const MyPetAddScreen({super.key});
@@ -16,12 +17,6 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
   // 선택된 펫 종류 공통 코드: 'DOG' (강아지) 또는 'CAT' (고양이)
   String? _selectedPetType;
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _labelMutedColor = Color(0xFF87909E);
-  static const Color _bgGrayColor = Color(0xFFF8F9FB);
-  static const Color _buttonDisabledBgColor = Color(0xFFE8EBF1);
-  static const Color _buttonDisabledTextColor = Color(0xFFA2ADBE);
 
   Widget _buildPetTypeCard({
     required String typeCode,
@@ -43,7 +38,7 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? _primaryColor : _borderColor,
+              color: isSelected ? AppColors.primary : AppColors.border,
               width: isSelected ? 1.5 : 1.0,
             ),
           ),
@@ -55,7 +50,7 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
                 height: 70,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: _bgGrayColor,
+                  color: AppColors.bgSoft,
                 ),
                 child: ClipOval(
                   child: Stack(
@@ -73,7 +68,7 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
                               child: Icon(
                                 Icons.pets,
                                 size: 40,
-                                color: isSelected ? _primaryColor : _labelMutedColor,
+                                color: isSelected ? AppColors.primary : AppColors.textSecondary,
                               ),
                             );
                           },
@@ -92,7 +87,7 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                   letterSpacing: -0.66,
-                  color: isSelected ? const Color(0xFF30343C) : _labelMutedColor,
+                  color: isSelected ? AppColors.textStrong : AppColors.textSecondary,
                   height: 1.4,
                 ),
               ),
@@ -125,7 +120,7 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
                   fontSize: 20,
                   fontWeight: FontWeight.w700, // Bold
                   letterSpacing: -0.66,
-                  color: Color(0xFF30343C), // strong text color
+                  color: AppColors.textStrong, // strong text color
                   height: 1.4,
                 ),
               ),
@@ -165,10 +160,10 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
                         );
                       },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _primaryColor,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  disabledBackgroundColor: _buttonDisabledBgColor,
-                  disabledForegroundColor: _buttonDisabledTextColor,
+                  disabledBackgroundColor: AppColors.borderLight,
+                  disabledForegroundColor: AppColors.placeholder,
                   minimumSize: const Size.fromHeight(56),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

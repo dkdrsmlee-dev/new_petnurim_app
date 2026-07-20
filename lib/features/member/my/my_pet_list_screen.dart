@@ -11,6 +11,7 @@ import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
 import '../domain/pet_models.dart';
 import '../data/pet_repository.dart';
+import '../../../core/theme/app_colors.dart';
 
 final myPetsListProvider = FutureProvider.autoDispose<List<MyPetListItem>>((ref) async {
   final response = await ref.read(petRepositoryProvider).getMyPetsList(limit: 100);
@@ -30,9 +31,6 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
   List<NurimPetCardData>? _customPetList;
   List<MyPetListItem>? _serverPets;
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _textMutedColor = Color(0xFF51565F);
-  static const Color _placeholderColor = Color(0xFFA2ADBE);
 
   Future<void> _updatePrimaryPet() async {
     if (_selectedPetIndex == null || _serverPets == null) return;
@@ -117,7 +115,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.66,
-                      color: _textMutedColor,
+                      color: AppColors.textMuted,
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -128,7 +126,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.66,
-                      color: _primaryColor,
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
@@ -147,7 +145,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.66,
-                    color: _textMutedColor,
+                    color: AppColors.textMuted,
                   ),
                 ),
               ),
@@ -162,7 +160,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                     children: [
                       const Icon(
                         Icons.pets,
-                        color: _placeholderColor,
+                        color: AppColors.placeholder,
                         size: 48,
                       ),
                       const SizedBox(height: 12),
@@ -172,7 +170,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                         style: TextStyle(
                           fontFamily: 'Pretendard',
                           fontSize: 16,
-                          color: _placeholderColor,
+                          color: AppColors.placeholder,
                         ),
                       ),
                     ],
@@ -227,10 +225,10 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                           _updatePrimaryPet();
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7F4FFF),
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    disabledBackgroundColor: const Color(0xFFE8EBF1),
-                    disabledForegroundColor: const Color(0xFF909AA9),
+                    disabledBackgroundColor: AppColors.borderLight,
+                    disabledForegroundColor: AppColors.textDisabled,
                     minimumSize: const Size.fromHeight(56),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -257,7 +255,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                     ref.invalidate(myPetsListProvider);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7F4FFF),
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     minimumSize: const Size.fromHeight(56),
                     shape: RoundedRectangleBorder(
@@ -312,7 +310,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
             style: TextStyle(
               fontFamily: 'Pretendard',
               fontSize: 16,
-              color: _textMutedColor,
+              color: AppColors.textMuted,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -334,7 +332,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: _primaryColor,
+              backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -358,7 +356,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
     } else {
       bodyWidget = petsAsync.when(
         loading: () => const Center(
-          child: CircularProgressIndicator(color: _primaryColor),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
         error: (err, stack) => _buildErrorView(),
         data: (_) => const SizedBox.shrink(),

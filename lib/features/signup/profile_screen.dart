@@ -8,6 +8,7 @@ import '../auth/domain/readable_auth_error.dart';
 import '../auth/domain/social_provider.dart';
 import 'application/signup_providers.dart';
 import 'domain/signup_profile.dart';
+import '../../core/theme/app_colors.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -189,7 +190,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             '회원 정보 입력',
             style: TextStyle(
               fontFamily: 'Pretendard',
-              color: Color(0xFF30343C),
+              color: AppColors.textStrong,
               fontSize: 18,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.54,
@@ -211,7 +212,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         height: 1.4,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                         letterSpacing: -0.66,
                       ),
                     ),
@@ -226,7 +227,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF51565F),
+                            color: AppColors.textMuted,
                             letterSpacing: -0.66,
                           ),
                         ),
@@ -236,8 +237,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF4F6F8),
-                            border: Border.all(color: const Color(0xFFD6DBE4)),
+                            color: AppColors.bgGray,
+                            border: Border.all(color: AppColors.border),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -248,7 +249,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF909AA9),
+                                  color: AppColors.textDisabled,
                                   letterSpacing: -0.66,
                                 ),
                               ),
@@ -259,7 +260,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF909AA9),
+                                  color: AppColors.textDisabled,
                                   letterSpacing: -0.66,
                                 ),
                               ),
@@ -279,7 +280,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF51565F),
+                            color: AppColors.textMuted,
                             letterSpacing: -0.66,
                           ),
                         ),
@@ -289,8 +290,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF4F6F8),
-                            border: Border.all(color: const Color(0xFFD6DBE4)),
+                            color: AppColors.bgGray,
+                            border: Border.all(color: AppColors.border),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Align(
@@ -301,7 +302,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 fontFamily: 'Pretendard',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xFF909AA9),
+                                color: AppColors.textDisabled,
                                 letterSpacing: -0.66,
                               ),
                             ),
@@ -320,7 +321,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF51565F),
+                            color: AppColors.textMuted,
                             letterSpacing: -0.66,
                           ),
                         ),
@@ -333,7 +334,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              border: Border.all(color: const Color(0xFFD6DBE4)),
+                              border: Border.all(color: AppColors.border),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
@@ -349,8 +350,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                       color: _address1Controller.text.isEmpty
-                                          ? const Color(0xFFA2ADBE)
-                                          : const Color(0xFF30343C),
+                                          ? AppColors.placeholder
+                                          : AppColors.textStrong,
                                       letterSpacing: -0.66,
                                     ),
                                     maxLines: 1,
@@ -360,7 +361,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 const Icon(
                                   Icons.search,
                                   size: 24,
-                                  color: Color(0xFF909AA9),
+                                  color: AppColors.textDisabled,
                                 ),
                               ],
                             ),
@@ -373,7 +374,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            border: Border.all(color: const Color(0xFFD6DBE4)),
+                            border: Border.all(color: AppColors.border),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: TextField(
@@ -382,12 +383,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: Color(0xFF30343C),
+                              color: AppColors.textStrong,
                             ),
                             decoration: const InputDecoration(
                               hintText: '상세주소를 입력해 주세요.',
                               hintStyle: TextStyle(
-                                color: Color(0xFFA2ADBE),
+                                color: AppColors.placeholder,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 fontFamily: 'Pretendard',
@@ -416,10 +417,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: ElevatedButton(
                     onPressed: formValid && !_saving ? _submitProfile : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7F4FFF),
+                      backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor: const Color(0xFFE8EBF1),
-                      disabledForegroundColor: const Color(0xFFA2ADBE),
+                      disabledBackgroundColor: AppColors.borderLight,
+                      disabledForegroundColor: AppColors.placeholder,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

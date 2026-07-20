@@ -6,6 +6,7 @@ import '../../app/app_bootstrap.dart';
 import '../../app/app_routes.dart';
 import '../auth/domain/readable_auth_error.dart';
 import 'application/signup_providers.dart';
+import '../../core/theme/app_colors.dart';
 
 class CompleteScreen extends ConsumerStatefulWidget {
   const CompleteScreen({super.key});
@@ -77,7 +78,7 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
-              icon: const Icon(Icons.close, color: Color(0xFF30343C), size: 24),
+              icon: const Icon(Icons.close, color: AppColors.textStrong, size: 24),
               onPressed: _saving ? null : () => _finishSignup(AppRoutes.home),
             ),
             const SizedBox(width: 8),
@@ -113,7 +114,7 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                         height: 1.4,
                         letterSpacing: -0.66,
                       ),
@@ -126,7 +127,7 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF87909E),
+                        color: AppColors.textSecondary,
                         height: 1.4,
                         letterSpacing: -0.66,
                       ),
@@ -151,8 +152,8 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
                         child: OutlinedButton(
                           onPressed: _saving ? null : () => _finishSignup(AppRoutes.myPetAdd),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF7F4FFF),
-                            side: const BorderSide(color: Color(0xFF7F4FFF)),
+                            foregroundColor: AppColors.primary,
+                            side: const BorderSide(color: AppColors.primary),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -177,10 +178,10 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
                         child: ElevatedButton(
                           onPressed: _saving ? null : () => _finishSignup(AppRoutes.home),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF7F4FFF),
+                            backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
-                            disabledBackgroundColor: const Color(0xFFE8EBF1),
-                            disabledForegroundColor: const Color(0xFFA2ADBE),
+                            disabledBackgroundColor: AppColors.borderLight,
+                            disabledForegroundColor: AppColors.placeholder,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),

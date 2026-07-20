@@ -11,6 +11,7 @@ import '../domain/notice_models.dart';
 import '../domain/qna_models.dart';
 import 'qna_create_screen.dart';
 import 'qna_detail_screen.dart';
+import '../../../core/theme/app_colors.dart';
 
 class CustomerCenterScreen extends ConsumerStatefulWidget {
   const CustomerCenterScreen({super.key});
@@ -249,8 +250,8 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
             // Custom TabBar
             TabBar(
               controller: _tabController,
-              labelColor: const Color(0xFF30343C),
-              unselectedLabelColor: const Color(0xFF6C737F),
+              labelColor: AppColors.textStrong,
+              unselectedLabelColor: AppColors.textTertiary,
               labelStyle: const TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 15,
@@ -261,7 +262,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
               ),
-              indicatorColor: const Color(0xFF7F4FFF),
+              indicatorColor: AppColors.primary,
               indicatorWeight: 3,
               indicatorSize: TabBarIndicatorSize.tab,
               tabs: const [
@@ -271,7 +272,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               ],
             ),
             // Divider Line under TabBar
-            Container(height: 1, color: const Color(0xFFD6DBE4)),
+            Container(height: 1, color: AppColors.border),
             // Tab contents
             Expanded(
               child: TabBarView(
@@ -293,7 +294,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
     if (_noticeIsLoading && _noticeItems.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(
-          color: Color(0xFF7F4FFF),
+          color: AppColors.primary,
         ),
       );
     }
@@ -308,14 +309,14 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               style: const TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 16,
-                color: Color(0xFF6C737F),
+                color: AppColors.textTertiary,
               ),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () => _fetchNotices(isRefresh: true),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7F4FFF),
+                backgroundColor: AppColors.primary,
               ),
               child: const Text('다시 시도', style: TextStyle(color: Colors.white)),
             ),
@@ -327,7 +328,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
     if (_noticeItems.isEmpty) {
       return RefreshIndicator(
         onRefresh: () => _fetchNotices(isRefresh: true),
-        color: const Color(0xFF7F4FFF),
+        color: AppColors.primary,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
@@ -339,7 +340,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                   Icon(
                     Icons.notifications_none_rounded,
                     size: 48,
-                    color: Color(0xFFA2ADBE),
+                    color: AppColors.placeholder,
                   ),
                   SizedBox(height: 16),
                   Text(
@@ -348,7 +349,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                       fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Color(0xFF6C737F),
+                      color: AppColors.textTertiary,
                     ),
                   ),
                 ],
@@ -361,7 +362,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
 
     return RefreshIndicator(
       onRefresh: () => _fetchNotices(isRefresh: true),
-      color: const Color(0xFF7F4FFF),
+      color: AppColors.primary,
       child: ListView.builder(
         controller: _noticeScrollController,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -373,7 +374,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Center(
                 child: CircularProgressIndicator(
-                  color: Color(0xFF7F4FFF),
+                  color: AppColors.primary,
                 ),
               ),
             );
@@ -438,7 +439,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                           width: 18,
                                           height: 18,
                                           decoration: const BoxDecoration(
-                                            color: Color(0xFF7F4FFF),
+                                            color: AppColors.primary,
                                             shape: BoxShape.circle,
                                           ),
                                           child: const Center(
@@ -465,7 +466,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                 fontFamily: 'Pretendard',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600, // SemiBold
-                                color: Color(0xFF30343C),
+                                color: AppColors.textStrong,
                                 height: 1.4,
                                 letterSpacing: -0.66,
                               ),
@@ -477,7 +478,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                   fontFamily: 'Pretendard',
                                   fontSize: 13,
                                   fontWeight: FontWeight.w400, // Regular
-                                  color: Color(0xFFA2ADBE),
+                                  color: AppColors.placeholder,
                                 ),
                               ),
                             ],
@@ -486,7 +487,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                         const SizedBox(width: 12),
                         Icon(
                           isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                          color: const Color(0xFF6C737F),
+                          color: AppColors.textTertiary,
                           size: 20,
                         ),
                       ],
@@ -496,7 +497,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                 // Body area (visible when expanded)
                 if (isExpanded) ...[
                   // Divider
-                  Container(height: 1, color: const Color(0xFFE8EBF1)),
+                  Container(height: 1, color: AppColors.borderLight),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Builder(
@@ -506,7 +507,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                             child: Padding(
                               padding: EdgeInsets.symmetric(vertical: 24),
                               child: CircularProgressIndicator(
-                                color: Color(0xFF7F4FFF),
+                                color: AppColors.primary,
                                 strokeWidth: 2,
                               ),
                             ),
@@ -522,7 +523,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                 style: TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 14,
-                                  color: Color(0xFF87909E),
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                             ),
@@ -538,7 +539,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                 fontFamily: 'Pretendard',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400, // Regular
-                                color: Color(0xFF51565F),
+                                color: AppColors.textMuted,
                                 height: 1.4,
                                 letterSpacing: -0.66,
                               ),
@@ -551,7 +552,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                   fontFamily: 'Pretendard',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF51565F),
+                                  color: AppColors.textMuted,
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -559,7 +560,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                     margin: const EdgeInsets.only(bottom: 8),
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFF8F9FB),
+                                      color: AppColors.bgSoft,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Row(
@@ -574,7 +575,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                                   fontFamily: 'Pretendard',
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
-                                                  color: Color(0xFF51565F),
+                                                  color: AppColors.textMuted,
                                                 ),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
@@ -586,14 +587,14 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                                   fontFamily: 'Pretendard',
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.w400,
-                                                  color: Color(0xFF6C737F),
+                                                  color: AppColors.textTertiary,
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
                                         IconButton(
-                                          icon: const Icon(Icons.file_download_outlined, color: Color(0xFF6C737F)),
+                                          icon: const Icon(Icons.file_download_outlined, color: AppColors.textTertiary),
                                           onPressed: () => _downloadFileToDevice(file),
                                         ),
                                       ],
@@ -631,7 +632,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
     if (_qnaIsLoading && _qnaItems.isEmpty) {
       body = const Center(
         child: CircularProgressIndicator(
-          color: Color(0xFF7F4FFF),
+          color: AppColors.primary,
         ),
       );
     } else if (_qnaError != null && _qnaItems.isEmpty) {
@@ -644,14 +645,14 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               style: const TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 16,
-                color: Color(0xFF6C737F),
+                color: AppColors.textTertiary,
               ),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () => _fetchQnas(isRefresh: true),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7F4FFF),
+                backgroundColor: AppColors.primary,
               ),
               child: const Text('다시 시도', style: TextStyle(color: Colors.white)),
             ),
@@ -661,7 +662,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
     } else {
       body = RefreshIndicator(
         onRefresh: () => _fetchQnas(isRefresh: true),
-        color: const Color(0xFF7F4FFF),
+        color: AppColors.primary,
         child: _qnaItems.isEmpty
             ? _buildEmptyQnaState()
             : ListView.builder(
@@ -674,7 +675,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                       padding: EdgeInsets.symmetric(vertical: 16),
                       child: Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFF7F4FFF),
+                          color: AppColors.primary,
                         ),
                       ),
                     );
@@ -707,7 +708,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               Icon(
                 Icons.chat_bubble_outline_rounded,
                 size: 48,
-                color: Color(0xFFA2ADBE),
+                color: AppColors.placeholder,
               ),
               SizedBox(height: 16),
               Text(
@@ -716,7 +717,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                   fontFamily: 'Pretendard',
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF6C737F),
+                  color: AppColors.textTertiary,
                 ),
               ),
             ],
@@ -735,7 +736,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
         color: Colors.white,
         border: Border(
           bottom: BorderSide(
-            color: Color(0xFFE8EBF1),
+            color: AppColors.borderLight,
             width: 1,
           ),
         ),
@@ -768,7 +769,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600, // SemiBold
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                         height: 1.4,
                         letterSpacing: -0.66,
                       ),
@@ -780,7 +781,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                         fontFamily: 'Pretendard',
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFFA2ADBE),
+                        color: AppColors.placeholder,
                       ),
                     ),
                   ],
@@ -793,10 +794,10 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                 height: 26,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isComplete ? Colors.white : const Color(0xFFE8EBF1),
+                  color: isComplete ? Colors.white : AppColors.borderLight,
                   borderRadius: BorderRadius.circular(13.5),
                   border: isComplete
-                      ? Border.all(color: const Color(0xFF7F4FFF), width: 1)
+                      ? Border.all(color: AppColors.primary, width: 1)
                       : null,
                 ),
                 child: Text(
@@ -805,7 +806,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                     fontFamily: 'Pretendard',
                     fontSize: 12,
                     fontWeight: FontWeight.w600, // SemiBold
-                    color: isComplete ? const Color(0xFF7F4FFF) : const Color(0xFF87909E),
+                    color: isComplete ? AppColors.primary : AppColors.textSecondary,
                     height: 1.0,
                   ),
                 ),
@@ -829,7 +830,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: const Color(0xFF7F4FFF),
+          color: AppColors.primary,
           borderRadius: BorderRadius.circular(12),
         ),
         child: InkWell(

@@ -10,6 +10,7 @@ import '../../../core/widgets/page_header.dart';
 import '../data/file_repository.dart';
 import '../data/pet_repository.dart';
 import 'my_pet_list_screen.dart';
+import '../../../core/theme/app_colors.dart';
 
 class MyPetHealthFormScreen extends ConsumerStatefulWidget {
   final String petType;
@@ -45,11 +46,6 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
   bool _isConfirmButtonEnabled = false;
   bool _isSubmitting = false;
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _textStrongColor = Color(0xFF30343C);
-  static const Color _placeholderColor = Color(0xFFA2ADBE);
-  static const Color _buttonDisabledBgColor = Color(0xFFE8EBF1);
 
   @override
   void initState() {
@@ -228,7 +224,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.66,
-                          color: _textStrongColor,
+                          color: AppColors.textStrong,
                           height: 1.4,
                         ),
                       ),
@@ -246,7 +242,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                 fontFamily: 'Pretendard',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF51565F),
+                                color: AppColors.textMuted,
                                 letterSpacing: -0.66,
                               ),
                             ),
@@ -255,7 +251,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                               width: 4,
                               height: 4,
                               decoration: const BoxDecoration(
-                                color: Color(0xFFFF3D3D),
+                                color: AppColors.error,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -279,7 +275,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: _selectedNeutered == true ? _primaryColor : _borderColor,
+                                      color: _selectedNeutered == true ? AppColors.primary : AppColors.border,
                                       width: _selectedNeutered == true ? 1.5 : 1.0,
                                     ),
                                   ),
@@ -290,7 +286,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: _selectedNeutered == true ? FontWeight.w600 : FontWeight.w500,
-                                      color: _selectedNeutered == true ? _primaryColor : _placeholderColor,
+                                      color: _selectedNeutered == true ? AppColors.primary : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
@@ -313,7 +309,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: _selectedNeutered == false ? _primaryColor : _borderColor,
+                                      color: _selectedNeutered == false ? AppColors.primary : AppColors.border,
                                       width: _selectedNeutered == false ? 1.5 : 1.0,
                                     ),
                                   ),
@@ -324,7 +320,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: _selectedNeutered == false ? FontWeight.w600 : FontWeight.w500,
-                                      color: _selectedNeutered == false ? _primaryColor : _placeholderColor,
+                                      color: _selectedNeutered == false ? AppColors.primary : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
@@ -348,7 +344,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                 fontFamily: 'Pretendard',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF51565F),
+                                color: AppColors.textMuted,
                                 letterSpacing: -0.66,
                               ),
                             ),
@@ -357,7 +353,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                               width: 4,
                               height: 4,
                               decoration: const BoxDecoration(
-                                color: Color(0xFFFF3D3D),
+                                color: AppColors.error,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -370,14 +366,14 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                           style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 16,
-                            color: _textStrongColor,
+                            color: AppColors.textStrong,
                           ),
                           decoration: InputDecoration(
                             hintText: '체중을 입력해 주세요.(ex 3.5)',
                             hintStyle: const TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 16,
-                              color: _placeholderColor,
+                              color: AppColors.placeholder,
                               letterSpacing: -0.66,
                             ),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -393,7 +389,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
-                                      color: _textStrongColor,
+                                      color: AppColors.textStrong,
                                     ),
                                   ),
                                 ],
@@ -401,15 +397,15 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: _borderColor),
+                              borderSide: const BorderSide(color: AppColors.border),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: _borderColor),
+                              borderSide: const BorderSide(color: AppColors.border),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: _primaryColor, width: 1.5),
+                              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                             ),
                           ),
                         ),
@@ -426,7 +422,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF51565F),
+                            color: AppColors.textMuted,
                             letterSpacing: -0.66,
                           ),
                         ),
@@ -439,7 +435,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: _borderColor),
+                              border: Border.all(color: AppColors.border),
                             ),
                             child: Row(
                               children: [
@@ -451,14 +447,14 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
                                       fontSize: 16,
-                                      color: _selectedWeightDate != null ? _textStrongColor : _placeholderColor,
+                                      color: _selectedWeightDate != null ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
                                 ),
                                 const Icon(
                                   Icons.keyboard_arrow_down,
-                                  color: Color(0xFF909AA9),
+                                  color: AppColors.textDisabled,
                                   size: 24,
                                 ),
                               ],
@@ -483,10 +479,10 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: _isPrimary ? _primaryColor : _borderColor,
+                                color: _isPrimary ? AppColors.primary : AppColors.border,
                                 width: 1.5,
                               ),
-                              color: _isPrimary ? _primaryColor : Colors.white,
+                              color: _isPrimary ? AppColors.primary : Colors.white,
                             ),
                             child: _isPrimary
                                 ? const Icon(Icons.check, size: 16, color: Colors.white)
@@ -499,7 +495,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                               fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: _textStrongColor,
+                              color: AppColors.textStrong,
                               letterSpacing: -0.66,
                             ),
                           ),
@@ -521,7 +517,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                       onPressed: _showCancelDialog,
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        side: const BorderSide(color: _borderColor),
+                        side: const BorderSide(color: AppColors.border),
                         minimumSize: const Size.fromHeight(56),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -535,7 +531,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                           fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF51565F),
+                          color: AppColors.textMuted,
                           letterSpacing: -0.66,
                         ),
                       ),
@@ -549,10 +545,10 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                           ? _submitMyPet
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _primaryColor,
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: _buttonDisabledBgColor,
-                        disabledForegroundColor: _placeholderColor,
+                        disabledBackgroundColor: AppColors.borderLight,
+                        disabledForegroundColor: AppColors.placeholder,
                         minimumSize: const Size.fromHeight(56),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

@@ -7,6 +7,7 @@ import '../../core/widgets/bottom_action_bar.dart';
 import '../auth/domain/readable_auth_error.dart';
 import 'application/signup_providers.dart';
 import 'domain/signup_terms.dart';
+import '../../core/theme/app_colors.dart';
 
 class TermsScreen extends ConsumerStatefulWidget {
   const TermsScreen({super.key});
@@ -33,7 +34,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back,
-            color: Color(0xFF30343C),
+            color: AppColors.textStrong,
             size: 24,
           ),
           onPressed: _submitting ? null : () => context.go(AppRoutes.authStart),
@@ -70,7 +71,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                 '서비스 이용을 위해\n약관에 동의해 주세요.',
                 style: TextStyle(
                   fontFamily: 'Pretendard',
-                  color: Color(0xFF30343C),
+                  color: AppColors.textStrong,
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   height: 1.4,
@@ -89,7 +90,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF4F6F8),
+                    color: AppColors.bgGray,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -99,7 +100,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                             ? Icons.check_circle
                             : Icons.check_circle_outline,
                         color: allChecked
-                            ? const Color(0xFF7F4FFF)
+                            ? AppColors.primary
                             : const Color(0xFFCBD5E1),
                         size: 24,
                       ),
@@ -109,8 +110,8 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                         style: TextStyle(
                           fontFamily: 'Pretendard',
                           color: allChecked
-                              ? const Color(0xFF30343C)
-                              : const Color(0xFF87909E),
+                              ? AppColors.textStrong
+                              : AppColors.textSecondary,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           letterSpacing: -0.66,
@@ -289,7 +290,7 @@ class _TermTile extends StatelessWidget {
                     Icon(
                       checked ? Icons.check_circle : Icons.check_circle_outline,
                       color: checked
-                          ? const Color(0xFF7F4FFF)
+                          ? AppColors.primary
                           : const Color(0xFFCBD5E1),
                       size: 18,
                     ),
@@ -300,8 +301,8 @@ class _TermTile extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Pretendard',
                           color: checked
-                              ? const Color(0xFF30343C)
-                              : const Color(0xFF87909E),
+                              ? AppColors.textStrong
+                              : AppColors.textSecondary,
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           letterSpacing: -0.66,

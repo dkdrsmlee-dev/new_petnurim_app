@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../data/pet_repository.dart';
 import '../domain/pet_breed.dart';
+import '../../../core/theme/app_colors.dart';
 
 class MyPetBreedSelectScreen extends ConsumerStatefulWidget {
   final String petType; // 'DOG' 또는 'CAT'
@@ -32,13 +33,6 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
   String? _errorMessage;
   Timer? _debounce;
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _textStrongColor = Color(0xFF30343C);
-  static const Color _textMutedColor = Color(0xFF51565F);
-  static const Color _placeholderColor = Color(0xFFA2ADBE);
-  static const Color _bgGrayColor = Color(0xFFF4F6F8);
-  static const Color _dividerColor = Color(0xFFE8EBF1);
 
   @override
   void initState() {
@@ -168,7 +162,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                         fontSize: 18,
                         fontWeight: FontWeight.w700, // Bold
                         letterSpacing: -0.54,
-                        color: _textStrongColor,
+                        color: AppColors.textStrong,
                       ),
                     ),
                   ),
@@ -179,7 +173,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                     child: const Icon(
                       Icons.close,
                       size: 24,
-                      color: _textStrongColor,
+                      color: AppColors.textStrong,
                     ),
                   ),
                 ],
@@ -200,33 +194,33 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                 style: const TextStyle(
                   fontFamily: 'Pretendard',
                   fontSize: 16,
-                  color: _textStrongColor,
+                  color: AppColors.textStrong,
                 ),
                 decoration: InputDecoration(
                   hintText: '검색어를 입력해 주세요.',
                   hintStyle: const TextStyle(
                     fontFamily: 'Pretendard',
                     fontSize: 16,
-                    color: _placeholderColor,
+                    color: AppColors.placeholder,
                     letterSpacing: -0.66,
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   suffixIcon: const Icon(
                     Icons.search,
-                    color: Color(0xFF909AA9),
+                    color: AppColors.textDisabled,
                     size: 24,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: _borderColor),
+                    borderSide: const BorderSide(color: AppColors.border),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: _borderColor),
+                    borderSide: const BorderSide(color: AppColors.border),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: _primaryColor, width: 1.5),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                   ),
                 ),
               ),
@@ -253,7 +247,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                       margin: const EdgeInsets.only(right: 8),
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: isSelected ? _textStrongColor : _bgGrayColor,
+                        color: isSelected ? AppColors.textStrong : AppColors.bgGray,
                         borderRadius: BorderRadius.circular(50),
                       ),
                       alignment: Alignment.center,
@@ -263,7 +257,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                           fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                          color: isSelected ? Colors.white : const Color(0xFF909AA9),
+                          color: isSelected ? Colors.white : AppColors.textDisabled,
                           letterSpacing: -0.66,
                         ),
                       ),
@@ -291,7 +285,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                             style: const TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 16,
-                              color: _textMutedColor,
+                              color: AppColors.textMuted,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -308,7 +302,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: _primaryColor,
+                              backgroundColor: AppColors.primary,
                               foregroundColor: Colors.white,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -327,7 +321,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                             children: [
                               const Icon(
                                 Icons.search_off,
-                                color: _placeholderColor,
+                                color: AppColors.placeholder,
                                 size: 48,
                               ),
                               const SizedBox(height: 12),
@@ -338,7 +332,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                                 style: const TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 16,
-                                  color: _placeholderColor,
+                                  color: AppColors.placeholder,
                                 ),
                               ),
                             ],
@@ -353,7 +347,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                               return const SizedBox.shrink();
                             }
                             return const Divider(
-                              color: _dividerColor,
+                              color: AppColors.borderLight,
                               height: 1,
                               thickness: 1,
                             );
@@ -364,7 +358,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                                 padding: EdgeInsets.symmetric(vertical: 16),
                                 child: Center(
                                   child: CircularProgressIndicator(
-                                    color: _primaryColor,
+                                    color: AppColors.primary,
                                   ),
                                 ),
                               );
@@ -385,7 +379,7 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                                     fontFamily: 'Pretendard',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500, // Medium
-                                    color: _textMutedColor,
+                                    color: AppColors.textMuted,
                                     letterSpacing: -0.66,
                                   ),
                                 ),

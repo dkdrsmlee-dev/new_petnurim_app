@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/widgets/camera_history_card.dart';
 import '../../core/widgets/pet_select_card.dart';
 import 'camera_screen.dart';
+import '../../core/theme/app_colors.dart';
 
 /// 촬영 내역 화면 (Figma USR-EVT-019)
 class ShootingHistoryScreen extends StatelessWidget {
@@ -55,7 +56,7 @@ class ShootingHistoryScreen extends StatelessWidget {
             fontFamily: 'Pretendard',
             fontWeight: FontWeight.w700,
             fontSize: 18,
-            color: Color(0xFF30343C),
+            color: AppColors.textStrong,
             letterSpacing: -0.54,
           ),
         ),
@@ -98,7 +99,7 @@ class ShootingHistoryScreen extends StatelessWidget {
                           // 2. 영역 구분선 (6px 회색 띠)
                           Container(
                             height: 6,
-                            color: const Color(0xFFF4F6F8),
+                            color: AppColors.bgGray,
                           ),
 
                           // 3. 비어있는 상태 (남은 공간을 모두 차지하도록 구성)
@@ -139,7 +140,7 @@ class _EmptyHistoryView extends StatelessWidget {
               fontSize: 16,
               fontWeight: FontWeight.w600,
               height: 1.4,
-              color: Color(0xFFA2ADBE), // placeholder 그레이
+              color: AppColors.placeholder, // placeholder 그레이
               letterSpacing: -0.66,
             ),
           ),
@@ -160,7 +161,7 @@ class _EmptyHistoryView extends StatelessWidget {
                 );
               },
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF7F4FFF), // 브랜드 퍼플
+                backgroundColor: AppColors.primary, // 브랜드 퍼플
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
