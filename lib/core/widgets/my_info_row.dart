@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 /// Figma `My_info` 컴포넌트 스펙 기반의 단일 행 위젯.
 ///
 /// 좌측에 라벨 및 정보 텍스트(주/부 텍스트), 우측에 아웃라인 형태의 액션 버튼을 배치합니다.
@@ -53,7 +55,7 @@ class NurimMyInfoRow extends StatelessWidget {
           border: showDivider
               ? const Border(
                   bottom: BorderSide(
-                    color: Color(0xFFE8EBF1), // Figma: var(--line/soft, #e8ebf1)
+                    color: AppColors.borderLight, // Figma: var(--line/soft, #e8ebf1)
                     width: 1.0,
                   ),
                 )
@@ -80,7 +82,7 @@ class NurimMyInfoRow extends StatelessWidget {
                       fontWeight: FontWeight.w600, // SemiBold
                       height: 1.4,
                       letterSpacing: -0.66,
-                      color: Color(0xFF51565F), // var(--text-color/primary, #51565f)
+                      color: AppColors.textMuted, // var(--text-color/primary, #51565f)
                     ),
                   ),
                   const SizedBox(height: 8.0), // Figma: gap-[8px]
@@ -99,7 +101,7 @@ class NurimMyInfoRow extends StatelessWidget {
                             fontWeight: FontWeight.w500, // Medium
                             height: 1.4,
                             letterSpacing: -0.66,
-                            color: Color(0xFF87909E), // var(--text-color/secondary, #87909e)
+                            color: AppColors.textSecondary, // var(--text-color/secondary, #87909e)
                           ),
                         ),
                       ),
@@ -113,7 +115,7 @@ class NurimMyInfoRow extends StatelessWidget {
                             fontWeight: FontWeight.w500, // Medium
                             height: 1.4,
                             letterSpacing: -0.66,
-                            color: Color(0xFF87909E),
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -139,7 +141,7 @@ class NurimMyInfoRow extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8.0), // Figma: rounded-[8px]
                     border: Border.all(
-                      color: const Color(0xFFD6DBE4), // Figma: var(--line/default, #d6dbe4)
+                      color: AppColors.border, // Figma: var(--line/default, #d6dbe4)
                       width: 1.0,
                     ),
                   ),
@@ -152,7 +154,7 @@ class NurimMyInfoRow extends StatelessWidget {
                       fontWeight: FontWeight.w600, // SemiBold
                       height: 1.4,
                       letterSpacing: -0.66,
-                      color: Color(0xFF51565F), // var(--color/gray/100, #51565f)
+                      color: AppColors.textMuted, // var(--color/gray/100, #51565f)
                     ),
                   ),
                 ),

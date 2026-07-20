@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../theme/app_colors.dart';
 
 /// 촬영 내역 화면 등에서 공동으로 사용하는 펫 및 촬영 정보 요약 카드 위젯 (Figma 582-10375)
 class CameraHistoryCardData {
@@ -32,10 +33,6 @@ class CameraHistoryCard extends StatelessWidget {
 
   final CameraHistoryCardData data;
 
-  static const Color _textColorPrimary = Color(0xFF51565F);
-  static const Color _textColorSecondary = Color(0xFF87909E);
-  static const Color _mutedColor = Color(0xFF909AA9);
-  static const Color _dividerBg = Color(0xFFF4F6F8);
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +110,7 @@ class _PetInfoSection extends StatelessWidget {
             fontWeight: FontWeight.w600,
             height: 1.4,
             letterSpacing: -0.66,
-            color: CameraHistoryCard._textColorPrimary,
+            color: AppColors.textMuted,
           ),
         ),
         const SizedBox(height: 4),
@@ -140,7 +137,7 @@ class _CircularAvatar extends StatelessWidget {
       height: 70,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: const Color(0xFFF4F6F8),
+        color: AppColors.bgGray,
         border: Border.all(color: const Color(0xFFE6EBF2), width: 1.5),
       ),
       child: ClipOval(
@@ -149,7 +146,7 @@ class _CircularAvatar extends StatelessWidget {
             : const Icon(
                 Icons.pets,
                 size: 36,
-                color: Color(0xFFB4C0D3),
+                color: AppColors.dot,
               ),
       ),
     );
@@ -173,7 +170,7 @@ class _PetDetailsRow extends StatelessWidget {
     fontWeight: FontWeight.w500,
     height: 1.4,
     letterSpacing: -0.66,
-    color: CameraHistoryCard._mutedColor,
+    color: AppColors.textDisabled,
   );
 
   @override
@@ -197,7 +194,7 @@ class _PetDetailsRow extends StatelessWidget {
             width: 3,
             height: 3,
             decoration: const BoxDecoration(
-              color: Color(0xFFB4C0D3),
+              color: AppColors.dot,
               shape: BoxShape.circle,
             ),
           ),
@@ -251,7 +248,7 @@ class _MissionHistoryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF51565F).withValues(alpha: 0.1),
+            color: AppColors.textMuted.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 0),
           ),
@@ -299,7 +296,7 @@ class _HistoryItemRow extends StatelessWidget {
           width: 24,
           height: 24,
           decoration: const BoxDecoration(
-            color: CameraHistoryCard._dividerBg,
+            color: AppColors.bgGray,
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -319,7 +316,7 @@ class _HistoryItemRow extends StatelessWidget {
               fontFamily: 'Pretendard',
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: CameraHistoryCard._textColorSecondary,
+              color: AppColors.textSecondary,
               letterSpacing: -0.66,
             ),
           ),
@@ -331,7 +328,7 @@ class _HistoryItemRow extends StatelessWidget {
             fontFamily: 'Pretendard',
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: CameraHistoryCard._textColorPrimary,
+            color: AppColors.textMuted,
             letterSpacing: -0.66,
           ),
         ),

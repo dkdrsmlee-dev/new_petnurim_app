@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 class CalendarGrid extends StatelessWidget {
   final int year;
@@ -41,7 +42,7 @@ class CalendarGrid extends StatelessWidget {
                       fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600, // SemiBold
-                      color: Color(0xFF87909E), // text-color/secondary
+                      color: AppColors.textSecondary, // text-color/secondary
                       letterSpacing: -0.48,
                     ),
                   ),

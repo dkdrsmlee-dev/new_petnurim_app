@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../theme/app_colors.dart';
 class CalendarStamp extends StatelessWidget {
   final bool isAttended;
   final bool showReward;
@@ -40,7 +41,7 @@ class CalendarStamp extends StatelessWidget {
                 width: 6,
                 height: 6,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFFF5F5F), // var(--color/red/60)
+                  color: AppColors.errorSoft, // var(--color/red/60)
                   shape: BoxShape.circle,
                 ),
               ),

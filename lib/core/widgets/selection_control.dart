@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 enum SelectionControlStyle { radio, checkbox }
 
@@ -31,7 +32,7 @@ class SelectionControl<T> extends StatelessWidget {
       isSelected = (value as bool?) ?? false;
     }
 
-    final textColor = isSelected ? const Color(0xFF30343C) : const Color(0xFF87909E);
+    final textColor = isSelected ? AppColors.textStrong : AppColors.textSecondary;
     final textWeight = isSelected ? FontWeight.w600 : FontWeight.w500;
 
     return InkWell(
@@ -76,13 +77,13 @@ class SelectionControl<T> extends StatelessWidget {
     if (style == SelectionControlStyle.radio) {
       return Icon(
         isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-        color: isSelected ? const Color(0xFF7F4FFF) : const Color(0xFFE8EBF1),
+        color: isSelected ? AppColors.primary : AppColors.borderLight,
         size: 24,
       );
     } else {
       return Icon(
         isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-        color: isSelected ? const Color(0xFF7F4FFF) : const Color(0xFFE8EBF1),
+        color: isSelected ? AppColors.primary : AppColors.borderLight,
         size: 24,
       );
     }

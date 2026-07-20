@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -26,7 +27,7 @@ class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       leading: showBackButton
           ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Color(0xFF30343C)),
+              icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.textStrong),
               onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
             )
           : null,
@@ -36,7 +37,7 @@ class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
           fontFamily: 'Pretendard',
           fontSize: 18,
           fontWeight: FontWeight.w700, // Bold
-          color: Color(0xFF30343C),
+          color: AppColors.textStrong,
           letterSpacing: -0.54,
           height: 1.4,
         ),
@@ -44,7 +45,7 @@ class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
       actions: showCloseButton
           ? [
               IconButton(
-                icon: const Icon(Icons.close, size: 24, color: Color(0xFF30343C)),
+                icon: const Icon(Icons.close, size: 24, color: AppColors.textStrong),
                 onPressed: onClosePressed ?? () => Navigator.of(context).pop(),
               ),
             ]

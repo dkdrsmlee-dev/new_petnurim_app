@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 /// 멤버십 카드 위젯 — Figma `Membership card` (node-id: 238:23691) 스펙 기반.
 ///
@@ -39,14 +40,6 @@ class NurimMembershipCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   // ── 색상 상수 ──────────────────────────────────────────────────
-  static const Color _strongTextColor = Color(0xFF30343C);
-  static const Color _secondaryTextColor = Color(0xFF87909E);
-  static const Color _primaryTextColor = Color(0xFF51565F);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _dividerColor = Color(0xFFE8EBF1);
-  static const Color _iconBgColor = Color(0xFFF4F6F8);
-  static const Color _badgeBgColor = Color(0xFFF2EFFF);
-  static const Color _badgeTextColor = Color(0xFF7F4FFF);
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +82,7 @@ class NurimMembershipCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 height: 1.4,
                 letterSpacing: -0.66,
-                color: _strongTextColor,
+                color: AppColors.textStrong,
               ),
             ),
           ),
@@ -98,7 +91,7 @@ class NurimMembershipCard extends StatelessWidget {
             height: 24,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: _badgeBgColor,
+              color: AppColors.primarySurface,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
@@ -109,7 +102,7 @@ class NurimMembershipCard extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 height: 1.4,
                 letterSpacing: -0.66,
-                color: _badgeTextColor,
+                color: AppColors.primary,
               ),
             ),
           ),
@@ -121,7 +114,7 @@ class NurimMembershipCard extends StatelessWidget {
   Widget _buildBillingBox() {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: _borderColor),
+        border: Border.all(color: AppColors.border),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -184,7 +177,7 @@ class _BillingRow extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 height: 1.4,
                 letterSpacing: -0.66,
-                color: NurimMembershipCard._secondaryTextColor,
+                color: AppColors.textSecondary,
               ),
             ),
           ),
@@ -196,7 +189,7 @@ class _BillingRow extends StatelessWidget {
               fontWeight: FontWeight.w600,
               height: 1.4,
               letterSpacing: -0.66,
-              color: NurimMembershipCard._primaryTextColor,
+              color: AppColors.textMuted,
             ),
           ),
         ],
@@ -231,13 +224,13 @@ class _ListRow extends StatelessWidget {
               width: 24,
               height: 24,
               decoration: const BoxDecoration(
-                color: NurimMembershipCard._iconBgColor,
+                color: AppColors.bgGray,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
                 size: 14,
-                color: NurimMembershipCard._secondaryTextColor,
+                color: AppColors.textSecondary,
               ),
             ),
             const SizedBox(width: 6),
@@ -250,14 +243,14 @@ class _ListRow extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   height: 1.4,
                   letterSpacing: -0.66,
-                  color: NurimMembershipCard._secondaryTextColor,
+                  color: AppColors.textSecondary,
                 ),
               ),
             ),
             const Icon(
               Icons.arrow_forward_ios,
               size: 14,
-              color: NurimMembershipCard._secondaryTextColor,
+              color: AppColors.textSecondary,
             ),
           ],
         ),
@@ -271,7 +264,7 @@ class _ListRow extends StatelessWidget {
           const Divider(
             height: 1,
             thickness: 1,
-            color: NurimMembershipCard._dividerColor,
+            color: AppColors.borderLight,
           ),
         ],
       );
@@ -298,7 +291,7 @@ class _CrownPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF30343C)
+      ..color = AppColors.textStrong
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.6
       ..strokeCap = StrokeCap.round
@@ -330,7 +323,7 @@ class _CrownPainter extends CustomPainter {
 
     // 왕관 위 점 3개
     final dotPaint = Paint()
-      ..color = const Color(0xFF30343C)
+      ..color = AppColors.textStrong
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(Offset(w * 0.5, h * 0.085), w * 0.06, dotPaint);

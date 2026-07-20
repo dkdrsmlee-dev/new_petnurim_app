@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 class BullitText extends StatelessWidget {
   final String text;
@@ -27,7 +28,7 @@ class BullitText extends StatelessWidget {
               width: 4,
               height: 4,
               decoration: BoxDecoration(
-                color: bulletColor ?? const Color(0xFF6C737F), // var(--color/gray/90)
+                color: bulletColor ?? AppColors.textTertiary, // var(--color/gray/90)
                 shape: BoxShape.circle,
               ),
             ),
@@ -41,7 +42,7 @@ class BullitText extends StatelessWidget {
                   fontFamily: 'Pretendard',
                   fontSize: 14,
                   fontWeight: FontWeight.w400, // Regular
-                  color: Color(0xFF6C737F), // var(--color/gray/90)
+                  color: AppColors.textTertiary, // var(--color/gray/90)
                   letterSpacing: -0.66,
                   height: 1.4,
                 ),

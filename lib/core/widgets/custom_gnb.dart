@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 enum GnbMenu {
   home('홈', 'ic_home', Icons.home_outlined, Icons.home),
@@ -34,7 +35,7 @@ class CustomGnb extends StatelessWidget {
         color: Colors.white,
         border: Border(
           top: BorderSide(
-            color: Color(0xFFE8EBF1), // Figma border-t Gray 30: #E8EBF1
+            color: AppColors.borderLight, // Figma border-t Gray 30: #E8EBF1
             width: 1.0,
           ),
         ),
@@ -75,7 +76,7 @@ class _GnbOnOffItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = isActive ? const Color(0xFF7025FF) : const Color(0xFF6C737F);
+    final textColor = isActive ? AppColors.primaryStrong : AppColors.textTertiary;
     final fontWeight = isActive ? FontWeight.w600 : FontWeight.w500;
     final stateStr = isActive ? 'active' : 'inactive';
 

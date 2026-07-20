@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../theme/app_colors.dart';
+
 class NurimAddressCard extends StatelessWidget {
   final String title;
   final String address;
@@ -12,11 +14,6 @@ class NurimAddressCard extends StatelessWidget {
     required this.address,
     this.onPressed,
   });
-
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _textStrongColor = Color(0xFF30343C);
-  static const Color _textSecondaryColor = Color(0xFF87909E);
-  static const Color _placeholderColor = Color(0xFFA2ADBE);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +27,7 @@ class NurimAddressCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: _borderColor, width: 1.0),
+          border: Border.all(color: AppColors.border, width: 1.0),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,7 +52,7 @@ class NurimAddressCard extends StatelessWidget {
                           fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: _textStrongColor,
+                          color: AppColors.textStrong,
                           height: 1.4,
                         ),
                       ),
@@ -69,7 +66,7 @@ class NurimAddressCard extends StatelessWidget {
                       fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: hasAddress ? _textSecondaryColor : _placeholderColor,
+                      color: hasAddress ? AppColors.textSecondary : AppColors.placeholder,
                       height: 1.4,
                     ),
                   ),
@@ -80,7 +77,7 @@ class NurimAddressCard extends StatelessWidget {
             // Right chevron icon
             const Icon(
               Icons.chevron_right,
-              color: _textSecondaryColor,
+              color: AppColors.textSecondary,
               size: 20,
             ),
           ],

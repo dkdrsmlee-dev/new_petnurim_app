@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class NurimDatePickerBottomSheet extends StatefulWidget {
   final String title;
   final DateTime initialDate;
@@ -60,10 +62,6 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
   late List<int> _years;
   final List<int> _months = List<int>.generate(12, (i) => i + 1);
 
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _textStrongColor = Color(0xFF30343C);
-
   @override
   void initState() {
     super.initState();
@@ -104,18 +102,18 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                       fontFamily: 'Pretendard',
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: _textStrongColor,
+                      color: AppColors.textStrong,
                     ),
                   ),
                 ),
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
-                  child: const Icon(Icons.close, size: 24, color: _textStrongColor),
+                  child: const Icon(Icons.close, size: 24, color: AppColors.textStrong),
                 ),
               ],
             ),
           ),
-          const Divider(color: _borderColor),
+          const Divider(color: AppColors.border),
           // 2. CupertinoPicker 스크롤 휠 영역
           Stack(
             alignment: Alignment.center,
@@ -126,8 +124,8 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                   height: 44, // 휠 높이에 맞춰 조정한 선택 행 높이
                   decoration: const BoxDecoration(
                     border: Border(
-                      top: BorderSide(color: Color(0xFFE8EBF1), width: 1.0),
-                      bottom: BorderSide(color: Color(0xFFE8EBF1), width: 1.0),
+                      top: BorderSide(color: AppColors.borderLight, width: 1.0),
+                      bottom: BorderSide(color: AppColors.borderLight, width: 1.0),
                     ),
                   ),
                 ),
@@ -213,7 +211,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                 widget.onConfirm(DateTime(_tempYear, _tempMonth, _tempDay));
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: _primaryColor,
+                backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 minimumSize: const Size.fromHeight(56),
                 shape: RoundedRectangleBorder(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/app_routes.dart';
+import '../theme/app_colors.dart';
 
 class MainHeader extends StatelessWidget implements PreferredSizeWidget {
   const MainHeader({super.key, this.onTapProfile});
@@ -54,7 +55,7 @@ class MainHeader extends StatelessWidget implements PreferredSizeWidget {
                             width: 6,
                             height: 6,
                             decoration: const BoxDecoration(
-                              color: Color(0xFFFF5F5F), // Red badge color from Figma
+                              color: AppColors.errorSoft, // Red badge color from Figma
                               shape: BoxShape.circle,
                             ),
                           ),

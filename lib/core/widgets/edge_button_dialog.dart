@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class EdgeButtonDialog extends StatelessWidget {
   const EdgeButtonDialog({
     super.key,
@@ -58,7 +60,7 @@ class EdgeButtonDialog extends StatelessWidget {
                       fontFamily: 'Pretendard',
                       fontSize: 20,
                       fontWeight: FontWeight.w600, // SemiBold
-                      color: Color(0xFF30343C),
+                      color: AppColors.textStrong,
                       height: 1.4,
                       letterSpacing: -0.66,
                     ),
@@ -72,7 +74,7 @@ class EdgeButtonDialog extends StatelessWidget {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w500, // Medium
-                        color: Color(0xFF87909E),
+                        color: AppColors.textSecondary,
                         height: 1.5,
                       ),
                     ),
@@ -89,8 +91,8 @@ class EdgeButtonDialog extends StatelessWidget {
                       child: TextButton(
                         onPressed: onCancel ?? () => Navigator.of(context).pop(),
                         style: TextButton.styleFrom(
-                          backgroundColor: cancelBgColor ?? const Color(0xFFE8EBF1),
-                          foregroundColor: cancelTextColor ?? const Color(0xFF6C737F),
+                          backgroundColor: cancelBgColor ?? AppColors.borderLight,
+                          foregroundColor: cancelTextColor ?? AppColors.textTertiary,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero,
                           ),
@@ -101,7 +103,7 @@ class EdgeButtonDialog extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: cancelTextColor ?? const Color(0xFF6C737F),
+                            color: cancelTextColor ?? AppColors.textTertiary,
                           ),
                         ),
                       ),
@@ -116,7 +118,7 @@ class EdgeButtonDialog extends StatelessWidget {
                         onConfirm();
                       },
                       style: TextButton.styleFrom(
-                        backgroundColor: confirmBgColor ?? const Color(0xFF7F4FFF),
+                        backgroundColor: confirmBgColor ?? AppColors.primary,
                         foregroundColor: confirmTextColor ?? Colors.white,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,

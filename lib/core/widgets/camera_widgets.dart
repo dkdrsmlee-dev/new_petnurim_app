@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../theme/app_colors.dart';
 
 /// 하단 카메라 촬영 버튼 바 (촬영 전)
 class CameraControlBar extends StatelessWidget {
@@ -34,7 +35,7 @@ class CameraControlBar extends StatelessWidget {
                 color: Colors.white,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: const Color(0xFF7F4FFF),
+                  color: AppColors.primary,
                   width: 8,
                 ),
               ),
@@ -99,13 +100,13 @@ class CameraButtonBar extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border: Border.all(color: const Color(0xFFD6DBE4)),
+                  border: Border.all(color: AppColors.border),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.close, color: Color(0xFF51565F), size: 24),
+                    const Icon(Icons.close, color: AppColors.textMuted, size: 24),
                     const SizedBox(width: 6),
                     Text(
                       '취소',
@@ -113,7 +114,7 @@ class CameraButtonBar extends StatelessWidget {
                         fontFamily: 'Pretendard',
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF51565F),
+                        color: AppColors.textMuted,
                         letterSpacing: -0.66,
                       ),
                     ),
@@ -130,7 +131,7 @@ class CameraButtonBar extends StatelessWidget {
                 height: 56,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7F4FFF),
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -228,7 +229,7 @@ class CameraHistoryCard extends StatelessWidget {
               fontFamily: 'Pretendard',
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF30343C),
+              color: AppColors.textStrong,
             ),
           ),
           const SizedBox(height: 4),
@@ -238,7 +239,7 @@ class CameraHistoryCard extends StatelessWidget {
               fontFamily: 'Pretendard',
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF87909E),
+              color: AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: 20),
@@ -246,7 +247,7 @@ class CameraHistoryCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8F9FB),
+              color: AppColors.bgSoft,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -256,7 +257,7 @@ class CameraHistoryCard extends StatelessWidget {
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.calendar_today, size: 16, color: Color(0xFF87909E)),
+                        Icon(Icons.calendar_today, size: 16, color: AppColors.textSecondary),
                         SizedBox(width: 6),
                         Text(
                           '이번 달 참여',
@@ -264,7 +265,7 @@ class CameraHistoryCard extends StatelessWidget {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF51565F),
+                            color: AppColors.textMuted,
                           ),
                         ),
                       ],
@@ -275,7 +276,7 @@ class CameraHistoryCard extends StatelessWidget {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                       ),
                     ),
                   ],
@@ -286,7 +287,7 @@ class CameraHistoryCard extends StatelessWidget {
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.monetization_on, size: 16, color: Color(0xFF87909E)),
+                        Icon(Icons.monetization_on, size: 16, color: AppColors.textSecondary),
                         SizedBox(width: 6),
                         Text(
                           '누적 촬영 리워드',
@@ -294,7 +295,7 @@ class CameraHistoryCard extends StatelessWidget {
                             fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF51565F),
+                            color: AppColors.textMuted,
                           ),
                         ),
                       ],
@@ -305,7 +306,7 @@ class CameraHistoryCard extends StatelessWidget {
                         fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF30343C),
+                        color: AppColors.textStrong,
                       ),
                     ),
                   ],
@@ -364,7 +365,7 @@ class CameraListItem extends StatelessWidget {
                     fontFamily: 'Pretendard',
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF30343C),
+                    color: AppColors.textStrong,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -374,7 +375,7 @@ class CameraListItem extends StatelessWidget {
                     fontFamily: 'Pretendard',
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF87909E),
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -386,7 +387,7 @@ class CameraListItem extends StatelessWidget {
               fontFamily: 'Pretendard',
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF7F4FFF),
+              color: AppColors.primary,
             ),
           ),
         ],
@@ -440,7 +441,7 @@ class CameraRewardPopup extends StatelessWidget {
                       fontFamily: 'Pretendard',
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF30343C),
+                      color: AppColors.textStrong,
                       letterSpacing: -0.66,
                       height: 1.4,
                     ),
@@ -451,7 +452,7 @@ class CameraRewardPopup extends StatelessWidget {
                       fontFamily: 'Pretendard',
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF30343C),
+                      color: AppColors.textStrong,
                       letterSpacing: -0.66,
                       height: 1.4,
                     ),
@@ -467,7 +468,7 @@ class CameraRewardPopup extends StatelessWidget {
                     child: Container(
                       height: 56,
                       decoration: const BoxDecoration(
-                        color: Color(0xFFE8EBF1),
+                        color: AppColors.borderLight,
                         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16)),
                       ),
                       alignment: Alignment.center,
@@ -477,7 +478,7 @@ class CameraRewardPopup extends StatelessWidget {
                           fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF6C737F),
+                          color: AppColors.textTertiary,
                           letterSpacing: -0.66,
                         ),
                       ),
@@ -490,7 +491,7 @@ class CameraRewardPopup extends StatelessWidget {
                     child: Container(
                       height: 56,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF7F4FFF),
+                        color: AppColors.primary,
                         borderRadius: BorderRadius.only(bottomRight: Radius.circular(16)),
                       ),
                       alignment: Alignment.center,

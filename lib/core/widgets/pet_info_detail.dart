@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../theme/app_colors.dart';
 import 'pet_card.dart';
 
 class NurimPetInfoDetail extends StatelessWidget {
@@ -20,12 +21,6 @@ class NurimPetInfoDetail extends StatelessWidget {
   final bool showActionButton;
   final EdgeInsetsGeometry padding;
 
-  static const Color _titleColor = Color(0xFF51565F); // var(--text-color/primary)
-  static const Color _mutedColor = Color(0xFF909AA9); // var(--color/gray/70)
-  static const Color _dotColor = Color(0xFFB4C0D3); // var(--color/gray/50)
-  static const Color _borderColor = Color(0xFFD6DBE4); // var(--line/default)
-  static const Color _badgeColor = Color(0xFFF4C21B);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -41,7 +36,7 @@ class NurimPetInfoDetail extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: const Color(0xFFF0F2F5),
-              border: Border.all(color: _borderColor, width: 1),
+              border: Border.all(color: AppColors.border, width: 1),
             ),
             child: pet.imageProvider != null
                 ? Image(
@@ -115,7 +110,7 @@ class NurimPetInfoDetail extends StatelessWidget {
                           fontWeight: FontWeight.w600, // SemiBold
                           height: 1.4,
                           letterSpacing: -0.66,
-                          color: _titleColor,
+                          color: AppColors.textMuted,
                         ),
                       ),
                     ),
@@ -123,7 +118,7 @@ class NurimPetInfoDetail extends StatelessWidget {
                       const SizedBox(width: 4),
                       const Icon(
                         Icons.star_rounded,
-                        color: _badgeColor,
+                        color: AppColors.gold,
                         size: 24,
                       ),
                     ],
@@ -143,7 +138,7 @@ class NurimPetInfoDetail extends StatelessWidget {
                           fontWeight: FontWeight.w500, // Medium
                           height: 1.4,
                           letterSpacing: -0.66,
-                          color: _mutedColor,
+                          color: AppColors.textDisabled,
                         ),
                       ),
                     ],
@@ -161,7 +156,7 @@ class NurimPetInfoDetail extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           height: 1.4,
                           letterSpacing: -0.66,
-                          color: _mutedColor,
+                          color: AppColors.textDisabled,
                         ),
                       ),
                     ],
@@ -179,7 +174,7 @@ class NurimPetInfoDetail extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           height: 1.4,
                           letterSpacing: -0.66,
-                          color: _mutedColor,
+                          color: AppColors.textDisabled,
                         ),
                       ),
                     ],
@@ -194,7 +189,7 @@ class NurimPetInfoDetail extends StatelessWidget {
             OutlinedButton(
               onPressed: onActionPressed,
               style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: _borderColor, width: 1),
+                side: const BorderSide(color: AppColors.border, width: 1),
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -208,7 +203,7 @@ class NurimPetInfoDetail extends StatelessWidget {
                   fontFamily: 'Pretendard',
                   fontSize: 14,
                   fontWeight: FontWeight.w600, // SemiBold
-                  color: Color(0xFF51565F), // var(--color/gray/100)
+                  color: AppColors.textMuted, // var(--color/gray/100)
                 ),
               ),
             ),
@@ -229,7 +224,7 @@ class _DotSeparator extends StatelessWidget {
       height: 3,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        color: NurimPetInfoDetail._dotColor,
+        color: AppColors.dot,
       ),
     );
   }

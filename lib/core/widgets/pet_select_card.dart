@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 /// 펫 선택 화면에서 사용하는 카드 위젯 (Figma 624-8533)
 ///
 /// 카드를 탭하면 [onTap]이 호출되며,
@@ -34,11 +36,6 @@ class PetSelectCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onHistoryTap;
 
-  static const Color _cardBg = Color(0xFFFFFFFF);
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _nameColor = Color(0xFF51565F);
-  static const Color _mutedColor = Color(0xFF909AA9);
-  static const Color _historyColor = Color(0xFF87909E);
   static const Color _favBadgeBg = Color(0xFFF0C119);
 
   @override
@@ -52,9 +49,9 @@ class PetSelectCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: _cardBg,
+            color: AppColors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _borderColor, width: 1),
+            border: Border.all(color: AppColors.border, width: 1),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -89,7 +86,7 @@ class PetSelectCard extends StatelessWidget {
                                     fontWeight: FontWeight.w600,
                                     height: 1.4,
                                     letterSpacing: -0.66,
-                                    color: _nameColor,
+                                    color: AppColors.textMuted,
                                   ),
                                 ),
                               ),
@@ -131,14 +128,14 @@ class PetSelectCard extends StatelessWidget {
                                     fontWeight: FontWeight.w500,
                                     height: 1.4,
                                     letterSpacing: -0.66,
-                                    color: _historyColor,
+                                    color: AppColors.textSecondary,
                                   ),
                                 ),
                                 const SizedBox(width: 2),
                                 const Icon(
                                   Icons.arrow_forward_ios_rounded,
                                   size: 12,
-                                  color: _mutedColor,
+                                  color: AppColors.textDisabled,
                                 ),
                               ],
                             ),
@@ -203,7 +200,7 @@ class _InfoRow extends StatelessWidget {
     fontWeight: FontWeight.w500,
     height: 1.4,
     letterSpacing: -0.66,
-    color: Color(0xFF909AA9),
+    color: AppColors.textDisabled,
   );
 
   @override
@@ -229,7 +226,7 @@ class _InfoRow extends StatelessWidget {
             width: 3,
             height: 3,
             decoration: const BoxDecoration(
-              color: Color(0xFFB4C0D3),
+              color: AppColors.dot,
               shape: BoxShape.circle,
             ),
           ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class NurimInfoRow extends StatelessWidget {
   const NurimInfoRow({
     super.key,
@@ -127,11 +129,6 @@ class NurimInfoRow extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   static const Color _backgroundColor = Colors.white;
-  static const Color _dividerColor = Color(0xFFE8EBF1);
-  static const Color _titleColor = Color(0xFF30343C);
-  static const Color _infoColor = Color(0xFF30343C);
-  static const Color _subColor = Color(0xFF87909E);
-  static const Color _disabledColor = Color(0xFFA2ADBE);
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +151,7 @@ class NurimInfoRow extends StatelessWidget {
           padding: padding,
           decoration: BoxDecoration(
             border: showDivider
-                ? const Border(bottom: BorderSide(color: _dividerColor))
+                ? const Border(bottom: BorderSide(color: AppColors.borderLight))
                 : null,
           ),
           child: Row(
@@ -189,7 +186,7 @@ class NurimInfoRow extends StatelessWidget {
                 Icon(
                   Icons.chevron_right,
                   size: 20,
-                  color: enabled ? _subColor : _disabledColor,
+                  color: enabled ? AppColors.textSecondary : AppColors.placeholder,
                 ),
               ],
             ],
@@ -238,8 +235,8 @@ class _InfoTextGroup extends StatelessWidget {
                   height: 1.5,
                   letterSpacing: -0.66,
                   color: enabled
-                      ? NurimInfoRow._titleColor
-                      : NurimInfoRow._disabledColor,
+                      ? AppColors.textStrong
+                      : AppColors.placeholder,
                 ),
               ),
             ),
@@ -258,8 +255,8 @@ class _InfoTextGroup extends StatelessWidget {
                     height: 1.5,
                     letterSpacing: -0.66,
                     color: enabled
-                        ? NurimInfoRow._infoColor
-                        : NurimInfoRow._disabledColor,
+                        ? AppColors.textStrong
+                        : AppColors.placeholder,
                   ),
                 ),
               ),
@@ -279,8 +276,8 @@ class _InfoTextGroup extends StatelessWidget {
               height: 1.5,
               letterSpacing: -0.66,
               color: enabled
-                  ? NurimInfoRow._subColor
-                  : NurimInfoRow._disabledColor,
+                  ? AppColors.textSecondary
+                  : AppColors.placeholder,
             ),
           ),
         ],
@@ -357,8 +354,8 @@ class _InfoRowTextButton extends StatelessWidget {
             height: 1.5,
             letterSpacing: -0.66,
             color: enabled
-                ? NurimInfoRow._subColor
-                : NurimInfoRow._disabledColor,
+                ? AppColors.textSecondary
+                : AppColors.placeholder,
           ),
         ),
       ),
@@ -393,7 +390,7 @@ class _InfoRowPillButton extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
-            color: enabled ? const Color(0xFFD6DBE4) : const Color(0xFFE8EBF1),
+            color: enabled ? AppColors.border : AppColors.borderLight,
           ),
         ),
         child: Text(
@@ -407,8 +404,8 @@ class _InfoRowPillButton extends StatelessWidget {
             height: 1.5,
             letterSpacing: -0.66,
             color: enabled
-                ? NurimInfoRow._titleColor
-                : NurimInfoRow._disabledColor,
+                ? AppColors.textStrong
+                : AppColors.placeholder,
           ),
         ),
       ),
@@ -438,9 +435,9 @@ class _InfoRowSwitch extends StatelessWidget {
           value: value,
           onChanged: enabled ? onChanged : null,
           activeThumbColor: Colors.white,
-          activeTrackColor: const Color(0xFF7F4FFF),
+          activeTrackColor: AppColors.primary,
           inactiveThumbColor: Colors.white,
-          inactiveTrackColor: const Color(0xFFD6DBE4),
+          inactiveTrackColor: AppColors.border,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),

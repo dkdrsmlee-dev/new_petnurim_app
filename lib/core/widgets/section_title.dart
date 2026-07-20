@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class NurimSectionTitle extends StatelessWidget {
   const NurimSectionTitle({
     super.key,
@@ -15,9 +17,6 @@ class NurimSectionTitle extends StatelessWidget {
   final VoidCallback? onActionPressed;
   final bool showAction;
   final EdgeInsetsGeometry padding;
-
-  static const Color _titleColor = Color(0xFF30343C);
-  static const Color _actionColor = Color(0xFF87909E);
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +40,7 @@ class NurimSectionTitle extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   height: 1.375,
                   letterSpacing: -0.66,
-                  color: _titleColor,
+                  color: AppColors.textStrong,
                 ),
               ),
             ),
@@ -80,14 +79,14 @@ class _SectionTitleAction extends StatelessWidget {
             fontWeight: FontWeight.w500,
             height: 1.5,
             letterSpacing: -0.66,
-            color: NurimSectionTitle._actionColor,
+            color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(width: 2),
         const Icon(
           Icons.chevron_right,
           size: 14,
-          color: NurimSectionTitle._actionColor,
+          color: AppColors.textSecondary,
         ),
       ],
     );

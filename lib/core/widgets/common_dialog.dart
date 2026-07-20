@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class CommonDialog extends StatelessWidget {
   const CommonDialog({
     super.key,
@@ -39,7 +41,7 @@ class CommonDialog extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600, // SemiBold
-                color: Color(0xFF30343C),
+                color: AppColors.textStrong,
                 height: 1.4,
               ),
             ),
@@ -50,7 +52,7 @@ class CommonDialog extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500, // Medium
-                color: Color(0xFF87909E),
+                color: AppColors.textSecondary,
                 height: 1.5,
               ),
             ),
@@ -63,7 +65,7 @@ class CommonDialog extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: onCancel ?? () => Navigator.of(context).pop(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE8EBF1),
+                        backgroundColor: AppColors.borderLight,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -74,7 +76,7 @@ class CommonDialog extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF6C737F),
+                          color: AppColors.textTertiary,
                         ),
                       ),
                     ),
@@ -90,7 +92,7 @@ class CommonDialog extends StatelessWidget {
                         onConfirm();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF7F4FFF),
+                        backgroundColor: AppColors.primary,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

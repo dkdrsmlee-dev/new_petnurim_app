@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../theme/app_colors.dart';
 class NurimPetCardData {
   const NurimPetCardData({
     required this.name,
@@ -53,16 +54,6 @@ class NurimPetCard extends StatelessWidget {
   final VoidCallback? onSelectionChanged;
 
   static const Color _backgroundColor = Colors.white;
-  static const Color _borderColor = Color(0xFFD6DBE4);
-  static const Color _titleColor = Color(0xFF30343C);
-  static const Color _nameColor = Color(0xFF51565F);
-  static const Color _rewardColor = Color(0xFF30343C);
-  static const Color _mutedColor = Color(0xFF909AA9);
-  static const Color _softBackgroundColor = Color(0xFFF8F9FB);
-  static const Color _dividerColor = Color(0xFFE8EBF1);
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _primarySoftColor = Color(0xFFC7B3FF);
-  static const Color _primaryBadgeColor = Color(0xFFF4C21B);
 
   Widget _buildDescription() {
     final list = pet.descriptionList;
@@ -82,7 +73,7 @@ class NurimPetCard extends StatelessWidget {
               fontWeight: FontWeight.w500,
               height: 1.4,
               letterSpacing: -0.66,
-              color: Color(0xFF909AA9),
+              color: AppColors.textDisabled,
             ),
           ),
         ),
@@ -111,7 +102,7 @@ class NurimPetCard extends StatelessWidget {
         color: _backgroundColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? _primaryColor : _borderColor,
+          color: isSelected ? AppColors.primary : AppColors.border,
           width: isSelected ? 1.5 : 1.0,
         ),
       ),
@@ -129,7 +120,7 @@ class NurimPetCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: Colors.white,
                   border: Border.all(
-                    color: isSelected ? _primaryColor : const Color(0xFFD6DBE4),
+                    color: isSelected ? AppColors.primary : AppColors.border,
                     width: 1.05,
                   ),
                 ),
@@ -140,7 +131,7 @@ class NurimPetCard extends StatelessWidget {
                           height: 11,
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: _primaryColor,
+                            color: AppColors.primary,
                           ),
                         ),
                       )
@@ -179,7 +170,7 @@ class NurimPetCard extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                       height: 1.4,
                                       letterSpacing: -0.66,
-                                      color: _nameColor,
+                                      color: AppColors.textMuted,
                                     ),
                                   ),
                                 ),
@@ -198,7 +189,7 @@ class NurimPetCard extends StatelessWidget {
                       const Icon(
                         Icons.arrow_forward_ios,
                         size: 16,
-                        color: Color(0xFF909AA9),
+                        color: AppColors.textDisabled,
                       ),
                     ],
                   ),
@@ -208,7 +199,7 @@ class NurimPetCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: _softBackgroundColor,
+                      color: AppColors.bgSoft,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
@@ -218,7 +209,7 @@ class NurimPetCard extends StatelessWidget {
                           children: [
                             const _CrownIcon(
                               size: 20,
-                              color: Color(0xFF87909E),
+                              color: AppColors.textSecondary,
                             ),
                             const SizedBox(width: 6),
                             const Expanded(
@@ -232,7 +223,7 @@ class NurimPetCard extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                   height: 1.4,
                                   letterSpacing: -0.66,
-                                  color: Color(0xFF87909E),
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                             ),
@@ -241,14 +232,14 @@ class NurimPetCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        const Divider(height: 1, thickness: 1, color: _dividerColor),
+                        const Divider(height: 1, thickness: 1, color: AppColors.borderLight),
                         const SizedBox(height: 12),
                         Row(
                           children: [
                             const _CoinStackIcon(
                               size: 20,
-                              color: Color(0xFF87909E),
-                              bgColor: _softBackgroundColor,
+                              color: AppColors.textSecondary,
+                              bgColor: AppColors.bgSoft,
                             ),
                             const SizedBox(width: 6),
                             const Expanded(
@@ -262,7 +253,7 @@ class NurimPetCard extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                   height: 1.4,
                                   letterSpacing: -0.66,
-                                  color: Color(0xFF87909E),
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                             ),
@@ -278,7 +269,7 @@ class NurimPetCard extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                                 height: 1.4,
                                 letterSpacing: -0.66,
-                                color: _rewardColor,
+                                color: AppColors.textStrong,
                               ),
                             ),
                           ],
@@ -363,7 +354,7 @@ class _NurimMyPetSectionState extends State<NurimMyPetSection> {
                     fontWeight: FontWeight.w500,
                     height: 1.4,
                     letterSpacing: -0.66,
-                    color: Color(0xFFA2ADBE),
+                    color: AppColors.placeholder,
                   ),
                 ),
                 SizedBox(height: 4),
@@ -375,7 +366,7 @@ class _NurimMyPetSectionState extends State<NurimMyPetSection> {
                     fontWeight: FontWeight.w500,
                     height: 1.4,
                     letterSpacing: -0.66,
-                    color: Color(0xFFA2ADBE),
+                    color: AppColors.placeholder,
                   ),
                 ),
               ],
@@ -434,7 +425,7 @@ class _DotSeparator extends StatelessWidget {
       width: 3,
       height: 3,
       decoration: const BoxDecoration(
-        color: Color(0xFFB4C0D3),
+        color: AppColors.dot,
         shape: BoxShape.circle,
       ),
     );
@@ -516,7 +507,7 @@ class _PrimaryPetBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return const CircleAvatar(
       radius: 12,
-      backgroundColor: NurimPetCard._primaryBadgeColor,
+      backgroundColor: AppColors.gold,
       child: Icon(Icons.star_rounded, size: 16, color: Colors.white),
     );
   }
@@ -538,7 +529,7 @@ class _MembershipChip extends StatelessWidget {
       padding: isNone ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: isJoinPrompt ? 6 : 8),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: isJoinPrompt ? Colors.white : const Color(0xFFF2EFFF),
+        color: isJoinPrompt ? Colors.white : AppColors.primarySurface,
         border: Border.all(color: const Color(0xFFC6BAFF)),
         borderRadius: BorderRadius.circular(100),
       ),
@@ -556,7 +547,7 @@ class _MembershipChip extends StatelessWidget {
               fontWeight: FontWeight.w600,
               height: 1.2,
               letterSpacing: -0.66,
-              color: NurimPetCard._primaryColor,
+              color: AppColors.primary,
             ),
           ),
           if (isJoinPrompt) ...[
@@ -564,7 +555,7 @@ class _MembershipChip extends StatelessWidget {
             const Icon(
               Icons.chevron_right,
               size: 16,
-              color: NurimPetCard._primaryColor,
+              color: AppColors.primary,
             ),
           ],
         ],
@@ -592,8 +583,8 @@ class _AddPetButton extends StatelessWidget {
           child: CustomPaint(
             painter: _DashedRoundedRectPainter(
               color: enabled
-                  ? NurimPetCard._borderColor
-                  : const Color(0xFFE8EBF1),
+                  ? AppColors.border
+                  : AppColors.borderLight,
             ),
             child: SizedBox(
               height: 48,
@@ -612,8 +603,8 @@ class _AddPetButton extends StatelessWidget {
                         height: 1.4,
                         letterSpacing: -0.66,
                         color: enabled
-                            ? const Color(0xFF30343C)
-                            : NurimPetCard._mutedColor,
+                            ? AppColors.textStrong
+                            : AppColors.textDisabled,
                       ),
                     ),
                     Text(
@@ -625,8 +616,8 @@ class _AddPetButton extends StatelessWidget {
                         height: 1.4,
                         letterSpacing: -0.66,
                         color: enabled
-                            ? NurimPetCard._primaryColor
-                            : NurimPetCard._mutedColor,
+                            ? AppColors.primary
+                            : AppColors.textDisabled,
                       ),
                     ),
                   ],
@@ -683,7 +674,7 @@ class _DashedRoundedRectPainter extends CustomPainter {
 }
 
 class _CrownIcon extends StatelessWidget {
-  const _CrownIcon({this.size = 20, this.color = NurimPetCard._mutedColor});
+  const _CrownIcon({this.size = 20, this.color = AppColors.textDisabled});
   final double size;
   final Color color;
 
@@ -737,8 +728,8 @@ class _CrownPainter extends CustomPainter {
 class _CoinStackIcon extends StatelessWidget {
   const _CoinStackIcon({
     this.size = 20,
-    this.color = NurimPetCard._mutedColor,
-    this.bgColor = NurimPetCard._softBackgroundColor,
+    this.color = AppColors.textDisabled,
+    this.bgColor = AppColors.bgSoft,
   });
   final double size;
   final Color color;

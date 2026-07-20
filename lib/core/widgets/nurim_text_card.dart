@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../theme/app_colors.dart';
 
 class NurimTextCard extends StatelessWidget {
   const NurimTextCard({
@@ -97,7 +98,7 @@ class NurimTextCard extends StatelessWidget {
                               fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w700, // Bold
-                              color: Color(0xFF30343C),
+                              color: AppColors.textStrong,
                               height: 1.4,
                               letterSpacing: -0.66,
                             ),
@@ -116,7 +117,7 @@ class NurimTextCard extends StatelessWidget {
                         fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w400, // Regular
-                        color: Color(0xFF6C737F),
+                        color: AppColors.textTertiary,
                         height: 1.4,
                         letterSpacing: -0.66,
                       ),
@@ -135,7 +136,7 @@ class NurimTextCard extends StatelessWidget {
                                   width: 4,
                                   height: 4,
                                   decoration: const BoxDecoration(
-                                    color: Color(0xFF6C737F),
+                                    color: AppColors.textTertiary,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
@@ -146,7 +147,7 @@ class NurimTextCard extends StatelessWidget {
                                       fontFamily: 'Pretendard',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
-                                      color: Color(0xFF6C737F),
+                                      color: AppColors.textTertiary,
                                       height: 1.4,
                                       letterSpacing: -0.66,
                                     ),
@@ -165,7 +166,7 @@ class NurimTextCard extends StatelessWidget {
                         fontFamily: 'Pretendard',
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xFFA2ADBE),
+                        color: AppColors.placeholder,
                         letterSpacing: -0.66,
                       ),
                     ),
@@ -175,7 +176,7 @@ class NurimTextCard extends StatelessWidget {
 
               // 하단 더보기 / 접기 버튼
               if (hasMore) ...[
-                Container(height: 1, color: const Color(0xFFF4F6F8)),
+                Container(height: 1, color: AppColors.bgGray),
                 InkWell(
                   onTap: onExpandToggled,
                   borderRadius: const BorderRadius.only(
@@ -193,14 +194,14 @@ class NurimTextCard extends StatelessWidget {
                             fontFamily: 'Pretendard',
                             fontSize: 13,
                             fontWeight: FontWeight.w500, // Medium
-                            color: Color(0xFF87909E),
+                            color: AppColors.textSecondary,
                             letterSpacing: -0.66,
                           ),
                         ),
                         const SizedBox(width: 4),
                         Icon(
                           isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                          color: const Color(0xFF87909E),
+                          color: AppColors.textSecondary,
                           size: 18,
                         ),
                       ],
@@ -221,7 +222,7 @@ class NurimTextCard extends StatelessWidget {
               width: 6,
               height: 6,
               decoration: const BoxDecoration(
-                color: Color(0xFFFF5F5F),
+                color: AppColors.errorSoft,
                 shape: BoxShape.circle,
               ),
             ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class NurimListButton extends StatelessWidget {
   const NurimListButton({
     super.key,
@@ -19,10 +21,6 @@ class NurimListButton extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   static const Color _backgroundColor = Colors.white;
-  static const Color _borderColor = Color(0xFFE8EBF1);
-  static const Color _textColor = Color(0xFF51565F);
-  static const Color _disabledTextColor = Color(0xFFA2ADBE);
-  static const Color _iconColor = Color(0xFF87909E);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +34,7 @@ class NurimListButton extends StatelessWidget {
           height: 56,
           padding: padding,
           decoration: const BoxDecoration(
-            border: Border(bottom: BorderSide(color: _borderColor)),
+            border: Border(bottom: BorderSide(color: AppColors.borderLight)),
           ),
           child: Row(
             children: [
@@ -52,7 +50,7 @@ class NurimListButton extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     height: 1.4,
                     letterSpacing: -0.66,
-                    color: enabled ? _textColor : _disabledTextColor,
+                    color: enabled ? AppColors.textMuted : AppColors.placeholder,
                   ),
                 ),
               ),
@@ -61,7 +59,7 @@ class NurimListButton extends StatelessWidget {
                 Icon(
                   Icons.chevron_right,
                   size: 24,
-                  color: enabled ? _iconColor : _disabledTextColor,
+                  color: enabled ? AppColors.textSecondary : AppColors.placeholder,
                 ),
               ],
             ],

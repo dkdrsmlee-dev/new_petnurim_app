@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 /// Figma `Page_header` 컴포넌트 스펙 기반의 헤더 위젯.
 ///
@@ -37,7 +38,7 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
         border: showDivider
             ? const Border(
                 bottom: BorderSide(
-                  color: Color(0xFFD6DBE4), // Figma line/default: #D6DBE4
+                  color: AppColors.border, // Figma line/default: #D6DBE4
                   width: 1.0,
                 ),
               )
@@ -53,7 +54,7 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
             fontWeight: FontWeight.w700, // Bold (700)
             height: 1.4,
             letterSpacing: -0.54, // Figma tracking: -0.54px
-            color: Color(0xFF30343C), // strong text color
+            color: AppColors.textStrong, // strong text color
           ),
         ),
         centerTitle: true,
@@ -67,7 +68,7 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
                 icon: const Icon(
                   Icons.arrow_back,
                   size: 24,
-                  color: Color(0xFF30343C),
+                  color: AppColors.textStrong,
                 ),
               )
             : null,

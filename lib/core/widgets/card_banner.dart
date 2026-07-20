@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class NurimCardBanner extends StatelessWidget {
   const NurimCardBanner({
     super.key,
@@ -29,14 +31,14 @@ class NurimCardBanner extends StatelessWidget {
   final Color? pointBgColor;
 
   static const Color _backgroundColor = Colors.white;
-  static const Color _borderColor = Color(0xFFF4F6F8);
-  static const Color _titleColor = Color(0xFF30343C);
-  static const Color _subtitleColor = Color(0xFF87909E);
+  static const Color _borderColor = AppColors.bgGray;
+  static const Color _titleColor = AppColors.textStrong;
+  static const Color _subtitleColor = AppColors.textSecondary;
   static const Color _pointTextColor = Color(0xFFC0A858);
   static const Color _pointBgColor = Color(0xFFFFFAE0);
-  static const Color _statusBarBgColor = Color(0xFFF8F9FB);
-  static const Color _statusTextColor = Color(0xFF51565F);
-  static const Color _dayTextColor = Color(0xFF30343C);
+  static const Color _statusBarBgColor = AppColors.bgSoft;
+  static const Color _statusTextColor = AppColors.textMuted;
+  static const Color _dayTextColor = AppColors.textStrong;
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +158,7 @@ class NurimCardBanner extends StatelessWidget {
                       child: bannerIcon ??
                           const Icon(
                             Icons.local_fire_department,
-                            color: Color(0xFFFF5F5F),
+                            color: AppColors.errorSoft,
                             size: 20,
                           ),
                     ),
@@ -234,13 +236,13 @@ class NurimCardBannerSmall extends StatelessWidget {
   final double height;
 
   static const Color _backgroundColor = Colors.white;
-  static const Color _borderColor = Color(0xFFF4F6F8);
-  static const Color _titleColor = Color(0xFF30343C);
-  static const Color _pointBadgeBorderColor = Color(0xFFD6DBE4);
-  static const Color _pointTextColor = Color(0xFF6C737F);
-  static const Color _statusBarBgColor = Color(0xFFF4F6F8);
-  static const Color _statusTextColor = Color(0xFF87909E);
-  static const Color _dayTextColor = Color(0xFF30343C);
+  static const Color _borderColor = AppColors.bgGray;
+  static const Color _titleColor = AppColors.textStrong;
+  static const Color _pointBadgeBorderColor = AppColors.border;
+  static const Color _pointTextColor = AppColors.textTertiary;
+  static const Color _statusBarBgColor = AppColors.bgGray;
+  static const Color _statusTextColor = AppColors.textSecondary;
+  static const Color _dayTextColor = AppColors.textStrong;
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class NurimMyInfoCard extends StatelessWidget {
   const NurimMyInfoCard({
     super.key,
@@ -19,10 +21,7 @@ class NurimMyInfoCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   static const Color _backgroundColor = Colors.white;
-  static const Color _borderColor = Color(0xFFE8EBF1);
-  static const Color _titleColor = Color(0xFF30343C);
   static const Color _bodyColor = Color(0xFF5B6472);
-  static const Color _disabledColor = Color(0xFFA2ADBE);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,7 @@ class NurimMyInfoCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: _backgroundColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: _borderColor),
+          border: Border.all(color: AppColors.borderLight),
         ),
         child: Row(
           children: [
@@ -56,7 +55,7 @@ class NurimMyInfoCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       height: 1.5,
                       letterSpacing: -0.66,
-                      color: enabled ? _titleColor : _disabledColor,
+                      color: enabled ? AppColors.textStrong : AppColors.placeholder,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -70,7 +69,7 @@ class NurimMyInfoCard extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                       height: 1.5,
                       letterSpacing: -0.66,
-                      color: enabled ? _bodyColor : _disabledColor,
+                      color: enabled ? _bodyColor : AppColors.placeholder,
                     ),
                   ),
                 ],
@@ -116,7 +115,7 @@ class _MyInfoActionButton extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
-            color: enabled ? const Color(0xFFD6DBE4) : const Color(0xFFE8EBF1),
+            color: enabled ? AppColors.border : AppColors.borderLight,
           ),
         ),
         child: Text(
@@ -130,8 +129,8 @@ class _MyInfoActionButton extends StatelessWidget {
             height: 1.5,
             letterSpacing: -0.66,
             color: enabled
-                ? NurimMyInfoCard._titleColor
-                : NurimMyInfoCard._disabledColor,
+                ? AppColors.textStrong
+                : AppColors.placeholder,
           ),
         ),
       ),

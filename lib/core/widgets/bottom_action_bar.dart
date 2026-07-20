@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 class NurimBottomActionBar extends StatelessWidget {
   const NurimBottomActionBar({
     super.key,
@@ -21,12 +23,6 @@ class NurimBottomActionBar extends StatelessWidget {
   final bool secondaryEnabled;
   final bool isLoading;
   final EdgeInsetsGeometry padding;
-
-  static const Color _primaryColor = Color(0xFF7F4FFF);
-  static const Color _disabledBackgroundColor = Color(0xFFE8EBF1);
-  static const Color _disabledForegroundColor = Color(0xFFA2ADBE);
-  static const Color _secondaryBorderColor = Color(0xFFD6DBE4);
-  static const Color _secondaryForegroundColor = Color(0xFF51565F);
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +66,10 @@ class _ActionButton extends StatelessWidget {
     required this.enabled,
     required this.onPressed,
     this.loading = false,
-  }) : backgroundColor = NurimBottomActionBar._primaryColor,
+  }) : backgroundColor = AppColors.primary,
        foregroundColor = Colors.white,
-       disabledBackgroundColor = NurimBottomActionBar._disabledBackgroundColor,
-       disabledForegroundColor = NurimBottomActionBar._disabledForegroundColor,
+       disabledBackgroundColor = AppColors.borderLight,
+       disabledForegroundColor = AppColors.placeholder,
        borderSide = BorderSide.none;
 
   const _ActionButton.secondary({
@@ -82,11 +78,11 @@ class _ActionButton extends StatelessWidget {
     required this.onPressed,
   }) : loading = false,
        backgroundColor = Colors.white,
-       foregroundColor = NurimBottomActionBar._secondaryForegroundColor,
+       foregroundColor = AppColors.textMuted,
        disabledBackgroundColor = Colors.white,
-       disabledForegroundColor = NurimBottomActionBar._disabledForegroundColor,
+       disabledForegroundColor = AppColors.placeholder,
        borderSide = const BorderSide(
-         color: NurimBottomActionBar._secondaryBorderColor,
+         color: AppColors.border,
        );
 
   final String label;
