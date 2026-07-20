@@ -50,6 +50,17 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
   bool _isConfirmButtonEnabled = false;
   bool _isSubmitting = false;
 
+  // 최초 로드값 스냅샷 (변경 감지 기준)
+  String _initialName = '';
+  int? _initialBreedId;
+  int? _initialAge;
+  DateTime? _initialDate;
+  String? _initialGender;
+  bool? _initialNeutered;
+  String _initialWeight = '';
+  DateTime? _initialWeightDate;
+  bool _initialIsPrimary = false;
+
   static const Color _primaryColor = Color(0xFF7F4FFF);
   static const Color _primaryStrongColor = Color(0xFF7025FF);
   static const Color _borderColor = Color(0xFFD6DBE4);
@@ -99,6 +110,17 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
             _selectedWeightDate = DateTime.tryParse(pet.weightMeasureDt);
           }
           _isPrimary = pet.representYn == 'Y';
+
+          // 변경 감지 기준값 스냅샷 저장
+          _initialName = _nameController.text.trim();
+          _initialBreedId = _selectedBreedId;
+          _initialAge = _selectedAge;
+          _initialDate = _selectedDate;
+          _initialGender = _selectedGender;
+          _initialNeutered = _selectedNeutered;
+          _initialWeight = _weightController.text.trim();
+          _initialWeightDate = _selectedWeightDate;
+          _initialIsPrimary = _isPrimary;
 
           _isLoading = false;
         });
@@ -421,6 +443,28 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     }
   }
 
+  bool _hasChanges() {
+    if (_profileImagePath != null) return true; // 사진 새로 선택
+    if (_nameController.text.trim() != _initialName) return true;
+    if (_selectedBreedId != _initialBreedId) return true;
+    if (_selectedAge != _initialAge) return true;
+    if (_selectedDate != _initialDate) return true;
+    if (_selectedGender != _initialGender) return true;
+    if (_selectedNeutered != _initialNeutered) return true;
+    if (_weightController.text.trim() != _initialWeight) return true;
+    if (_selectedWeightDate != _initialWeightDate) return true;
+    if (_isPrimary != _initialIsPrimary) return true;
+    return false;
+  }
+
+  void _handleBackPressed() {
+    if (_hasChanges()) {
+      _showCancelDialog();
+    } else {
+      context.pop();
+    }
+  }
+
   void _showCancelDialog() {
     showDialog(
       context: context,
@@ -485,7 +529,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
       appBar: NurimPageHeader(
         title: '마이 펫 관리',
         showDivider: false,
-        onBackPressed: _showCancelDialog,
+        onBackPressed: _handleBackPressed,
       ),
       body: SafeArea(
         child: Column(
