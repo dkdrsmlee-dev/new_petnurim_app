@@ -11,7 +11,7 @@ import 'package:new_petnurim_app/features/signup/domain/signup_profile.dart';
 import 'package:new_petnurim_app/features/signup/domain/signup_terms.dart';
 
 void main() {
-  test('활성 약관 목록을 카테고리 그룹 응답에서 정렬해 반환한다', () async {
+  test('활성 약관 목록을 target 응답에서 sortNo 기준으로 정렬해 반환한다', () async {
     final repository = BackendSignupRepository(
       apiClient: ApiClient(
         config: const AppConfig(apiBaseUrl: 'https://api.petnurim.test'),
@@ -19,32 +19,29 @@ void main() {
           expect(request.method, 'GET');
           expect(
             request.url.toString(),
-            'https://api.petnurim.test/api/v1/terms?categories=SIGNUP%2CSECURITY',
+            'https://api.petnurim.test/api/v1/terms?target=SIGNUP',
           );
 
+          // 신규 약관 조회 API는 target 기준 배열(data)을 반환한다.
           return http.Response(
             jsonEncode({
               'code': 'COMMON.SUCCESS',
-              'data': {
-                'SECURITY': [
-                  {
-                    'termsId': 'security-1',
-                    'termsNm': 'Privacy',
-                    'termsCategory': 'SECURITY',
-                    'requiredType': 'REQUIRED',
-                    'sortNo': 2,
-                  },
-                ],
-                'SIGNUP': [
-                  {
-                    'termsId': 'signup-1',
-                    'termsNm': 'Service',
-                    'termsCategory': 'SIGNUP',
-                    'requiredType': 'REQUIRED',
-                    'sortNo': 1,
-                  },
-                ],
-              },
+              'data': [
+                {
+                  'termsMasterId': 'security-1',
+                  'termsName': 'Privacy',
+                  'termsCategoryCode': 'SECURITY',
+                  'requiredTypeCode': 'REQUIRED',
+                  'sortNo': 2,
+                },
+                {
+                  'termsMasterId': 'signup-1',
+                  'termsName': 'Service',
+                  'termsCategoryCode': 'SIGNUP',
+                  'requiredTypeCode': 'REQUIRED',
+                  'sortNo': 1,
+                },
+              ],
             }),
             200,
           );
@@ -53,11 +50,10 @@ void main() {
       tokenStorage: InMemoryTokenStorage(),
     );
 
-    final terms = await repository.fetchActiveTerms(
-      categories: const [TermsCategory.signup, TermsCategory.security],
-    );
+    final terms = await repository.fetchActiveTerms(target: 'SIGNUP');
 
     expect(terms.map((term) => term.termsId), ['signup-1', 'security-1']);
+    expect(terms.first.termsName, 'Service');
     expect(terms.first.isRequired, isTrue);
   });
 

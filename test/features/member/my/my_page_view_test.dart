@@ -8,7 +8,9 @@ import 'package:new_petnurim_app/features/member/data/member_repository.dart';
 import 'package:new_petnurim_app/features/member/domain/member_info.dart';
 import 'package:new_petnurim_app/features/member/domain/member_my_page.dart';
 import 'package:new_petnurim_app/features/member/domain/member_withdrawal.dart';
+import 'package:new_petnurim_app/features/member/domain/pet_models.dart';
 import 'package:new_petnurim_app/features/member/my/my_page_view.dart';
+import 'package:new_petnurim_app/features/member/my/my_pet_list_screen.dart';
 import 'package:new_petnurim_app/core/widgets/section_title.dart';
 import 'package:new_petnurim_app/core/widgets/pet_card.dart';
 import 'package:new_petnurim_app/core/widgets/membership_card.dart';
@@ -48,19 +50,45 @@ class _FakeMemberRepository implements MemberRepository {
   }
 
   @override
-  Future<void> updateMemberInfo({
-    required String name,
-    required String email,
-    required String address,
-  }) async {}
-
-  @override
   Future<void> updateMemberAddress({
     required String zipCode,
     required String address1,
     required String address2,
   }) async {}
 }
+
+List<MyPetListItem> _fakePets() => [
+  MyPetListItem(
+    myPetId: '1',
+    petTypeCode: 'DOG',
+    petBreedId: '1',
+    breedNameKor: '푸들',
+    petName: '콩두리',
+    petAge: 3,
+    familyDt: '2024-01-01',
+    genderCode: 'MALE',
+    neuteredYn: 'Y',
+    weightKg: 5.0,
+    weightMeasureDt: '2024-01-01',
+    representYn: 'Y',
+    statusCode: 'ACTIVE',
+  ),
+  MyPetListItem(
+    myPetId: '2',
+    petTypeCode: 'DOG',
+    petBreedId: '2',
+    breedNameKor: '말티즈',
+    petName: '초코',
+    petAge: 2,
+    familyDt: '2024-02-01',
+    genderCode: 'FEMALE',
+    neuteredYn: 'N',
+    weightKg: 3.5,
+    weightMeasureDt: '2024-02-01',
+    representYn: 'N',
+    statusCode: 'ACTIVE',
+  ),
+];
 
 void main() {
   setUpAll(() {
@@ -83,6 +111,7 @@ void main() {
           body: ProviderScope(
             overrides: [
               memberRepositoryProvider.overrideWithValue(_FakeMemberRepository()),
+              myPetsListProvider.overrideWith((ref) async => _fakePets()),
             ],
             child: MyPageView(
               isLoggingOut: false,
