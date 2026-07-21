@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/widgets/authed_file_image.dart';
+import '../../../core/widgets/age_picker_sheet.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
@@ -190,78 +191,14 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
   }
 
   void _showAgeBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Text(
-                        '나이',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textStrong,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: const Icon(Icons.close, size: 24, color: AppColors.textStrong),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(color: AppColors.border),
-              Flexible(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: 30,
-                  itemBuilder: (context, index) {
-                    final ageVal = index + 1;
-                    final isSelected = _selectedAge == ageVal;
-                    return ListTile(
-                      title: Text(
-                        '$ageVal살',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 16,
-                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                          color: isSelected ? AppColors.primary : AppColors.textStrong,
-                        ),
-                      ),
-                      trailing: isSelected
-                          ? const Icon(Icons.check, color: AppColors.primary, size: 20)
-                          : null,
-                      onTap: () {
-                        setState(() {
-                          _selectedAge = ageVal;
-                        });
-                        _validateForm();
-                        Navigator.of(context).pop();
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
+    showAgePickerSheet(
+      context,
+      selectedAge: _selectedAge,
+      onSelected: (age) {
+        setState(() {
+          _selectedAge = age;
+        });
+        _validateForm();
       },
     );
   }
