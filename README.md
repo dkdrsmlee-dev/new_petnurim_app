@@ -38,6 +38,15 @@
   - **공통 반려동물 요약 카드 (`CameraHistoryCard`)**: 펫의 대표 즐겨찾기 상태, 기본 정보(이름, 품종, 나이, 성별) 및 획득 리워드를 깔끔하게 표현하는 카드 위젯.
   - **디자인 디테일 / 커스텀 SVG 아이콘**: 피그마 원본 벡터에 최적화된 굴뚝 모양의 홈 버튼(`_homeIconSvg`), 긴 화살표 모양의 뒤로가기 버튼(`_backIconSvg`), 즐겨찾기 별 배지, 출석/기록 달력 체크, 3D 누적 리워드 코인 아이콘 등을 커스텀 SVG로 정밀 적용.
 
+## 코드 구조 개선 (리팩토링)
+
+동작 변화 없이(시각/기능 동일) 중복을 제거하고 단일 출처로 통합하는 리팩토링을 진행했습니다. 각 항목은 정적 분석·단위 테스트·Android 실단말(`SM G991N`) 3중 검증을 거쳤습니다.
+
+- **색상 디자인 토큰 (`AppColors`)**: 앱 전역에 하드코딩돼 있던 `Color(0xFF..)` 리터럴과 화면별 로컬 색상 상수를 `lib/core/theme/app_colors.dart`의 의미 기반 토큰(`primary`/`textStrong`/`border`/`bgGray` 등)으로 일원화. `core/widgets` 및 feature 화면 60여 개 파일에 적용(값 hex 1:1 유지 → 시각 변화 없음)하여 색상 변경 시 토큰 파일 한 곳만 수정하면 전역 반영. 카카오/네이버 등 브랜드색·1회성 색은 리터럴로 유지.
+- **JSON 파싱 유틸 (`JsonReader`)**: 여러 도메인 모델과 `ApiClient`에 중복 구현돼 있던 문자열/정수/불리언 파싱 규칙을 `lib/core/utils/json_reader.dart`로 통합(`coerceString`/`stringFrom`/`plainString`/`asInt`/`coerceBool` 등). 각 모델은 고유 기본값(''/fallback 등)만 남긴 얇은 래퍼로 위임하여 동작을 100% 보존했고, 직접 검증하는 단위 테스트(`test/core/utils/json_reader_test.dart`)를 추가.
+- **공통 폼 위젯 (`form_fields`)**: 마이펫 폼 화면들에 반복되던 필드 라벨(라벨+빨강 필수 dot), pill 형태 선택 버튼, 입력 데코레이션을 `lib/core/widgets/form_fields.dart`(`NurimFieldLabel`/`NurimSelectableTab`/`nurimInputDecoration`)로 추출하여 `MyPetEdit`/`MyPetDetailForm`/`MyPetStoryForm`/`MyPetHealthForm`에 적용.
+- **미구현 메뉴 안내**: 마이페이지의 목적지 없는 메뉴(결제 수단 변경/서비스 약관/설정)의 빈 핸들러를 `ToastUtil`로 "준비 중인 기능입니다." 토스트를 노출하도록 정리하여 먹통 탭을 제거.
+
 ## 초기 구조
 
 ```txt
@@ -47,6 +56,9 @@ lib/
     api/               API 클라이언트와 응답 envelope 처리
     config/            실행 환경 설정
     storage/           토큰과 로컬 상태 저장
+    theme/             색상 디자인 토큰(AppColors)
+    utils/             JSON 파싱(JsonReader), 토스트 등 공통 유틸
+    widgets/           공통 위젯(라벨/탭/버튼/카드/폼 필드 등)
   features/
     splash/
     onboarding/
