@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
+import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/theme/app_colors.dart';
@@ -191,29 +192,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const Text(
-                              '나이',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textMuted,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
-                            const SizedBox(width: 2),
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: const BoxDecoration(
-                                color: AppColors.error,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
-                        ),
+                        const NurimFieldLabel('나이', isRequired: true),
                         const SizedBox(height: 8),
                         GestureDetector(
                           onTap: _showAgeBottomSheet,
@@ -254,16 +233,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          '가족이 된 날',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textMuted,
-                            letterSpacing: -0.66,
-                          ),
-                        ),
+                        const NurimFieldLabel('가족이 된 날'),
                         const SizedBox(height: 8),
                         GestureDetector(
                           onTap: _showDatePickerBottomSheet,
@@ -306,29 +276,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const Text(
-                              '성별',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textMuted,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
-                            const SizedBox(width: 2),
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: const BoxDecoration(
-                                color: AppColors.error,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
-                        ),
+                        const NurimFieldLabel('성별', isRequired: true),
                         const SizedBox(height: 8),
                         Row(
                           children: [

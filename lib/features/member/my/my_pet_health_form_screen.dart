@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
+import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/file_repository.dart';
@@ -234,29 +235,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const Text(
-                              '중성화',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textMuted,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
-                            const SizedBox(width: 2),
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: const BoxDecoration(
-                                color: AppColors.error,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
-                        ),
+                        const NurimFieldLabel('중성화', isRequired: true),
                         const SizedBox(height: 8),
                         Row(
                           children: [
@@ -336,29 +315,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const Text(
-                              '체중',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textMuted,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
-                            const SizedBox(width: 2),
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: const BoxDecoration(
-                                color: AppColors.error,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
-                        ),
+                        const NurimFieldLabel('체중', isRequired: true),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _weightController,
@@ -416,16 +373,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          '체중 측정일',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textMuted,
-                            letterSpacing: -0.66,
-                          ),
-                        ),
+                        const NurimFieldLabel('체중 측정일'),
                         const SizedBox(height: 8),
                         GestureDetector(
                           onTap: _showWeightDatePicker,

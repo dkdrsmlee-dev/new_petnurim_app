@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
+import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/file_repository.dart';
@@ -864,69 +865,18 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     );
   }
 
-  Widget _buildLabelRow(String text, {bool isRequired = false}) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Pretendard',
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textMuted,
-            letterSpacing: -0.66,
-          ),
-        ),
-        if (isRequired) ...[
-          const SizedBox(width: 2),
-          Container(
-            width: 4,
-            height: 4,
-            decoration: const BoxDecoration(color: AppColors.error, shape: BoxShape.circle),
-          ),
-        ],
-      ],
-    );
-  }
+  Widget _buildLabelRow(String text, {bool isRequired = false}) =>
+      NurimFieldLabel(text, isRequired: isRequired);
 
-  Widget _buildTabButton(String label, bool isSelected, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 52,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isSelected ? AppColors.primary : AppColors.border, width: isSelected ? 1.5 : 1),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Pretendard',
-              fontSize: 16,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              color: isSelected ? AppColors.primaryStrong : AppColors.textSecondary,
-            ),
-          ),
+  Widget _buildTabButton(String label, bool isSelected, VoidCallback onTap) =>
+      Expanded(
+        child: NurimSelectableTab(
+          label: label,
+          selected: isSelected,
+          onTap: onTap,
         ),
-      ),
-    );
-  }
+      );
 
-  InputDecoration _buildInputDecoration(String hint) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: AppColors.placeholder, letterSpacing: -0.66),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-      ),
-    );
-  }
+  InputDecoration _buildInputDecoration(String hint) =>
+      nurimInputDecoration(hint);
 }

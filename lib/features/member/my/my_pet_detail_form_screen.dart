@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
+import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/page_header.dart';
 import '../domain/pet_breed.dart';
 import '../../../core/theme/app_colors.dart';
@@ -317,30 +318,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const Text(
-                              '이름',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textMuted,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
-                            const SizedBox(width: 2),
-                            // 필수 마커 (빨간 점)
-                            Container(
-                              width: 4,
-                              height: 4,
-                              decoration: const BoxDecoration(
-                                color: AppColors.error,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
-                        ),
+                        const NurimFieldLabel('이름', isRequired: true),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _nameController,
@@ -379,16 +357,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          '품종',
-                          style: TextStyle(
-                            fontFamily: 'Pretendard',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textMuted,
-                            letterSpacing: -0.66,
-                          ),
-                        ),
+                        const NurimFieldLabel('품종'),
                         const SizedBox(height: 8),
                         GestureDetector(
                           onTap: _navigateToBreedSelect,
