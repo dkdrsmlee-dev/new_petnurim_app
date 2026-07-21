@@ -10,6 +10,7 @@ import '../../../core/widgets/mypage_name.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
 import '../../../core/widgets/section_title.dart';
+import '../../../core/utils/toast_util.dart';
 import '../data/member_repository.dart';
 import '../domain/member_my_page.dart';
 import '../domain/pet_models.dart';
@@ -167,7 +168,8 @@ class _MyPageContentState extends State<_MyPageContent> {
                         primaryValue: email,
                         secondaryValue: '삼성카드(12**)',
                         actionLabel: '변경',
-                        onActionPressed: () {},
+                        onActionPressed: () =>
+                            ToastUtil.show(context, '준비 중인 기능입니다.'),
                         showDivider: false,
                       ),
                     ],
@@ -228,12 +230,12 @@ class _MyPageContentState extends State<_MyPageContent> {
               NurimListButton(
                 title: '서비스 약관',
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                onPressed: () {},
+                onPressed: () => ToastUtil.show(context, '준비 중인 기능입니다.'),
               ),
               NurimListButton(
                 title: '설정',
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                onPressed: () {},
+                onPressed: () => ToastUtil.show(context, '준비 중인 기능입니다.'),
               ),
               const SizedBox(height: 24),
 
