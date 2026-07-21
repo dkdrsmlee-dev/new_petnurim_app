@@ -9,6 +9,7 @@ import '../../../app/app_routes.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../../core/widgets/photo_source_sheet.dart';
 import '../domain/pet_breed.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -58,86 +59,10 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
 
   // 사진 등록 바텀 시트 호출
   void _showPhotoBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16), // Figma tl/tr 16px
-        ),
-      ),
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Container(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // 상단 핸들 인디케이터
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Container(
-                    width: 52,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: AppColors.border,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
-                // 사진 촬영 항목
-                ListTile(
-                  leading: SvgPicture.asset(
-                    'assets/images/ic_camera.svg',
-                    width: 24,
-                    height: 24,
-                    colorFilter: const ColorFilter.mode(AppColors.textMuted, BlendMode.srcIn),
-                  ),
-                  title: const Text(
-                    '사진 촬영',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textMuted,
-                      letterSpacing: -0.66,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _pickImage(ImageSource.camera);
-                  },
-                ),
-                const SizedBox(height: 8),
-                // 앨범 선택 항목
-                ListTile(
-                  leading: SvgPicture.asset(
-                    'assets/images/ic_album.svg',
-                    width: 24,
-                    height: 24,
-                    colorFilter: const ColorFilter.mode(AppColors.textMuted, BlendMode.srcIn),
-                  ),
-                  title: const Text(
-                    '앨범 선택',
-                    style: TextStyle(
-                      fontFamily: 'Pretendard',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textMuted,
-                      letterSpacing: -0.66,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _pickImage(ImageSource.gallery);
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+    showPhotoSourceSheet(
+      context,
+      onCamera: () => _pickImage(ImageSource.camera),
+      onGallery: () => _pickImage(ImageSource.gallery),
     );
   }
 
