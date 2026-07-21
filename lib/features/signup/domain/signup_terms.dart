@@ -1,3 +1,4 @@
+import '../../../core/utils/json_reader.dart';
 import '../../auth/domain/auth_exception.dart';
 
 enum TermsCategory {
@@ -90,30 +91,11 @@ class ActiveTerm {
     if (value == null && fallbackKey != null) {
       value = data[fallbackKey];
     }
-    if (value is String) {
-      return value.trim();
-    }
-    if (value is num || value is bool) {
-      return '$value';
-    }
-
-    return '';
+    return JsonReader.coerceString(value) ?? '';
   }
 
-  static int _readInt(Map<dynamic, dynamic> data, String key) {
-    final value = data[key];
-    if (value is int) {
-      return value;
-    }
-    if (value is num) {
-      return value.toInt();
-    }
-    if (value is String) {
-      return int.tryParse(value.trim()) ?? 0;
-    }
-
-    return 0;
-  }
+  static int _readInt(Map<dynamic, dynamic> data, String key) =>
+      JsonReader.asInt(data[key]);
 }
 
 class TermAgreement {

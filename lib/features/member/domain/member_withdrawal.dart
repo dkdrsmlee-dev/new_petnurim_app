@@ -1,3 +1,5 @@
+import '../../../core/utils/json_reader.dart';
+
 class MemberWithdrawResult {
   const MemberWithdrawResult({
     required this.withdrawalStatus,
@@ -21,11 +23,6 @@ class MemberWithdrawResult {
   final String withdrawalStatus;
   final String effectiveDt;
 
-  static String _readString(Object? value, String fallback) {
-    if (value is String && value.trim().isNotEmpty) {
-      return value.trim();
-    }
-
-    return fallback;
-  }
+  static String _readString(Object? value, String fallback) =>
+      JsonReader.plainString(value) ?? fallback;
 }

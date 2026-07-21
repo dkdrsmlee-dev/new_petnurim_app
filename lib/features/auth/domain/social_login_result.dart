@@ -1,3 +1,4 @@
+import '../../../core/utils/json_reader.dart';
 import 'auth_exception.dart';
 import 'social_provider.dart';
 
@@ -156,40 +157,9 @@ class SocialLoginResult {
     throw const AuthException('SNS 로그인 응답 형식이 올바르지 않습니다.');
   }
 
-  static String? _readString(Map<String, Object?> payload, List<String> keys) {
-    for (final key in keys) {
-      final rawValue = payload[key];
-      if (rawValue is String && rawValue.trim().isNotEmpty) {
-        return rawValue.trim();
-      }
-      if (rawValue is num || rawValue is bool) {
-        return '$rawValue';
-      }
-    }
+  static String? _readString(Map<String, Object?> payload, List<String> keys) =>
+      JsonReader.stringFrom(payload, keys);
 
-    return null;
-  }
-
-  static bool? _readBool(Map<String, Object?> payload, List<String> keys) {
-    for (final key in keys) {
-      final rawValue = payload[key];
-      if (rawValue is bool) {
-        return rawValue;
-      }
-      if (rawValue is num) {
-        return rawValue != 0;
-      }
-      if (rawValue is String) {
-        final normalized = rawValue.trim().toLowerCase();
-        if (const {'true', '1', 'y', 'yes'}.contains(normalized)) {
-          return true;
-        }
-        if (const {'false', '0', 'n', 'no'}.contains(normalized)) {
-          return false;
-        }
-      }
-    }
-
-    return null;
-  }
+  static bool? _readBool(Map<String, Object?> payload, List<String> keys) =>
+      JsonReader.boolFrom(payload, keys);
 }

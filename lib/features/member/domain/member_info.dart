@@ -1,3 +1,5 @@
+import '../../../core/utils/json_reader.dart';
+
 class MemberInfo {
   const MemberInfo({
     required this.name,
@@ -36,10 +38,6 @@ class MemberInfo {
   final String birthDate;
   final String? snsFlatform;
 
-  static String _readString(Object? value, String fallback) {
-    if (value is String && value.trim().isNotEmpty) {
-      return value.trim();
-    }
-    return fallback;
-  }
+  static String _readString(Object? value, String fallback) =>
+      JsonReader.plainString(value) ?? fallback;
 }

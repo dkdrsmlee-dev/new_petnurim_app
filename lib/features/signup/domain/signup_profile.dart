@@ -1,3 +1,4 @@
+import '../../../core/utils/json_reader.dart';
 import '../../auth/domain/social_login_result.dart';
 import '../../auth/domain/social_provider.dart';
 
@@ -85,15 +86,6 @@ class SignupProfileInit {
     );
   }
 
-  static String? _readString(Map<dynamic, dynamic> data, String key) {
-    final value = data[key];
-    if (value is String && value.trim().isNotEmpty) {
-      return value.trim();
-    }
-    if (value is num || value is bool) {
-      return '$value';
-    }
-
-    return null;
-  }
+  static String? _readString(Map<dynamic, dynamic> data, String key) =>
+      JsonReader.stringFrom(data, [key]);
 }

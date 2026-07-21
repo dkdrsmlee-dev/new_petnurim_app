@@ -1,3 +1,4 @@
+import '../../../core/utils/json_reader.dart';
 import '../../auth/domain/auth_exception.dart';
 
 class CompleteSignupResult {
@@ -29,17 +30,6 @@ class CompleteSignupResult {
   final String? refreshToken;
   final String? nextStep;
 
-  static String? _readString(Map<dynamic, dynamic> data, List<String> keys) {
-    for (final key in keys) {
-      final value = data[key];
-      if (value is String && value.trim().isNotEmpty) {
-        return value.trim();
-      }
-      if (value is num || value is bool) {
-        return '$value';
-      }
-    }
-
-    return null;
-  }
+  static String? _readString(Map<dynamic, dynamic> data, List<String> keys) =>
+      JsonReader.stringFrom(data, keys);
 }

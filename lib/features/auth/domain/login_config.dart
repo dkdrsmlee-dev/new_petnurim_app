@@ -1,3 +1,4 @@
+import '../../../core/utils/json_reader.dart';
 import 'auth_exception.dart';
 import 'social_provider.dart';
 
@@ -54,18 +55,5 @@ class LoginConfig {
     throw AuthException(message);
   }
 
-  static bool _readBool(Object? value) {
-    if (value is bool) {
-      return value;
-    }
-    if (value is num) {
-      return value != 0;
-    }
-    if (value is String) {
-      final normalized = value.trim().toLowerCase();
-      return const {'true', '1', 'y', 'yes'}.contains(normalized);
-    }
-
-    return false;
-  }
+  static bool _readBool(Object? value) => JsonReader.coerceBool(value) ?? false;
 }

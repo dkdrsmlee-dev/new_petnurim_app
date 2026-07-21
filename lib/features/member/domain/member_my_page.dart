@@ -1,3 +1,5 @@
+import '../../../core/utils/json_reader.dart';
+
 class MemberMyPage {
   const MemberMyPage({
     required this.userId,
@@ -30,17 +32,8 @@ class MemberMyPage {
   final String? outDt;
   final String? sleeperDt;
 
-  static String _readString(Object? value) {
-    if (value is String && value.trim().isNotEmpty) {
-      return value.trim();
-    }
-    return '';
-  }
+  static String _readString(Object? value) => JsonReader.plainString(value) ?? '';
 
-  static String? _readNullableString(Object? value) {
-    if (value is String && value.trim().isNotEmpty) {
-      return value.trim();
-    }
-    return null;
-  }
+  static String? _readNullableString(Object? value) =>
+      JsonReader.plainString(value);
 }

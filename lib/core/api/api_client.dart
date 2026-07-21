@@ -9,6 +9,7 @@ import 'package:mime/mime.dart';
 
 import '../config/app_config.dart';
 import '../storage/token_storage.dart';
+import '../utils/json_reader.dart';
 import 'api_envelope.dart';
 import 'api_exception.dart';
 
@@ -431,18 +432,8 @@ class ApiClient {
     );
   }
 
-  String? _readString(Object? payload, String key) {
-    if (payload is! Map) {
-      return null;
-    }
-
-    final value = payload[key];
-    if (value is String && value.trim().isNotEmpty) {
-      return value.trim();
-    }
-
-    return null;
-  }
+  String? _readString(Object? payload, String key) =>
+      JsonReader.plainStringFrom(payload, key);
 
   Object? _readData(Object? payload) {
     if (payload is! Map || !payload.containsKey('data')) {
