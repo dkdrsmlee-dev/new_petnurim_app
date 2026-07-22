@@ -49,6 +49,11 @@ flutter:
     - assets/images/home/
     - assets/images/banner/
 
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/PretendardVariable.ttf
+
 flutter_native_splash:
   color: "#7F4FFF"
   image: assets/images/splash_logo_fill.png

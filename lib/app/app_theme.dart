@@ -13,6 +13,7 @@ abstract final class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: const Color(0xFFF8FAFC),
       useMaterial3: true,
+      fontFamily: 'Pretendard',
       appBarTheme: const AppBarTheme(
         centerTitle: false,
         scrolledUnderElevation: 0,
