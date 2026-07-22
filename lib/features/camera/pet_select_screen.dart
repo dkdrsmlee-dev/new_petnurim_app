@@ -32,7 +32,6 @@ class PetSelectScreen extends StatelessWidget {
               const Text(
                 '촬영 미션에 참여할\n아이를 선택해 주세요.',
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   height: 1.4,

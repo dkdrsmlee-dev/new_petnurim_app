@@ -40,7 +40,6 @@ Future<void> showAgePickerSheet(
                     child: Text(
                       '나이',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textStrong,
@@ -70,7 +69,6 @@ Future<void> showAgePickerSheet(
                     title: Text(
                       '$ageVal살',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight:
                             isSelected ? FontWeight.w700 : FontWeight.w500,

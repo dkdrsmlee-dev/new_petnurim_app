@@ -39,7 +39,6 @@ class CalendarGrid extends StatelessWidget {
                   child: Text(
                     day,
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600, // SemiBold
                       color: AppColors.textSecondary, // text-color/secondary

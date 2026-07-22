@@ -49,7 +49,6 @@ class NurimAddressCard extends StatelessWidget {
                       Text(
                         title,
                         style: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textStrong,
@@ -63,7 +62,6 @@ class NurimAddressCard extends StatelessWidget {
                   Text(
                     address,
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: hasAddress ? AppColors.textSecondary : AppColors.placeholder,

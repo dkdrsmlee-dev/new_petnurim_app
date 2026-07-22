@@ -19,7 +19,6 @@ class NurimFieldLabel extends StatelessWidget {
         Text(
           text,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: AppColors.textMuted,
@@ -75,7 +74,6 @@ class NurimSelectableTab extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 16,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             color: selected ? AppColors.primaryStrong : AppColors.textSecondary,
@@ -91,7 +89,6 @@ InputDecoration nurimInputDecoration(String hint) {
   return InputDecoration(
     hintText: hint,
     hintStyle: const TextStyle(
-      fontFamily: 'Pretendard',
       fontSize: 16,
       color: AppColors.placeholder,
       letterSpacing: -0.66,

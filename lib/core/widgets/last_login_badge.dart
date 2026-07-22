@@ -39,7 +39,6 @@ class LastLoginBadge extends StatelessWidget {
           child: const Text(
             _label,
             style: TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: _textColor,

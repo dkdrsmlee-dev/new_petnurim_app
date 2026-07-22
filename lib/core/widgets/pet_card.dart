@@ -68,7 +68,6 @@ class NurimPetCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 14,
               fontWeight: FontWeight.w500,
               height: 1.4,
@@ -165,7 +164,6 @@ class NurimPetCard extends StatelessWidget {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
                                       height: 1.4,
@@ -218,7 +216,6 @@ class NurimPetCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
                                   height: 1.4,
@@ -248,7 +245,6 @@ class NurimPetCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
                                   height: 1.4,
@@ -264,7 +260,6 @@ class NurimPetCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.right,
                               style: const TextStyle(
-                                fontFamily: 'Pretendard',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 height: 1.4,
@@ -349,7 +344,6 @@ class _NurimMyPetSectionState extends State<NurimMyPetSection> {
                 Text(
                   '등록된 펫 정보가 없어요.',
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     height: 1.4,
@@ -361,7 +355,6 @@ class _NurimMyPetSectionState extends State<NurimMyPetSection> {
                 Text(
                   '펫 정보를 등록해 주세요 :)',
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     height: 1.4,
@@ -542,7 +535,6 @@ class _MembershipChip extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 13,
               fontWeight: FontWeight.w600,
               height: 1.2,
@@ -597,7 +589,6 @@ class _AddPetButton extends StatelessWidget {
                     Text(
                       '마이 펫 추가',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         height: 1.4,
@@ -610,7 +601,6 @@ class _AddPetButton extends StatelessWidget {
                     Text(
                       ' +',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         height: 1.4,

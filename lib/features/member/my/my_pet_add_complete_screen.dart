@@ -58,7 +58,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                       '등록 완료',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.54,
@@ -100,7 +99,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                 const Text(
                   '등록 정보를 불러오지 못했습니다.',
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 16,
                     color: AppColors.textMuted,
                     fontWeight: FontWeight.w500,
@@ -113,7 +111,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                   label: const Text(
                     '다시 시도',
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -147,7 +144,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                           child: Text(
                             '등록이 완료되었어요!\n이제 맞춤 케어를 시작해볼까요?',
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.66,
@@ -250,7 +246,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                     child: const Text(
                       '확인',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.66,
@@ -283,7 +278,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
           Text(
             title,
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColors.textMuted,
@@ -296,7 +290,6 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
               textAlign: TextAlign.end,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontFamily: 'Pretendard',
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textSecondary,

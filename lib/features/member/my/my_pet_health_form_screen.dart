@@ -222,7 +222,6 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                       child: Text(
                         '마지막이에요!\n건강 정보를 알려주세요.',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.66,
@@ -263,7 +262,6 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                   child: Text(
                                     '했어요',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: _selectedNeutered == true ? FontWeight.w600 : FontWeight.w500,
                                       color: _selectedNeutered == true ? AppColors.primary : AppColors.placeholder,
@@ -297,7 +295,6 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                   child: Text(
                                     '안했어요',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: _selectedNeutered == false ? FontWeight.w600 : FontWeight.w500,
                                       color: _selectedNeutered == false ? AppColors.primary : AppColors.placeholder,
@@ -322,14 +319,12 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                           controller: _weightController,
                           keyboardType: const TextInputType.numberWithOptions(decimal: true),
                           style: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 16,
                             color: AppColors.textStrong,
                           ),
                           decoration: InputDecoration(
                             hintText: '체중을 입력해 주세요.(ex 3.5)',
                             hintStyle: const TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               color: AppColors.placeholder,
                               letterSpacing: -0.66,
@@ -344,7 +339,6 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                   Text(
                                     'Kg',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                       color: AppColors.textStrong,
@@ -394,7 +388,6 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                         ? _selectedWeightDate!.toKoreanDate()
                                         : '측정일을 선택해 주세요.',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       color: _selectedWeightDate != null ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,
@@ -441,7 +434,6 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                           const Text(
                             '대표 펫으로 설정',
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               color: AppColors.textStrong,

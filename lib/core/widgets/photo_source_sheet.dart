@@ -91,7 +91,6 @@ class _PhotoSourceTile extends StatelessWidget {
       title: Text(
         label,
         style: const TextStyle(
-          fontFamily: 'Pretendard',
           fontSize: 16,
           fontWeight: FontWeight.w600,
           color: AppColors.textMuted,

@@ -77,7 +77,6 @@ class NurimMembershipCard extends StatelessWidget {
             child: Text(
               tierName,
               style: const TextStyle(
-                fontFamily: 'Pretendard',
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 height: 1.4,
@@ -97,7 +96,6 @@ class NurimMembershipCard extends StatelessWidget {
             child: Text(
               statusLabel,
               style: const TextStyle(
-                fontFamily: 'Pretendard',
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 height: 1.4,
@@ -172,7 +170,6 @@ class _BillingRow extends StatelessWidget {
             child: Text(
               label,
               style: const TextStyle(
-                fontFamily: 'Pretendard',
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
@@ -184,7 +181,6 @@ class _BillingRow extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 16,
               fontWeight: FontWeight.w600,
               height: 1.4,
@@ -238,7 +234,6 @@ class _ListRow extends StatelessWidget {
               child: Text(
                 label,
                 style: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                   height: 1.4,

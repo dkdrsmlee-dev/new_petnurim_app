@@ -39,7 +39,6 @@ class BullitText extends StatelessWidget {
             text,
             style: textStyle ??
                 const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 14,
                   fontWeight: FontWeight.w400, // Regular
                   color: AppColors.textTertiary, // var(--color/gray/90)

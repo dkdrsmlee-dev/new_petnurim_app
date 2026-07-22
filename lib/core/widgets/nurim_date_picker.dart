@@ -99,7 +99,6 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                   child: Text(
                     widget.title,
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textStrong,
@@ -150,7 +149,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                         children: _years.map((y) => Center(
                           child: Text(
                             '$y년',
-                            style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         )).toList(),
                       ),
@@ -171,7 +170,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                         children: _months.map((m) => Center(
                           child: Text(
                             '${m.toString().padLeft(2, '0')}월',
-                            style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         )).toList(),
                       ),
@@ -192,7 +191,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                         children: days.map((d) => Center(
                           child: Text(
                             '${d.toString().padLeft(2, '0')}일',
-                            style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         )).toList(),
                       ),
@@ -223,7 +222,6 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
               child: const Text(
                 '확인',
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),

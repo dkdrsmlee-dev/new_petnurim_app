@@ -84,7 +84,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       const Text(
                         '기본 정보',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.66,
@@ -147,7 +146,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       const Text(
                         '주소 정보',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.66,
@@ -184,7 +182,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           textStyle: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             letterSpacing: -0.66,
@@ -199,7 +196,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                           style: TextButton.styleFrom(
                             foregroundColor: AppColors.textSecondary,
                             textStyle: const TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
                               letterSpacing: -0.66,
@@ -319,7 +315,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     const Text(
                       '로그아웃 안내',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF1E2024),
@@ -339,7 +334,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 const Text(
                   '진행 중인 서비스가 있는 상태에서 로그아웃할 경우 안내를 받을 수 없습니다.',
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: AppColors.textMuted,
@@ -360,7 +354,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           textStyle: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -381,7 +374,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           textStyle: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -468,7 +460,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                         child: Text(
                           '주소 설정',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF1E2024),
@@ -483,7 +474,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 Text(
                   baseAddress,
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF1E2024),
@@ -501,7 +491,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       child: const Text(
                         '도로명',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF2B66FF),
@@ -515,7 +504,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                           color: AppColors.textSecondary,
@@ -528,7 +516,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 const Text(
                   '상세 주소를 입력해 주세요.',
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF1E2024),
@@ -567,7 +554,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     textStyle: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -605,7 +591,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     '주소가 저장되었습니다.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF1E2024),
@@ -623,7 +608,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       textStyle: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -694,7 +678,6 @@ class _CustomInfoRow extends StatelessWidget {
             child: Text(
               title,
               style: const TextStyle(
-                fontFamily: 'Pretendard',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textMuted,
@@ -712,7 +695,6 @@ class _CustomInfoRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: AppColors.textSecondary,
@@ -725,7 +707,6 @@ class _CustomInfoRow extends StatelessWidget {
                   Text(
                     subText!,
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: AppColors.textSecondary,

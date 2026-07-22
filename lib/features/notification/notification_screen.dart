@@ -76,7 +76,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   child: const Text(
                     '모두읽음',
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 13,
                       fontWeight: FontWeight.w400, // Regular
                       color: AppColors.textSecondary,

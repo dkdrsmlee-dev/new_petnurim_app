@@ -95,7 +95,6 @@ class NurimTextCard extends StatelessWidget {
                             maxLines: isExpanded ? null : 2,
                             overflow: isExpanded ? null : TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w700, // Bold
                               color: AppColors.textStrong,
@@ -114,7 +113,6 @@ class NurimTextCard extends StatelessWidget {
                       maxLines: isExpanded ? null : 2,
                       overflow: isExpanded ? null : TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w400, // Regular
                         color: AppColors.textTertiary,
@@ -144,7 +142,6 @@ class NurimTextCard extends StatelessWidget {
                                   child: Text(
                                     bullet,
                                     style: const TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                       color: AppColors.textTertiary,
@@ -163,7 +160,6 @@ class NurimTextCard extends StatelessWidget {
                     Text(
                       date,
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                         color: AppColors.placeholder,
@@ -191,7 +187,6 @@ class NurimTextCard extends StatelessWidget {
                         Text(
                           isExpanded ? '접기' : '더보기',
                           style: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 13,
                             fontWeight: FontWeight.w500, // Medium
                             color: AppColors.textSecondary,

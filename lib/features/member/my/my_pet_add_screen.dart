@@ -83,7 +83,6 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
               Text(
                 label,
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                   letterSpacing: -0.66,
@@ -116,7 +115,6 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
               child: Text(
                 '어떤 반려동물과\n함께하고 있나요?',
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 20,
                   fontWeight: FontWeight.w700, // Bold
                   letterSpacing: -0.66,
@@ -174,7 +172,6 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
                 child: const Text(
                   '다음',
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 18,
                     fontWeight: FontWeight.w600, // SemiBold
                     letterSpacing: -0.66,

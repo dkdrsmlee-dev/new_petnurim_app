@@ -105,7 +105,6 @@ class _PetInfoSection extends StatelessWidget {
         Text(
           data.name,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 18,
             fontWeight: FontWeight.w600,
             height: 1.4,
@@ -165,7 +164,6 @@ class _PetDetailsRow extends StatelessWidget {
   final String genderText;
 
   static const TextStyle _style = TextStyle(
-    fontFamily: 'Pretendard',
     fontSize: 15,
     fontWeight: FontWeight.w500,
     height: 1.4,
@@ -313,7 +311,6 @@ class _HistoryItemRow extends StatelessWidget {
           child: Text(
             label,
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: AppColors.textSecondary,
@@ -325,7 +322,6 @@ class _HistoryItemRow extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: AppColors.textMuted,

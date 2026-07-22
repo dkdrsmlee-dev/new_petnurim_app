@@ -105,7 +105,6 @@ class NurimPetInfoDetail extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600, // SemiBold
                           height: 1.4,
@@ -133,7 +132,6 @@ class NurimPetInfoDetail extends StatelessWidget {
                       Text(
                         pet.ageText,
                         style: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 15,
                           fontWeight: FontWeight.w500, // Medium
                           height: 1.4,
@@ -151,7 +149,6 @@ class NurimPetInfoDetail extends StatelessWidget {
                       Text(
                         pet.breed,
                         style: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           height: 1.4,
@@ -169,7 +166,6 @@ class NurimPetInfoDetail extends StatelessWidget {
                       Text(
                         pet.genderText,
                         style: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           height: 1.4,
@@ -200,7 +196,6 @@ class NurimPetInfoDetail extends StatelessWidget {
               child: Text(
                 actionLabel,
                 style: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 14,
                   fontWeight: FontWeight.w600, // SemiBold
                   color: AppColors.textMuted, // var(--color/gray/100)

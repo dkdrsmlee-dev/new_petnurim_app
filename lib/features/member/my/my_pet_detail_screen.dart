@@ -61,7 +61,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                 const Text(
                   '마이펫 상세 정보를 불러오지 못했습니다.',
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 16,
                     color: AppColors.textMuted,
                     fontWeight: FontWeight.w500,
@@ -74,7 +73,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                   label: const Text(
                     '다시 시도',
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -144,7 +142,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                       const Text(
                         '멤버십 정보',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textSecondary,
@@ -180,7 +177,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                                     const Text(
                                       '브론즈',
                                       style: TextStyle(
-                                        fontFamily: 'Pretendard',
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.textStrong,
@@ -196,7 +192,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                                       child: const Text(
                                         '현재 이용 중',
                                         style: TextStyle(
-                                          fontFamily: 'Pretendard',
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.textTertiary,
@@ -214,7 +209,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                                       Text(
                                         '결제 내역',
                                         style: TextStyle(
-                                          fontFamily: 'Pretendard',
                                           fontSize: 15,
                                           fontWeight: FontWeight.w500,
                                           color: AppColors.textSecondary,
@@ -261,7 +255,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                                     child: const Text(
                                       '멤버십 관리',
                                       style: TextStyle(
-                                        fontFamily: 'Pretendard',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -281,7 +274,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                               '이용 중인 멤버십이 없어요.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontFamily: 'Pretendard',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.placeholder,
@@ -292,7 +284,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                               '멤버십을 구독하고 혜택을 받아보세요.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontFamily: 'Pretendard',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.placeholder,
@@ -317,7 +308,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                                   Text(
                                     '멤버십 혜택 보기',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.primaryStrong,
@@ -354,7 +344,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                       const Text(
                         '리워드 정보',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textSecondary,
@@ -378,7 +367,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                                   const Text(
                                     '28,000PR',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.textStrong,
@@ -395,7 +383,6 @@ class MyPetDetailScreen extends ConsumerWidget {
                                     Text(
                                       '리워드 내역',
                                       style: TextStyle(
-                                        fontFamily: 'Pretendard',
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,
                                         color: AppColors.textSecondary,
@@ -448,7 +435,6 @@ class MyPetDetailScreen extends ConsumerWidget {
         Text(
           key,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 16,
             fontWeight: FontWeight.w500,
             color: AppColors.textSecondary,
@@ -457,7 +443,6 @@ class MyPetDetailScreen extends ConsumerWidget {
         Text(
           value,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.textMuted,

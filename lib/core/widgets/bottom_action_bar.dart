@@ -113,7 +113,6 @@ class _ActionButton extends StatelessWidget {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           textStyle: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 18,
             fontWeight: FontWeight.w600,
             height: 1.4,

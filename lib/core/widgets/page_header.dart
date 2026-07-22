@@ -49,7 +49,6 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
         title: Text(
           title,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 18,
             fontWeight: FontWeight.w700, // Bold (700)
             height: 1.4,

@@ -30,7 +30,6 @@ class PetEmptyScreen extends StatelessWidget {
                 '등록된 펫 정보가 없어요.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   height: 1.4,
@@ -43,7 +42,6 @@ class PetEmptyScreen extends StatelessWidget {
                 '펫 정보 등록 후 진행해 주세요 :)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   height: 1.4,
@@ -63,7 +61,6 @@ class PetEmptyScreen extends StatelessWidget {
                   label: const Text(
                     '마이 펫 추가',
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       height: 1.4,

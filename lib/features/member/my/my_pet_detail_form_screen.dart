@@ -146,7 +146,6 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                       child: Text(
                         '우리 아이의 첫 프로필을\n만들어 볼까요?',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 20,
                           fontWeight: FontWeight.w700, // Bold
                           letterSpacing: -0.66,
@@ -235,14 +234,12 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                         TextFormField(
                           controller: _nameController,
                           style: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 16,
                             color: AppColors.textStrong,
                           ),
                           decoration: InputDecoration(
                             hintText: '아이의 이름을 알려주세요.',
                             hintStyle: const TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               color: AppColors.placeholder,
                               letterSpacing: -0.66,
@@ -287,7 +284,6 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                   child: Text(
                                     _selectedBreed ?? '품종을 선택해 주세요.',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       color: _selectedBreed != null ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,

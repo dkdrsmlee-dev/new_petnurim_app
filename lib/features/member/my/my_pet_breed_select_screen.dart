@@ -158,7 +158,6 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                       '품종 선택',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 18,
                         fontWeight: FontWeight.w700, // Bold
                         letterSpacing: -0.54,
@@ -192,14 +191,12 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
               child: TextFormField(
                 controller: _searchController,
                 style: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 16,
                   color: AppColors.textStrong,
                 ),
                 decoration: InputDecoration(
                   hintText: '검색어를 입력해 주세요.',
                   hintStyle: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 16,
                     color: AppColors.placeholder,
                     letterSpacing: -0.66,
@@ -254,7 +251,6 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                       child: Text(
                         tabName,
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 16,
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                           color: isSelected ? Colors.white : AppColors.textDisabled,
@@ -283,7 +279,6 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                             _errorMessage!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               color: AppColors.textMuted,
                               fontWeight: FontWeight.w500,
@@ -296,7 +291,6 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                             label: const Text(
                               '다시 시도',
                               style: TextStyle(
-                                fontFamily: 'Pretendard',
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -330,7 +324,6 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                                     ? '입력하신 검색어와 일치하는 품종이 없습니다.'
                                     : '등록된 품종 정보가 없습니다.',
                                 style: const TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   color: AppColors.placeholder,
                                 ),
@@ -376,7 +369,6 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                                 child: Text(
                                   breed.breedNameKor,
                                   style: const TextStyle(
-                                    fontFamily: 'Pretendard',
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500, // Medium
                                     color: AppColors.textMuted,

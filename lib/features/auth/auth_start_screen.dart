@@ -55,7 +55,6 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
                   '안녕하세요 :)\n회원가입 후 이용해 주세요.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
                     height: 1.4,

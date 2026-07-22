@@ -140,7 +140,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       '찍을수록 쏟아지는 리워드!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -165,7 +164,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         child: const Text(
                           '2026.4.1~4.30',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -288,7 +286,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               Text(
                 '${_today.month}월',
                 style: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textStrong,
@@ -305,7 +302,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     const Text(
                       '이번 달 출석 ',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: AppColors.textMuted,
@@ -314,7 +310,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     Text(
                       '${_attendedDays.length}일',
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: AppColors.primary,
@@ -343,7 +338,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                     Text(
                       '${date.day}',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: isOutsideMonth ? FontWeight.w500 : FontWeight.w600,
                         color: isOutsideMonth
@@ -454,7 +448,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               child: Text(
                 '오늘 출석하기',
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -718,7 +711,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             label,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppColors.textMuted,
@@ -830,7 +822,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           Text(
             '이벤트 유의사항',
             style: TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: AppColors.textStrong,

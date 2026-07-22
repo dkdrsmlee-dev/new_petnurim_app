@@ -57,7 +57,6 @@ class EdgeButtonDialog extends StatelessWidget {
                     title,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 20,
                       fontWeight: FontWeight.w600, // SemiBold
                       color: AppColors.textStrong,
@@ -71,7 +70,6 @@ class EdgeButtonDialog extends StatelessWidget {
                       content!,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w500, // Medium
                         color: AppColors.textSecondary,

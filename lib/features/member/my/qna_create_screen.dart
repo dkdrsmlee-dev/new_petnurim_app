@@ -124,7 +124,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         const Text(
                           '첨부파일 형식',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textStrong,
@@ -145,7 +144,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                     const Text(
                       'jpg, jpeg, png, gif, pdf, xls, xlsx, txt,\ndoc, docx, ppt, pptx, zip, hwp, hwpx',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                         color: AppColors.textSecondary,
@@ -201,7 +199,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         const Text(
                           '문의 유형',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textStrong,
@@ -243,7 +240,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                   Text(
                                     type['label']!,
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                                       color: AppColors.textStrong,
@@ -591,7 +587,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
             Text(
               label,
               style: const TextStyle(
-                fontFamily: 'Pretendard',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textMuted,
@@ -696,7 +691,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                     const Text(
                       '문의유형',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textStrong,
@@ -723,7 +717,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                             Text(
                               selectedLabel ?? '문의 유형을 선택해 주세요.',
                               style: TextStyle(
-                                fontFamily: 'Pretendard',
                                 fontSize: 15,
                                 color: selectedLabel != null ? AppColors.textStrong : AppColors.placeholder,
                               ),
@@ -741,7 +734,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                     const Text(
                       '제목',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textStrong,
@@ -755,7 +747,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       decoration: InputDecoration(
                         hintText: '제목을 입력해 주세요.',
                         hintStyle: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 15,
                           color: AppColors.placeholder,
                         ),
@@ -773,7 +764,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         ),
                       ),
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 15,
                         color: AppColors.textStrong,
                       ),
@@ -782,7 +772,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                     const Text(
                       '내용',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textStrong,
@@ -800,7 +789,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                           decoration: InputDecoration(
                             hintText: '내용을 입력해 주세요.',
                             hintStyle: const TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 15,
                               color: AppColors.placeholder,
                             ),
@@ -818,7 +806,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                             ),
                           ),
                           style: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 15,
                             color: AppColors.textStrong,
                           ),
@@ -829,7 +816,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                           child: Text(
                             '${_contentController.text.length}/1200',
                             style: const TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
                               color: AppColors.placeholder,
@@ -846,7 +832,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                           const Text(
                             '첨부파일',
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: AppColors.textStrong,
@@ -866,7 +851,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               child: const Text(
                                 '?',
                                 style: TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.textSecondary,
@@ -899,7 +883,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               Text(
                                 '파일 첨부',
                                 style: TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.primary,
@@ -950,7 +933,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                       Text(
                                         file['name']!,
                                         style: const TextStyle(
-                                          fontFamily: 'Pretendard',
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                           color: AppColors.textStrong,
@@ -962,7 +944,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                       Text(
                                         file['size']!,
                                         style: const TextStyle(
-                                          fontFamily: 'Pretendard',
                                           fontSize: 11,
                                           color: AppColors.textSecondary,
                                         ),
@@ -1021,7 +1002,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                           child: Text(
                             '첨부파일은 최대 3개, 30MB까지 등록 가능합니다.',
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
                               color: AppColors.textSecondary,
@@ -1035,7 +1015,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       Text(
                         _errorMessage!,
                         style: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 14,
                           color: Colors.red,
                         ),
@@ -1080,7 +1059,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       : Text(
                           '등록하기',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                             color: isSubmitEnabled ? Colors.white : AppColors.textSecondary,

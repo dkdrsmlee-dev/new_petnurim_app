@@ -50,7 +50,6 @@ class NurimToast extends StatelessWidget {
                 message,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: Colors.white,

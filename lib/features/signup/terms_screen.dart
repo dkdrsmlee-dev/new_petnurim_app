@@ -70,7 +70,6 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
               const Text(
                 '서비스 이용을 위해\n약관에 동의해 주세요.',
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   color: AppColors.textStrong,
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
@@ -108,7 +107,6 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                       Text(
                         '약관 전체 동의',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           color: allChecked
                               ? AppColors.textStrong
                               : AppColors.textSecondary,
@@ -299,7 +297,6 @@ class _TermTile extends StatelessWidget {
                       child: Text(
                         '(${term.requiredLabel}) ${term.termsName}',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           color: checked
                               ? AppColors.textStrong
                               : AppColors.textSecondary,

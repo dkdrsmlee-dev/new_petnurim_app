@@ -115,7 +115,6 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                       child: Text(
                         '아이의 이야기를\n조금 더 들려주세요.',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.66,
@@ -147,7 +146,6 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                   child: Text(
                                     _selectedAge != null ? '$_selectedAge살' : '나이를 선택해 주세요.',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       color: _selectedAge != null ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,
@@ -190,7 +188,6 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                         ? _selectedDate!.toKoreanDate()
                                         : '날짜를 선택해 주세요.',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       color: _selectedDate != null ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,
@@ -240,7 +237,6 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                   child: Text(
                                     '남아',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: _selectedGender == 'MALE' ? FontWeight.w600 : FontWeight.w500,
                                       color: _selectedGender == 'MALE' ? AppColors.primary : AppColors.placeholder,
@@ -274,7 +270,6 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                   child: Text(
                                     '여아',
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: _selectedGender == 'FEMALE' ? FontWeight.w600 : FontWeight.w500,
                                       color: _selectedGender == 'FEMALE' ? AppColors.primary : AppColors.placeholder,

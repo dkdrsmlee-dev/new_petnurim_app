@@ -35,7 +35,6 @@ class NurimSectionTitle extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   height: 1.375,
@@ -74,7 +73,6 @@ class _SectionTitleAction extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 12,
             fontWeight: FontWeight.w500,
             height: 1.5,

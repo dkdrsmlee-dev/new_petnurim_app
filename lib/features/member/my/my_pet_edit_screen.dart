@@ -343,7 +343,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
         body: Center(
           child: Text(
             _errorMessage!,
-            style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: AppColors.textMuted),
+            style: const TextStyle(fontSize: 16, color: AppColors.textMuted),
           ),
         ),
       );
@@ -447,7 +447,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _nameController,
-                      style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: AppColors.textStrong),
+                      style: const TextStyle(fontSize: 16, color: AppColors.textStrong),
                       decoration: _buildInputDecoration('이름을 입력해 주세요.'),
                     ),
                     const SizedBox(height: 24),
@@ -471,7 +471,6 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                               child: Text(
                                 _selectedBreed ?? '품종을 선택해 주세요.',
                                 style: TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   color: _selectedBreed != null ? AppColors.textStrong : AppColors.placeholder,
                                 ),
@@ -503,7 +502,6 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                               child: Text(
                                 _selectedAge != null ? '$_selectedAge살' : '나이를 선택해 주세요.',
                                 style: TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   color: _selectedAge != null ? AppColors.textStrong : AppColors.placeholder,
                                 ),
@@ -535,7 +533,6 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                               child: Text(
                                 familyDateText,
                                 style: TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   color: _selectedDate != null ? AppColors.textStrong : AppColors.placeholder,
                                 ),
@@ -598,14 +595,13 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     TextFormField(
                       controller: _weightController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      style: const TextStyle(fontFamily: 'Pretendard', fontSize: 16, color: AppColors.textStrong),
+                      style: const TextStyle(fontSize: 16, color: AppColors.textStrong),
                       decoration: _buildInputDecoration('체중을 입력해 주세요.').copyWith(
                         suffixIcon: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                           child: Text(
                             'Kg',
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               color: AppColors.textMuted,
@@ -635,7 +631,6 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                               child: Text(
                                 weightDateText,
                                 style: TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   color: _selectedWeightDate != null ? AppColors.textStrong : AppColors.placeholder,
                                 ),
@@ -666,7 +661,6 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                           const Text(
                             '대표 펫으로 설정',
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: AppColors.textStrong,
@@ -699,7 +693,6 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     : const Text(
                         '확인',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.66,

@@ -45,7 +45,6 @@ class NurimListButton extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     height: 1.4,

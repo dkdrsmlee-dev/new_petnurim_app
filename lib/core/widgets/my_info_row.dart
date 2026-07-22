@@ -77,7 +77,6 @@ class NurimMyInfoRow extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 16.0, // Figma: text-[16px]
                       fontWeight: FontWeight.w600, // SemiBold
                       height: 1.4,
@@ -96,7 +95,6 @@ class NurimMyInfoRow extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 15.0, // Figma: text-[15px]
                             fontWeight: FontWeight.w500, // Medium
                             height: 1.4,
@@ -110,7 +108,6 @@ class NurimMyInfoRow extends StatelessWidget {
                         Text(
                           secondaryValue!,
                           style: const TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 15.0, // Figma: text-[15px]
                             fontWeight: FontWeight.w500, // Medium
                             height: 1.4,
@@ -149,7 +146,6 @@ class NurimMyInfoRow extends StatelessWidget {
                   child: Text(
                     actionLabel,
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 14.0, // Figma: text-[14px]
                       fontWeight: FontWeight.w600, // SemiBold
                       height: 1.4,

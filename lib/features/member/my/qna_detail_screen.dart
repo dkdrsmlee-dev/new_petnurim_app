@@ -210,7 +210,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                 '오류: $_error',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 15,
                   color: Colors.red,
                 ),
@@ -232,7 +231,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
         child: Text(
           '문의 상세 내역이 없습니다.',
           style: TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 15,
             color: AppColors.textSecondary,
           ),
@@ -276,7 +274,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                               Text(
                                 _getTypeLabel(qna.qnaTypeCode),
                                 style: const TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.placeholder,
@@ -295,7 +292,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                               Text(
                                 _formatDate(qna.regDt),
                                 style: const TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                   color: AppColors.placeholder,
@@ -347,7 +343,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                                   const Text(
                                                     '수정하기',
                                                     style: TextStyle(
-                                                      fontFamily: 'Pretendard',
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.w500,
                                                       color: AppColors.textStrong,
@@ -383,7 +378,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                                   const Text(
                                                     '삭제하기',
                                                     style: TextStyle(
-                                                      fontFamily: 'Pretendard',
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.w500,
                                                       color: AppColors.textStrong,
@@ -421,7 +415,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                       Text(
                         qna.title,
                         style: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textStrong,
@@ -441,7 +434,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                       Text(
                         qna.content,
                         style: const TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: AppColors.textTertiary,
@@ -488,7 +480,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
       child: Text(
         statusText,
         style: TextStyle(
-          fontFamily: 'Pretendard',
           fontSize: 12,
           fontWeight: FontWeight.w600,
           color: isComplete ? AppColors.primary : AppColors.textSecondary,
@@ -513,7 +504,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
           Text(
             '첨부파일 ${docFiles.length}',
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: AppColors.textMuted,
@@ -596,7 +586,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                 Text(
                   file.originName,
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: AppColors.textStrong,
@@ -609,7 +598,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                 Text(
                   sizeText,
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 11,
                     color: AppColors.textSecondary,
                   ),
@@ -665,7 +653,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                     const Text(
                       'A.',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.primary,
@@ -675,7 +662,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                     Text(
                       hasAnswer ? '답변이 완료되었습니다.' : '답변이 준비 중입니다.',
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textStrong,
@@ -687,7 +673,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                 Text(
                   _formatDate(answerDate),
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
                     color: AppColors.placeholder,
@@ -706,7 +691,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                   Text(
                     qna.answer!.content,
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: AppColors.textMuted,
@@ -737,7 +721,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                     const Text(
                       '담당자가 문의 내용을 확인하고 있어요.',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textStrong,
@@ -748,7 +731,6 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                     const Text(
                       '잠시만 기다려 주세요.',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: AppColors.textTertiary,

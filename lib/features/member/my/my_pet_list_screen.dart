@@ -110,7 +110,6 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                   const Text(
                     '전체',
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.66,
@@ -121,7 +120,6 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                   Text(
                     '${list.length}',
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.66,
@@ -140,7 +138,6 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                 child: Text(
                   _isEditMode ? '완료' : '편집',
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.66,
@@ -167,7 +164,6 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                         '등록된 마이펫이 없습니다.\n마이 펫을 등록해 주세요.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 16,
                           color: AppColors.placeholder,
                         ),
@@ -238,7 +234,6 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                   child: const Text(
                     '대표 펫 설정',
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.66,
@@ -269,7 +264,6 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                       const Text(
                         '마이 펫 추가',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.66,
@@ -307,7 +301,6 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
           const Text(
             '마이펫 목록을 불러오지 못했습니다.',
             style: TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 16,
               color: AppColors.textMuted,
               fontWeight: FontWeight.w500,
@@ -325,7 +318,6 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
             label: const Text(
               '다시 시도',
               style: TextStyle(
-                fontFamily: 'Pretendard',
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),

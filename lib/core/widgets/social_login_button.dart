@@ -42,7 +42,6 @@ class SocialLoginButton extends StatelessWidget {
               child: Text(
                 label,
                 style: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.66,

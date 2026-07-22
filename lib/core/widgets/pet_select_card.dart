@@ -81,7 +81,6 @@ class PetSelectCard extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    fontFamily: 'Pretendard',
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
                                     height: 1.4,
@@ -123,7 +122,6 @@ class PetSelectCard extends StatelessWidget {
                                 Text(
                                   '촬영 내역',
                                   style: const TextStyle(
-                                    fontFamily: 'Pretendard',
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
                                     height: 1.4,
@@ -195,7 +193,6 @@ class _InfoRow extends StatelessWidget {
   final String genderText;
 
   static const TextStyle _style = TextStyle(
-    fontFamily: 'Pretendard',
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.4,

@@ -111,7 +111,6 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
                     const Text(
                       '회원가입이 완료되었어요!',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textStrong,
@@ -124,7 +123,6 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
                       '마이펫 등록 후 멤버십에 가입하면\n더 다양한 혜택을 받을 수 있어요.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: AppColors.textSecondary,
@@ -162,7 +160,6 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
                           child: const Text(
                             '마이펫 등록',
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.66,
@@ -198,7 +195,6 @@ class _CompleteScreenState extends ConsumerState<CompleteScreen> {
                               : const Text(
                                   '홈으로',
                                   style: TextStyle(
-                                    fontFamily: 'Pretendard',
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: -0.66,

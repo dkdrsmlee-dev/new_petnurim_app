@@ -57,7 +57,6 @@ class RewardMilestoneStamp extends StatelessWidget {
                     '완료',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -78,7 +77,6 @@ class RewardMilestoneStamp extends StatelessWidget {
                   child: Text(
                     '${points}P',
                     style: const TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w700, // Bold
                       color: Colors.white,
@@ -95,7 +93,6 @@ class RewardMilestoneStamp extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 14,
             fontWeight: isCompleted ? FontWeight.w700 : FontWeight.w600,
             color: isCompleted ? const Color(0xFF15354C) : const Color(0xFF4E8DBA),

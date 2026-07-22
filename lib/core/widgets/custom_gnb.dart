@@ -108,7 +108,6 @@ class _GnbOnOffItem extends StatelessWidget {
           Text(
             menu.label,
             style: TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 12,
               fontWeight: fontWeight,
               color: textColor,

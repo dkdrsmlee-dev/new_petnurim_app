@@ -73,7 +73,6 @@ class NurimCardBanner extends StatelessWidget {
                     Text(
                       title,
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                         height: 1.4,
@@ -85,7 +84,6 @@ class NurimCardBanner extends StatelessWidget {
                     Text(
                       subtitle,
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         height: 1.4,
@@ -106,7 +104,6 @@ class NurimCardBanner extends StatelessWidget {
                       child: Text(
                         pointText,
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           height: 1.4,
@@ -166,7 +163,6 @@ class NurimCardBanner extends StatelessWidget {
                     Text(
                       statusText,
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         height: 1.4,
@@ -179,7 +175,6 @@ class NurimCardBanner extends StatelessWidget {
                 Text(
                   dayText,
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     height: 1.4,
@@ -298,7 +293,6 @@ class NurimCardBannerSmall extends StatelessWidget {
                 child: Text(
                   pointText,
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     height: 1.4,
@@ -317,7 +311,6 @@ class NurimCardBannerSmall extends StatelessWidget {
               Text(
                 titleLine1,
                 style: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   height: 1.4,
@@ -332,7 +325,6 @@ class NurimCardBannerSmall extends StatelessWidget {
                     child: Text(
                       titleLine2,
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         height: 1.4,
@@ -365,7 +357,6 @@ class NurimCardBannerSmall extends StatelessWidget {
                 Text(
                   statusText,
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     height: 1.4,
@@ -376,7 +367,6 @@ class NurimCardBannerSmall extends StatelessWidget {
                 Text(
                   dayText,
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     height: 1.4,

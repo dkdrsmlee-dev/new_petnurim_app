@@ -189,7 +189,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           title: const Text(
             '회원 정보 입력',
             style: TextStyle(
-              fontFamily: 'Pretendard',
               color: AppColors.textStrong,
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -208,7 +207,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     const Text(
                       '추가 정보를 입력하고\n회원가입을 완료해 주세요.',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         height: 1.4,
@@ -224,7 +222,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const Text(
                           '연결계정',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textMuted,
@@ -246,7 +243,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               Text(
                                 emailText,
                                 style: const TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.textDisabled,
@@ -257,7 +253,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               Text(
                                 snsText,
                                 style: const TextStyle(
-                                  fontFamily: 'Pretendard',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.textDisabled,
@@ -277,7 +272,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const Text(
                           '생년월일',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textMuted,
@@ -299,7 +293,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             child: Text(
                               _formatBirthDate(_birthDateController.text),
                               style: const TextStyle(
-                                fontFamily: 'Pretendard',
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.textDisabled,
@@ -318,7 +311,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const Text(
                           '주소',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textMuted,
@@ -346,7 +338,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         ? '주소를 검색해 주세요.'
                                         : _address1Controller.text,
                                     style: TextStyle(
-                                      fontFamily: 'Pretendard',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                       color: _address1Controller.text.isEmpty
@@ -380,7 +371,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: TextField(
                             controller: _address2Controller,
                             style: const TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               color: AppColors.textStrong,
@@ -391,7 +381,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 color: AppColors.placeholder,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                fontFamily: 'Pretendard',
                               ),
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.zero,
@@ -437,7 +426,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         : const Text(
                             '다음',
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.66,

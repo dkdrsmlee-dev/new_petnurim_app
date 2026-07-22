@@ -193,7 +193,6 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
                             '마이펫 촬영을 위해\n카메라 접근 권한이 필요해요.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontFamily: 'Pretendard',
                               fontSize: 16,
                               color: Colors.white,
                               height: 1.5,
@@ -223,7 +222,6 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
                             child: const Text(
                               '설정으로 이동',
                               style: TextStyle(
-                                fontFamily: 'Pretendard',
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -273,7 +271,6 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
                   child: const Text(
                     '밝은 곳에서 선명하게 촬영해 주세요.',
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,

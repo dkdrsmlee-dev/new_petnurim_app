@@ -53,7 +53,6 @@ class ShootingHistoryScreen extends StatelessWidget {
         title: const Text(
           '촬영 내역',
           style: TextStyle(
-            fontFamily: 'Pretendard',
             fontWeight: FontWeight.w700,
             fontSize: 18,
             color: AppColors.textStrong,
@@ -136,7 +135,6 @@ class _EmptyHistoryView extends StatelessWidget {
             '아직 촬영 내역이 없어요.\n촬영 미션에 참여해 보세요.',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 16,
               fontWeight: FontWeight.w600,
               height: 1.4,
@@ -169,7 +167,6 @@ class _EmptyHistoryView extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 textStyle: const TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   height: 1.4,

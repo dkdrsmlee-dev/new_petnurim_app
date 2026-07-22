@@ -62,7 +62,6 @@ class CalendarStamp extends StatelessWidget {
                 child: Text(
                   '${rewardPoint}P',
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 12,
                     fontWeight: FontWeight.w600, // SemiBold
                     color: Colors.white,

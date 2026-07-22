@@ -111,7 +111,6 @@ class CameraButtonBar extends StatelessWidget {
                     Text(
                       '취소',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textMuted,
@@ -146,7 +145,6 @@ class CameraButtonBar extends StatelessWidget {
                     const Text(
                       '저장',
                       style: TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -226,7 +224,6 @@ class CameraHistoryCard extends StatelessWidget {
           Text(
             petName,
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: AppColors.textStrong,
@@ -236,7 +233,6 @@ class CameraHistoryCard extends StatelessWidget {
           Text(
             petInfo,
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: AppColors.textSecondary,
@@ -262,7 +258,6 @@ class CameraHistoryCard extends StatelessWidget {
                         Text(
                           '이번 달 참여',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: AppColors.textMuted,
@@ -273,7 +268,6 @@ class CameraHistoryCard extends StatelessWidget {
                     Text(
                       '$monthlyCount회',
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textStrong,
@@ -292,7 +286,6 @@ class CameraHistoryCard extends StatelessWidget {
                         Text(
                           '누적 촬영 리워드',
                           style: TextStyle(
-                            fontFamily: 'Pretendard',
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: AppColors.textMuted,
@@ -303,7 +296,6 @@ class CameraHistoryCard extends StatelessWidget {
                     Text(
                       '${totalReward}PR',
                       style: const TextStyle(
-                        fontFamily: 'Pretendard',
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textStrong,
@@ -362,7 +354,6 @@ class CameraListItem extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: AppColors.textStrong,
@@ -372,7 +363,6 @@ class CameraListItem extends StatelessWidget {
                 Text(
                   date,
                   style: const TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: AppColors.textSecondary,
@@ -384,7 +374,6 @@ class CameraListItem extends StatelessWidget {
           Text(
             reward,
             style: const TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: AppColors.primary,
@@ -438,7 +427,6 @@ class CameraRewardPopup extends StatelessWidget {
                   const Text(
                     '촬영 미션 완료!',
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textStrong,
@@ -449,7 +437,6 @@ class CameraRewardPopup extends StatelessWidget {
                   const Text(
                     '리워드 100PR이 지급되었어요!',
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textStrong,
@@ -475,7 +462,6 @@ class CameraRewardPopup extends StatelessWidget {
                       child: const Text(
                         '닫기',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textTertiary,
@@ -498,7 +484,6 @@ class CameraRewardPopup extends StatelessWidget {
                       child: const Text(
                         '촬영 내역 보기',
                         style: TextStyle(
-                          fontFamily: 'Pretendard',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,

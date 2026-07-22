@@ -229,7 +229,6 @@ class _InfoTextGroup extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontFamily: 'Pretendard',
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   height: 1.5,
@@ -249,7 +248,6 @@ class _InfoTextGroup extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    fontFamily: 'Pretendard',
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                     height: 1.5,
@@ -270,7 +268,6 @@ class _InfoTextGroup extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontFamily: 'Pretendard',
               fontSize: 12,
               fontWeight: FontWeight.w500,
               height: 1.5,
@@ -348,7 +345,6 @@ class _InfoRowTextButton extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 12,
             fontWeight: FontWeight.w500,
             height: 1.5,
@@ -398,7 +394,6 @@ class _InfoRowPillButton extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 12,
             fontWeight: FontWeight.w500,
             height: 1.5,

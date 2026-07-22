@@ -50,7 +50,6 @@ class NurimMyInfoCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       height: 1.5,
@@ -64,7 +63,6 @@ class NurimMyInfoCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontFamily: 'Pretendard',
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       height: 1.5,
@@ -123,7 +121,6 @@ class _MyInfoActionButton extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontFamily: 'Pretendard',
             fontSize: 12,
             fontWeight: FontWeight.w600,
             height: 1.5,

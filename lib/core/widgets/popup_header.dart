@@ -34,7 +34,6 @@ class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
         style: const TextStyle(
-          fontFamily: 'Pretendard',
           fontSize: 18,
           fontWeight: FontWeight.w700, // Bold
           color: AppColors.textStrong,
