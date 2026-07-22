@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/utils/image_picker_util.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/page_header.dart';
@@ -68,26 +69,11 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
 
   // 이미지 선택 처리
   Future<void> _pickImage(ImageSource source) async {
-    try {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(
-        source: source,
-        maxWidth: 500,
-        maxHeight: 500,
-        imageQuality: 85,
-      );
-      if (pickedFile != null) {
-        setState(() {
-          _profileImagePath = pickedFile.path;
-        });
-      }
-    } catch (e) {
-      // 이미지 선택 중 오류 처리
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('이미지를 가져오지 못했습니다.')),
-        );
-      }
+    final path = await pickImagePath(context, source);
+    if (path != null) {
+      setState(() {
+        _profileImagePath = path;
+      });
     }
   }
 

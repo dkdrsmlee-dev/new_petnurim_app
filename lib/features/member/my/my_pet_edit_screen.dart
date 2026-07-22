@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/utils/date_format.dart';
+import '../../../core/utils/image_picker_util.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/age_picker_sheet.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
@@ -153,25 +154,11 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    try {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(
-        source: source,
-        maxWidth: 500,
-        maxHeight: 500,
-        imageQuality: 85,
-      );
-      if (pickedFile != null) {
-        setState(() {
-          _profileImagePath = pickedFile.path;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('이미지를 가져오지 못했습니다.')),
-        );
-      }
+    final path = await pickImagePath(context, source);
+    if (path != null) {
+      setState(() {
+        _profileImagePath = path;
+      });
     }
   }
 
