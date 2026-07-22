@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/utils/date_format.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/bottom_action_bar.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/form_fields.dart';
@@ -169,9 +170,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('마이펫 등록에 실패했습니다: $e')),
-        );
+        ToastUtil.show(context, '마이펫 등록에 실패했습니다: $e');
       }
     } finally {
       if (mounted) {

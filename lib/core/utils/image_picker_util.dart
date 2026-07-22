@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'toast_util.dart';
+
 /// 이미지 소스([ImageSource.camera] 또는 [ImageSource.gallery])에서 이미지를
 /// 선택해 로컬 파일 경로를 반환한다.
 ///
@@ -21,9 +23,7 @@ Future<String?> pickImagePath(BuildContext context, ImageSource source) async {
     return pickedFile?.path;
   } catch (_) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('이미지를 가져오지 못했습니다.')),
-      );
+      ToastUtil.show(context, '이미지를 가져오지 못했습니다.');
     }
     return null;
   }

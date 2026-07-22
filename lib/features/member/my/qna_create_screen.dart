@@ -274,9 +274,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
 
   Future<void> _pickImageFromCamera() async {
     if (_attachedFiles.length >= 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('첨부파일은 최대 3개까지 등록 가능합니다.')),
-      );
+      ToastUtil.show(context, '첨부파일은 최대 3개까지 등록 가능합니다.');
       return;
     }
 
@@ -333,18 +331,14 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
       });
       debugPrint('Camera pick & upload error: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('사진 업로드에 실패했습니다: $e')),
-        );
+        ToastUtil.show(context, '사진 업로드에 실패했습니다: $e');
       }
     }
   }
 
   Future<void> _pickImageFromGallery() async {
     if (_attachedFiles.length >= 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('첨부파일은 최대 3개까지 등록 가능합니다.')),
-      );
+      ToastUtil.show(context, '첨부파일은 최대 3개까지 등록 가능합니다.');
       return;
     }
 
@@ -401,18 +395,14 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
       });
       debugPrint('Gallery pick & upload error: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('사진 업로드에 실패했습니다: $e')),
-        );
+        ToastUtil.show(context, '사진 업로드에 실패했습니다: $e');
       }
     }
   }
 
   Future<void> _pickFile() async {
     if (_attachedFiles.length >= 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('첨부파일은 최대 3개까지 등록 가능합니다.')),
-      );
+      ToastUtil.show(context, '첨부파일은 최대 3개까지 등록 가능합니다.');
       return;
     }
 
@@ -440,9 +430,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
               _isLoading = false;
             });
             if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('첨부파일은 최대 30MB까지 등록 가능합니다.')),
-              );
+              ToastUtil.show(context, '첨부파일은 최대 30MB까지 등록 가능합니다.');
             }
             return;
           }
@@ -484,9 +472,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
       });
       debugPrint('File pick & upload error: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('파일 업로드에 실패했습니다: $e')),
-        );
+        ToastUtil.show(context, '파일 업로드에 실패했습니다: $e');
       }
     }
   }

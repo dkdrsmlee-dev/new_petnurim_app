@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/utils/date_format.dart';
 import '../../../core/utils/image_picker_util.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/age_picker_sheet.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
@@ -272,9 +273,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
-        );
+        ToastUtil.show(context, e.toString().replaceAll('Exception: ', ''));
       }
     } finally {
       if (mounted) {

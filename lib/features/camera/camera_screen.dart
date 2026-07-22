@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../core/utils/toast_util.dart';
 import '../../core/widgets/camera_widgets.dart';
 import 'shooting_history_screen.dart';
 import '../../core/theme/app_colors.dart';
@@ -204,15 +205,11 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
                               try {
                                 bool opened = await openAppSettings();
                                 if (!opened && mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('설정 앱을 열 수 없습니다. 직접 기기 설정에서 권한을 켜주세요.')),
-                                  );
+                                  ToastUtil.show(context, '설정 앱을 열 수 없습니다. 직접 기기 설정에서 권한을 켜주세요.');
                                 }
                               } catch (e) {
                                 if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('오류 발생: $e')),
-                                  );
+                                  ToastUtil.show(context, '오류 발생: $e');
                                 }
                               }
                             },

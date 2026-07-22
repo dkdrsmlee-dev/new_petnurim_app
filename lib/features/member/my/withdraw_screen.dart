@@ -7,6 +7,7 @@ import '../../../app/app_bootstrap.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/storage/token_storage.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/common_dialog.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/selection_control.dart';
@@ -301,9 +302,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('회원탈퇴가 성공적으로 처리되었습니다.')),
-      );
+      ToastUtil.show(context, '회원탈퇴가 성공적으로 처리되었습니다.');
       
       context.go(AppRoutes.authStart);
     } catch (e) {
@@ -319,9 +318,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
         ref.invalidate(appBootstrapStateProvider);
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('로그인 세션이 만료되었습니다. 다시 로그인해 주세요.')),
-          );
+          ToastUtil.show(context, '로그인 세션이 만료되었습니다. 다시 로그인해 주세요.');
           context.go(AppRoutes.authStart);
         }
       } else {

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app_bootstrap.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/storage/token_storage.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/address_card.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
@@ -650,9 +651,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
           ref.invalidate(memberMyPageProvider);
         } catch (e) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('주소 저장 중 오류가 발생했습니다: $e')),
-            );
+            ToastUtil.show(context, '주소 저장 중 오류가 발생했습니다: $e');
           }
         }
       }

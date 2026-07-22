@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/authed_file_image.dart';
 
 import '../../../core/widgets/edge_button_dialog.dart';
@@ -74,9 +75,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('대표 펫 설정에 실패했습니다: $e')),
-      );
+      ToastUtil.show(context, '대표 펫 설정에 실패했습니다: $e');
     }
   }
 

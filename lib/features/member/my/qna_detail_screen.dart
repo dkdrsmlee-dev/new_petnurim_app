@@ -114,9 +114,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
               setState(() {
                 _isLoading = false;
               });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('삭제에 실패했습니다: $e')),
-              );
+              ToastUtil.show(context, '삭제에 실패했습니다: $e');
             }
           }
         },
