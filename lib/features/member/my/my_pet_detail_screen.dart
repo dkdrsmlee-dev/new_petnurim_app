@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/utils/date_format.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
@@ -100,7 +101,7 @@ class MyPetDetailScreen extends ConsumerWidget {
             // Calculate mock next payment date (1 month from today)
             final now = DateTime.now();
             final nextPaymentDate = DateTime(now.year, now.month + 1, now.day);
-            final nextPaymentStr = '${nextPaymentDate.year}.${nextPaymentDate.month.toString().padLeft(2, '0')}.${nextPaymentDate.day.toString().padLeft(2, '0')}';
+            final nextPaymentStr = nextPaymentDate.toDotDate(spaced: false);
 
             return ListView(
               children: [

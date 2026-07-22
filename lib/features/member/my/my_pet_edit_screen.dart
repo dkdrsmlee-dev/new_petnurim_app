@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/utils/date_format.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/age_picker_sheet.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
@@ -256,13 +257,9 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
 
       final weightVal = double.tryParse(_weightController.text.trim()) ?? 0.0;
 
-      final familyDtStr = _selectedDate != null
-          ? '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}'
-          : null;
+      final familyDtStr = _selectedDate?.toApiDate();
 
-      final weightDateStr = _selectedWeightDate != null
-          ? '${_selectedWeightDate!.year}-${_selectedWeightDate!.month.toString().padLeft(2, '0')}-${_selectedWeightDate!.day.toString().padLeft(2, '0')}'
-          : null;
+      final weightDateStr = _selectedWeightDate?.toApiDate();
 
       await ref.read(petRepositoryProvider).updateMyPet(
         myPetId: widget.myPetId,
@@ -375,11 +372,11 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     }
 
     final familyDateText = _selectedDate != null
-        ? '${_selectedDate!.year}. ${_selectedDate!.month.toString().padLeft(2, '0')}. ${_selectedDate!.day.toString().padLeft(2, '0')}'
+        ? _selectedDate!.toDotDate()
         : '가족이 된 날을 선택해 주세요.';
 
     final weightDateText = _selectedWeightDate != null
-        ? '${_selectedWeightDate!.year}. ${_selectedWeightDate!.month.toString().padLeft(2, '0')}. ${_selectedWeightDate!.day.toString().padLeft(2, '0')}.'
+        ? _selectedWeightDate!.toDotDate(trailing: true)
         : '체중 측정일을 선택해 주세요.';
 
     return Scaffold(

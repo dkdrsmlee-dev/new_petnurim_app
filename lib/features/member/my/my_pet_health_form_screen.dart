@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/utils/date_format.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
@@ -122,7 +123,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
       final weightVal = double.tryParse(_weightController.text.trim()) ?? 0.0;
 
       final weightDateStr = _selectedWeightDate != null
-          ? '${_selectedWeightDate!.year}-${_selectedWeightDate!.month.toString().padLeft(2, '0')}-${_selectedWeightDate!.day.toString().padLeft(2, '0')}'
+          ? _selectedWeightDate!.toApiDate()
           : widget.dateBecameFamily!;
 
       // Check if it's the first pet to register
@@ -390,7 +391,7 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
                                 Expanded(
                                   child: Text(
                                     _selectedWeightDate != null
-                                        ? '${_selectedWeightDate!.year}년 ${_selectedWeightDate!.month.toString().padLeft(2, '0')}월 ${_selectedWeightDate!.day.toString().padLeft(2, '0')}일'
+                                        ? _selectedWeightDate!.toKoreanDate()
                                         : '측정일을 선택해 주세요.',
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',

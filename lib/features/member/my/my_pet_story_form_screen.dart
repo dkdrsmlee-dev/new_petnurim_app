@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/utils/date_format.dart';
 import '../../../core/widgets/age_picker_sheet.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/form_fields.dart';
@@ -185,7 +186,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                 Expanded(
                                   child: Text(
                                     _selectedDate != null
-                                        ? '${_selectedDate!.year}년 ${_selectedDate!.month.toString().padLeft(2, '0')}월 ${_selectedDate!.day.toString().padLeft(2, '0')}일'
+                                        ? _selectedDate!.toKoreanDate()
                                         : '날짜를 선택해 주세요.',
                                     style: TextStyle(
                                       fontFamily: 'Pretendard',
@@ -337,9 +338,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     'breedId': widget.breedId,
                                     'profileImagePath': widget.profileImagePath,
                                     'age': _selectedAge.toString(),
-                                    'dateBecameFamily': _selectedDate != null
-                                        ? '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}'
-                                        : null,
+                                    'dateBecameFamily': _selectedDate?.toApiDate(),
                                     'gender': _selectedGender,
                                   },
                                 ).toString(),
