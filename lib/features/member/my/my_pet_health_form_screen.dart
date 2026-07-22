@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/utils/date_format.dart';
+import '../../../core/widgets/bottom_action_bar.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
@@ -456,77 +457,13 @@ class _MyPetHealthFormScreenState extends ConsumerState<MyPetHealthFormScreen> {
               ),
             ),
             // 하단 버튼 영역 (취소 vs 다음)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  // 취소 버튼
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _showCancelDialog,
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: AppColors.border),
-                        minimumSize: const Size.fromHeight(56),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      ),
-                      child: const Text(
-                        '취소',
-                        style: TextStyle(
-                          fontFamily: 'Pretendard',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textMuted,
-                          letterSpacing: -0.66,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // 다음 버튼
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: (_isConfirmButtonEnabled && !_isSubmitting)
-                          ? _submitMyPet
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: AppColors.borderLight,
-                        disabledForegroundColor: AppColors.placeholder,
-                        minimumSize: const Size.fromHeight(56),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      ),
-                      child: _isSubmitting
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.0,
-                              ),
-                            )
-                          : const Text(
-                              '다음',
-                              style: TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
-                    ),
-                  ),
-                ],
-              ),
+            NurimBottomActionBar(
+              secondaryLabel: '취소',
+              onSecondaryPressed: _showCancelDialog,
+              primaryLabel: '다음',
+              primaryEnabled: _isConfirmButtonEnabled,
+              isLoading: _isSubmitting,
+              onPrimaryPressed: _submitMyPet,
             ),
           ],
         ),
