@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/widgets/popup_header.dart';
 import '../../core/widgets/calendar_grid.dart';
 import '../../core/widgets/calendar_stamp.dart';
@@ -6,16 +7,20 @@ import '../../core/widgets/bullit_text.dart';
 import '../../core/widgets/edge_button_dialog.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/reward_milestone_stamp.dart';
+import 'domain/attendance_models.dart';
+import 'data/attendance_repository.dart';
+import '../../core/api/api_exception.dart';
+import '../../core/utils/toast_util.dart';
 import '../../core/theme/app_colors.dart';
 
-class AttendanceScreen extends StatefulWidget {
+class AttendanceScreen extends ConsumerStatefulWidget {
   const AttendanceScreen({Key? key}) : super(key: key);
 
   @override
-  State<AttendanceScreen> createState() => _AttendanceScreenState();
+  ConsumerState<AttendanceScreen> createState() => _AttendanceScreenState();
 }
 
-class _AttendanceScreenState extends State<AttendanceScreen> {
+class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   // Figma 이미지 URL 상수들
   static const String imgCheckTitle = "assets/images/banner/check_title.png";
   static const String imgCoin11 = "assets/images/banner/coin11.png";
@@ -32,54 +37,143 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   static const String imgAo1 = "assets/images/banner/ao1.png";
   static const String imgDlf1 = "assets/images/banner/dlf1.png";
 
-  // 예시 데이터: 이번 달 출석 일수 및 출석일 목록
-  final DateTime _today = DateTime(2026, 5, 14); // 스크린샷 기준 5월 14일
-  final List<int> _attendedDays = [3, 4, 5, 11, 12, 13, 14];
-  
-  // 리워드 마일스톤 예시 데이터
-  final List<Map<String, dynamic>> _milestones = [
-    {'title': '7일 출석', 'points': 100, 'isCompleted': true},
-    {'title': '14일 연속 출석', 'points': 200, 'isCompleted': false},
-    {'title': '21일 연속 출석', 'points': 300, 'isCompleted': false},
-    {'title': '28일 연속 출석', 'points': 400, 'isCompleted': false},
-    {'title': '30일 연속 출석', 'points': 500, 'isCompleted': false},
-  ];
+  // 현재 날짜 (달력 표시 기준)
+  final DateTime _now = DateTime.now();
+
+  // API 응답 데이터 (build → _buildContent에서 채워짐)
+  AttendanceCurrentResponse? _data;
+
+  // 출석 처리 진행 중 여부 (중복 탭 방지)
+  bool _isCheckingIn = false;
+
+  /// 이번 달(현재 월) 출석한 '일(day)' 목록
+  List<int> get _attendedDaysThisMonth {
+    final data = _data;
+    if (data == null) return const [];
+    return data.attendanceCalendar
+        .where((d) {
+          final dt = d.date;
+          return d.isAttended &&
+              dt != null &&
+              dt.year == _now.year &&
+              dt.month == _now.month;
+        })
+        .map((d) => d.date!.day)
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final attendanceAsync = ref.watch(currentAttendanceProvider);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const PopupHeader(
         title: '출석 체크',
         showBackButton: false, // 스크린샷 요구사항: 뒤로가기 버튼 숨김
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // 1. 배너 영역
-            _buildBannerSection(),
-            
-            const SizedBox(height: 32),
-            
-            // 2. 달력 영역
-            _buildCalendarSection(),
-            
-            const SizedBox(height: 32),
-            
-            // 3. 오늘 출석하기 버튼
-            _buildBottomButton(),
-            
-            const SizedBox(height: 48),
-            
-            // 4. 친구에게 소문내기 섹션
-            _buildShareSection(),
-            
-            // 5. 이벤트 유의사항 섹션
-            _buildNoticeSection(),
-            
-            const SizedBox(height: 40),
-          ],
+      body: attendanceAsync.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
+        error: (err, stack) {
+          // 진행 중인 출석 이벤트가 없는 경우는 오류가 아닌 전용 빈 상태로 표시
+          if (err is ApiException &&
+              err.code == 'ATTENDANCE.NO_ACTIVE_EVENT') {
+            return _buildNoActiveEventView();
+          }
+          return _buildErrorView();
+        },
+        data: (data) => _buildContent(data),
+      ),
+    );
+  }
+
+  Widget _buildContent(AttendanceCurrentResponse data) {
+    _data = data;
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // 1. 배너 영역
+          _buildBannerSection(),
+
+          const SizedBox(height: 32),
+
+          // 2. 달력 영역
+          _buildCalendarSection(),
+
+          const SizedBox(height: 32),
+
+          // 3. 오늘 출석하기 버튼
+          _buildBottomButton(),
+
+          const SizedBox(height: 48),
+
+          // 4. 친구에게 소문내기 섹션
+          _buildShareSection(),
+
+          // 5. 이벤트 유의사항 섹션
+          _buildNoticeSection(),
+
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.error_outline, color: Color(0xFFFA6262), size: 48),
+          const SizedBox(height: 12),
+          const Text(
+            '출석 정보를 불러오지 못했습니다.',
+            style: TextStyle(
+              fontSize: 16,
+              color: AppColors.textMuted,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () => ref.invalidate(currentAttendanceProvider),
+            icon: const Icon(Icons.refresh, size: 18),
+            label: const Text('다시 시도'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 진행 중인 출석 이벤트가 없을 때의 빈 상태 (오류 아님)
+  Widget _buildNoActiveEventView() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.event_busy_outlined,
+              color: AppColors.placeholder, size: 48),
+          SizedBox(height: 12),
+          Text(
+            '진행 중인 출석 이벤트가 없어요.',
+            style: TextStyle(
+              fontSize: 16,
+              color: AppColors.textMuted,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 6),
+          Text(
+            '새로운 출석 이벤트를 기다려 주세요.',
+            style: TextStyle(fontSize: 14, color: AppColors.placeholder),
+          ),
+        ],
       ),
     );
   }
@@ -218,11 +312,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             spacing: 20,
                             runSpacing: 12,
                             alignment: WrapAlignment.center,
-                            children: _milestones.map((milestone) {
+                            children: (_data?.continuousRewards ?? const [])
+                                .map((reward) {
                               return RewardMilestoneStamp(
-                                title: milestone['title'],
-                                points: milestone['points'],
-                                isCompleted: milestone['isCompleted'],
+                                title: '${reward.continuousDay}일 연속 출석',
+                                points: reward.rewardPoints,
+                                isCompleted: reward.isReceived,
                               );
                             }).toList(),
                           ),
@@ -284,7 +379,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${_today.month}월',
+                '${_now.month}월',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
@@ -308,7 +403,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       ),
                     ),
                     Text(
-                      '${_attendedDays.length}일',
+                      '${_data?.currentMonthAttendanceDays ?? 0}일',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -324,11 +419,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           
           // 달력 그리드
           CalendarGrid(
-            year: _today.year,
-            month: _today.month,
+            year: _now.year,
+            month: _now.month,
             dayBuilder: (context, date, isOutsideMonth) {
-              final isAttended = !isOutsideMonth && _attendedDays.contains(date.day);
-              final isToday = !isOutsideMonth && date.day == _today.day;
+              final isAttended =
+                  !isOutsideMonth && _attendedDaysThisMonth.contains(date.day);
+              final isToday = !isOutsideMonth && date.day == _now.day;
               
               return Stack(
                 alignment: Alignment.center,
@@ -363,99 +459,134 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   }
 
   Widget _buildBottomButton() {
+    final attended = _data?.isTodayAttended ?? false;
+    final disabled = attended || _isCheckingIn;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         width: double.infinity,
         height: 56,
         decoration: BoxDecoration(
-          color: AppColors.primary,
+          color: disabled ? AppColors.borderLight : AppColors.primary,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x4D47287C), // rgba(71,40,124,0.3)
-              offset: Offset(0, 4),
-              blurRadius: 3,
-            ),
-          ],
+          boxShadow: disabled
+              ? null
+              : const [
+                  BoxShadow(
+                    color: Color(0x4D47287C), // rgba(71,40,124,0.3)
+                    offset: Offset(0, 4),
+                    blurRadius: 3,
+                  ),
+                ],
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) => EdgeButtonDialog(
-                  title: '일일 출석체크가 완료되었어요!',
-                  confirmText: '확인',
-                  onConfirm: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => EdgeButtonDialog(
-                        title: '출석체크 완료!\n리워드 100PR이 지급되었어요!',
-                        confirmText: '확인',
-                        onConfirm: () {},
-                        topWidget: SizedBox(
-                          width: 60,
-                          height: 60,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 1,
-                                bottom: 1,
-                                width: 56,
-                                height: 56,
-                                child: Image.asset(
-                                  'assets/images/ic_coin.png',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                width: 12,
-                                height: 12,
-                                child: SvgPicture.asset(
-                                  'assets/images/ic_star_large.svg',
-                                ),
-                              ),
-                              Positioned(
-                                left: 0,
-                                bottom: 0,
-                                width: 9,
-                                height: 9,
-                                child: SvgPicture.asset(
-                                  'assets/images/ic_star_small.svg',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+            onTap: disabled ? null : _handleCheckIn,
+            child: Center(
+              child: _isCheckingIn
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
                       ),
-                    );
-                  },
-                  topWidget: Image.asset(
-                    'assets/images/ic_pet_foot.png',
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              );
-            },
-            child: const Center(
-              child: Text(
-                '오늘 출석하기',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: -0.54,
+                    )
+                  : Text(
+                      attended ? '오늘 출석 완료' : '오늘 출석하기',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: attended ? AppColors.textDisabled : Colors.white,
+                        letterSpacing: -0.54,
+                      ),
+                    ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 오늘 출석 처리: POST → 성공 시 리워드 다이얼로그 + 데이터 갱신
+  Future<void> _handleCheckIn() async {
+    setState(() => _isCheckingIn = true);
+    try {
+      final result =
+          await ref.read(attendanceRepositoryProvider).checkTodayAttendance();
+      if (!mounted) return;
+      // 달력/카운트/연속일/버튼 상태 갱신
+      ref.invalidate(currentAttendanceProvider);
+      _showCheckInRewardDialog(result);
+    } catch (e) {
+      if (mounted) {
+        ToastUtil.show(context, '출석 처리에 실패했습니다. 다시 시도해 주세요.');
+      }
+    } finally {
+      if (mounted) setState(() => _isCheckingIn = false);
+    }
+  }
+
+  /// 출석 완료 리워드 다이얼로그 (실제 지급 금액 표시)
+  void _showCheckInRewardDialog(AttendanceCheckResponse result) {
+    showDialog(
+      context: context,
+      builder: (context) => EdgeButtonDialog(
+        title: '일일 출석체크가 완료되었어요!',
+        confirmText: '확인',
+        onConfirm: () {
+          showDialog(
+            context: context,
+            builder: (context) => EdgeButtonDialog(
+              title: '출석체크 완료!\n리워드 ${result.totalRewardPoints}PR이 지급되었어요!',
+              confirmText: '확인',
+              onConfirm: () {},
+              topWidget: SizedBox(
+                width: 60,
+                height: 60,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      left: 1,
+                      bottom: 1,
+                      width: 56,
+                      height: 56,
+                      child: Image.asset(
+                        'assets/images/ic_coin.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      width: 12,
+                      height: 12,
+                      child: SvgPicture.asset(
+                        'assets/images/ic_star_large.svg',
+                      ),
+                    ),
+                    Positioned(
+                      left: 0,
+                      bottom: 0,
+                      width: 9,
+                      height: 9,
+                      child: SvgPicture.asset(
+                        'assets/images/ic_star_small.svg',
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
+          );
+        },
+        topWidget: Image.asset(
+          'assets/images/ic_pet_foot.png',
+          width: 60,
+          height: 60,
+          fit: BoxFit.contain,
         ),
       ),
     );

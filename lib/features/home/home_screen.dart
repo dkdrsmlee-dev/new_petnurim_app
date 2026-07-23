@@ -10,6 +10,7 @@ import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
 import '../../core/widgets/section_title.dart';
 import '../attendance/attendance_screen.dart';
+import '../attendance/data/attendance_repository.dart';
 import '../auth/application/auth_providers.dart';
 import '../camera/camera_mission_guide_screen.dart';
 import '../member/my/my_page_view.dart';
@@ -116,13 +117,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class _HomeOverview extends StatelessWidget {
+class _HomeOverview extends ConsumerWidget {
   const _HomeOverview({required this.onOpenCare});
 
   final VoidCallback onOpenCare;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final continuousDays =
+        ref.watch(currentAttendanceProvider).value?.continuousAttendanceDays;
     return ListView(
       padding: const EdgeInsets.only(top: 16, bottom: 28),
       children: [
@@ -142,7 +145,7 @@ class _HomeOverview extends StatelessWidget {
                 subtitle: '매일 출석하고 포인트 받자!',
                 pointText: '+100P',
                 statusText: '연속 출석',
-                dayText: '15일',
+                dayText: continuousDays != null ? '$continuousDays일' : '-일',
                 bannerImg: Container(
                   width: 78,
                   height: 78,
