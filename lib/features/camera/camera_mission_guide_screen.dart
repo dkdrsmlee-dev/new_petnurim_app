@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/widgets/popup_header.dart';
 import '../../core/widgets/bullit_text.dart';
 import '../../core/widgets/pet_select_card.dart';
+import '../../core/widgets/authed_file_image.dart';
+import '../../core/utils/toast_util.dart';
+import '../member/domain/pet_models.dart';
+import '../member/data/pet_repository.dart';
 import 'camera_screen.dart';
 import 'pet_empty_screen.dart';
 import 'pet_select_screen.dart';
 import '../../core/theme/app_colors.dart';
 
-class CameraMissionGuideScreen extends StatelessWidget {
+class CameraMissionGuideScreen extends ConsumerWidget {
   const CameraMissionGuideScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.bgGray, // var(--color/gray/20)
       appBar: PopupHeader(
@@ -585,7 +590,7 @@ class CameraMissionGuideScreen extends StatelessWidget {
                           ),
                           child: ElevatedButton(
                             onPressed: () {
-                              _onMissionParticipate(context);
+                              _onMissionParticipate(context, ref);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.textStrong, // Figma 검정/진회색 배경
@@ -663,10 +668,40 @@ class CameraMissionGuideScreen extends StatelessWidget {
   /// - 0마리 → PetEmptyScreen (펫 없음 안내)
   /// - 1마리 → CameraScreen (바로 카메라)
   /// - 2마리 이상 → PetSelectScreen (펫 선택)
-  void _onMissionParticipate(BuildContext context) {
-    // TODO: 실제 API 연동 후 등록된 펫 목록을 가져와 교체
-    // 현재는 더미 데이터로 동작 (앱 전체가 더미 데이터 단계)
-    final List<PetSelectCardData> registeredPets = _dummyPets;
+  Future<void> _onMissionParticipate(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    // 등록된 실제 펫 목록을 조회해 화면을 분기한다.
+    List<MyPetListItem> items;
+    try {
+      final response =
+          await ref.read(petRepositoryProvider).getMyPetsList(limit: 100);
+      items = response.items;
+    } catch (_) {
+      if (context.mounted) {
+        ToastUtil.show(context, '펫 정보를 불러오지 못했습니다. 다시 시도해 주세요.');
+      }
+      return;
+    }
+    if (!context.mounted) return;
+
+    // MyPetListItem → PetSelectCardData 매핑 (마이펫 목록 화면과 동일 규칙)
+    final List<PetSelectCardData> registeredPets = items
+        .map(
+          (item) => PetSelectCardData(
+            name: item.petName,
+            breed: item.breedNameKor ?? '믹스',
+            ageText: '${item.petAge}살',
+            genderText: item.genderCodeNm ??
+                (item.genderCode == 'MALE' ? '남아' : '여아'),
+            isFavorite: item.representYn == 'Y',
+            imageProvider: item.profileFileId != null
+                ? AuthedFileImageX.of(ref, item.profileFileId!)
+                : null,
+          ),
+        )
+        .toList();
 
     if (registeredPets.isEmpty) {
       // 0마리: 펫 없음 안내 화면
@@ -697,36 +732,4 @@ class CameraMissionGuideScreen extends StatelessWidget {
       );
     }
   }
-
-  /// 더미 펫 데이터 (실제 API 연동 전까지 사용)
-  static final List<PetSelectCardData> _dummyPets = [
-    const PetSelectCardData(
-      name: '콩두리',
-      breed: '웰시코기',
-      ageText: '2살',
-      genderText: '남아',
-      isFavorite: true,
-      imageProvider: NetworkImage(
-        'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=150&h=150&fit=crop',
-      ),
-    ),
-    const PetSelectCardData(
-      name: '초코',
-      breed: '푸들',
-      ageText: '3살',
-      genderText: '여아',
-      imageProvider: NetworkImage(
-        'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=150&h=150&fit=crop',
-      ),
-    ),
-    const PetSelectCardData(
-      name: '크림이',
-      breed: '포메라니안',
-      ageText: '1살',
-      genderText: '남아',
-      imageProvider: NetworkImage(
-        'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=150&h=150&fit=crop',
-      ),
-    ),
-  ];
 }
