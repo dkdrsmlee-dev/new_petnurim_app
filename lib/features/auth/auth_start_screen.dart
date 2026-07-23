@@ -1,10 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/app_bootstrap.dart';
 import '../../app/app_routes.dart';
 import '../../core/storage/last_login_storage.dart';
+import '../../core/storage/token_storage.dart';
+import '../../core/utils/toast_util.dart';
 import '../../core/widgets/last_login_badge.dart';
 import '../../core/widgets/social_login_button.dart';
 import 'application/auth_providers.dart';
@@ -81,6 +85,25 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
                     ),
                     label: const Text(
                       '[테스트] 신규 가입 흐름 강제진입',
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.orange),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    onPressed:
+                        _pendingProvider == null ? _injectDebugToken : null,
+                    icon: const Icon(
+                      Icons.vpn_key_outlined,
+                      color: Colors.orange,
+                    ),
+                    label: const Text(
+                      '[테스트] 클립보드 토큰 주입',
                       style: TextStyle(
                         color: Colors.orange,
                         fontWeight: FontWeight.bold,
@@ -179,6 +202,39 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
     ref.read(pendingSocialLoginResultProvider.notifier).setResult(mockResult);
     ref.read(signupFlowProvider.notifier).startFromSocialLogin(mockResult);
     context.go(AppRoutes.signupTerms);
+  }
+
+  // [디버그 전용] 클립보드의 토큰을 읽어 로그인 상태로 진입한다.
+  // 클립보드 형식: "ACCESS" 또는 "ACCESS|REFRESH". secure storage에 저장 후 홈으로 이동한다.
+  Future<void> _injectDebugToken() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final raw = (data?.text ?? '').trim();
+    if (raw.isEmpty) {
+      if (mounted) {
+        ToastUtil.show(context, '클립보드가 비어 있습니다. 토큰을 복사해 주세요.');
+      }
+      return;
+    }
+
+    final parts = raw.split('|');
+    final accessToken = parts[0].trim();
+    final refreshToken = parts.length > 1 ? parts[1].trim() : '';
+    if (accessToken.isEmpty) {
+      if (mounted) {
+        ToastUtil.show(context, 'access token이 비어 있습니다.');
+      }
+      return;
+    }
+
+    final tokenStorage = ref.read(tokenStorageProvider);
+    await tokenStorage.saveAccessToken(accessToken);
+    if (refreshToken.isNotEmpty) {
+      await tokenStorage.saveRefreshToken(refreshToken);
+    }
+    ref.invalidate(appBootstrapStateProvider);
+
+    if (!mounted) return;
+    context.go(AppRoutes.home);
   }
 
   String _readErrorMessage(Object error, String fallbackMessage) =>
