@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import 'dart:async';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/authed_file_image.dart';
+import '../../event/data/event_repository.dart';
+import '../../event/domain/event_models.dart';
 
 class _BannerData {
   final Color bgColor;
@@ -23,14 +27,268 @@ class _BannerData {
   });
 }
 
-class HomeEventCarousel extends StatefulWidget {
+// ⛳️ ─────────────────────────────────────────────────────────────
+// MILESTONE: 홈 배너 소스 전환 스위치
+//   true  = 백엔드 이벤트 배너 API 사용 (GET /api/v1/events/banners)
+//   false = 기존 하드코딩 배너 3종으로 복귀 (_LegacyBannerCarousel)
+//   → 하드코딩 배너로 되돌리려면 이 값만 false 로 바꾸세요.
+//     (레거시 코드는 아래 _LegacyBannerCarousel 에 그대로 보존되어 있음)
+// ─────────────────────────────────────────────────────────────────
+const bool _useApiBanners = true;
+
+class HomeEventCarousel extends StatelessWidget {
   const HomeEventCarousel({super.key});
 
   @override
-  State<HomeEventCarousel> createState() => _HomeEventCarouselState();
+  Widget build(BuildContext context) {
+    return _useApiBanners
+        ? const _ApiBannerCarousel()
+        : const _LegacyBannerCarousel();
+  }
 }
 
-class _HomeEventCarouselState extends State<HomeEventCarousel> {
+// ═══════════════════════════════════════════════════════════════════
+// 신규: 백엔드 이벤트 배너 API 기반 캐러셀
+// ═══════════════════════════════════════════════════════════════════
+class _ApiBannerCarousel extends ConsumerStatefulWidget {
+  const _ApiBannerCarousel();
+
+  @override
+  ConsumerState<_ApiBannerCarousel> createState() => _ApiBannerCarouselState();
+}
+
+class _ApiBannerCarouselState extends ConsumerState<_ApiBannerCarousel> {
+  late final PageController _pageController;
+  int _currentIndex = 0;
+  Timer? _timer;
+  bool _isPlaying = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.9413);
+  }
+
+  @override
+  void dispose() {
+    _stopTimer();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _startTimer(int count) {
+    _timer?.cancel();
+    if (count <= 1) return;
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_pageController.hasClients) {
+        final nextPage = (_currentIndex + 1) % count;
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  /// bannerFile → ImageProvider (fileUrl 절대URL 우선, 없으면 fileId 인증 다운로드)
+  ImageProvider? _bannerImage(BannerFile? file) {
+    if (file == null) return null;
+    final url = file.fileUrl;
+    if (url != null &&
+        (url.startsWith('http://') || url.startsWith('https://'))) {
+      return NetworkImage(url);
+    }
+    final id = file.fileId;
+    if (id != null && id.isNotEmpty) {
+      return AuthedFileImageX.of(ref, id);
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bannersAsync = ref.watch(homeBannersProvider);
+    return bannersAsync.when(
+      loading: () => _buildPlaceholder(),
+      error: (e, _) => const SizedBox.shrink(),
+      data: (banners) {
+        if (banners.isEmpty) return const SizedBox.shrink();
+        // 데이터 도착 후 자동 스크롤 시작 (개수 반영, 중복 시작 방지)
+        if (_isPlaying && _timer == null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _startTimer(banners.length);
+          });
+        }
+        return SizedBox(
+          height: 203,
+          child: PageView.builder(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => _currentIndex = index);
+              if (_isPlaying) _startTimer(banners.length);
+            },
+            itemCount: banners.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: _buildBannerCard(banners[index], banners.length),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      height: 203,
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      decoration: BoxDecoration(
+        color: AppColors.bgGray,
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
+  }
+
+  Widget _buildBannerCard(EventBanner banner, int total) {
+    final image = _bannerImage(banner.bannerFile);
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: AppColors.bgGray,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 백엔드 제공 배너 이미지
+          if (image != null)
+            Image(
+              image: image,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stack) => _buildImageFallback(banner),
+            )
+          else
+            _buildImageFallback(banner),
+
+          // 재생/정지 + 페이지 인디케이터 오버레이 (기존 디자인 유지)
+          Positioned(
+            right: 10,
+            bottom: 10,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isPlaying = !_isPlaying;
+                      if (_isPlaying) {
+                        _startTimer(total);
+                      } else {
+                        _stopTimer();
+                      }
+                    });
+                  },
+                  child: Container(
+                    width: 21,
+                    height: 21,
+                    decoration: const BoxDecoration(
+                      color: Color(0x99000000),
+                      shape: BoxShape.circle,
+                    ),
+                    child: _isPlaying
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(width: 2, height: 8, color: Colors.white),
+                              const SizedBox(width: 2),
+                              Container(width: 2, height: 8, color: Colors.white),
+                            ],
+                          )
+                        : const Icon(Icons.play_arrow,
+                            size: 11, color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0x99000000),
+                    borderRadius: BorderRadius.circular(9999),
+                  ),
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '0${_currentIndex + 1} ',
+                          style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: -0.66,
+                          ),
+                        ),
+                        TextSpan(
+                          text: '/ ${total < 10 ? '0$total' : '$total'}',
+                          style: const TextStyle(
+                            fontFamily: 'Pretendard',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFFBFBFBF),
+                            letterSpacing: -0.66,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 배너 이미지가 없거나 로딩 실패 시 이벤트명 표시
+  Widget _buildImageFallback(EventBanner banner) {
+    return Container(
+      color: AppColors.bgGray,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(16),
+      child: Text(
+        banner.eventName,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontFamily: 'Pretendard',
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textMuted,
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 레거시: 하드코딩 배너 3종 — _useApiBanners = false 일 때 사용 (보존)
+// ═══════════════════════════════════════════════════════════════════
+class _LegacyBannerCarousel extends StatefulWidget {
+  const _LegacyBannerCarousel();
+
+  @override
+  State<_LegacyBannerCarousel> createState() => _LegacyBannerCarouselState();
+}
+
+class _LegacyBannerCarouselState extends State<_LegacyBannerCarousel> {
   late final PageController _pageController;
   int _currentIndex = 0;
   Timer? _timer;
