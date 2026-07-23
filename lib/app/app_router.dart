@@ -5,7 +5,6 @@ import '../features/auth/auth_start_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/member/my/my_info_screen.dart';
 import '../features/member/my/withdraw_screen.dart';
-import '../features/onboarding/onboarding_screen.dart';
 import '../features/signup/complete_screen.dart';
 import '../features/signup/profile_screen.dart';
 import '../features/signup/terms_screen.dart';
@@ -33,11 +32,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.splash,
         name: AppRouteNames.splash,
         builder: (context, state) => const SplashScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.onboarding,
-        name: AppRouteNames.onboarding,
-        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
         path: AppRoutes.authStart,

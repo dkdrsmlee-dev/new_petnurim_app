@@ -61,7 +61,6 @@ lib/
     widgets/           공통 위젯(라벨/탭/버튼/카드/폼 필드 등)
   features/
     splash/
-    onboarding/
     auth/
     signup/             약관, 본인인증, 프로필, 가입 완료
     member/             나의 정보, 회원탈퇴 화면 및 회원 도메인
@@ -76,7 +75,6 @@ lib/
 
 ```txt
 /                 스플래시
-/onboarding       온보딩
 /auth/start       로그인 시작
 /signup/terms     약관 동의
 /signup/verify    본인인증

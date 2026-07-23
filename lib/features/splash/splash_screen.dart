@@ -12,7 +12,7 @@ class SplashScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 앱 초기화 상태(access token, onboarding 등) 확인 후 분기 처리
+    // 앱 초기화 상태(access token) 확인 후 분기 처리
     ref.listen(appBootstrapStateProvider, (previous, next) {
       next.whenData((state) {
         WidgetsBinding.instance.addPostFrameCallback((_) {

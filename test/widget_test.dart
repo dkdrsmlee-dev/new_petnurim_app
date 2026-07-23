@@ -4,12 +4,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_petnurim_app/app/petnurim_app.dart';
-import 'package:new_petnurim_app/core/storage/onboarding_storage.dart';
 import 'package:new_petnurim_app/core/storage/token_storage.dart';
 import 'package:new_petnurim_app/features/auth/application/auth_providers.dart';
 import 'package:new_petnurim_app/features/auth/data/auth_repository.dart';
@@ -22,15 +20,12 @@ void main() {
     HttpOverrides.global = _MockHttpOverrides();
   });
 
-  testWidgets('토큰이 없고 온보딩 미완료이면 온보딩으로 이동한다', (WidgetTester tester) async {
+  testWidgets('토큰이 없으면 로그인 시작 화면으로 이동한다', (WidgetTester tester) async {
     // 앱을 렌더링합니다.
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           tokenStorageProvider.overrideWithValue(InMemoryTokenStorage()),
-          onboardingStorageProvider.overrideWithValue(
-            InMemoryOnboardingStorage(),
-          ),
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
         ],
         child: const PetnurimApp(),
@@ -38,13 +33,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('온보딩'), findsWidgets);
-    expect(find.text('서비스 시작하기'), findsOneWidget);
-
-    // 온보딩 완료를 저장한 뒤 로그인 시작 화면으로 이동합니다.
-    await tester.tap(find.byIcon(Icons.arrow_forward));
-    await tester.pumpAndSettle();
-
+    // 온보딩 없이 곧바로 로그인 시작 화면이 노출됩니다.
     expect(find.text('안녕하세요 :)\n회원가입 후 이용해 주세요.'), findsOneWidget);
     expect(find.text('카카오로 시작하기'), findsOneWidget);
     expect(find.text('네이버로 시작하기'), findsOneWidget);

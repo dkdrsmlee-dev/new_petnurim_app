@@ -1,6 +1,5 @@
 abstract final class AppRoutes {
   static const splash = '/';
-  static const onboarding = '/onboarding';
   static const authStart = '/auth/start';
   static const signupTerms = '/signup/terms';
   static const signupVerify = '/signup/verify';
@@ -25,7 +24,6 @@ abstract final class AppRoutes {
 
 abstract final class AppRouteNames {
   static const splash = 'splash';
-  static const onboarding = 'onboarding';
   static const authStart = 'authStart';
   static const signupTerms = 'signupTerms';
   static const signupVerify = 'signupVerify';
