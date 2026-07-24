@@ -168,14 +168,24 @@ class _PetAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 이미지가 없거나 로드 실패(예: 404) 시 동일한 발바닥 아이콘으로 폴백
+    const fallback = Center(
+      child: Icon(Icons.pets, size: 24, color: Colors.white),
+    );
     return ClipOval(
       child: Container(
         width: 48,
         height: 48,
         color: const Color(0xFFA9A9A9),
         child: imageProvider != null
-            ? Image(image: imageProvider!, fit: BoxFit.cover)
-            : const Icon(Icons.pets, size: 24, color: Colors.white),
+            ? Image(
+                image: imageProvider!,
+                fit: BoxFit.cover,
+                width: 48,
+                height: 48,
+                errorBuilder: (_, __, ___) => fallback,
+              )
+            : fallback,
       ),
     );
   }
