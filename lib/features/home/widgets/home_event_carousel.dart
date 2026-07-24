@@ -33,8 +33,10 @@ class _BannerData {
 //   false = 기존 하드코딩 배너 3종으로 복귀 (_LegacyBannerCarousel)
 //   → 하드코딩 배너로 되돌리려면 이 값만 false 로 바꾸세요.
 //     (레거시 코드는 아래 _LegacyBannerCarousel 에 그대로 보존되어 있음)
+//   [2026-07-24] homeBanners 는 홈 상단 슬라이더용 데이터가 아님이 확인되어
+//                false 로 되돌림. 원래 하드코딩 배너 사용.
 // ─────────────────────────────────────────────────────────────────
-const bool _useApiBanners = true;
+const bool _useApiBanners = false;
 
 class HomeEventCarousel extends StatelessWidget {
   const HomeEventCarousel({super.key});
