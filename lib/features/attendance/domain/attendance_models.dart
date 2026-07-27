@@ -14,6 +14,7 @@ class AttendanceCurrentResponse {
   final String title;
   final String? thumbnailFileId;
   final String? detailImageFileId;
+  final String? detailImageUrl; // "/api/v1/files/{id}/download"
   final String eventPeriod;
   final String? startDt;
   final String? endDt;
@@ -34,6 +35,7 @@ class AttendanceCurrentResponse {
     required this.title,
     this.thumbnailFileId,
     this.detailImageFileId,
+    this.detailImageUrl,
     required this.eventPeriod,
     this.startDt,
     this.endDt,
@@ -52,12 +54,23 @@ class AttendanceCurrentResponse {
 
   bool get isTodayAttended => todayAttendanceYn == 'Y';
 
+  /// 상세 배너 이미지 fileId (detailImageFileId 우선, 없으면 detailImageUrl에서 추출)
+  String? get detailImageFileIdResolved {
+    if (detailImageFileId != null && detailImageFileId!.isNotEmpty) {
+      return detailImageFileId;
+    }
+    final url = detailImageUrl;
+    if (url == null || url.isEmpty) return null;
+    return RegExp(r'/files/(\d+)/download').firstMatch(url)?.group(1);
+  }
+
   factory AttendanceCurrentResponse.fromJson(Map<String, dynamic> json) {
     return AttendanceCurrentResponse(
       eventMasterId: json['eventMasterId']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
       thumbnailFileId: json['thumbnailFileId']?.toString(),
       detailImageFileId: json['detailImageFileId']?.toString(),
+      detailImageUrl: json['detailImageUrl']?.toString(),
       eventPeriod: json['eventPeriod']?.toString() ?? '',
       startDt: json['startDt']?.toString(),
       endDt: json['endDt']?.toString(),

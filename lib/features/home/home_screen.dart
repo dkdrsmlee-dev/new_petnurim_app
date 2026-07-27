@@ -10,8 +10,9 @@ import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
 import '../../core/widgets/section_title.dart';
 import '../attendance/attendance_screen.dart';
-import '../attendance/data/attendance_repository.dart';
 import '../auth/application/auth_providers.dart';
+import '../event/data/event_repository.dart';
+import '../../core/widgets/authed_file_image.dart';
 import '../camera/camera_mission_guide_screen.dart';
 import '../member/my/my_page_view.dart';
 import 'widgets/home_event_carousel.dart';
@@ -124,8 +125,10 @@ class _HomeOverview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final continuousDays =
-        ref.watch(currentAttendanceProvider).value?.continuousAttendanceDays;
+    // 이벤트 템플릿(출석/촬영)으로 리워드 카드 구성
+    final templates = ref.watch(eventTemplatesProvider).value;
+    final attendance = templates?.attendance;
+    final photo = templates?.photo;
     return ListView(
       padding: const EdgeInsets.only(top: 16, bottom: 28),
       children: [
@@ -141,20 +144,18 @@ class _HomeOverview extends ConsumerWidget {
           child: Column(
             children: [
               NurimCardBanner(
-                title: '출석 체크 리워드',
+                title: attendance?.title ?? '출석 체크 리워드',
                 subtitle: '매일 출석하고 포인트 받자!',
-                pointText: '+100P',
+                pointText: '+${attendance?.defaultReward?.rewardValue ?? 100}P',
                 statusText: '연속 출석',
-                dayText: continuousDays != null ? '$continuousDays일' : '-일',
-                bannerImg: Container(
-                  width: 78,
-                  height: 78,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFEEEBE),
-                    shape: BoxShape.circle,
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                  child: Stack(
+                dayText: attendance != null
+                    ? '${attendance.continuousAttendanceDays}일'
+                    : '-일',
+                bannerImg: _rewardThumb(
+                  ref,
+                  attendance?.thumbnailFileId,
+                  const Color(0xFFFEEEBE),
+                  Stack(
                     children: [
                       Positioned(
                         left: 39 + 10.01 - (77.332 / 2),
@@ -170,31 +171,33 @@ class _HomeOverview extends ConsumerWidget {
                   ),
                 ),
                 bannerIcon: const Icon(Icons.local_fire_department, color: AppColors.errorSoft, size: 20),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AttendanceScreen()),
-                  );
-                },
+                onTap: attendance == null
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AttendanceScreen(
+                              eventMasterId: attendance.eventMasterId,
+                            ),
+                          ),
+                        );
+                      },
               ),
               const SizedBox(height: 10),
               NurimCardBanner(
-                title: '마이펫 촬영 리워드',
+                title: photo?.title ?? '마이펫 촬영 리워드',
                 subtitle: '귀여운 사진 찍고 포인트 받자!',
-                pointText: '+100P',
+                pointText: '+${photo?.defaultReward?.rewardValue ?? 100}P',
                 pointTextColor: const Color(0xFF85B48B),
                 pointBgColor: const Color(0xFFE7FAEA),
                 statusText: '이번 주 촬영',
                 dayText: '3일 / 7일',
-                bannerImg: Container(
-                  width: 78,
-                  height: 78,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFDCEFDE),
-                    shape: BoxShape.circle,
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                  child: Stack(
+                bannerImg: _rewardThumb(
+                  ref,
+                  photo?.thumbnailFileId,
+                  const Color(0xFFDCEFDE),
+                  Stack(
                     children: [
                       Positioned(
                         left: 39 + 19.5 - (77.033 / 2),
@@ -226,6 +229,33 @@ class _HomeOverview extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// 리워드 카드 썸네일: 이벤트 thumbnail(fileId) 로드, 없거나 실패 시 기본 일러스트로 폴백
+Widget _rewardThumb(
+  WidgetRef ref,
+  String? fileId,
+  Color bg,
+  Widget fallback,
+) {
+  final provider = (fileId != null && fileId.isNotEmpty)
+      ? AuthedFileImageX.of(ref, fileId)
+      : null;
+  return Container(
+    width: 78,
+    height: 78,
+    decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+    clipBehavior: Clip.hardEdge,
+    child: provider == null
+        ? fallback
+        : Image(
+            image: provider,
+            width: 78,
+            height: 78,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => fallback,
+          ),
+  );
 }
 
 

@@ -9,12 +9,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/reward_milestone_stamp.dart';
 import 'domain/attendance_models.dart';
 import 'data/attendance_repository.dart';
+import '../../core/widgets/authed_file_image.dart';
 import '../../core/api/api_exception.dart';
 import '../../core/utils/toast_util.dart';
 import '../../core/theme/app_colors.dart';
 
 class AttendanceScreen extends ConsumerStatefulWidget {
-  const AttendanceScreen({Key? key}) : super(key: key);
+  const AttendanceScreen({Key? key, required this.eventMasterId})
+      : super(key: key);
+
+  /// 출석 이벤트 마스터 ID (홈 리워드 카드에서 templates.ATTENDANCE 로부터 전달)
+  final String eventMasterId;
 
   @override
   ConsumerState<AttendanceScreen> createState() => _AttendanceScreenState();
@@ -64,7 +69,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final attendanceAsync = ref.watch(currentAttendanceProvider);
+    final attendanceAsync = ref.watch(attendanceProvider(widget.eventMasterId));
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const PopupHeader(
@@ -137,7 +142,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
-            onPressed: () => ref.invalidate(currentAttendanceProvider),
+            onPressed: () =>
+                ref.invalidate(attendanceProvider(widget.eventMasterId)),
             icon: const Icon(Icons.refresh, size: 18),
             label: const Text('다시 시도'),
             style: ElevatedButton.styleFrom(
@@ -179,6 +185,21 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   }
 
   Widget _buildBannerSection() {
+    // 상세 이미지(detailImageUrl)로 배너 전체를 대체.
+    // 이미지가 없거나 로드 실패 시 기존 하드코딩 배너로 폴백.
+    final fileId = _data?.detailImageFileIdResolved;
+    if (fileId == null || fileId.isEmpty) {
+      return _buildLegacyBannerSection();
+    }
+    return Image(
+      image: AuthedFileImageX.of(ref, fileId),
+      width: double.infinity,
+      fit: BoxFit.fitWidth,
+      errorBuilder: (_, __, ___) => _buildLegacyBannerSection(),
+    );
+  }
+
+  Widget _buildLegacyBannerSection() {
     return Container(
       width: double.infinity,
       height: 558, // Figma 배너 영역 전체 높이
@@ -255,9 +276,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                           color: AppColors.textStrong,
                           borderRadius: BorderRadius.circular(9999),
                         ),
-                        child: const Text(
-                          '2026.4.1~4.30',
-                          style: TextStyle(
+                        child: Text(
+                          _data?.eventPeriod ?? '',
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -269,8 +290,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     ),
                   ),
 
-                  // 6. 큰 보라색 도장 장식 (stamp 1) - 뱃지 위로 올라오도록 뱃지 다음 순서에 선언!
-                  _buildTransformedImage(imgStamp1, isSvg: false, left: 235.49, top: 183.15, boundingWidth: 64.542, boundingHeight: 76.106, imageWidth: 51.677, imageHeight: 66.742, angle: 12.12),
+                  // 6. 큰 보라색 도장 장식 (stamp 1)
+                  //   기간 뱃지(동적 eventPeriod) 우측 끝에 거의 붙되 텍스트는 안 가리도록 배치
+                  _buildTransformedImage(imgStamp1, isSvg: false, left: 272, top: 183, boundingWidth: 64.542, boundingHeight: 76.106, imageWidth: 51.677, imageHeight: 66.742, angle: 12.12),
 
                   // 7. 메인 3D 타이틀 ("출석체크")
                   Positioned(
@@ -515,10 +537,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     setState(() => _isCheckingIn = true);
     try {
       final result =
-          await ref.read(attendanceRepositoryProvider).checkTodayAttendance();
+          await ref
+              .read(attendanceRepositoryProvider)
+              .checkAttendance(widget.eventMasterId);
       if (!mounted) return;
       // 달력/카운트/연속일/버튼 상태 갱신
-      ref.invalidate(currentAttendanceProvider);
+      ref.invalidate(attendanceProvider(widget.eventMasterId));
       _showCheckInRewardDialog(result);
     } catch (e) {
       if (mounted) {

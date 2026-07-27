@@ -6,11 +6,11 @@ import '../../auth/domain/auth_exception.dart';
 import '../domain/attendance_models.dart';
 
 abstract interface class AttendanceRepository {
-  /// 현재 진행중 출석 이벤트 조회
-  Future<AttendanceCurrentResponse> getCurrentAttendance();
+  /// 출석 이벤트 상세 조회 (eventMasterId 기준)
+  Future<AttendanceCurrentResponse> getAttendance(String eventMasterId);
 
-  /// 오늘 출석 처리
-  Future<AttendanceCheckResponse> checkTodayAttendance();
+  /// 오늘 출석 처리 (eventMasterId 기준)
+  Future<AttendanceCheckResponse> checkAttendance(String eventMasterId);
 }
 
 class BackendAttendanceRepository implements AttendanceRepository {
@@ -24,9 +24,9 @@ class BackendAttendanceRepository implements AttendanceRepository {
   final TokenStorage _tokenStorage;
 
   @override
-  Future<AttendanceCurrentResponse> getCurrentAttendance() async {
+  Future<AttendanceCurrentResponse> getAttendance(String eventMasterId) async {
     final payload = await _apiClient.getJson(
-      '/api/v1/user/attendance/current',
+      '/api/v1/user/attendance/$eventMasterId',
       bearerToken: await _readAccessToken('로그인 정보가 없어 출석 정보를 조회할 수 없습니다.'),
       fallbackMessage: '출석 정보를 불러오지 못했습니다.',
     );
@@ -39,9 +39,9 @@ class BackendAttendanceRepository implements AttendanceRepository {
   }
 
   @override
-  Future<AttendanceCheckResponse> checkTodayAttendance() async {
+  Future<AttendanceCheckResponse> checkAttendance(String eventMasterId) async {
     final payload = await _apiClient.postJson(
-      '/api/v1/user/attendance/current/check',
+      '/api/v1/user/attendance/$eventMasterId/check',
       bearerToken: await _readAccessToken('로그인 정보가 없어 출석할 수 없습니다.'),
       fallbackMessage: '출석 처리에 실패했습니다.',
     );
@@ -69,8 +69,8 @@ final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
   );
 });
 
-/// 현재 진행중 출석 이벤트 데이터 provider
-final currentAttendanceProvider =
-    FutureProvider.autoDispose<AttendanceCurrentResponse>((ref) async {
-  return ref.read(attendanceRepositoryProvider).getCurrentAttendance();
+/// 출석 이벤트 상세 provider (eventMasterId 기준)
+final attendanceProvider = FutureProvider.autoDispose
+    .family<AttendanceCurrentResponse, String>((ref, eventMasterId) async {
+  return ref.read(attendanceRepositoryProvider).getAttendance(eventMasterId);
 });

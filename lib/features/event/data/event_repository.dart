@@ -7,6 +7,9 @@ import '../domain/event_models.dart';
 abstract interface class EventRepository {
   /// 메인 이벤트 배너 목록 조회
   Future<EventBannersResponse> getBanners();
+
+  /// 메인 이벤트 템플릿 목록 조회 (타입별: ATTENDANCE / PHOTO …)
+  Future<EventTemplates> getTemplates();
 }
 
 class BackendEventRepository implements EventRepository {
@@ -38,6 +41,25 @@ class BackendEventRepository implements EventRepository {
       throw const FormatException('잘못된 응답 형식입니다.');
     }
   }
+
+  @override
+  Future<EventTemplates> getTemplates() async {
+    final token = await _tokenStorage.readAccessToken();
+    final bearer =
+        (token != null && token.trim().isNotEmpty) ? token.trim() : null;
+
+    final payload = await _apiClient.getJson(
+      '/api/v1/events/templates',
+      bearerToken: bearer,
+      fallbackMessage: '이벤트 목록을 불러오지 못했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return EventTemplates.fromJson(payload);
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
+  }
 }
 
 final eventRepositoryProvider = Provider<EventRepository>((ref) {
@@ -52,4 +74,10 @@ final homeBannersProvider =
     FutureProvider.autoDispose<List<EventBanner>>((ref) async {
   final response = await ref.read(eventRepositoryProvider).getBanners();
   return response.homeBanners;
+});
+
+/// 메인 이벤트 템플릿 목록 provider (홈 리워드 카드 등에서 사용)
+final eventTemplatesProvider =
+    FutureProvider.autoDispose<EventTemplates>((ref) async {
+  return ref.read(eventRepositoryProvider).getTemplates();
 });
