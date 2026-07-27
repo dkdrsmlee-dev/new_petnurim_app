@@ -26,6 +26,7 @@ class AttendanceCurrentResponse {
   final int currentMonthAttendanceDays;
   final List<AttendanceCalendarDay> attendanceCalendar;
   final List<ContinuousReward> continuousRewards;
+  final int defaultRewardValue; // 이벤트 기본 리워드(defaultReward.rewardValue)
   final String? shareTitle;
   final String? sharePeriod;
   final String? notice;
@@ -47,6 +48,7 @@ class AttendanceCurrentResponse {
     required this.currentMonthAttendanceDays,
     required this.attendanceCalendar,
     required this.continuousRewards,
+    this.defaultRewardValue = 0,
     this.shareTitle,
     this.sharePeriod,
     this.notice,
@@ -90,6 +92,10 @@ class AttendanceCurrentResponse {
               .map(ContinuousReward.fromJson)
               .toList() ??
           const [],
+      defaultRewardValue: json['defaultReward'] is Map<String, dynamic>
+          ? _parseInt(
+              (json['defaultReward'] as Map<String, dynamic>)['rewardValue'])
+          : 0,
       shareTitle: json['shareTitle']?.toString(),
       sharePeriod: json['sharePeriod']?.toString(),
       notice: json['notice']?.toString(),

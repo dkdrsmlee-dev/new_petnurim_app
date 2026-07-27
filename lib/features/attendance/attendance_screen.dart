@@ -67,6 +67,25 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
         .toList();
   }
 
+  /// 특정 날짜(이번 달)의 리워드 포인트: 해당 날짜 rewardAmt 우선,
+  /// 없으면 이벤트 기본 리워드(defaultReward.rewardValue)로 폴백
+  int _rewardPointForDay(int day) {
+    final data = _data;
+    if (data == null) return 0;
+    for (final d in data.attendanceCalendar) {
+      final dt = d.date;
+      if (dt != null &&
+          dt.year == _now.year &&
+          dt.month == _now.month &&
+          dt.day == day) {
+        final amt = (double.tryParse(d.rewardAmt ?? '') ?? 0).toInt();
+        if (amt > 0) return amt;
+        break;
+      }
+    }
+    return data.defaultRewardValue;
+  }
+
   @override
   Widget build(BuildContext context) {
     final attendanceAsync = ref.watch(attendanceProvider(widget.eventMasterId));
@@ -469,7 +488,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       isAttended: isAttended,
                       showToday: isToday,
                       showReward: isAttended && isToday,
-                      rewardPoint: 100,
+                      rewardPoint: _rewardPointForDay(date.day),
                     ),
                 ],
               );
