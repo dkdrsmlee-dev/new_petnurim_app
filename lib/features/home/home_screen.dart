@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +10,7 @@ import '../../core/widgets/card_banner.dart';
 import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
 import '../../core/widgets/section_title.dart';
+import '../../core/utils/toast_util.dart';
 import '../attendance/attendance_screen.dart';
 import '../auth/application/auth_providers.dart';
 import '../event/data/event_repository.dart';
@@ -33,6 +35,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late int _selectedIndex;
   bool _isLoggingOut = false;
+  DateTime? _lastBackPressedAt; // 홈에서 '뒤로 두 번 종료' 판정용
 
   @override
   void initState() {
@@ -52,40 +55,61 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _selectedIndex == 5
-          ? null
-          : MainHeader(
-              onTapProfile: () {
-                setState(() {
-                  _selectedIndex = 5;
-                });
-              },
-            ),
-      body: SafeArea(
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: [
-            _HomeOverview(onOpenCare: () => setState(() => _selectedIndex = 2)),
-            const _GiftTabView(),
-            const _CareTabView(),
-            const _PetTabView(),
-            const _EventTabView(),
-            MyPageView(
-              isLoggingOut: _isLoggingOut,
-              onLogout: _logout,
-              onBackToHome: () => setState(() => _selectedIndex = 0),
-            ),
-          ],
+    return PopScope(
+      // 시스템 백을 항상 가로채서 직접 처리 (하위 탭→홈 / 홈→두 번 눌러 종료)
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        // 홈 탭이 아니면(마이페이지 등) 홈 탭으로 복귀 (상단 <- 와 동일)
+        if (_selectedIndex != 0) {
+          setState(() => _selectedIndex = 0);
+          return;
+        }
+        // 홈 탭: 2초 내 두 번 누르면 종료, 아니면 안내 토스트
+        final now = DateTime.now();
+        if (_lastBackPressedAt != null &&
+            now.difference(_lastBackPressedAt!) < const Duration(seconds: 2)) {
+          SystemNavigator.pop();
+          return;
+        }
+        _lastBackPressedAt = now;
+        ToastUtil.show(context, '한 번 더 누르면 종료됩니다.');
+      },
+      child: Scaffold(
+        appBar: _selectedIndex == 5
+            ? null
+            : MainHeader(
+                onTapProfile: () {
+                  setState(() {
+                    _selectedIndex = 5;
+                  });
+                },
+              ),
+        body: SafeArea(
+          child: IndexedStack(
+            index: _selectedIndex,
+            children: [
+              _HomeOverview(onOpenCare: () => setState(() => _selectedIndex = 2)),
+              const _GiftTabView(),
+              const _CareTabView(),
+              const _PetTabView(),
+              const _EventTabView(),
+              MyPageView(
+                isLoggingOut: _isLoggingOut,
+                onLogout: _logout,
+                onBackToHome: () => setState(() => _selectedIndex = 0),
+              ),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: CustomGnb(
-        currentIndex: _selectedIndex >= 5 ? -1 : _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+        bottomNavigationBar: CustomGnb(
+          currentIndex: _selectedIndex >= 5 ? -1 : _selectedIndex,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        ),
       ),
     );
   }
