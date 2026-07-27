@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/widgets/popup_header.dart';
+import '../../core/widgets/page_header.dart';
 import '../../core/widgets/pet_select_card.dart';
 import 'camera_screen.dart';
 import 'shooting_history_screen.dart';
@@ -17,10 +17,8 @@ class PetSelectScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PopupHeader(
+      appBar: const NurimPageHeader(
         title: '마이 펫 촬영',
-        showBackButton: true,
-        showCloseButton: false,
       ),
       body: SafeArea(
         child: Padding(
