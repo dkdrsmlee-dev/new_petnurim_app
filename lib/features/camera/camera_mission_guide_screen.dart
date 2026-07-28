@@ -35,6 +35,8 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 사진 이벤트 상세(미션명·가이드·리워드·기간)로 하드코딩 대체 (없으면 폴백)
+    final detail = ref.watch(photoEventDetailProvider(eventMasterId)).value;
     return Scaffold(
       backgroundColor: AppColors.bgGray, // var(--color/gray/20)
       appBar: PopupHeader(
@@ -425,8 +427,8 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                         // C. 보상 안내 및 기간 텍스트
                         RichText(
-                          text: const TextSpan(
-                            style: TextStyle(
+                          text: TextSpan(
+                            style: const TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -435,19 +437,19 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                               height: 1.4,
                             ),
                             children: [
-                              TextSpan(text: '미션 수행 시 매일 '),
+                              const TextSpan(text: '미션 수행 시 매일 '),
                               TextSpan(
-                                text: '100PR ',
-                                style: TextStyle(color: Color(0xFFFF8FE7)),
+                                text: '${detail?.rewardValue ?? 100}PR ',
+                                style: const TextStyle(color: Color(0xFFFF8FE7)),
                               ),
-                              TextSpan(text: '지급!'),
+                              const TextSpan(text: '지급!'),
                             ],
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          '2026.4.1~4.30',
-                          style: TextStyle(
+                        Text(
+                          detail?.eventPeriod ?? '2026.4.1~4.30',
+                          style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -501,9 +503,9 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                               ),
                               const SizedBox(height: 12),
                               // 타이틀: "송곳니를 촬영해 주세요!"
-                              const Text(
-                                '송곳니를 촬영해 주세요!',
-                                style: TextStyle(
+                              Text(
+                                detail?.missionTitle ?? '송곳니를 촬영해 주세요!',
+                                style: const TextStyle(
                                   fontFamily: 'Gmarket Sans',
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
@@ -573,10 +575,11 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                               const SizedBox(height: 16),
                               
                               // 설명 텍스트
-                              const Text(
-                                '마이 펫의 송곳니 부분이 잘 보이도록\n선명하게 촬영해 주세요.',
+                              Text(
+                                detail?.missionGuide ??
+                                    '마이 펫의 송곳니 부분이 잘 보이도록\n선명하게 촬영해 주세요.',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: 'Pretendard',
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
@@ -658,8 +661,8 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const BullitText(
-                    text: '미션 수행 시 100PR이 즉시 지급됩니다.',
+                  BullitText(
+                    text: '미션 수행 시 ${detail?.rewardValue ?? 100}PR이 즉시 지급됩니다.',
                   ),
                   const SizedBox(height: 8),
                   const BullitText(
