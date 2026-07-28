@@ -390,10 +390,14 @@ class CameraRewardPopup extends StatelessWidget {
   final VoidCallback onClose;
   final VoidCallback onViewHistory;
 
+  /// 지급된 리워드 값 (백엔드 참여 결과). 미지정 시 기본 100.
+  final int rewardValue;
+
   const CameraRewardPopup({
     Key? key,
     required this.onClose,
     required this.onViewHistory,
+    this.rewardValue = 100,
   }) : super(key: key);
 
   @override
@@ -434,9 +438,9 @@ class CameraRewardPopup extends StatelessWidget {
                       height: 1.4,
                     ),
                   ),
-                  const Text(
-                    '리워드 100PR이 지급되었어요!',
-                    style: TextStyle(
+                  Text(
+                    '리워드 ${rewardValue}PR이 지급되었어요!',
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textStrong,

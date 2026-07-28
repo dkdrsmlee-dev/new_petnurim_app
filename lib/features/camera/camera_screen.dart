@@ -1,21 +1,37 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/utils/toast_util.dart';
 import '../../core/widgets/camera_widgets.dart';
+import '../member/data/file_repository.dart';
+import 'data/photo_event_repository.dart';
 import 'shooting_history_screen.dart';
 import '../../core/theme/app_colors.dart';
 
-class CameraScreen extends StatefulWidget {
-  const CameraScreen({Key? key}) : super(key: key);
+class CameraScreen extends ConsumerStatefulWidget {
+  const CameraScreen({
+    Key? key,
+    this.eventMasterId,
+    this.petId,
+    this.rewardValueHint,
+  }) : super(key: key);
+
+  /// 촬영 참여 API 호출에 사용할 이벤트 식별자. null이면 백엔드 연동 없이 기존 동작.
+  final String? eventMasterId;
+
+  /// 촬영 참여 대상 펫 식별자
+  final String? petId;
+
+  /// 참여 결과에 리워드가 없을 때 팝업에 표시할 예비 리워드 값
+  final int? rewardValueHint;
 
   @override
-  State<CameraScreen> createState() => _CameraScreenState();
+  ConsumerState<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver {
+class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBindingObserver {
   CameraController? _controller;
   List<CameraDescription>? _cameras;
   int _selectedCameraIndex = 0;
@@ -24,6 +40,7 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
   XFile? _capturedImage;
   bool _isCaptured = false;
   bool _isPermissionDenied = false;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -135,28 +152,71 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
   }
 
   Future<void> _savePicture() async {
-    if (_capturedImage == null) return;
-    
-    // 임시 저장 후 홈으로 복귀. 실제 갤러리 저장 플러그인이 없으므로 로컬 저장소 시뮬레이션
-    final directory = await getApplicationDocumentsDirectory();
-    final String newPath = '${directory.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
-    await _capturedImage!.saveTo(newPath);
+    if (_capturedImage == null || _isSaving) return;
 
-    // SnackBar 대신 팝업 표시
+    final eventMasterId = widget.eventMasterId;
+    final petId = widget.petId;
+
+    // 이벤트/펫 정보가 없으면 (예: 촬영 내역 화면에서 진입) 백엔드 연동 없이 팝업만 표시
+    if (eventMasterId == null ||
+        eventMasterId.isEmpty ||
+        petId == null ||
+        petId.isEmpty) {
+      _showRewardPopup(widget.rewardValueHint ?? 100);
+      return;
+    }
+
+    setState(() => _isSaving = true);
+    try {
+      // 1) 촬영 이미지를 파일 서버에 업로드
+      final bytes = await _capturedImage!.readAsBytes();
+      final filename =
+          _capturedImage!.name.isNotEmpty ? _capturedImage!.name : 'pet.jpg';
+      final uploadResult = await ref
+          .read(fileRepositoryProvider)
+          .uploadFile(fileBytes: bytes, filename: filename);
+      final fileId = uploadResult['fileId']?.toString();
+      if (fileId == null || fileId.isEmpty) {
+        throw const FormatException('파일 ID를 확인할 수 없습니다.');
+      }
+
+      // 2) 업로드한 파일로 촬영 미션 참여
+      final result = await ref.read(photoEventRepositoryProvider).participate(
+            eventMasterId: eventMasterId,
+            petId: petId,
+            fileId: fileId,
+          );
+
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+
+      final reward =
+          result.rewardValue > 0 ? result.rewardValue : (widget.rewardValueHint ?? 0);
+      _showRewardPopup(reward);
+    } catch (e) {
+      debugPrint('Participate error: $e');
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ToastUtil.show(context, '사진 저장에 실패했습니다. 다시 시도해 주세요.');
+    }
+  }
+
+  void _showRewardPopup(int rewardValue) {
     if (!mounted) return;
     showDialog(
       context: context,
       barrierColor: const Color(0x99000000), // bg-[var(--scrim/60,rgba(0,0,0,0.6))]
-      builder: (context) => CameraRewardPopup(
+      builder: (dialogContext) => CameraRewardPopup(
+        rewardValue: rewardValue,
         onClose: () {
-          Navigator.pop(context); // 팝업 닫기
-          Navigator.pop(this.context); // 화면 닫기
+          Navigator.pop(dialogContext); // 팝업 닫기
+          Navigator.pop(context); // 화면 닫기
         },
         onViewHistory: () {
           // 촬영 완료 팝업 닫고 내역 화면으로 유도
-          Navigator.pop(context); // 팝업 닫기
+          Navigator.pop(dialogContext); // 팝업 닫기
           Navigator.pushReplacement(
-            this.context,
+            context,
             MaterialPageRoute(
               builder: (_) => const ShootingHistoryScreen(),
             ),
@@ -342,6 +402,17 @@ class _CameraScreenState extends State<CameraScreen> with WidgetsBindingObserver
               color: _isCaptured ? Colors.white : const Color(0x42000000),
             ),
           ),
+
+          // 업로드/참여 진행 중 로딩 오버레이
+          if (_isSaving)
+            const Positioned.fill(
+              child: ColoredBox(
+                color: Color(0x99000000),
+                child: Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+              ),
+            ),
         ],
       ),
     );

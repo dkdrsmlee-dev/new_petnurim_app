@@ -9,9 +9,20 @@ import '../../core/theme/app_colors.dart';
 ///
 /// 카드를 탭하면 선택한 펫 정보를 가지고 [CameraScreen]으로 이동합니다.
 class PetSelectScreen extends StatelessWidget {
-  const PetSelectScreen({super.key, required this.pets});
+  const PetSelectScreen({
+    super.key,
+    required this.pets,
+    this.eventMasterId,
+    this.rewardValueHint,
+  });
 
   final List<PetSelectCardData> pets;
+
+  /// 촬영 참여 API 호출에 사용할 이벤트 식별자
+  final String? eventMasterId;
+
+  /// 참여 결과에 리워드가 없을 때 팝업에 표시할 예비 리워드 값
+  final int? rewardValueHint;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +64,11 @@ class PetSelectScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const CameraScreen(),
+                            builder: (_) => CameraScreen(
+                              eventMasterId: eventMasterId,
+                              petId: pet.petId,
+                              rewardValueHint: rewardValueHint,
+                            ),
                           ),
                         );
                       },

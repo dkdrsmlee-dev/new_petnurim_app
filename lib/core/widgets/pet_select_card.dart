@@ -8,6 +8,7 @@ import '../theme/app_colors.dart';
 /// "촬영 내역" 버튼을 탭하면 [onHistoryTap]이 호출됩니다.
 class PetSelectCardData {
   const PetSelectCardData({
+    this.petId,
     required this.name,
     required this.breed,
     required this.ageText,
@@ -16,6 +17,8 @@ class PetSelectCardData {
     this.imageProvider,
   });
 
+  /// 백엔드 펫 식별자 (촬영 참여 API 호출에 사용). 하드코딩 예시 데이터에는 없을 수 있음.
+  final String? petId;
   final String name;
   final String breed;
   final String ageText;

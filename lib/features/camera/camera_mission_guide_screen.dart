@@ -705,10 +705,15 @@ class CameraMissionGuideScreen extends ConsumerWidget {
     }
     if (!context.mounted) return;
 
+    // 참여 결과에 리워드가 없을 때 사용할 예비 리워드 값(상세 API의 리워드)
+    final rewardHint =
+        ref.read(photoEventDetailProvider(eventMasterId)).value?.rewardValue;
+
     // PhotoEventPet → PetSelectCardData 매핑
     final List<PetSelectCardData> registeredPets = pets
         .map(
           (pet) => PetSelectCardData(
+            petId: pet.petId,
             name: pet.petName,
             breed: (pet.breedName != null && pet.breedName!.isNotEmpty)
                 ? pet.breedName!
@@ -741,14 +746,24 @@ class CameraMissionGuideScreen extends ConsumerWidget {
       // 1마리: 바로 카메라 화면으로 이동
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const CameraScreen()),
+        MaterialPageRoute(
+          builder: (_) => CameraScreen(
+            eventMasterId: eventMasterId,
+            petId: registeredPets.first.petId,
+            rewardValueHint: rewardHint,
+          ),
+        ),
       );
     } else {
       // 2마리 이상: 펫 선택 화면으로 이동
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => PetSelectScreen(pets: registeredPets),
+          builder: (_) => PetSelectScreen(
+            pets: registeredPets,
+            eventMasterId: eventMasterId,
+            rewardValueHint: rewardHint,
+          ),
         ),
       );
     }
