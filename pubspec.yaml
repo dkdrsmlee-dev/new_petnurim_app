@@ -41,6 +41,7 @@ dev_dependencies:
   # Flutter 권장 린트 규칙을 적용합니다.
   flutter_lints: ^6.0.0
   flutter_native_splash: ^2.4.4
+  flutter_launcher_icons: ^0.14.1
 
 flutter:
   uses-material-design: true
@@ -67,3 +68,14 @@ flutter_native_splash:
   android_12:
     color: "#7F4FFF"
     image: assets/images/splash_logo_android12.png
+
+# 앱 런처 아이콘 (Figma 02_디자인 App icon 기준)
+# 재생성: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"       # 전체 아이콘(보라 배경+로고): iOS·Android 레거시
+  remove_alpha_ios: true
+  min_sdk_android: 21
+  adaptive_icon_background: "#7F4FFF"           # Android 8+ 어댑티브 배경(브랜드 퍼플)
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"  # 어댑티브 포그라운드(투명+로고)
