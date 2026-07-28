@@ -710,9 +710,8 @@ class CameraMissionGuideScreen extends ConsumerWidget {
             breed: (pet.breedName != null && pet.breedName!.isNotEmpty)
                 ? pet.breedName!
                 : '믹스',
-            ageText: (pet.age != null && pet.age!.isNotEmpty)
-                ? '${pet.age}살'
-                : '',
+            // age 필드는 백엔드에서 이미 "3살" 형태로 내려오므로 그대로 사용
+            ageText: pet.age ?? '',
             genderText: _genderText(pet.gender),
             isFavorite: false,
             imageProvider: pet.thumbnailFileId != null
