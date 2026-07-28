@@ -6,15 +6,32 @@ import '../../core/widgets/bullit_text.dart';
 import '../../core/widgets/pet_select_card.dart';
 import '../../core/widgets/authed_file_image.dart';
 import '../../core/utils/toast_util.dart';
-import '../member/domain/pet_models.dart';
-import '../member/data/pet_repository.dart';
+import 'domain/photo_event_models.dart';
+import 'data/photo_event_repository.dart';
 import 'camera_screen.dart';
 import 'pet_empty_screen.dart';
 import 'pet_select_screen.dart';
 import '../../core/theme/app_colors.dart';
 
+/// 성별 코드/값을 표시용 문자열로 변환
+String _genderText(String? gender) {
+  switch (gender?.trim().toUpperCase()) {
+    case 'MALE':
+    case 'M':
+      return '남아';
+    case 'FEMALE':
+    case 'F':
+      return '여아';
+    default:
+      return gender ?? '';
+  }
+}
+
 class CameraMissionGuideScreen extends ConsumerWidget {
-  const CameraMissionGuideScreen({super.key});
+  const CameraMissionGuideScreen({super.key, required this.eventMasterId});
+
+  /// 사진(PHOTO) 이벤트 마스터 ID (홈 촬영 카드에서 templates.photo 로부터 전달)
+  final String eventMasterId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -672,12 +689,11 @@ class CameraMissionGuideScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
-    // 등록된 실제 펫 목록을 조회해 화면을 분기한다.
-    List<MyPetListItem> items;
+    // 촬영 이벤트 전용 펫 목록(/pets)을 조회해 화면을 분기한다.
+    List<PhotoEventPet> pets;
     try {
-      final response =
-          await ref.read(petRepositoryProvider).getMyPetsList(limit: 100);
-      items = response.items;
+      pets =
+          await ref.read(photoEventRepositoryProvider).getPets(eventMasterId);
     } catch (_) {
       if (context.mounted) {
         ToastUtil.show(context, '펫 정보를 불러오지 못했습니다. 다시 시도해 주세요.');
@@ -686,18 +702,21 @@ class CameraMissionGuideScreen extends ConsumerWidget {
     }
     if (!context.mounted) return;
 
-    // MyPetListItem → PetSelectCardData 매핑 (마이펫 목록 화면과 동일 규칙)
-    final List<PetSelectCardData> registeredPets = items
+    // PhotoEventPet → PetSelectCardData 매핑
+    final List<PetSelectCardData> registeredPets = pets
         .map(
-          (item) => PetSelectCardData(
-            name: item.petName,
-            breed: item.breedNameKor ?? '믹스',
-            ageText: '${item.petAge}살',
-            genderText: item.genderCodeNm ??
-                (item.genderCode == 'MALE' ? '남아' : '여아'),
-            isFavorite: item.representYn == 'Y',
-            imageProvider: item.profileFileId != null
-                ? AuthedFileImageX.of(ref, item.profileFileId!)
+          (pet) => PetSelectCardData(
+            name: pet.petName,
+            breed: (pet.breedName != null && pet.breedName!.isNotEmpty)
+                ? pet.breedName!
+                : '믹스',
+            ageText: (pet.age != null && pet.age!.isNotEmpty)
+                ? '${pet.age}살'
+                : '',
+            genderText: _genderText(pet.gender),
+            isFavorite: false,
+            imageProvider: pet.thumbnailFileId != null
+                ? AuthedFileImageX.of(ref, pet.thumbnailFileId!)
                 : null,
           ),
         )

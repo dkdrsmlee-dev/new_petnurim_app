@@ -240,12 +240,18 @@ class _HomeOverview extends ConsumerWidget {
                   ),
                 ),
                 bannerIcon: const Icon(Icons.camera_alt, color: Color(0xFF85B48B), size: 20), // Figma has IconCamera20 but camera_alt is a good fallback
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CameraMissionGuideScreen()),
-                  );
-                },
+                onTap: photo == null
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CameraMissionGuideScreen(
+                              eventMasterId: photo.eventMasterId,
+                            ),
+                          ),
+                        );
+                      },
               ),
             ],
           ),
