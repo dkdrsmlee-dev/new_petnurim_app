@@ -129,6 +129,12 @@ class _CircularAvatar extends StatelessWidget {
   const _CircularAvatar({required this.imageProvider});
   final ImageProvider? imageProvider;
 
+  static const Widget _fallbackIcon = Icon(
+    Icons.pets,
+    size: 36,
+    color: AppColors.dot,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -140,13 +146,16 @@ class _CircularAvatar extends StatelessWidget {
         border: Border.all(color: const Color(0xFFE6EBF2), width: 1.5),
       ),
       child: ClipOval(
+        // 이미지가 없거나 로드 실패(예: 404) 시 동일한 발바닥 아이콘으로 폴백
         child: imageProvider != null
-            ? Image(image: imageProvider!, fit: BoxFit.cover)
-            : const Icon(
-                Icons.pets,
-                size: 36,
-                color: AppColors.dot,
-              ),
+            ? Image(
+                image: imageProvider!,
+                fit: BoxFit.cover,
+                width: 70,
+                height: 70,
+                errorBuilder: (_, __, ___) => _fallbackIcon,
+              )
+            : _fallbackIcon,
       ),
     );
   }

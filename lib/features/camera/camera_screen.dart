@@ -213,12 +213,15 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
           Navigator.pop(context); // 화면 닫기
         },
         onViewHistory: () {
-          // 촬영 완료 팝업 닫고 내역 화면으로 유도
+          // 촬영 완료 팝업 닫고 내역 화면으로 유도 (이벤트/펫 식별자 전달)
           Navigator.pop(dialogContext); // 팝업 닫기
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => const ShootingHistoryScreen(),
+              builder: (_) => ShootingHistoryScreen(
+                eventMasterId: widget.eventMasterId,
+                petId: widget.petId,
+              ),
             ),
           );
         },

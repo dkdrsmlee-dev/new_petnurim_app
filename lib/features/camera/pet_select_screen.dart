@@ -73,11 +73,14 @@ class PetSelectScreen extends StatelessWidget {
                         );
                       },
                       onHistoryTap: () {
-                        // 촬영 내역 화면으로 펫 데이터를 동반하여 이동
+                        // 촬영 내역 화면으로 펫 데이터 + 이벤트 식별자를 동반하여 이동
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ShootingHistoryScreen(petData: pet),
+                            builder: (_) => ShootingHistoryScreen(
+                              petData: pet,
+                              eventMasterId: eventMasterId,
+                            ),
                           ),
                         );
                       },

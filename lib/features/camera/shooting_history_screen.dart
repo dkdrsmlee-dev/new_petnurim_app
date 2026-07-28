@@ -1,53 +1,149 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../core/utils/date_format.dart';
+import '../../core/widgets/authed_file_image.dart';
 import '../../core/widgets/camera_history_card.dart';
 import '../../core/widgets/pet_select_card.dart';
 import 'camera_screen.dart';
+import 'data/photo_event_repository.dart';
+import 'domain/photo_event_models.dart';
 import '../../core/theme/app_colors.dart';
 
 /// 촬영 내역 화면 (Figma USR-EVT-019)
-class ShootingHistoryScreen extends StatelessWidget {
+///
+/// [eventMasterId] 와 펫 식별자([petId] 또는 [petData.petId])가 모두 있으면
+/// `GET /events/photo/{eventMasterId}/pets/{petId}/history` 를 조회해 실제
+/// 참여 횟수·누적 리워드·촬영 목록을 표시한다. 식별자가 없으면 표시용 기본
+/// 데이터(빈 상태)를 보여준다.
+class ShootingHistoryScreen extends ConsumerWidget {
   const ShootingHistoryScreen({
     super.key,
     this.petData,
+    this.eventMasterId,
+    this.petId,
   });
 
-  /// 펫 정보가 전달되면 해당 정보를 표시하고, 없으면 기본 디폴트 펫(뭉치) 데이터를 보여줍니다.
+  /// 요약 카드에 표시할 펫 정보(품종·나이·성별·썸네일 등). 없으면 기본값 사용.
   final PetSelectCardData? petData;
 
+  /// 촬영 내역 조회에 사용할 이벤트 식별자
+  final String? eventMasterId;
+
+  /// 촬영 내역 조회 대상 펫 식별자([petData.petId] 로도 대체 가능)
+  final String? petId;
+
   @override
-  Widget build(BuildContext context) {
-    // 디폴트 데이터 세팅 (Figma 디자인 기반)
-    final displayData = petData ??
-        const PetSelectCardData(
-          name: '뭉치',
-          breed: '시바',
-          ageText: '2살',
-          genderText: '남아',
-          isFavorite: true,
-        );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final effectivePetId = petId ?? petData?.petId;
+    final canQuery = eventMasterId != null &&
+        eventMasterId!.isNotEmpty &&
+        effectivePetId != null &&
+        effectivePetId.isNotEmpty;
 
-    // 카드용 데이터 변환
-    final cardData = CameraHistoryCardData(
-      name: displayData.name,
-      breed: displayData.breed,
-      ageText: displayData.ageText,
-      genderText: displayData.genderText,
-      thisMonthCount: 0, // 초기 참여 회수 0회
-      accumulatedRewards: 800, // 초기 리워드 800PR
-      isFavorite: displayData.isFavorite,
-      imageProvider: displayData.imageProvider,
+    if (canQuery) {
+      final historyAsync = ref.watch(
+        photoPetHistoryProvider(
+          (eventMasterId: eventMasterId!, petId: effectivePetId),
+        ),
+      );
+      return historyAsync.when(
+        data: (history) => _buildScaffold(
+          context,
+          cardData: _cardDataFrom(ref, history),
+          body: history.items.isEmpty
+              ? _EmptyHistoryView(
+                  eventMasterId: eventMasterId,
+                  petId: effectivePetId,
+                )
+              : _HistoryList(items: history.items),
+        ),
+        loading: () => _buildScaffold(
+          context,
+          cardData: _cardDataFrom(ref, null),
+          body: const Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 48),
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        ),
+        error: (_, __) => _buildScaffold(
+          context,
+          cardData: _cardDataFrom(ref, null),
+          body: _EmptyHistoryView(
+            eventMasterId: eventMasterId,
+            petId: effectivePetId,
+          ),
+        ),
+      );
+    }
+
+    // 이벤트/펫 식별자가 없으면 표시용 기본 데이터(빈 상태)
+    return _buildScaffold(
+      context,
+      cardData: _fallbackCardData(),
+      body: const _EmptyHistoryView(),
     );
+  }
 
+  /// history(있으면) + petData(표시 정보)를 합쳐 요약 카드 데이터를 만든다.
+  CameraHistoryCardData _cardDataFrom(WidgetRef ref, PhotoHistory? history) {
+    final histFileId = history?.pet?.thumbnailFileId;
+    final imageProvider = petData?.imageProvider ??
+        (histFileId != null ? AuthedFileImageX.of(ref, histFileId) : null);
+    final name = (petData?.name.isNotEmpty ?? false)
+        ? petData!.name
+        : (history?.pet?.petName ?? '');
+    return CameraHistoryCardData(
+      name: name,
+      breed: petData?.breed ?? '',
+      ageText: petData?.ageText ?? '',
+      genderText: petData?.genderText ?? '',
+      thisMonthCount: history?.monthParticipationCount ?? 0,
+      accumulatedRewards: history?.totalReward ?? 0,
+      isFavorite: petData?.isFavorite ?? false,
+      imageProvider: imageProvider,
+    );
+  }
+
+  /// API 조회가 불가능할 때(식별자 없음) 사용하는 표시용 기본 데이터.
+  CameraHistoryCardData _fallbackCardData() {
+    final display = petData;
+    if (display != null) {
+      return CameraHistoryCardData(
+        name: display.name,
+        breed: display.breed,
+        ageText: display.ageText,
+        genderText: display.genderText,
+        thisMonthCount: 0,
+        accumulatedRewards: 0,
+        isFavorite: display.isFavorite,
+        imageProvider: display.imageProvider,
+      );
+    }
+    // 표시할 펫 정보가 전혀 없을 때의 디폴트 (Figma 예시)
+    return const CameraHistoryCardData(
+      name: '뭉치',
+      breed: '시바',
+      ageText: '2살',
+      genderText: '남아',
+      thisMonthCount: 0,
+      accumulatedRewards: 0,
+      isFavorite: true,
+    );
+  }
+
+  Widget _buildScaffold(
+    BuildContext context, {
+    required CameraHistoryCardData cardData,
+    required Widget body,
+  }) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: SvgPicture.string(
-            _backIconSvg,
-            width: 24,
-            height: 24,
-          ),
+          icon: SvgPicture.string(_backIconSvg, width: 24, height: 24),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -62,13 +158,9 @@ class ShootingHistoryScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: SvgPicture.string(
-              _homeIconSvg,
-              width: 24,
-              height: 24,
-            ),
+            icon: SvgPicture.string(_homeIconSvg, width: 24, height: 24),
             onPressed: () {
-              // 홈 화면으로 바로 이동 (모든 스택 팝 후 홈 탭 복귀 등)
+              // 홈 화면으로 바로 이동 (모든 스택 팝)
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
@@ -77,40 +169,21 @@ class ShootingHistoryScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.white,
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480), // 태블릿 가로 늘어남 방지
-          child: SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight, // 꽉 찬 화면에서 EmptyState를 가운데 배치하기 위함
-                    ),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        children: [
-                          // 1. 반려동물 요약 카드 영역 (공통 위젯 사용)
-                          CameraHistoryCard(data: cardData),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480), // 태블릿 가로 늘어남 방지
+            child: Column(
+              children: [
+                // 1. 반려동물 요약 카드 영역 (공통 위젯 사용)
+                CameraHistoryCard(data: cardData),
 
-                          // 2. 영역 구분선 (6px 회색 띠)
-                          Container(
-                            height: 6,
-                            color: AppColors.bgGray,
-                          ),
+                // 2. 영역 구분선 (6px 회색 띠)
+                Container(height: 6, color: AppColors.bgGray),
 
-                          // 3. 비어있는 상태 (남은 공간을 모두 차지하도록 구성)
-                          const Expanded(
-                            child: _EmptyHistoryView(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
+                // 3. 내역 목록 / 빈 상태 / 로딩
+                Expanded(child: body),
+              ],
             ),
           ),
         ),
@@ -119,9 +192,119 @@ class ShootingHistoryScreen extends StatelessWidget {
   }
 }
 
+/// 촬영 내역 목록
+class _HistoryList extends StatelessWidget {
+  const _HistoryList({required this.items});
+
+  final List<PhotoHistoryItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: items.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) => _HistoryItemTile(item: items[index]),
+    );
+  }
+}
+
+/// 촬영 내역 1건 카드
+class _HistoryItemTile extends ConsumerWidget {
+  const _HistoryItemTile({required this.item});
+
+  final PhotoHistoryItem item;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fileId = item.imageFileId;
+    final image = fileId != null ? AuthedFileImageX.of(ref, fileId) : null;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border, width: 1),
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: SizedBox(
+              width: 56,
+              height: 56,
+              child: image != null
+                  ? Image(
+                      image: image,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _thumbFallback(),
+                    )
+                  : _thumbFallback(),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '촬영 미션 완료',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textStrong,
+                    letterSpacing: -0.66,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatDate(item.participatedDt),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary,
+                    letterSpacing: -0.66,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            '+${item.rewardValue}PR',
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primary,
+              letterSpacing: -0.66,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget _thumbFallback() => Container(
+        color: AppColors.bgGray,
+        child: const Center(
+          child: Icon(Icons.pets, size: 24, color: AppColors.dot),
+        ),
+      );
+
+  static String _formatDate(String raw) {
+    final dt = DateTime.tryParse(raw);
+    return dt != null ? dt.toDotDate() : raw;
+  }
+}
+
 /// 내역이 없을 때 노출되는 빈 플레이스홀더 영역
 class _EmptyHistoryView extends StatelessWidget {
-  const _EmptyHistoryView();
+  const _EmptyHistoryView({this.eventMasterId, this.petId});
+
+  final String? eventMasterId;
+  final String? petId;
 
   @override
   Widget build(BuildContext context) {
@@ -143,18 +326,21 @@ class _EmptyHistoryView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // 촬영하기 버튼
           SizedBox(
             width: 283,
             height: 56,
             child: FilledButton(
               onPressed: () {
-                // 카메라 촬영 화면으로 이동
+                // 카메라 촬영 화면으로 이동 (이벤트/펫 정보 전달)
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const CameraScreen(),
+                    builder: (_) => CameraScreen(
+                      eventMasterId: eventMasterId,
+                      petId: petId,
+                    ),
                   ),
                 );
               },
