@@ -269,7 +269,7 @@ Widget _rewardThumb(
   Widget fallback,
 ) {
   final provider = (fileId != null && fileId.isNotEmpty)
-      ? AuthedFileImageX.of(ref, fileId)
+      ? AuthedFileImageX.of(ref, fileId, variant: 'thumb')
       : null;
   return Container(
     width: 78,

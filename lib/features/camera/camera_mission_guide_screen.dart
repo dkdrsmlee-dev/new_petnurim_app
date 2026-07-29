@@ -760,7 +760,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
             genderText: _genderText(pet.gender),
             isFavorite: false,
             imageProvider: pet.thumbnailFileId != null
-                ? AuthedFileImageX.of(ref, pet.thumbnailFileId!)
+                ? AuthedFileImageX.of(ref, pet.thumbnailFileId!, variant: 'thumb')
                 : null,
           ),
         )

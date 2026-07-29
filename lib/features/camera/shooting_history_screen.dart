@@ -91,7 +91,9 @@ class ShootingHistoryScreen extends ConsumerWidget {
   CameraHistoryCardData _cardDataFrom(WidgetRef ref, PhotoHistory? history) {
     final histFileId = history?.pet?.thumbnailFileId;
     final imageProvider = petData?.imageProvider ??
-        (histFileId != null ? AuthedFileImageX.of(ref, histFileId) : null);
+        (histFileId != null
+            ? AuthedFileImageX.of(ref, histFileId, variant: 'thumb')
+            : null);
     final name = (petData?.name.isNotEmpty ?? false)
         ? petData!.name
         : (history?.pet?.petName ?? '');
@@ -219,7 +221,8 @@ class _HistoryItemTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final fileId = item.imageFileId;
-    final image = fileId != null ? AuthedFileImageX.of(ref, fileId) : null;
+    final image =
+        fileId != null ? AuthedFileImageX.of(ref, fileId, variant: 'thumb') : null;
 
     return Container(
       padding: const EdgeInsets.all(12),

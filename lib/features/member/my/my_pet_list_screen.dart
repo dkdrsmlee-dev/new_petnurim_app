@@ -91,7 +91,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
           rewardText: '28,000P',
           isPrimary: item.representYn == 'Y',
           imageProvider: item.profileFileId != null
-              ? AuthedFileImageX.of(ref, item.profileFileId!)
+              ? AuthedFileImageX.of(ref, item.profileFileId!, variant: 'thumb')
               : null,
         );
       }).toList();
