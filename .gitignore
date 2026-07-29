@@ -46,3 +46,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# 로컬 dart-define 시크릿 (커밋 금지) — dart_defines.example.json 참고
+dart_defines.json
