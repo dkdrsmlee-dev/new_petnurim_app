@@ -6,7 +6,9 @@ import '../../app/app_routes.dart';
 import '../auth/domain/readable_auth_error.dart';
 import '../auth/domain/social_provider.dart';
 import 'application/signup_providers.dart';
+import 'domain/identity_verification.dart';
 import 'domain/signup_profile.dart';
+import 'kcp_cert_webview_screen.dart';
 import '../../core/theme/app_colors.dart';
 
 class VerifyScreen extends ConsumerStatefulWidget {
@@ -463,7 +465,24 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
           provider: SocialProvider.kakao,
         );
       } else {
-        await repository.verifyPhone(signupToken: signupToken);
+        // 1) KCP 본인인증 거래 등록 → 인증창 URL 획득
+        final reqResult = await repository.requestIdentityVerification(
+          signupToken: signupToken,
+          purposeCode: IdentityPurpose.signup,
+        );
+
+        // 2) WebView 로 KCP 인증창 진행. 콜백 URL 도달 시 true 반환
+        if (!mounted) return;
+        final verified = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (_) => KcpCertWebViewScreen(webViewUrl: reqResult.webViewUrl),
+          ),
+        );
+
+        // 사용자 취소/미완료 시 중단 (finally 에서 _submitting 해제)
+        if (verified != true) return;
+
+        // 3) 서버에서 검증된 본인인증 결과(이름·휴대폰) 조회
         profileInit = await repository.fetchProfileInit(
           signupToken: signupToken,
         );

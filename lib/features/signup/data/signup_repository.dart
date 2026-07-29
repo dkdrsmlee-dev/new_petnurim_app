@@ -1,6 +1,7 @@
 import '../../../core/api/api_client.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../auth/domain/auth_exception.dart';
+import '../domain/identity_verification.dart';
 import '../domain/signup_completion.dart';
 import '../domain/signup_profile.dart';
 import '../domain/signup_terms.dart';
@@ -11,6 +12,12 @@ abstract interface class SignupRepository {
   Future<void> submitTerms({
     required String signupToken,
     required List<TermAgreement> agreements,
+  });
+
+  /// KCP 본인인증 거래 등록을 요청하고 인증창 URL 을 받아온다.
+  Future<IdentityRequestResponse> requestIdentityVerification({
+    required String signupToken,
+    String purposeCode,
   });
 
   Future<void> verifyPhone({required String signupToken});
@@ -59,6 +66,24 @@ class BackendSignupRepository implements SignupRepository {
       },
       fallbackMessage: '약관 동의 저장에 실패했습니다.',
     );
+  }
+
+  @override
+  Future<IdentityRequestResponse> requestIdentityVerification({
+    required String signupToken,
+    String purposeCode = IdentityPurpose.signup,
+  }) async {
+    _ensureSignupToken(signupToken, '회원가입 토큰이 없어 본인인증을 진행할 수 없습니다.');
+    final payload = await _apiClient.postJson(
+      '/api/v1/identity-verification/request',
+      bearerToken: signupToken,
+      body: {'purposeCode': purposeCode},
+      fallbackMessage: '본인인증 요청에 실패했습니다.',
+    );
+    if (payload is Map<String, dynamic>) {
+      return IdentityRequestResponse.fromJson(payload);
+    }
+    throw const FormatException('잘못된 응답 형식입니다.');
   }
 
   @override
