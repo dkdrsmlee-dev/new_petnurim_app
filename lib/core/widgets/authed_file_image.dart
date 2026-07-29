@@ -20,6 +20,7 @@ class AuthedFileImage extends ImageProvider<AuthedFileImage> {
     required this.apiClient,
     required this.tokenStorage,
     this.scale = 1.0,
+    this.variant,
   });
 
   final String fileId;
@@ -27,7 +28,13 @@ class AuthedFileImage extends ImageProvider<AuthedFileImage> {
   final TokenStorage tokenStorage;
   final double scale;
 
-  String get _path => '/api/v1/files/$fileId/download';
+  /// 파일 variant (`original`/`medium`/`thumb`). null이면 원본 다운로드.
+  /// 표시 크기에 맞는 축소본을 쓰면 다운로드 시간이 단축된다.
+  final String? variant;
+
+  String get _path => (variant == null || variant!.isEmpty)
+      ? '/api/v1/files/$fileId/download'
+      : '/api/v1/files/$fileId/variant/$variant';
 
   @override
   Future<AuthedFileImage> obtainKey(ImageConfiguration configuration) {
@@ -64,11 +71,12 @@ class AuthedFileImage extends ImageProvider<AuthedFileImage> {
     if (identical(this, other)) return true;
     return other is AuthedFileImage &&
         other.fileId == fileId &&
+        other.variant == variant &&
         other.scale == scale;
   }
 
   @override
-  int get hashCode => Object.hash(fileId, scale);
+  int get hashCode => Object.hash(fileId, variant, scale);
 
   @override
   String toString() =>
@@ -78,11 +86,12 @@ class AuthedFileImage extends ImageProvider<AuthedFileImage> {
 /// 화면 코드에서 간결하게 사용하기 위한 헬퍼.
 /// `AuthedFileImage.of(ref, fileId)` 형태로 ImageProvider 를 생성한다.
 extension AuthedFileImageX on AuthedFileImage {
-  static AuthedFileImage of(WidgetRef ref, String fileId) {
+  static AuthedFileImage of(WidgetRef ref, String fileId, {String? variant}) {
     return AuthedFileImage(
       fileId,
       apiClient: ref.read(apiClientProvider),
       tokenStorage: ref.read(tokenStorageProvider),
+      variant: variant,
     );
   }
 }

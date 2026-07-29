@@ -27,6 +27,24 @@ String _genderText(String? gender) {
   }
 }
 
+/// guideContent 등 HTML 문자열을 평문으로 변환한다.
+/// (기존 텍스트 스타일을 그대로 유지하기 위해 태그만 제거)
+String? _htmlToPlainText(String? html) {
+  if (html == null || html.trim().isEmpty) return null;
+  final text = html
+      .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'</p>|</div>|</li>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'<[^>]+>'), '') // 나머지 태그 제거
+      .replaceAll('&nbsp;', ' ')
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"')
+      .replaceAll(RegExp(r'\n{2,}'), '\n')
+      .trim();
+  return text.isEmpty ? null : text;
+}
+
 class CameraMissionGuideScreen extends ConsumerWidget {
   const CameraMissionGuideScreen({super.key, required this.eventMasterId});
 
@@ -502,9 +520,11 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              // 타이틀: "송곳니를 촬영해 주세요!"
+                              // 타이틀: 이벤트 title (예: "송곳니찍기")
                               Text(
-                                detail?.missionTitle ?? '송곳니를 촬영해 주세요!',
+                                (detail?.title.isNotEmpty ?? false)
+                                    ? detail!.title
+                                    : '송곳니를 촬영해 주세요!',
                                 style: const TextStyle(
                                   fontFamily: 'Gmarket Sans',
                                   fontSize: 22,
@@ -537,10 +557,27 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                                 top: topPos,
                                                 width: imgSize,
                                                 height: imgSize,
-                                                child: Image.asset(
-                                                  'assets/images/banner/fangs_guide.png',
-                                                  fit: BoxFit.cover,
-                                                ),
+                                                child: detail?.detailImageFileId !=
+                                                        null
+                                                    ? Image(
+                                                        image: AuthedFileImageX.of(
+                                                          ref,
+                                                          detail!
+                                                              .detailImageFileId!,
+                                                          variant: 'medium',
+                                                        ),
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder:
+                                                            (_, __, ___) =>
+                                                                Image.asset(
+                                                          'assets/images/banner/fangs_guide.png',
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      )
+                                                    : Image.asset(
+                                                        'assets/images/banner/fangs_guide.png',
+                                                        fit: BoxFit.cover,
+                                                      ),
                                               ),
                                             ],
                                           );
@@ -574,9 +611,9 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                               ),
                               const SizedBox(height: 16),
                               
-                              // 설명 텍스트
+                              // 설명 텍스트 (guideContent HTML → 평문, 기존 디자인 유지)
                               Text(
-                                detail?.missionGuide ??
+                                _htmlToPlainText(detail?.guideContent) ??
                                     '마이 펫의 송곳니 부분이 잘 보이도록\n선명하게 촬영해 주세요.',
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
