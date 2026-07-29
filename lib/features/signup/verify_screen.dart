@@ -11,6 +11,11 @@ import 'domain/signup_profile.dart';
 import 'kcp_cert_webview_screen.dart';
 import '../../core/theme/app_colors.dart';
 
+/// 본인인증 단계.
+///
+/// 별도의 통신사 선택/약관 목업 화면 없이, 진입하면 곧바로 KCP 본인인증
+/// WebView 로 이동한다(통신사 선택·PASS/문자 인증·약관 동의는 KCP 인증창이
+/// 담당). 인증 완료 시 profile-init 으로 이름·휴대폰을 받아 완료 화면을 노출한다.
 class VerifyScreen extends ConsumerStatefulWidget {
   const VerifyScreen({super.key});
 
@@ -19,30 +24,15 @@ class VerifyScreen extends ConsumerStatefulWidget {
 }
 
 class _VerifyScreenState extends ConsumerState<VerifyScreen> {
-  bool _submitting = false;
-  String? _errorMessage;
-  
-  // 1. 선택된 통신사 (기본 SKT)
-  String _selectedTelecom = 'SKT';
-  
-  // 2. 본인인증 통과 여부 (대기화면 모사를 위함)
+  bool _submitting = true; // 진입 즉시 인증 시작
   bool _verified = false;
+  String? _errorMessage;
 
-  // 3. PASS 약관 동의 상태
-  bool _termPrivacy = false;
-  bool _termUniqueId = false;
-  bool _termService = false;
-  bool _termTelecom = false;
-
-  bool get _allChecked => _termPrivacy && _termUniqueId && _termService && _termTelecom;
-
-  void _toggleAll(bool checked) {
-    setState(() {
-      _termPrivacy = checked;
-      _termUniqueId = checked;
-      _termService = checked;
-      _termTelecom = checked;
-    });
+  @override
+  void initState() {
+    super.initState();
+    // 화면 진입 직후 바로 KCP 본인인증을 시작한다.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startVerification());
   }
 
   @override
@@ -50,11 +40,11 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
     if (_verified) {
       return _buildVerifiedView(context);
     }
-    return _buildVerificationForm(context);
+    return _buildLauncherView(context);
   }
 
-  // 본인인증 진행 화면
-  Widget _buildVerificationForm(BuildContext context) {
+  /// 인증 진행/대기/재시도 화면 (목업 폼 대체)
+  Widget _buildLauncherView(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -66,7 +56,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
           onPressed: _submitting ? null : () => context.go(AppRoutes.signupTerms),
         ),
         title: const Text(
-          '웹 3.0 본인인증',
+          '본인인증',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -77,134 +67,148 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.black, size: 24),
-            onPressed: () => context.go(AppRoutes.authStart),
+            onPressed: _submitting ? null : () => context.go(AppRoutes.authStart),
           ),
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                children: [
-                  const Text(
-                    '이용중이신 통신사를\n선택해주세요',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // 통신사 2x2 Grid
-                  _buildTelecomGrid(),
-                  const SizedBox(height: 32),
-                  // 전체 동의
-                  GestureDetector(
-                    onTap: _submitting ? null : () => _toggleAll(!_allChecked),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8FAFC),
-                        border: Border.all(color: AppColors.borderSubtle),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            _allChecked ? Icons.check_circle : Icons.check_circle_outline,
-                            color: _allChecked ? Colors.black : const Color(0xFFCBD5E1),
-                            size: 22,
-                          ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            '전체 동의하기',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  // 개별 약관 동의 Grid (2x2)
-                  _buildSubTermsGrid(),
-                  if (_errorMessage != null) ...[
-                    const SizedBox(height: 16),
-                    _InfoBox(message: _errorMessage!, warning: true),
-                  ],
-                ],
-              ),
-            ),
-            // 하단 버튼들
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: _allChecked && !_submitting ? _verifyPhone : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFE11D48), // PASS Red
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: AppColors.borderSubtle,
-                        disabledForegroundColor: const Color(0xFF94A3B8),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: _submitting
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      CircularProgressIndicator(color: AppColors.primary),
+                      SizedBox(height: 20),
+                      Text(
+                        '본인인증을 준비하고 있어요...',
+                        style: TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      child: _submitting
-                          ? const SizedBox.square(
-                              dimension: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text(
-                              'PASS로 인증하기',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: _allChecked && !_submitting ? _verifyPhone : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF334155), // Slate Grey
-                        foregroundColor: Colors.white,
-                        disabledBackgroundColor: AppColors.borderSubtle,
-                        disabledForegroundColor: const Color(0xFF94A3B8),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                    ],
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _errorMessage ?? '본인인증이 필요합니다.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0xFF475569),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          height: 1.5,
                         ),
                       ),
-                      child: const Text(
-                        '문자(SMS)로 인증하기',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: _startVerification,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            '본인인증 시작하기',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _startVerification() async {
+    final signupToken = ref.read(signupFlowProvider).signupToken;
+    if (signupToken == null || signupToken.trim().isEmpty) {
+      setState(() {
+        _submitting = false;
+        _errorMessage = '회원가입 토큰이 없어 본인인증을 진행할 수 없습니다. 소셜 로그인을 다시 시도해 주세요.';
+      });
+      return;
+    }
+
+    setState(() {
+      _submitting = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final repository = ref.read(signupRepositoryProvider);
+      final SignupProfileInit profileInit;
+
+      if (signupToken == 'mock_signup_token_for_debug_testing') {
+        // 디버그 강제 진입 토큰인 경우 본인인증 API 동작을 모킹
+        await Future<void>.delayed(const Duration(milliseconds: 800));
+        profileInit = const SignupProfileInit(
+          name: '홍길동',
+          phoneNumber: '01012341234',
+          provider: SocialProvider.kakao,
+        );
+      } else {
+        // 1) KCP 본인인증 거래 등록 → 인증창 URL 획득
+        final reqResult = await repository.requestIdentityVerification(
+          signupToken: signupToken,
+          purposeCode: IdentityPurpose.signup,
+        );
+
+        // 2) KCP 본인인증 WebView 로 바로 이동. 콜백 URL 도달 시 true 반환
+        if (!mounted) return;
+        final verified = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (_) => KcpCertWebViewScreen(webViewUrl: reqResult.webViewUrl),
+          ),
+        );
+
+        // 사용자 취소/미완료 시 재시도 화면 노출
+        if (verified != true) {
+          if (mounted) {
+            setState(() {
+              _submitting = false;
+              _errorMessage = '본인인증이 완료되지 않았어요. 다시 시도해 주세요.';
+            });
+          }
+          return;
+        }
+
+        // 3) 서버에서 검증된 본인인증 결과(이름·휴대폰) 조회
+        profileInit = await repository.fetchProfileInit(
+          signupToken: signupToken,
+        );
+      }
+
+      ref.read(signupFlowProvider.notifier)
+        ..mergeProfileInit(profileInit)
+        ..markVerificationComplete();
+
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+          _verified = true; // 본인인증 완료 상태화면 노출
+        });
+      }
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+          _errorMessage = _readErrorMessage(error, '본인인증 처리에 실패했습니다.');
+        });
+      }
+    }
   }
 
   // 본인인증 완료 상태화면
@@ -216,7 +220,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         title: const Text(
-          '웹 3.0 본인인증',
+          '본인인증',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -236,24 +240,15 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // 로고 또는 완성 아이콘
                       Container(
                         width: 90,
                         height: 90,
                         decoration: BoxDecoration(
-                          color: Colors.black,
+                          color: AppColors.primary,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Center(
-                          child: Text(
-                            'rn',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 50,
-                              fontWeight: FontWeight.w900,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
+                          child: Icon(Icons.check, color: Colors.white, size: 50),
                         ),
                       ),
                       const SizedBox(height: 32),
@@ -288,7 +283,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                 child: ElevatedButton(
                   onPressed: () => context.go(AppRoutes.signupProfile),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -296,7 +291,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                     ),
                   ),
                   child: const Text(
-                    '본인인증 완료',
+                    '다음',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -311,238 +306,6 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
     );
   }
 
-  Widget _buildTelecomGrid() {
-    final list = ['SKT', 'KT', 'LG U+', '알뜰폰'];
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 2.2,
-      ),
-      itemCount: list.length,
-      itemBuilder: (context, index) {
-        final telecom = list[index];
-        final isSelected = _selectedTelecom == telecom;
-        return GestureDetector(
-          onTap: _submitting
-              ? null
-              : () {
-                  setState(() {
-                    _selectedTelecom = telecom;
-                  });
-                },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                color: isSelected ? Colors.black : AppColors.borderSubtle,
-                width: isSelected ? 2 : 1,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Text(
-                telecom,
-                style: TextStyle(
-                  color: isSelected ? Colors.black : const Color(0xFF64748B),
-                  fontSize: 16,
-                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSubTermsGrid() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildTermCheckbox(
-                label: '개인정보이용동의',
-                value: _termPrivacy,
-                onChanged: (val) => setState(() => _termPrivacy = val ?? false),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildTermCheckbox(
-                label: '고유식별정보처리동의',
-                value: _termUniqueId,
-                onChanged: (val) => setState(() => _termUniqueId = val ?? false),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _buildTermCheckbox(
-                label: '서비스이용약관동의',
-                value: _termService,
-                onChanged: (val) => setState(() => _termService = val ?? false),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _buildTermCheckbox(
-                label: '통신사이용약관동의',
-                value: _termTelecom,
-                onChanged: (val) => setState(() => _termTelecom = val ?? false),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTermCheckbox({
-    required String label,
-    required bool value,
-    required ValueChanged<bool?> onChanged,
-  }) {
-    return GestureDetector(
-      onTap: _submitting ? null : () => onChanged(!value),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            value ? Icons.check_box : Icons.check_box_outline_blank,
-            color: value ? Colors.black : const Color(0xFFCBD5E1),
-            size: 20,
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color(0xFF475569),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _verifyPhone() async {
-    final signupToken = ref.read(signupFlowProvider).signupToken;
-    if (signupToken == null || signupToken.trim().isEmpty) {
-      setState(() {
-        _errorMessage = '회원가입 토큰이 없어 본인인증을 진행할 수 없습니다. 소셜 로그인을 다시 시도해 주세요.';
-      });
-      return;
-    }
-
-    setState(() {
-      _submitting = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final repository = ref.read(signupRepositoryProvider);
-      final SignupProfileInit profileInit;
-
-      if (signupToken == 'mock_signup_token_for_debug_testing') {
-        // 디버그 강제 진입 토큰인 경우 본인인증 API 동작을 모킹
-        await Future<void>.delayed(const Duration(milliseconds: 1000));
-        profileInit = const SignupProfileInit(
-          name: '홍길동',
-          phoneNumber: '01012341234',
-          provider: SocialProvider.kakao,
-        );
-      } else {
-        // 1) KCP 본인인증 거래 등록 → 인증창 URL 획득
-        final reqResult = await repository.requestIdentityVerification(
-          signupToken: signupToken,
-          purposeCode: IdentityPurpose.signup,
-        );
-
-        // 2) WebView 로 KCP 인증창 진행. 콜백 URL 도달 시 true 반환
-        if (!mounted) return;
-        final verified = await Navigator.of(context).push<bool>(
-          MaterialPageRoute(
-            builder: (_) => KcpCertWebViewScreen(webViewUrl: reqResult.webViewUrl),
-          ),
-        );
-
-        // 사용자 취소/미완료 시 중단 (finally 에서 _submitting 해제)
-        if (verified != true) return;
-
-        // 3) 서버에서 검증된 본인인증 결과(이름·휴대폰) 조회
-        profileInit = await repository.fetchProfileInit(
-          signupToken: signupToken,
-        );
-      }
-
-      debugPrint('[verify_screen] fetchProfileInit raw success: name="${profileInit.name}", phone="${profileInit.phoneNumber}", provider="${profileInit.provider}"');
-
-      ref.read(signupFlowProvider.notifier)
-        ..mergeProfileInit(profileInit)
-        ..markVerificationComplete();
-
-      if (mounted) {
-        setState(() {
-          _verified = true; // 본인인증 완료 상태화면 노출
-        });
-      }
-    } catch (error) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = _readErrorMessage(error, '휴대폰 인증 단계 처리에 실패했습니다.');
-        });
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _submitting = false;
-        });
-      }
-    }
-  }
-
   String _readErrorMessage(Object error, String fallbackMessage) =>
       readAuthErrorMessage(error, fallbackMessage);
-}
-
-class _InfoBox extends StatelessWidget {
-  const _InfoBox({required this.message, this.warning = false});
-
-  final String message;
-  final bool warning;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: warning ? const Color(0xFFFEF2F2) : const Color(0xFFF8FAFC),
-        border: Border.all(
-          color: warning ? const Color(0xFFFCA5A5) : AppColors.borderSubtle,
-        ),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Text(
-          message,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: warning ? const Color(0xFF991B1B) : const Color(0xFF334155),
-              ),
-        ),
-      ),
-    );
-  }
 }
