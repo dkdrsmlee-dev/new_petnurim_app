@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../core/api/api_exception.dart';
 import '../../core/utils/toast_util.dart';
 import '../../core/widgets/camera_widgets.dart';
 import '../member/data/file_repository.dart';
@@ -197,7 +198,15 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
       debugPrint('Participate error: $e');
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ToastUtil.show(context, '사진 저장에 실패했습니다. 다시 시도해 주세요.');
+      // 이미 참여한 경우(1일 1회 제한)는 전용 안내 메시지로 분기
+      final alreadyParticipated =
+          e is ApiException && e.code == 'EVENT.ALREADY_PARTICIPATED';
+      ToastUtil.show(
+        context,
+        alreadyParticipated
+            ? '오늘은 이미 참여했어요.'
+            : '사진 저장에 실패했습니다. 다시 시도해 주세요.',
+      );
     }
   }
 
