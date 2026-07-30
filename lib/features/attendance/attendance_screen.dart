@@ -211,7 +211,14 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       return _buildLegacyBannerSection();
     }
     return Image(
-      image: AuthedFileImageX.of(ref, fileId),
+      // 배너는 전체 폭 표시라 원본 대신 medium 축소본 사용(로딩 속도 개선).
+      // medium 이 없으면(404 등) 원본 다운로드로 자동 폴백.
+      image: AuthedFileImageX.of(
+        ref,
+        fileId,
+        variant: 'medium',
+        downloadFallback: true,
+      ),
       width: double.infinity,
       fit: BoxFit.fitWidth,
       errorBuilder: (_, __, ___) => _buildLegacyBannerSection(),
