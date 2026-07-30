@@ -361,6 +361,10 @@ class _LegacyBannerCarouselState extends State<_LegacyBannerCarousel> {
     ),
   ];
 
+  // 홈 상단에 노출할 배너: 현재는 첫 번째(01번) 하나만 표시.
+  // (나머지 배너 정의는 위에 보존 — 여러 개 노출로 되돌리려면 take 수만 조정)
+  late final List<_BannerData> _visibleBanners = _banners.take(1).toList();
+
   @override
   void initState() {
     super.initState();
@@ -377,9 +381,10 @@ class _LegacyBannerCarouselState extends State<_LegacyBannerCarousel> {
 
   void _startTimer() {
     _timer?.cancel();
+    if (_visibleBanners.length <= 1) return; // 단일 배너면 자동 슬라이드 없음
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (_pageController.hasClients) {
-        final nextPage = (_currentIndex + 1) % _banners.length;
+        final nextPage = (_currentIndex + 1) % _visibleBanners.length;
         _pageController.animateToPage(
           nextPage,
           duration: const Duration(milliseconds: 350),
@@ -408,9 +413,9 @@ class _LegacyBannerCarouselState extends State<_LegacyBannerCarousel> {
             _startTimer();
           }
         },
-        itemCount: _banners.length,
+        itemCount: _visibleBanners.length,
         itemBuilder: (context, index) {
-          final banner = _banners[index];
+          final banner = _visibleBanners[index];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: _buildBannerCard(banner, context),
@@ -563,7 +568,7 @@ class _LegacyBannerCarouselState extends State<_LegacyBannerCarousel> {
                           ),
                         ),
                         TextSpan(
-                          text: '/ 0${_banners.length}',
+                          text: '/ 0${_visibleBanners.length}',
                           style: const TextStyle(
                             fontFamily: 'Pretendard',
                             fontSize: 12,
