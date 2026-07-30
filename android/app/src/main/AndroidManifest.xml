@@ -60,5 +60,17 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- 본인인증(KCP): 통신사 PASS 앱 실행(intent:// explicit package) 가시성 -->
+        <package android:name="com.kt.ktauth" />        <!-- KT PASS -->
+        <package android:name="com.sktelecom.tauth" />  <!-- SKT PASS -->
+        <package android:name="com.lguplus.smartotp" /> <!-- LG U+ PASS -->
+        <!-- 그 외 외부 앱 실행 및 마켓 이동 가시성 -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="market"/>
+        </intent>
     </queries>
 </manifest>

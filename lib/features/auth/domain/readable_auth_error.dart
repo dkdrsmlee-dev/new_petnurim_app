@@ -10,6 +10,10 @@ String readAuthErrorMessage(Object error, String fallbackMessage) {
   }
 
   if (error is ApiException) {
+    final friendly = _friendlyMessageForCode(error.code);
+    if (friendly != null) {
+      return friendly;
+    }
     return error.toString();
   }
 
@@ -22,4 +26,13 @@ String readAuthErrorMessage(Object error, String fallbackMessage) {
   }
 
   return fallbackMessage;
+}
+
+/// 백엔드 에러 코드를 사용자 친화적 한글 메시지로 매핑한다(없으면 null).
+String? _friendlyMessageForCode(String? code) {
+  switch (code) {
+    case 'AUTH.IDENTITY_NOT_VERIFIED':
+      return '본인인증이 완료되지 않았어요. 다시 시도해 주세요.';
+  }
+  return null;
 }
