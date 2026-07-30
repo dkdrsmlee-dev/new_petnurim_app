@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/app_bootstrap.dart';
 import '../../app/widgets/route_step_screen.dart';
 import '../../core/theme/app_colors.dart';
+import '../home/home_thumbnail_preloader.dart';
 
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
@@ -15,6 +18,11 @@ class SplashScreen extends ConsumerWidget {
     // 앱 초기화 상태(access token) 확인 후 분기 처리
     ref.listen(appBootstrapStateProvider, (previous, next) {
       next.whenData((state) {
+        // 홈으로 진입하는 경우, 홈 썸네일을 백그라운드로 미리 워밍한다(논블로킹).
+        // 이동을 지연시키지 않으므로, 준비되면 즉시 표시되고 아니면 기존대로 로드된다.
+        if (state.destination == AppBootstrapDestination.home) {
+          unawaited(precacheHomeThumbnails(ref));
+        }
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
             context.go(state.nextRoute);

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/api_client.dart';
+import '../cache/authed_file_disk_cache.dart';
 import '../storage/token_storage.dart';
 
 /// 인증이 필요한 백엔드 파일(`/api/v1/files/{id}/download`)을 로드하는 ImageProvider.
@@ -64,6 +66,13 @@ class AuthedFileImage extends ImageProvider<AuthedFileImage> {
     AuthedFileImage key,
     ImageDecoderCallback decode,
   ) async {
+    // 0) 디스크 캐시 우선(fileId 불변 → 재실행에도 네트워크 없이 즉시 로드)
+    final cached = await AuthedFileDiskCache.read(key.fileId, key.variant);
+    if (cached != null) {
+      final buffer = await ui.ImmutableBuffer.fromUint8List(cached);
+      return decode(buffer);
+    }
+
     final token = await tokenStorage.readAccessToken();
 
     Future<Uint8List> fetch(String path) async {
@@ -86,6 +95,9 @@ class AuthedFileImage extends ImageProvider<AuthedFileImage> {
       debugPrint('[AuthedFileImage] variant 실패 → 다운로드 폴백: ${key._downloadPath}');
       bytes = await fetch(key._downloadPath);
     }
+
+    // 디스크 캐시에 저장(비동기, best-effort).
+    unawaited(AuthedFileDiskCache.write(key.fileId, key.variant, bytes));
 
     final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
     return decode(buffer);
