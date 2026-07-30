@@ -268,8 +268,10 @@ Widget _rewardThumb(
   Color bg,
   Widget fallback,
 ) {
+  // 이벤트 썸네일: 작은 'thumb' variant 를 우선 쓰고, 서버에 생성돼 있지 않으면
+  // (404 등) 원본 다운로드로 폴백해 확실히 표시되도록 한다.
   final provider = (fileId != null && fileId.isNotEmpty)
-      ? AuthedFileImageX.of(ref, fileId, variant: 'thumb')
+      ? AuthedFileImageX.of(ref, fileId, variant: 'thumb', downloadFallback: true)
       : null;
   return Container(
     width: 78,
