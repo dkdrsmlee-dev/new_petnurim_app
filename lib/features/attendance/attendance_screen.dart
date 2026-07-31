@@ -5,6 +5,7 @@ import '../../core/widgets/calendar_grid.dart';
 import '../../core/widgets/calendar_stamp.dart';
 import '../../core/widgets/bullit_text.dart';
 import '../../core/widgets/edge_button_dialog.dart';
+import '../../core/widgets/nurim_refreshable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/reward_milestone_stamp.dart';
 import 'domain/attendance_models.dart';
@@ -112,13 +113,21 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     );
   }
 
+  Future<void> _refresh() async {
+    ref.invalidate(attendanceProvider(widget.eventMasterId));
+    await ref.read(attendanceProvider(widget.eventMasterId).future);
+  }
+
   Widget _buildContent(AttendanceCurrentResponse data) {
     _data = data;
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // 1. 배너 영역
-          _buildBannerSection(),
+    return NurimRefreshable(
+      onRefresh: _refresh,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            // 1. 배너 영역
+            _buildBannerSection(),
 
           const SizedBox(height: 32),
 
@@ -140,6 +149,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
           const SizedBox(height: 40),
         ],
+      ),
       ),
     );
   }

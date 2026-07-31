@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/utils/date_format.dart';
 import '../../core/widgets/authed_file_image.dart';
 import '../../core/widgets/camera_history_card.dart';
+import '../../core/widgets/nurim_refreshable.dart';
 import '../../core/widgets/pet_select_card.dart';
 import 'camera_screen.dart';
 import 'data/photo_event_repository.dart';
@@ -42,21 +43,28 @@ class ShootingHistoryScreen extends ConsumerWidget {
         effectivePetId.isNotEmpty;
 
     if (canQuery) {
-      final historyAsync = ref.watch(
-        photoPetHistoryProvider(
-          (eventMasterId: eventMasterId!, petId: effectivePetId),
-        ),
-      );
+      final historyArg =
+          (eventMasterId: eventMasterId!, petId: effectivePetId);
+      final historyAsync = ref.watch(photoPetHistoryProvider(historyArg));
+      Future<void> refresh() async {
+        ref.invalidate(photoPetHistoryProvider(historyArg));
+        await ref.read(photoPetHistoryProvider(historyArg).future);
+      }
       return historyAsync.when(
         data: (history) => _buildScaffold(
           context,
           cardData: _cardDataFrom(ref, history),
-          body: history.items.isEmpty
-              ? _EmptyHistoryView(
-                  eventMasterId: eventMasterId,
-                  petId: effectivePetId,
-                )
-              : _HistoryList(items: history.items),
+          body: NurimRefreshable(
+            onRefresh: refresh,
+            child: history.items.isEmpty
+                ? RefreshableCenter(
+                    child: _EmptyHistoryView(
+                      eventMasterId: eventMasterId,
+                      petId: effectivePetId,
+                    ),
+                  )
+                : _HistoryList(items: history.items),
+          ),
         ),
         loading: () => _buildScaffold(
           context,
@@ -71,9 +79,14 @@ class ShootingHistoryScreen extends ConsumerWidget {
         error: (_, __) => _buildScaffold(
           context,
           cardData: _cardDataFrom(ref, null),
-          body: _EmptyHistoryView(
-            eventMasterId: eventMasterId,
-            petId: effectivePetId,
+          body: NurimRefreshable(
+            onRefresh: refresh,
+            child: RefreshableCenter(
+              child: _EmptyHistoryView(
+                eventMasterId: eventMasterId,
+                petId: effectivePetId,
+              ),
+            ),
           ),
         ),
       );

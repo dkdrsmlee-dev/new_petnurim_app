@@ -6,6 +6,7 @@ import '../../../app/app_routes.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/list_button.dart';
 import '../../../core/widgets/my_info_row.dart';
+import '../../../core/widgets/nurim_refreshable.dart';
 import '../../../core/widgets/mypage_name.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
@@ -34,6 +35,17 @@ class MyPageView extends ConsumerWidget {
     final myPageState = ref.watch(memberMyPageProvider);
     final petsState = ref.watch(myPetsListProvider);
     final memberInfoState = ref.watch(memberInfoProvider);
+
+    Future<void> refresh() async {
+      ref.invalidate(memberMyPageProvider);
+      ref.invalidate(myPetsListProvider);
+      ref.invalidate(memberInfoProvider);
+      await Future.wait([
+        ref.read(memberMyPageProvider.future),
+        ref.read(myPetsListProvider.future),
+        ref.read(memberInfoProvider.future),
+      ]);
+    }
 
     return myPageState.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -76,6 +88,7 @@ class MyPageView extends ConsumerWidget {
             onLogout: onLogout,
             onBackToHome: onBackToHome,
             snsFlatform: snsFlatform,
+            onRefresh: refresh,
           );
         },
       ),
@@ -90,6 +103,7 @@ class MyPageView extends ConsumerWidget {
     required this.serverPets,
     required this.isLoggingOut,
     required this.onLogout,
+    required this.onRefresh,
     this.onBackToHome,
     this.snsFlatform,
   });
@@ -99,6 +113,7 @@ class MyPageView extends ConsumerWidget {
   final List<MyPetListItem> serverPets;
   final bool isLoggingOut;
   final VoidCallback onLogout;
+  final Future<void> Function() onRefresh;
   final VoidCallback? onBackToHome;
   final String? snsFlatform;
 
@@ -130,9 +145,12 @@ class _MyPageContentState extends State<_MyPageContent> {
         ),
         // 2. 본문 스크롤 영역
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            children: [
+          child: NurimRefreshable(
+            onRefresh: widget.onRefresh,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: NurimMypageName(name: name),
@@ -242,6 +260,7 @@ class _MyPageContentState extends State<_MyPageContent> {
 
 
             ],
+            ),
           ),
         ),
       ],

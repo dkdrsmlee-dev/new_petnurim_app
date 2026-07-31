@@ -9,6 +9,7 @@ import '../../core/storage/token_storage.dart';
 import '../../core/widgets/card_banner.dart';
 import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
+import '../../core/widgets/nurim_refreshable.dart';
 import '../../core/widgets/section_title.dart';
 import '../../core/utils/toast_util.dart';
 import '../attendance/attendance_screen.dart';
@@ -153,9 +154,15 @@ class _HomeOverview extends ConsumerWidget {
     final templates = ref.watch(eventTemplatesProvider).value;
     final attendance = templates?.attendance;
     final photo = templates?.photo;
-    return ListView(
-      padding: const EdgeInsets.only(top: 16, bottom: 28),
-      children: [
+    return NurimRefreshable(
+      onRefresh: () async {
+        ref.invalidate(eventTemplatesProvider);
+        await ref.read(eventTemplatesProvider.future);
+      },
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(top: 16, bottom: 28),
+        children: [
         const HomeEventCarousel(),
         const SizedBox(height: 32),
         const NurimSectionTitle(
@@ -257,6 +264,7 @@ class _HomeOverview extends ConsumerWidget {
           ),
         ),
       ],
+      ),
     );
   }
 }

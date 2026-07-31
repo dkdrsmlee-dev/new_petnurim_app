@@ -8,6 +8,7 @@ import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/authed_file_image.dart';
 
 import '../../../core/widgets/edge_button_dialog.dart';
+import '../../../core/widgets/nurim_refreshable.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
 import '../domain/pet_models.dart';
@@ -77,6 +78,11 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
       if (!mounted) return;
       ToastUtil.show(context, '대표 펫 설정에 실패했습니다: $e');
     }
+  }
+
+  Future<void> _refresh() async {
+    ref.invalidate(myPetsListProvider);
+    await ref.read(myPetsListProvider.future);
   }
 
   Widget _buildContent(List<MyPetListItem> serverPets) {
@@ -149,18 +155,20 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
           ),
         ),
         Expanded(
-          child: list.isEmpty
-              ? Center(
+          child: NurimRefreshable(
+            onRefresh: _refresh,
+            child: list.isEmpty
+              ? const RefreshableCenter(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.pets,
                         color: AppColors.placeholder,
                         size: 48,
                       ),
-                      const SizedBox(height: 12),
-                      const Text(
+                      SizedBox(height: 12),
+                      Text(
                         '등록된 마이펫이 없습니다.\n마이 펫을 등록해 주세요.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
@@ -172,6 +180,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                   ),
                 )
               : ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: list.length,
                   separatorBuilder: (context, index) => const SizedBox(height: 12),
@@ -209,6 +218,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                     );
                   },
                 ),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.all(16.0),
