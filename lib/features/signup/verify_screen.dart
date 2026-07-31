@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/app_routes.dart';
+import '../../core/widgets/edge_button_dialog.dart';
 import '../auth/domain/readable_auth_error.dart';
 import '../auth/domain/social_provider.dart';
 import 'application/signup_providers.dart';
@@ -35,12 +36,37 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _startVerification());
   }
 
+  /// 회원가입 중단 확인 팝업. "나가기" 선택 시에만 로그인 화면으로 이탈한다.
+  void _confirmCancelSignup() {
+    if (_submitting) return;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => EdgeButtonDialog(
+        title: '회원가입을 중단하시겠어요?',
+        content: '지금 나가면\n회원가입이 진행되지 않아요.',
+        cancelText: '나가기',
+        confirmText: '계속 가입하기',
+        onCancel: () {
+          Navigator.of(dialogContext).pop(); // 팝업 닫기
+          context.go(AppRoutes.authStart); // 회원가입 이탈
+        },
+        onConfirm: () {}, // 계속 가입: 팝업만 닫힘(EdgeButtonDialog가 자동 pop)
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_verified) {
-      return _buildVerifiedView(context);
-    }
-    return _buildLauncherView(context);
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _confirmCancelSignup();
+      },
+      child: _verified
+          ? _buildVerifiedView(context)
+          : _buildLauncherView(context),
+    );
   }
 
   /// 인증 진행/대기/재시도 화면 (목업 폼 대체)
@@ -67,7 +93,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.black, size: 24),
-            onPressed: _submitting ? null : () => context.go(AppRoutes.authStart),
+            onPressed: _submitting ? null : _confirmCancelSignup,
           ),
         ],
       ),
