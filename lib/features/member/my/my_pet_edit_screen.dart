@@ -18,6 +18,7 @@ import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/photo_source_sheet.dart';
 import '../data/file_repository.dart';
 import '../data/pet_repository.dart';
+import '../domain/pet_codes.dart';
 import '../domain/pet_breed.dart';
 import 'my_pet_detail_screen.dart';
 import 'my_pet_list_screen.dart';
@@ -102,12 +103,12 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
             _selectedDate = DateTime.tryParse(pet.familyDt);
           }
           _selectedGender = pet.genderCode;
-          _selectedNeutered = pet.neuteredYn == 'Y';
+          _selectedNeutered = YesNo.isYes(pet.neuteredYn);
           _weightController.text = pet.weightKg > 0 ? pet.weightKg.toString() : '';
           if (pet.weightMeasureDt.isNotEmpty) {
             _selectedWeightDate = DateTime.tryParse(pet.weightMeasureDt);
           }
-          _isPrimary = pet.representYn == 'Y';
+          _isPrimary = YesNo.isYes(pet.representYn);
 
           // 변경 감지 기준값 스냅샷 저장
           _initialName = _nameController.text.trim();
@@ -167,7 +168,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     final selected = await context.push<PetBreed>(
       Uri(
         path: AppRoutes.myPetBreedSelect,
-        queryParameters: {'petType': _petType ?? 'DOG'},
+        queryParameters: {'petType': _petType ?? PetType.dog},
       ).toString(),
     );
     if (selected != null && mounted) {
@@ -251,7 +252,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
 
       await ref.read(petRepositoryProvider).updateMyPet(
         myPetId: widget.myPetId,
-        petTypeCode: _petType ?? 'DOG',
+        petTypeCode: _petType ?? PetType.dog,
         petName: _nameController.text.trim(),
         petAge: _selectedAge!,
         genderCode: _selectedGender!,
@@ -550,16 +551,16 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        _buildTabButton('남아', _selectedGender == 'MALE', () {
+                        _buildTabButton('남아', _selectedGender == PetGender.male, () {
                           setState(() {
-                            _selectedGender = 'MALE';
+                            _selectedGender = PetGender.male;
                             _validateForm();
                           });
                         }),
                         const SizedBox(width: 8),
-                        _buildTabButton('여아', _selectedGender == 'FEMALE', () {
+                        _buildTabButton('여아', _selectedGender == PetGender.female, () {
                           setState(() {
-                            _selectedGender = 'FEMALE';
+                            _selectedGender = PetGender.female;
                             _validateForm();
                           });
                         }),

@@ -14,6 +14,7 @@ import '../../../core/widgets/section_title.dart';
 import '../../../core/utils/toast_util.dart';
 import '../data/member_repository.dart';
 import '../domain/member_my_page.dart';
+import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
 import 'my_pet_list_screen.dart';
 import '../../../core/theme/app_colors.dart';
@@ -68,10 +69,10 @@ class MyPageView extends ConsumerWidget {
               name: item.petName,
               breed: item.breedNameKor ?? '믹스',
               ageText: '${item.petAge}살',
-              genderText: item.genderCodeNm ?? (item.genderCode == 'MALE' ? '남아' : '여아'),
-              membershipTier: item.representYn == 'Y' ? '브론즈' : '멤버십 가입하기',
+              genderText: PetGender.label(item.genderCode, serverName: item.genderCodeNm),
+              membershipTier: YesNo.isYes(item.representYn) ? '브론즈' : '멤버십 가입하기',
               rewardText: '28,000P',
-              isPrimary: item.representYn == 'Y',
+              isPrimary: YesNo.isYes(item.representYn),
               imageProvider: item.profileFileId != null
                   ? AuthedFileImageX.of(ref, item.profileFileId!, variant: 'thumb')
                   : null,

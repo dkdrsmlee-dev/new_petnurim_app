@@ -11,6 +11,7 @@ import '../../../core/widgets/form_fields.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/theme/app_colors.dart';
+import '../domain/pet_codes.dart';
 
 class MyPetStoryFormScreen extends ConsumerStatefulWidget {
   final String petType;
@@ -219,7 +220,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    _selectedGender = 'MALE';
+                                    _selectedGender = PetGender.male;
                                   });
                                   _validateForm();
                                 },
@@ -229,8 +230,8 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: _selectedGender == 'MALE' ? AppColors.primary : AppColors.border,
-                                      width: _selectedGender == 'MALE' ? 1.5 : 1.0,
+                                      color: _selectedGender == PetGender.male ? AppColors.primary : AppColors.border,
+                                      width: _selectedGender == PetGender.male ? 1.5 : 1.0,
                                     ),
                                   ),
                                   alignment: Alignment.center,
@@ -238,8 +239,8 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     '남아',
                                     style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: _selectedGender == 'MALE' ? FontWeight.w600 : FontWeight.w500,
-                                      color: _selectedGender == 'MALE' ? AppColors.primary : AppColors.placeholder,
+                                      fontWeight: _selectedGender == PetGender.male ? FontWeight.w600 : FontWeight.w500,
+                                      color: _selectedGender == PetGender.male ? AppColors.primary : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
@@ -252,7 +253,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    _selectedGender = 'FEMALE';
+                                    _selectedGender = PetGender.female;
                                   });
                                   _validateForm();
                                 },
@@ -262,8 +263,8 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: _selectedGender == 'FEMALE' ? AppColors.primary : AppColors.border,
-                                      width: _selectedGender == 'FEMALE' ? 1.5 : 1.0,
+                                      color: _selectedGender == PetGender.female ? AppColors.primary : AppColors.border,
+                                      width: _selectedGender == PetGender.female ? 1.5 : 1.0,
                                     ),
                                   ),
                                   alignment: Alignment.center,
@@ -271,8 +272,8 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     '여아',
                                     style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: _selectedGender == 'FEMALE' ? FontWeight.w600 : FontWeight.w500,
-                                      color: _selectedGender == 'FEMALE' ? AppColors.primary : AppColors.placeholder,
+                                      fontWeight: _selectedGender == PetGender.female ? FontWeight.w600 : FontWeight.w500,
+                                      color: _selectedGender == PetGender.female ? AppColors.primary : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),

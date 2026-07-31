@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/app_routes.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/theme/app_colors.dart';
+import '../domain/pet_codes.dart';
 
 class MyPetAddScreen extends ConsumerStatefulWidget {
   const MyPetAddScreen({super.key});
@@ -56,10 +57,10 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
                   child: Stack(
                     children: [
                       Positioned(
-                        left: typeCode == 'DOG' ? 8.853 : 10.536,
-                        top: typeCode == 'DOG' ? 13.301 : 14.101,
-                        width: typeCode == 'DOG' ? (70 * 0.74705) : (70 * 0.69896),
-                        height: typeCode == 'DOG' ? (70 * 1.04856) : (70 * 1.16853),
+                        left: typeCode == PetType.dog ? 8.853 : 10.536,
+                        top: typeCode == PetType.dog ? 13.301 : 14.101,
+                        width: typeCode == PetType.dog ? (70 * 0.74705) : (70 * 0.69896),
+                        height: typeCode == PetType.dog ? (70 * 1.04856) : (70 * 1.16853),
                         child: Image.asset(
                           assetPath,
                           fit: BoxFit.fill,
@@ -129,13 +130,13 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
               child: Row(
                 children: [
                   _buildPetTypeCard(
-                    typeCode: 'DOG',
+                    typeCode: PetType.dog,
                     label: '강아지',
                     assetPath: 'assets/images/banner/ic_dog_select.png',
                   ),
                   const SizedBox(width: 12),
                   _buildPetTypeCard(
-                    typeCode: 'CAT',
+                    typeCode: PetType.cat,
                     label: '고양이',
                     assetPath: 'assets/images/banner/ic_cat_select.png',
                   ),

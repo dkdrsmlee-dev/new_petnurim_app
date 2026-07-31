@@ -9,6 +9,7 @@ import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
 import '../../../core/widgets/pet_info_detail.dart';
+import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
 import '../data/pet_repository.dart';
 import '../../../core/theme/app_colors.dart';
@@ -91,9 +92,9 @@ class MyPetDetailScreen extends ConsumerWidget {
             ),
           ),
           data: (pet) {
-            final isPrimary = pet.representYn == 'Y';
+            final isPrimary = YesNo.isYes(pet.representYn);
             final ageText = '${pet.petAge}살';
-            final genderText = pet.genderCodeNm ?? (pet.genderCode == 'MALE' ? '남아' : '여아');
+            final genderText = PetGender.label(pet.genderCode, serverName: pet.genderCodeNm);
             final breedText = pet.breedNameKor ?? '믹스';
 
             // Calculate mock next payment date (1 month from today)

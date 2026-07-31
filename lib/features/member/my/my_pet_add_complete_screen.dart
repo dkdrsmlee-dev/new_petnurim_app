@@ -7,6 +7,7 @@ import '../../../app/app_routes.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../data/member_repository.dart';
 import '../data/pet_repository.dart';
+import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
 import 'my_pet_list_screen.dart';
 import '../../../core/theme/app_colors.dart';
@@ -212,8 +213,8 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                               _buildInfoRow('품종', detail.breedNameKor ?? '믹스'),
                               _buildInfoRow('나이', '${detail.petAge}살'),
                               _buildInfoRow('가족이 된 날', _formatDate(detail.familyDt)),
-                              _buildInfoRow('성별', detail.genderCodeNm ?? (detail.genderCode == 'MALE' ? '남아' : '여아')),
-                              _buildInfoRow('중성화', detail.neuteredYn == 'Y' ? '했어요' : '안했어요'),
+                              _buildInfoRow('성별', PetGender.label(detail.genderCode, serverName: detail.genderCodeNm)),
+                              _buildInfoRow('중성화', YesNo.isYes(detail.neuteredYn) ? '했어요' : '안했어요'),
                               _buildInfoRow('체중', '${detail.weightKg}Kg'),
                               _buildInfoRow('체중 측정일', _formatDate(detail.weightMeasureDt), isLast: true),
                             ],
