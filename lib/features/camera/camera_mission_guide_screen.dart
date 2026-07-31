@@ -774,8 +774,8 @@ class CameraMissionGuideScreen extends ConsumerWidget {
       showDialog(
         context: context,
         builder: (_) => EdgeButtonDialog(
-          title: '아이 등록이 필요해요',
-          content: '마이펫 등록 후 진행해 주세요 :)',
+          title: '아이 등록이 필요해요.',
+          content: '아이 등록 후 리워드 이벤트에\n참여할 수 있어요.',
           cancelText: '닫기',
           confirmText: '마이펫 등록',
           onConfirm: () {
