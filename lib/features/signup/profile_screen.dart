@@ -35,7 +35,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         _zipCodeController.text = profile.zipCode;
         _address1Controller.text = profile.address1;
         _address2Controller.text = profile.address2;
-        _birthDateController.text = profile.birthDate.isNotEmpty ? profile.birthDate : '2004-01-01';
+        // 백엔드 profile-init 이 생년월일을 내려주지 않으므로 사용자가 직접 입력한다.
+        _birthDateController.text = profile.birthDate;
         setState(() {});
       }
     });
@@ -51,6 +52,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   bool _isFormValid() {
+    // 생년월일은 본인인증 값이 자동 채워지는 읽기전용이므로 주소만 검증한다.
     return _address1Controller.text.trim().isNotEmpty &&
         _address2Controller.text.trim().isNotEmpty;
   }
@@ -156,11 +158,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String _readErrorMessage(Object error, String fallbackMessage) =>
       readAuthErrorMessage(error, fallbackMessage);
 
-  String _formatBirthDate(String yyyymmdd) {
-    if (yyyymmdd.isEmpty) return '2004.01.01';
-    return yyyymmdd.replaceAll('-', '.');
-  }
-
   @override
   Widget build(BuildContext context) {
     try {
@@ -168,13 +165,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       final profile = signupState.profile;
       final formValid = _isFormValid();
 
-      // Dynamic email construction based on provider
-      final emailDomain = profile.provider == SocialProvider.kakao ? 'kakao.com' : 'naver.com';
-      final emailName = profile.name.contains(RegExp(r'[a-zA-Z]'))
-          ? profile.name.replaceAll(' ', '').toLowerCase()
-          : 'abcd';
-      final emailText = '$emailName@$emailDomain';
-      final snsText = '(${profile.providerLabel.isNotEmpty ? profile.providerLabel : (profile.provider == SocialProvider.kakao ? "카카오" : "네이버")})';
+      // 연결계정: 실제 계정 이메일은 회원가입 단계(profile-init)에서 제공되지 않으므로
+      // 가짜 이메일을 만들지 않고 연결된 소셜 계정(provider)만 표기한다.
+      final providerName = profile.providerLabel.isNotEmpty
+          ? profile.providerLabel
+          : (profile.provider == SocialProvider.kakao ? '카카오' : '네이버');
+      final connectedText = '$providerName 계정';
 
       return Scaffold(
         backgroundColor: Colors.white,
@@ -238,28 +234,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             border: Border.all(color: AppColors.border),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Row(
-                            children: [
-                              Text(
-                                emailText,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textDisabled,
-                                  letterSpacing: -0.66,
-                                ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              connectedText,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textDisabled,
+                                letterSpacing: -0.66,
                               ),
-                              const SizedBox(width: 2),
-                              Text(
-                                snsText,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textDisabled,
-                                  letterSpacing: -0.66,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
                       ],
@@ -279,6 +264,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
+                        // 생년월일: 본인인증(KCP) 결과가 자동 채워지는 읽기전용 필드
                         Container(
                           height: 52,
                           width: double.infinity,
@@ -291,7 +277,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              _formatBirthDate(_birthDateController.text),
+                              _birthDateController.text.replaceAll('-', '.'),
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,

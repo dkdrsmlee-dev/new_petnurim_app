@@ -183,6 +183,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
         profileInit = const SignupProfileInit(
           name: '홍길동',
           phoneNumber: '01012341234',
+          birthDate: '1995-05-15',
           provider: SocialProvider.kakao,
         );
       } else {

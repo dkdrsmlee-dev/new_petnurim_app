@@ -56,7 +56,12 @@ class SignupProfileDraft {
 }
 
 class SignupProfileInit {
-  const SignupProfileInit({this.name, this.phoneNumber, this.provider});
+  const SignupProfileInit({
+    this.name,
+    this.phoneNumber,
+    this.birthDate,
+    this.provider,
+  });
 
   factory SignupProfileInit.fromJson(Object? payload) {
     final data = payload is Map ? payload : const <String, Object?>{};
@@ -65,12 +70,14 @@ class SignupProfileInit {
       name: _readString(data, 'name'),
       phoneNumber:
           _readString(data, 'phoneNumber') ?? _readString(data, 'phone'),
+      birthDate: _readString(data, 'birthDate'),
       provider: SocialProvider.fromKey(_readString(data, 'provider') ?? ''),
     );
   }
 
   final String? name;
   final String? phoneNumber;
+  final String? birthDate;
   final SocialProvider? provider;
 
   SignupProfileDraft mergeInto(SignupProfileDraft profile) {
@@ -81,6 +88,9 @@ class SignupProfileInit {
       phone: phoneNumber?.trim().isNotEmpty == true
           ? phoneNumber!.trim()
           : profile.phone,
+      birthDate: birthDate?.trim().isNotEmpty == true
+          ? birthDate!.trim()
+          : profile.birthDate,
       provider: provider ?? profile.provider,
       providerLabel: providerLabel ?? profile.providerLabel,
     );
