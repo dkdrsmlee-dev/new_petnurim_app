@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../auth/domain/auth_exception.dart';
+import '../domain/faq_models.dart';
 import '../domain/notice_models.dart';
 import '../domain/qna_models.dart';
 
@@ -22,6 +23,15 @@ abstract interface class BoardRepository {
   });
 
   Future<NoticeDetail> getNoticeDetail(String id);
+
+  Future<CursorPaginationResponse<FaqItem>> getFaqList({
+    String? cursor,
+    int? limit,
+    String? categoryCode,
+    String? title,
+  });
+
+  Future<FaqDetail> getFaqDetail(String id);
 
   Future<void> createQna({
     required String qnaTypeCode,
@@ -217,6 +227,54 @@ class BackendBoardRepository implements BoardRepository {
 
     if (payload is Map<String, dynamic>) {
       return NoticeDetail.fromJson(payload);
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
+  }
+
+  @override
+  Future<CursorPaginationResponse<FaqItem>> getFaqList({
+    String? cursor,
+    int? limit,
+    String? categoryCode,
+    String? title,
+  }) async {
+    final queryParameters = <String, String>{};
+    if (cursor != null) queryParameters['cursor'] = cursor;
+    if (limit != null) queryParameters['limit'] = limit.toString();
+    if (categoryCode != null) queryParameters['categoryCode'] = categoryCode;
+    if (title != null) queryParameters['title'] = title;
+
+    final uri = Uri(
+      path: '/api/v1/board/faqs',
+      queryParameters: queryParameters.isEmpty ? null : queryParameters,
+    );
+    final path = '${uri.path}${uri.hasQuery ? '?${uri.query}' : ''}';
+
+    final payload = await _apiClient.getJson(
+      path,
+      fallbackMessage: '자주 묻는 질문 목록을 불러오지 못했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return CursorPaginationResponse<FaqItem>.fromJson(
+        payload,
+        (json) => FaqItem.fromJson(json),
+      );
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
+  }
+
+  @override
+  Future<FaqDetail> getFaqDetail(String id) async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/board/faqs/$id',
+      fallbackMessage: '자주 묻는 질문 상세를 불러오지 못했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return FaqDetail.fromJson(payload);
     } else {
       throw const FormatException('잘못된 응답 형식입니다.');
     }

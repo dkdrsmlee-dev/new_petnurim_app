@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/board_repository.dart';
+import '../domain/faq_models.dart';
 import '../domain/notice_models.dart';
 import '../domain/qna_models.dart';
 import 'qna_create_screen.dart';
@@ -44,16 +45,29 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
   final Map<String, NoticeDetail> _noticeDetails = {};
   final Set<String> _loadingDetails = {};
 
+  // FAQ List and Pagination State
+  int _faqExpandedIndex = -1;
+  final List<FaqItem> _faqItems = [];
+  bool _faqIsLoading = false;
+  bool _faqHasNext = true;
+  String? _faqNextCursor;
+  String? _faqError;
+  final ScrollController _faqScrollController = ScrollController();
+  final Map<String, FaqDetail> _faqDetails = {};
+  final Set<String> _faqLoadingDetails = {};
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    
+
     // Fetch QnAs & Notices on init
     _qnaScrollController.addListener(_onQnaScroll);
     _noticeScrollController.addListener(_onNoticeScroll);
+    _faqScrollController.addListener(_onFaqScroll);
     _fetchQnas();
     _fetchNotices();
+    _fetchFaqs();
   }
 
   @override
@@ -61,6 +75,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
     _tabController.dispose();
     _qnaScrollController.dispose();
     _noticeScrollController.dispose();
+    _faqScrollController.dispose();
     super.dispose();
   }
 
@@ -140,6 +155,78 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
       debugPrint('[CustomerCenter] 공지 상세 로딩 실패: $e');
       setState(() {
         _loadingDetails.remove(boardId);
+      });
+    }
+  }
+
+  void _onFaqScroll() {
+    if (_faqScrollController.position.pixels >= _faqScrollController.position.maxScrollExtent - 200) {
+      if (!_faqIsLoading && _faqHasNext) {
+        _fetchFaqs();
+      }
+    }
+  }
+
+  Future<void> _fetchFaqs({bool isRefresh = false, int retryCount = 0}) async {
+    if (_faqIsLoading && retryCount == 0) return;
+
+    if (retryCount == 0) {
+      setState(() {
+        _faqIsLoading = true;
+        _faqError = null;
+        if (isRefresh) {
+          _faqItems.clear();
+          _faqNextCursor = null;
+          _faqHasNext = true;
+          _faqExpandedIndex = -1;
+        }
+      });
+    }
+
+    try {
+      final repository = ref.read(boardRepositoryProvider);
+      final response = await repository.getFaqList(
+        cursor: _faqNextCursor,
+        limit: 20,
+      );
+
+      setState(() {
+        _faqItems.addAll(response.items);
+        _faqHasNext = response.hasNext;
+        _faqNextCursor = response.nextCursor;
+        _faqIsLoading = false;
+      });
+    } catch (e) {
+      debugPrint('[CustomerCenter] FAQ 로딩 실패 에러: $e (retry: $retryCount)');
+      if (retryCount < 1) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        return _fetchFaqs(isRefresh: isRefresh, retryCount: retryCount + 1);
+      }
+      setState(() {
+        _faqError = '자주 묻는 질문 목록을 불러오는데 실패했습니다.';
+        _faqIsLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchFaqDetail(String boardId) async {
+    if (_faqLoadingDetails.contains(boardId)) return;
+
+    setState(() {
+      _faqLoadingDetails.add(boardId);
+    });
+
+    try {
+      final repository = ref.read(boardRepositoryProvider);
+      final detail = await repository.getFaqDetail(boardId);
+      setState(() {
+        _faqDetails[boardId] = detail;
+        _faqLoadingDetails.remove(boardId);
+      });
+    } catch (e) {
+      debugPrint('[CustomerCenter] FAQ 상세 로딩 실패: $e');
+      setState(() {
+        _faqLoadingDetails.remove(boardId);
       });
     }
   }
@@ -279,7 +366,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                 controller: _tabController,
                 children: [
                   _buildNoticeTabList(),
-                  const Center(child: Text('자주 묻는 질문 목록')),
+                  _buildFaqTabList(),
                   _buildQnaTab(),
                 ],
               ),
@@ -624,6 +711,242 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
     } catch (e) {
       return false;
     }
+  }
+
+  Widget _buildFaqTabList() {
+    if (_faqIsLoading && _faqItems.isEmpty) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      );
+    }
+
+    if (_faqError != null && _faqItems.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _faqError!,
+              style: const TextStyle(
+                fontFamily: 'Pretendard',
+                fontSize: 16,
+                color: AppColors.textTertiary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => _fetchFaqs(isRefresh: true),
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+              child: const Text('다시 시도', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_faqItems.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: () => _fetchFaqs(isRefresh: true),
+        color: AppColors.primary,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+            const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.help_outline_rounded,
+                    size: 48,
+                    color: AppColors.placeholder,
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    '등록된 자주 묻는 질문이 없습니다.',
+                    style: TextStyle(
+                      fontFamily: 'Pretendard',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => _fetchFaqs(isRefresh: true),
+      color: AppColors.primary,
+      child: ListView.builder(
+        controller: _faqScrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        itemCount: _faqItems.length + (_faqHasNext ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == _faqItems.length) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+            );
+          }
+
+          final faq = _faqItems[index];
+          final isExpanded = _faqExpandedIndex == index;
+          final detail = _faqDetails[faq.boardId];
+          final isDetailLoading = _faqLoadingDetails.contains(faq.boardId);
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x1A51565F), // #51565F1A
+                  offset: Offset(0, 0),
+                  blurRadius: 8,
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // Question header (Q 배지 + 질문 + 화살표)
+                InkWell(
+                  onTap: () {
+                    if (isExpanded) {
+                      setState(() {
+                        _faqExpandedIndex = -1;
+                      });
+                    } else {
+                      setState(() {
+                        _faqExpandedIndex = index;
+                      });
+                      if (detail == null) {
+                        _fetchFaqDetail(faq.boardId);
+                      }
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 보라색 Q 배지
+                        Container(
+                          margin: const EdgeInsets.only(top: 2),
+                          width: 18,
+                          height: 18,
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Text(
+                            'Q',
+                            style: TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              height: 1.0,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            faq.title,
+                            maxLines: isExpanded ? 5 : 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontFamily: 'Pretendard',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600, // SemiBold
+                              color: AppColors.textStrong,
+                              height: 1.4,
+                              letterSpacing: -0.66,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Icon(
+                          isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                          color: AppColors.textTertiary,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Answer (펼침 시 노출)
+                if (isExpanded) ...[
+                  Container(height: 1, color: AppColors.borderLight),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Builder(
+                      builder: (context) {
+                        if (isDetailLoading) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24),
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          );
+                        }
+
+                        if (detail == null) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24),
+                              child: Text(
+                                '내용을 불러오지 못했습니다.',
+                                style: TextStyle(
+                                  fontFamily: 'Pretendard',
+                                  fontSize: 14,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            HtmlWidget(
+                              detail.content,
+                              textStyle: const TextStyle(
+                                fontFamily: 'Pretendard',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400, // Regular
+                                color: AppColors.textMuted,
+                                height: 1.4,
+                                letterSpacing: -0.66,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildQnaTab() {
