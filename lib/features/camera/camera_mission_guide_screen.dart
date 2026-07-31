@@ -7,11 +7,11 @@ import '../../core/widgets/popup_header.dart';
 import '../../core/widgets/bullit_text.dart';
 import '../../core/widgets/pet_select_card.dart';
 import '../../core/widgets/authed_file_image.dart';
+import '../../core/widgets/edge_button_dialog.dart';
 import '../../core/utils/toast_util.dart';
 import 'domain/photo_event_models.dart';
 import 'data/photo_event_repository.dart';
 import 'camera_screen.dart';
-import 'pet_empty_screen.dart';
 import 'pet_select_screen.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -724,7 +724,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
   /// 미션 참여하기 버튼 탭 시 등록 펫 수에 따라 화면 분기
   ///
-  /// - 0마리 → PetEmptyScreen (펫 없음 안내)
+  /// - 0마리 → 마이펫 등록 안내 다이얼로그
   /// - 1마리 → CameraScreen (바로 카메라)
   /// - 2마리 이상 → PetSelectScreen (펫 선택)
   Future<void> _onMissionParticipate(
@@ -769,18 +769,20 @@ class CameraMissionGuideScreen extends ConsumerWidget {
         .toList();
 
     if (registeredPets.isEmpty) {
-      // 0마리: 펫 없음 안내 화면
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PetEmptyScreen(
-            onAddPetPressed: () {
-              // 카메라 미션 플로우(가이드/빈화면)를 닫고 마이펫 추가 화면으로 이동
-              final router = GoRouter.of(context);
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              router.push(AppRoutes.myPetAdd);
-            },
-          ),
+      // 0마리: 마이펫 등록 안내 다이얼로그 (Figma USR-EVT-016)
+      final router = GoRouter.of(context);
+      showDialog(
+        context: context,
+        builder: (_) => EdgeButtonDialog(
+          title: '아이 등록이 필요해요',
+          content: '마이펫 등록 후 진행해 주세요 :)',
+          cancelText: '닫기',
+          confirmText: '마이펫 등록',
+          onConfirm: () {
+            // 카메라 미션 플로우를 닫고 마이펫 추가 화면으로 이동
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            router.push(AppRoutes.myPetAdd);
+          },
         ),
       );
     } else if (registeredPets.length == 1) {
