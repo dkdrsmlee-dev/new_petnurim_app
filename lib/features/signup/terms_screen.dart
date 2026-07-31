@@ -8,6 +8,7 @@ import '../../core/widgets/edge_button_dialog.dart';
 import '../auth/domain/readable_auth_error.dart';
 import 'application/signup_providers.dart';
 import 'domain/signup_terms.dart';
+import 'terms_detail_screen.dart';
 import '../../core/theme/app_colors.dart';
 
 class TermsScreen extends ConsumerStatefulWidget {
@@ -257,26 +258,11 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
   }
 
   void _openTerm(ActiveTerm term) {
-    showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) {
-        return SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
-            children: [
-              Text(
-                '[${term.requiredLabel}] ${term.termsName}',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 16),
-              Text(term.content.isEmpty ? '약관 본문이 비어 있습니다.' : term.content),
-            ],
-          ),
-        );
-      },
+    // 마이페이지 서비스 약관과 동일한 전체화면 상세(HtmlWidget 렌더 + 확인)로 표시.
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TermsDetailScreen(term: term),
+      ),
     );
   }
 
