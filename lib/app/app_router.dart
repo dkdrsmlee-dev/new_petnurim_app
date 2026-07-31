@@ -12,6 +12,7 @@ import '../features/signup/verify_screen.dart';
 import '../features/splash/splash_screen.dart';
 import '../features/webview/address_webview_screen.dart';
 import '../features/member/my/customer_center_screen.dart';
+import '../features/member/my/service_terms_screen.dart';
 import '../features/member/my/my_pet_list_screen.dart';
 import '../features/member/my/my_pet_detail_screen.dart';
 import '../features/member/my/my_pet_edit_screen.dart';
@@ -86,6 +87,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.customerCenter,
         name: AppRouteNames.customerCenter,
         builder: (context, state) => const CustomerCenterScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.serviceTerms,
+        name: AppRouteNames.serviceTerms,
+        builder: (context, state) => const ServiceTermsScreen(),
       ),
       GoRoute(
         path: AppRoutes.myPetList,

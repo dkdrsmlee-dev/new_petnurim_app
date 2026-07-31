@@ -19,6 +19,7 @@ abstract final class AppRoutes {
   static const myPetAddComplete = '/my/pets/add/complete';
   static const addressWebView = '/webview/address';
   static const customerCenter = '/my/customer-center';
+  static const serviceTerms = '/my/service-terms';
   static const notificationCenter = '/notification-center';
 }
 
@@ -43,5 +44,6 @@ abstract final class AppRouteNames {
   static const myPetAddComplete = 'myPetAddComplete';
   static const addressWebView = 'addressWebView';
   static const customerCenter = 'customerCenter';
+  static const serviceTerms = 'serviceTerms';
   static const notificationCenter = 'notificationCenter';
 }

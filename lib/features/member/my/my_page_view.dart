@@ -249,7 +249,7 @@ class _MyPageContentState extends State<_MyPageContent> {
               NurimListButton(
                 title: '서비스 약관',
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                onPressed: () => ToastUtil.show(context, '준비 중인 기능입니다.'),
+                onPressed: () => context.push(AppRoutes.serviceTerms),
               ),
               NurimListButton(
                 title: '설정',
