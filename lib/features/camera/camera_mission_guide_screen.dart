@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import '../../app/app_routes.dart';
 import '../../core/widgets/popup_header.dart';
 import '../../core/widgets/bullit_text.dart';
 import '../../core/widgets/pet_select_card.dart';
@@ -773,8 +775,10 @@ class CameraMissionGuideScreen extends ConsumerWidget {
         MaterialPageRoute(
           builder: (_) => PetEmptyScreen(
             onAddPetPressed: () {
-              // TODO: 마이 펫 추가 화면으로 이동 (추후 구현)
-              Navigator.of(context).pop();
+              // 카메라 미션 플로우(가이드/빈화면)를 닫고 마이펫 추가 화면으로 이동
+              final router = GoRouter.of(context);
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              router.push(AppRoutes.myPetAdd);
             },
           ),
         ),

@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../core/api/api_exception.dart';
 import '../../core/utils/toast_util.dart';
 import '../../core/widgets/camera_widgets.dart';
+import '../../core/widgets/edge_button_dialog.dart';
 import '../member/data/file_repository.dart';
 import 'data/photo_event_repository.dart';
 import 'shooting_history_screen.dart';
@@ -42,6 +43,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   bool _isCaptured = false;
   bool _isPermissionDenied = false;
   bool _isSaving = false;
+  // 촬영 중단 확인 팝업을 거친 뒤에만 실제로 화면을 pop 하기 위한 플래그
+  bool _canPop = false;
 
   @override
   void initState() {
@@ -219,7 +222,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
         rewardValue: rewardValue,
         onClose: () {
           Navigator.pop(dialogContext); // 팝업 닫기
-          Navigator.pop(context); // 화면 닫기
+          _exit(); // 화면 닫기 (PopScope 우회)
         },
         onViewHistory: () {
           // 촬영 완료 팝업 닫고 내역 화면으로 유도 (이벤트/펫 식별자 전달)
@@ -238,9 +241,43 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     );
   }
 
+  /// 촬영 중단 확인 팝업. "중단하기" 선택 시에만 화면을 종료한다.
+  void _confirmExit() {
+    if (_isSaving) return;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => EdgeButtonDialog(
+        title: '촬영을 중단하시겠어요?',
+        content: '지금 나가면 촬영이 취소돼요.',
+        cancelText: '중단하기',
+        confirmText: '계속 참여하기',
+        onCancel: () {
+          Navigator.of(dialogContext).pop(); // 팝업 닫기
+          _exit(); // 카메라 화면 종료
+        },
+        onConfirm: () {}, // 계속 참여: 팝업만 닫힘(EdgeButtonDialog가 자동 pop)
+      ),
+    );
+  }
+
+  /// PopScope(canPop:false)를 우회해 실제로 화면을 pop 한다.
+  void _exit() {
+    if (!mounted) return;
+    setState(() => _canPop = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Navigator.of(context).pop();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: _canPop,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _confirmExit();
+      },
+      child: Scaffold(
       backgroundColor: const Color(0x99000000), // bg-[var(--scrim/60,rgba(0,0,0,0.6))]
       body: Stack(
         children: [
@@ -373,7 +410,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: _confirmExit,
                     child: Icon(
                       Icons.arrow_back,
                       color: _isCaptured ? Colors.black : Colors.white,
@@ -427,6 +464,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
             ),
         ],
       ),
+    ),
     );
   }
 }
