@@ -313,7 +313,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      '로그아웃 안내',
+                      '로그아웃하시겠어요?',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -332,7 +332,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  '진행 중인 서비스가 있는 상태에서 로그아웃할 경우 안내를 받을 수 없습니다.',
+                  '현재 계정에서 로그아웃됩니다.',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -378,7 +378,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        child: const Text('로그아웃'),
+                        child: const Text('확인'),
                       ),
                     ),
                   ],
