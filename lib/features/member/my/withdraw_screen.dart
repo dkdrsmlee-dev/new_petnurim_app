@@ -11,7 +11,9 @@ import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/common_dialog.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/selection_control.dart';
+import '../data/common_code_repository.dart';
 import '../data/member_repository.dart';
+import '../domain/common_code.dart';
 import '../../../core/theme/app_colors.dart';
 
 class WithdrawScreen extends ConsumerStatefulWidget {
@@ -22,29 +24,22 @@ class WithdrawScreen extends ConsumerStatefulWidget {
 }
 
 class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
-  // 탈퇴 사유 목록
-  final List<String> _reasons = [
-    '사용 빈도가 낮음',
-    '원하는 기능/서비스가 없음',
-    '서비스 이용이 불편해서',
-    '가격(비용)이 부담됨',
-    '개인정보/보안 우려',
-    '고객 응대가 불만족스러움',
-    '기타 (직접 입력)',
+  // 탈퇴 사유는 백엔드 공통코드(WITHDRAW_REASON_TYPE)에서 받아온다(withdrawReasonsProvider).
+  // 조회 실패/로딩 시 사용할 fallback 목록.
+  static const List<CommonCode> _fallbackReasons = [
+    CommonCode(codeVal: 'LOW_USAGE', codeNm: '사용 빈도가 낮아요.'),
+    CommonCode(codeVal: 'FEATURE_LACK', codeNm: '원하는 기능/서비스가 없어요.'),
+    CommonCode(codeVal: 'INCONVENIENT', codeNm: '서비스 이용이 불편해요.'),
+    CommonCode(codeVal: 'PRICE', codeNm: '가격이 부담돼요.'),
+    CommonCode(codeVal: 'PRIVACY', codeNm: '개인정보 보안이 우려돼요.'),
+    CommonCode(codeVal: 'CUSTOMER_SERVICE', codeNm: '고객 응대가 불만족스러워요.'),
+    CommonCode(codeVal: 'ETC', codeNm: '직접 입력'),
   ];
 
-  // 사유 코드 매핑 (백엔드 WITHDRAW_REASON_TYPE 일치)
-  final Map<int, String> _reasonCodes = {
-    0: 'LOW_USAGE',
-    1: 'FEATURE_LACK',
-    2: 'INCONVENIENT',
-    3: 'PRICE',
-    4: 'PRIVACY',
-    5: 'CUSTOMER_SERVICE',
-    6: 'ETC',
-  };
+  // 직접 입력(기타) 코드값
+  static const String _customReasonCode = 'ETC';
 
-  int? _selectedReasonIndex; // 선택된 사유 인덱스
+  String? _selectedReasonCode; // 선택된 사유 codeVal
   final TextEditingController _customReasonController = TextEditingController();
   bool _agreed = false; // 동의 여부 체크박스 상태
   bool _isWithdrawing = false; // 탈퇴 로딩 상태
@@ -59,6 +54,10 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 탈퇴 사유: 백엔드 공통코드 조회값 우선, 로딩/실패 시 fallback.
+    final fetched = ref.watch(withdrawReasonsProvider).asData?.value;
+    final reasons =
+        (fetched != null && fetched.isNotEmpty) ? fetched : _fallbackReasons;
     return Scaffold(
       appBar: const NurimPageHeader(title: '회원 탈퇴'),
       backgroundColor: Colors.white,
@@ -111,29 +110,29 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ...List.generate(_reasons.length, (index) {
-                    return SelectionControl<int>(
+                  ...reasons.map((reason) {
+                    return SelectionControl<String>(
                       style: SelectionControlStyle.radio,
-                      text: _reasons[index],
-                      value: index,
-                      groupValue: _selectedReasonIndex,
+                      text: reason.codeNm,
+                      value: reason.codeVal,
+                      groupValue: _selectedReasonCode,
                       onChanged: (val) {
                         setState(() {
-                          _selectedReasonIndex = val;
+                          _selectedReasonCode = val;
                         });
                       },
                     );
                   }),
 
-                  // '기타 (직접 입력)' 선택 시 텍스트 영역 활성화
-                  if (_selectedReasonIndex == 6) ...[
+                  // 직접 입력(ETC) 선택 시 텍스트 영역 활성화
+                  if (_selectedReasonCode == _customReasonCode) ...[
                     const SizedBox(height: 8),
                     TextField(
                       controller: _customReasonController,
                       maxLines: 4,
                       maxLength: 100,
                       decoration: InputDecoration(
-                        hintText: '탈퇴 사유를 입력해 주세요.',
+                        hintText: '내용을 작성해 주세요.',
                         hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
                         filled: true,
                         fillColor: AppColors.bgSoft,
@@ -279,16 +278,22 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
       _errorMessage = null;
     });
 
-    final reasonCode = _selectedReasonIndex != null
-        ? _reasonCodes[_selectedReasonIndex!] ?? 'ETC'
-        : 'ETC';
+    final reasons =
+        ref.read(withdrawReasonsProvider).asData?.value ?? _fallbackReasons;
+    final reasonCode = _selectedReasonCode ?? _customReasonCode;
 
-    // 기타 사유 텍스트 구성
+    // 사유 텍스트: 직접입력이면 입력값, 아니면 선택 코드의 codeNm
     String reasonText = '앱에서 회원탈퇴 요청';
-    if (_selectedReasonIndex == 6 && _customReasonController.text.trim().isNotEmpty) {
+    if (_selectedReasonCode == _customReasonCode &&
+        _customReasonController.text.trim().isNotEmpty) {
       reasonText = _customReasonController.text.trim();
-    } else if (_selectedReasonIndex != null) {
-      reasonText = _reasons[_selectedReasonIndex!];
+    } else if (_selectedReasonCode != null) {
+      for (final code in reasons) {
+        if (code.codeVal == _selectedReasonCode) {
+          reasonText = code.codeNm;
+          break;
+        }
+      }
     }
 
     try {
