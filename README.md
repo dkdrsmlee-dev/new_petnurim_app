@@ -45,7 +45,10 @@
 - **색상 디자인 토큰 (`AppColors`)**: 앱 전역에 하드코딩돼 있던 `Color(0xFF..)` 리터럴과 화면별 로컬 색상 상수를 `lib/core/theme/app_colors.dart`의 의미 기반 토큰(`primary`/`textStrong`/`border`/`bgGray` 등)으로 일원화. `core/widgets` 및 feature 화면 60여 개 파일에 적용(값 hex 1:1 유지 → 시각 변화 없음)하여 색상 변경 시 토큰 파일 한 곳만 수정하면 전역 반영. 카카오/네이버 등 브랜드색·1회성 색은 리터럴로 유지.
 - **JSON 파싱 유틸 (`JsonReader`)**: 여러 도메인 모델과 `ApiClient`에 중복 구현돼 있던 문자열/정수/불리언 파싱 규칙을 `lib/core/utils/json_reader.dart`로 통합(`coerceString`/`stringFrom`/`plainString`/`asInt`/`coerceBool` 등). 각 모델은 고유 기본값(''/fallback 등)만 남긴 얇은 래퍼로 위임하여 동작을 100% 보존했고, 직접 검증하는 단위 테스트(`test/core/utils/json_reader_test.dart`)를 추가.
 - **공통 폼 위젯 (`form_fields`)**: 마이펫 폼 화면들에 반복되던 필드 라벨(라벨+빨강 필수 dot), pill 형태 선택 버튼, 입력 데코레이션을 `lib/core/widgets/form_fields.dart`(`NurimFieldLabel`/`NurimSelectableTab`/`nurimInputDecoration`)로 추출하여 `MyPetEdit`/`MyPetDetailForm`/`MyPetStoryForm`/`MyPetHealthForm`에 적용.
-- **미구현 메뉴 안내**: 마이페이지의 목적지 없는 메뉴(결제 수단 변경/서비스 약관/설정)의 빈 핸들러를 `ToastUtil`로 "준비 중인 기능입니다." 토스트를 노출하도록 정리하여 먹통 탭을 제거.
+- **미구현 메뉴 안내**: 마이페이지의 목적지 없는 메뉴(결제 수단 변경/설정)의 빈 핸들러를 `ToastUtil`로 "준비 중인 기능입니다." 토스트를 노출하도록 정리하여 먹통 탭을 제거. (서비스 약관은 이후 실제 화면으로 구현 — 아래 검증 상태 참고)
+- **펫 공통코드 매핑 중앙화 (`pet_codes.dart`)**: 성별(`MALE`/`FEMALE`↔남아/여아)·펫종류(`DOG`/`CAT`)·`Y`/`N` 매핑을 마이펫 화면 8곳에 흩어져 있던 하드코딩·매직스트링에서 `lib/features/member/domain/pet_codes.dart`(`PetGender`/`PetType`/`YesNo`)로 통합. 표시는 서버 코드명(`~CodeNm`) 우선 + fallback 구조를 유지하여 동작 보존.
+- **공통코드 조회 (`common_code_repository`)**: 회원 탈퇴 사유를 하드코딩에서 백엔드 공통코드(`GET /common-codes/{groupKey}`, `WITHDRAW_REASON_TYPE`)로 전환. 응답 필드가 `code`/`name`으로 내려와 여러 키를 방어적으로 파싱하고, 조회 실패/로딩 시 fallback 목록을 사용해 화면이 항상 동작하도록 함.
+- **약관 상세 화면 공용화 (`TermsDetailScreen`)**: 회원가입 약관 동의(기존 바텀시트+평문)와 마이페이지 서비스 약관에서 각기 다르게 보여주던 약관 본문을, `lib/features/signup/terms_detail_screen.dart`의 공용 전체화면(HtmlWidget 렌더 + 확인 버튼)으로 통합. 가입 약관의 raw HTML 노출 버그도 해결.
 
 ## 초기 구조
 
@@ -84,6 +87,7 @@ lib/
 /my/info          나의 정보 (마이페이지 상세)
 /my/withdraw      회원탈퇴
 /my/customer-center 고객센터
+/my/service-terms 서비스 약관 (목록/상세)
 /notification-center 알림 센터
 /webview/address  주소검색 WebView
 ```
@@ -129,13 +133,17 @@ flutter run \
 - **동작 검증 범위**:
   - 소셜 로그인 연동(Kakao/Naver) 및 신규 가입 흐름 진입 검증
   - 회원가입 1~3단계(약관 동의 -> 본인인증 -> 주소검색 WebView/생년월일 입력 프로필 저장) 검증 완료
-  - **회원 정보 입력 화면 리뉴얼 및 파라미터 에러 조치 (`ProfileScreen`)**: 피그마 시안(`USR-AUT-090-회원정보 입력(SNS)`) 스펙에 맞추어 연결계정 및 생년월일 필드(비활성화 읽기 전용 연동), 주소 검색/상세 입력 필드 및 다음 버튼 디자인 개편 완료. 생년월일이 비어 있을 때 화면의 기본 표시와 동기화되도록 기본값 `'2004-01-01'`을 자동 대입하여 백엔드 파라미터 유효성 검사 에러(`AUTH.INVALID_PARAMS`) 해결 완료
+  - **회원 정보 입력 화면 (`ProfileScreen`)**: 피그마 시안(`USR-AUT-090-회원정보 입력(SNS)`) 스펙에 맞추어 연결계정(provider 표기)·생년월일(읽기 전용) 필드, 주소 검색/상세 입력 필드 및 다음 버튼 개편 완료. **생년월일은 백엔드 `profile-init` 응답의 본인인증 값(`birthDate`, ISO)을 자동 채움(읽기전용)** — 기존 하드코딩 기본값(`2004-01-01`) 자동 대입 방식을 대체하여 실제 생년월일이 제출되도록 조치. 연결계정도 가짜 이메일 조합 대신 provider(`카카오 계정` 등)로 정직하게 표기
   - **회원가입 완료 화면 리뉴얼 (`CompleteScreen`)**: 피그마 시안(`USR-AUT-094-회원가입 완료`)에 부합하는 일러스트 및 하단 듀얼 버튼("마이펫 등록" 및 "홈으로") 개편 완료. 마이펫 등록 선택 시 앱 전역 로그인 세션 상태를 안전하게 갱신(invalidate)한 뒤 마이펫 추가 화면(`MyPetAddScreen`)으로 부드럽고 정밀하게 라우팅되도록 연동 완료
   - **마이펫 프로필 이미지 다운로드 인증 헤더 오류 조치 (`MyPage`, `MyPetList`, `MyPetDetail`, `MyPetEdit`, `MyPetAddComplete`)**: 백엔드의 파일 다운로드 API가 `access-token` 헤더를 필수로 인가 검증함에 따라, 이미지 뷰어들의 `NetworkImage` / `Image.network` 구성 요소에서 `Authorization` 헤더와 함께 `access-token` 헤더를 공동 전송하도록 전면 개편하여 사진 등록 및 변경 시 즉각 반영되도록 조치 완료
   - 회원 정보 조회(`MyInfoScreen`), 날짜 휠 피커(한국어 대응), 로그아웃 및 회원탈퇴(WithdrawScreen) 실서버 통신 및 토큰 제거 전체 라이프사이클 동작 검증 완료
   - 고객센터(`CustomerCenterScreen`) 공지사항 아코디언 목록 및 1:1 문의 목록 API(Cursor Pagination) 연동 검증 완료
   - 1:1 문의 등록(`QnaCreateScreen`) 첨부파일 실물(사진/파일) 업로드 연동 및 유효성 검증 예외 방어 기능 검증 완료
   - 알림 센터(`NotificationScreen`) 및 공통 카드 위젯(`NurimTextCard`)의 피그마 스펙(종 색상, 모두읽음 헤더 액션 등) 동기화 및 동적 접기/펼치기 반응형 검증 완료
-- **플랫폼 빌드**: Android 실단말 디버그 실행(`SM G991N`) 및 iOS 빌드 확인 (`flutter build ios --no-codesign`) 완료
+  - **고객센터 FAQ 탭 (`CustomerCenterScreen`)**: 자주 묻는 질문 탭을 백엔드 FAQ(`GET /board/faqs`, 커서 페이징) 아코디언으로 구현(공지사항 패턴 재사용, HTML 답변 렌더). 실단말 검증 완료
+  - **서비스 약관 (`ServiceTermsScreen`/`TermsDetailScreen`)**: 마이페이지 서비스 약관을 활성 약관 목록 + 상세(HtmlWidget) 화면으로 구현하고 가입 약관 상세와 공용화. 실단말 검증 완료
+  - **확인 다이얼로그 정비**: 촬영 미션 중단·회원가입 중단(약관/인증)·펫 0마리 안내("아이 등록이 필요해요")·로그아웃 확인 팝업을 피그마 문구/구성에 맞춰 추가·정비. 실단말 검증 완료
+  - **회원 탈퇴 사유 공통코드화 (`WithdrawScreen`)**: 하드코딩 사유를 백엔드 공통코드(`WITHDRAW_REASON_TYPE`) 조회로 전환. 실단말에서 조회·렌더·직접입력·글자수 카운터 검증 완료
+- **플랫폼 빌드/배포**: Android 실단말 디버그 실행(`SM G991N`, `R3CR209JAWX`) 및 iOS 빌드 확인(`flutter build ios --no-codesign`) 완료. Firebase App Distribution(`web3-petnurim`) 테스트 빌드 배포.
 
 
