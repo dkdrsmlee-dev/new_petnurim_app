@@ -5,6 +5,7 @@ import '../../../core/storage/token_storage.dart';
 import '../../auth/domain/auth_exception.dart';
 import '../domain/pet_breed.dart';
 import '../domain/pet_models.dart';
+import '../domain/pet_reward_history.dart';
 import '../domain/qna_models.dart'; // For CursorPaginationResponse
 
 abstract interface class PetRepository {
@@ -34,6 +35,15 @@ abstract interface class PetRepository {
 
   /// 마이펫 리워드 요약 조회 (총 보유/누적 적립/이번 달 적립·사용)
   Future<PetRewardSummary> getPetRewardSummary(String myPetId);
+
+  /// 마이펫 리워드 내역 조회 (커서 무한스크롤).
+  /// [historyType] ALL(이용내역=EARN/USE/RECOVER) / EXPIRE(소멸내역).
+  Future<CursorPaginationResponse<PetRewardHistoryItem>> getPetRewardHistory({
+    required String myPetId,
+    String historyType,
+    String? cursor,
+    int? limit,
+  });
 
   Future<CursorPaginationResponse<MyPetListItem>> getMyPetsList({
     String? cursor,
@@ -188,6 +198,43 @@ class BackendPetRepository implements PetRepository {
 
     if (payload is Map<String, dynamic>) {
       return PetRewardSummary.fromJson(payload);
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
+  }
+
+  @override
+  Future<CursorPaginationResponse<PetRewardHistoryItem>> getPetRewardHistory({
+    required String myPetId,
+    String historyType = 'ALL',
+    String? cursor,
+    int? limit,
+  }) async {
+    final queryParameters = <String, String>{'historyType': historyType};
+    if (cursor != null && cursor.isNotEmpty) {
+      queryParameters['cursor'] = cursor;
+    }
+    if (limit != null) {
+      queryParameters['limit'] = limit.toString();
+    }
+
+    final uri = Uri(
+      path: '/api/v1/users/my-pets/$myPetId/reward/history',
+      queryParameters: queryParameters,
+    );
+    final path = '${uri.path}?${uri.query}';
+
+    final payload = await _apiClient.getJson(
+      path,
+      bearerToken: await _readAccessToken('로그인 정보가 없어 리워드 내역을 조회할 수 없습니다.'),
+      fallbackMessage: '리워드 내역을 불러오지 못했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return CursorPaginationResponse<PetRewardHistoryItem>.fromJson(
+        payload,
+        (json) => PetRewardHistoryItem.fromJson(json),
+      );
     } else {
       throw const FormatException('잘못된 응답 형식입니다.');
     }

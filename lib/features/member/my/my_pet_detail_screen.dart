@@ -13,6 +13,7 @@ import '../../../core/widgets/pet_info_detail.dart';
 import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
 import '../data/pet_repository.dart';
+import 'pet_reward_history_screen.dart';
 import '../../../core/theme/app_colors.dart';
 
 final myPetDetailProvider = FutureProvider.autoDispose.family<MyPetDetailResponse, String>((ref, myPetId) async {
@@ -384,7 +385,14 @@ class MyPetDetailScreen extends ConsumerWidget {
                               ),
                               InkWell(
                                 onTap: () {
-                                  // 리워드 내역 화면 연동
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => PetRewardHistoryScreen(
+                                        myPetId: myPetId,
+                                      ),
+                                    ),
+                                  );
                                 },
                                 child: const Row(
                                   children: [
