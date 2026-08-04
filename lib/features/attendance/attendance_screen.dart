@@ -103,9 +103,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     final attendanceAsync = ref.watch(attendanceProvider(widget._arg));
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const PopupHeader(
+      appBar: PopupHeader(
         title: '출석 체크',
         showBackButton: false, // 스크린샷 요구사항: 뒤로가기 버튼 숨김
+        // X 닫기: 펫 선택 화면을 거쳐왔어도 항상 홈으로(첫 라우트까지 pop)
+        onClosePressed: () =>
+            Navigator.of(context).popUntil((route) => route.isFirst),
       ),
       body: attendanceAsync.when(
         loading: () => const Center(
