@@ -6,6 +6,7 @@ import '../../core/widgets/calendar_stamp.dart';
 import '../../core/widgets/bullit_text.dart';
 import '../../core/widgets/edge_button_dialog.dart';
 import '../../core/widgets/nurim_refreshable.dart';
+import '../../core/widgets/shimmer_box.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/reward_milestone_stamp.dart';
 import 'domain/attendance_models.dart';
@@ -231,6 +232,21 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       ),
       width: double.infinity,
       fit: BoxFit.fitWidth,
+      // 로딩 중엔 디자인 비율(375:558)로 공간 확보 + 셔머 → 로드 완료 시 교체.
+      // (캐시 히트 시엔 셔머 없이 즉시 표시)
+      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+        if (wasSynchronouslyLoaded) return child;
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: frame == null
+              ? AspectRatio(
+                  key: const ValueKey('shimmer'),
+                  aspectRatio: 375 / 558,
+                  child: const ShimmerBox(),
+                )
+              : KeyedSubtree(key: const ValueKey('image'), child: child),
+        );
+      },
       errorBuilder: (_, __, ___) => _buildLegacyBannerSection(),
     );
   }

@@ -112,7 +112,8 @@ class MyPetDetailScreen extends ConsumerWidget {
                     ageText: ageText,
                     genderText: genderText,
                     imageProvider: pet.profileFileId != null
-                        ? AuthedFileImageX.of(ref, pet.profileFileId!)
+                        ? AuthedFileImageX.of(ref, pet.profileFileId!,
+                            variant: 'medium', downloadFallback: true)
                         : null,
                     isPrimary: isPrimary,
                     membershipTier: '-',

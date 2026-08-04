@@ -7,6 +7,7 @@ import '../../core/widgets/popup_header.dart';
 import '../../core/widgets/bullit_text.dart';
 import '../../core/widgets/pet_select_card.dart';
 import '../../core/widgets/authed_file_image.dart';
+import '../../core/widgets/shimmer_box.dart';
 import '../../core/widgets/edge_button_dialog.dart';
 import '../../core/utils/toast_util.dart';
 import 'domain/photo_event_models.dart';
@@ -56,7 +57,8 @@ class CameraMissionGuideScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 사진 이벤트 상세(미션명·가이드·리워드·기간)로 하드코딩 대체 (없으면 폴백)
-    final detail = ref.watch(photoEventDetailProvider(eventMasterId)).value;
+    final detailAsync = ref.watch(photoEventDetailProvider(eventMasterId));
+    final detail = detailAsync.value;
     return Scaffold(
       backgroundColor: AppColors.bgGray, // var(--color/gray/20)
       appBar: PopupHeader(
@@ -559,27 +561,37 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                                 top: topPos,
                                                 width: imgSize,
                                                 height: imgSize,
-                                                child: detail?.detailImageFileId !=
-                                                        null
-                                                    ? Image(
-                                                        image: AuthedFileImageX.of(
-                                                          ref,
-                                                          detail!
-                                                              .detailImageFileId!,
-                                                          variant: 'medium',
-                                                        ),
-                                                        fit: BoxFit.cover,
-                                                        errorBuilder:
-                                                            (_, __, ___) =>
-                                                                Image.asset(
-                                                          'assets/images/banner/fangs_guide.png',
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      )
-                                                    : Image.asset(
-                                                        'assets/images/banner/fangs_guide.png',
-                                                        fit: BoxFit.cover,
-                                                      ),
+                                                // 상세 로딩 중엔 셔머(에셋 폴백이
+                                                // 잠깐 보이지 않도록) → 로드 후
+                                                // 이미지(있으면)/에셋(없으면).
+                                                child: detailAsync.isLoading
+                                                    ? const ShimmerBox()
+                                                    : (detail?.detailImageFileId !=
+                                                            null
+                                                        ? Image(
+                                                            image:
+                                                                AuthedFileImageX.of(
+                                                              ref,
+                                                              detail!
+                                                                  .detailImageFileId!,
+                                                              variant: 'medium',
+                                                            ),
+                                                            fit: BoxFit.cover,
+                                                            // 이미지 다운로드 중 셔머 →
+                                                            // 로드 완료 시 교체.
+                                                            frameBuilder:
+                                                                shimmerImageFrameBuilder,
+                                                            errorBuilder:
+                                                                (_, __, ___) =>
+                                                                    Image.asset(
+                                                              'assets/images/banner/fangs_guide.png',
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          )
+                                                        : Image.asset(
+                                                            'assets/images/banner/fangs_guide.png',
+                                                            fit: BoxFit.cover,
+                                                          )),
                                               ),
                                             ],
                                           );

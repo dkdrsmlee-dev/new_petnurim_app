@@ -167,7 +167,8 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                             clipBehavior: Clip.antiAlias,
                             child: detail.profileFileId != null
                                 ? Image(
-                                    image: AuthedFileImageX.of(ref, detail.profileFileId!),
+                                    image: AuthedFileImageX.of(ref, detail.profileFileId!,
+                                        variant: 'medium', downloadFallback: true),
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) => Stack(
                                       children: [

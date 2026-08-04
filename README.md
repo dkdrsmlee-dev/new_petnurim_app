@@ -144,6 +144,7 @@ flutter run \
   - **서비스 약관 (`ServiceTermsScreen`/`TermsDetailScreen`)**: 마이페이지 서비스 약관을 활성 약관 목록 + 상세(HtmlWidget) 화면으로 구현하고 가입 약관 상세와 공용화. 실단말 검증 완료
   - **확인 다이얼로그 정비**: 촬영 미션 중단·회원가입 중단(약관/인증)·펫 0마리 안내("아이 등록이 필요해요")·로그아웃 확인 팝업을 피그마 문구/구성에 맞춰 추가·정비. 실단말 검증 완료
   - **회원 탈퇴 사유 공통코드화 (`WithdrawScreen`)**: 하드코딩 사유를 백엔드 공통코드(`WITHDRAW_REASON_TYPE`) 조회로 전환. 실단말에서 조회·렌더·직접입력·글자수 카운터 검증 완료
+  - **이미지 로딩 UX/성능 개선 (홈·출석·촬영·마이펫)**: 첫 진입 시 이미지가 늦게 뜨는 체감을 개선. (1) **프리워밍** — 홈 이미지(캐러셀 배너·리워드 썸네일·출석/촬영 상세)를 스플래시·홈 양쪽에서 백그라운드로 미리 받아(`lib/features/home/home_image_preloader.dart`) 진입 시 캐시 히트로 즉시 표시(신규 로그인/토큰복원 경로 모두 커버). (2) **셔머 스켈레톤** — 로딩 구간에 국내 표준형 셔머(`lib/core/widgets/shimmer_box.dart`, 대각선 `topLeft→centerRight`·중립 회색 `#E0E0E0/#F5F5F5`·1500ms)를 공용 `frameBuilder`로 적용해 빈 화면→팝인 대신 자연스러운 전환. (3) **에셋 플래시 제거** — 촬영예시(`CameraMissionGuideScreen`)에서 상세 로딩 중 폴백 에셋이 잠깐 노출되던 것을 셔머로 대체. (4) **다운로드 크기 축소** — 캐러셀 배너·마이펫 프로필 이미지를 원본→`medium` variant로 전환(실측 배너 3.2MB→815KB, `downloadFallback: true`로 medium 부재 시 원본 폴백). 실단말(`R3CR209JAWX`) 캐시 계측·렌더 검증 완료
 - **플랫폼 빌드/배포**: Android 실단말 디버그 실행(`SM G991N`, `R3CR209JAWX`) 및 iOS 빌드 확인(`flutter build ios --no-codesign`) 완료. Firebase App Distribution(`web3-petnurim`) 테스트 빌드 배포.
 
 

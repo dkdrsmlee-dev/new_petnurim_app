@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'dart:async';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/authed_file_image.dart';
+import '../../../core/widgets/shimmer_box.dart';
 import '../../event/data/event_repository.dart';
 import '../../event/domain/event_models.dart';
 
@@ -108,7 +109,9 @@ class _ApiBannerCarouselState extends ConsumerState<_ApiBannerCarousel> {
     }
     final id = file.fileId;
     if (id != null && id.isNotEmpty) {
-      return AuthedFileImageX.of(ref, id);
+      // 배너는 203px 표시라 원본 대신 medium 축소본 사용(다운로드 속도 개선).
+      // medium 이 없으면(404 등) 원본 다운로드로 자동 폴백.
+      return AuthedFileImageX.of(ref, id, variant: 'medium', downloadFallback: true);
     }
     return null;
   }
@@ -152,10 +155,12 @@ class _ApiBannerCarouselState extends ConsumerState<_ApiBannerCarousel> {
     return Container(
       height: 203,
       margin: const EdgeInsets.symmetric(horizontal: 5),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: AppColors.bgGray,
         borderRadius: BorderRadius.circular(16),
       ),
+      child: const ShimmerBox(),
     );
   }
 
@@ -175,6 +180,8 @@ class _ApiBannerCarouselState extends ConsumerState<_ApiBannerCarousel> {
             Image(
               image: image,
               fit: BoxFit.cover,
+              // 로딩 중 셔머 → 로드 완료 시 이미지로 교체
+              frameBuilder: shimmerImageFrameBuilder,
               errorBuilder: (context, error, stack) => _buildImageFallback(banner),
             )
           else

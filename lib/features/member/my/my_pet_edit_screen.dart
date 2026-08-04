@@ -355,7 +355,8 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
     if (_profileImagePath != null) {
       imageProv = FileImage(File(_profileImagePath!));
     } else if (_profileFileId != null) {
-      imageProv = AuthedFileImageX.of(ref, _profileFileId!.toString());
+      imageProv = AuthedFileImageX.of(ref, _profileFileId!.toString(),
+          variant: 'medium', downloadFallback: true);
     }
 
     final familyDateText = _selectedDate != null

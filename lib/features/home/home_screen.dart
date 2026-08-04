@@ -11,6 +11,7 @@ import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
 import '../../core/widgets/nurim_refreshable.dart';
 import '../../core/widgets/section_title.dart';
+import '../../core/widgets/shimmer_box.dart';
 import '../../core/utils/toast_util.dart';
 import '../attendance/attendance_screen.dart';
 import '../auth/application/auth_providers.dart';
@@ -18,6 +19,7 @@ import '../event/data/event_repository.dart';
 import '../../core/widgets/authed_file_image.dart';
 import '../camera/camera_mission_guide_screen.dart';
 import '../member/my/my_page_view.dart';
+import 'home_image_preloader.dart';
 import 'widgets/home_event_carousel.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -154,6 +156,9 @@ class _HomeOverview extends ConsumerWidget {
     final templates = ref.watch(eventTemplatesProvider).value;
     final attendance = templates?.attendance;
     final photo = templates?.photo;
+    // 홈 이미지(배너·리워드 썸네일·출석/촬영 상세)를 백그라운드로 미리 받아둔다.
+    // 신규 로그인/새로고침 경로 커버(토큰복원 콜드 진입은 스플래시에서 이미 워밍).
+    ref.watch(homeImagePrewarmProvider);
     return NurimRefreshable(
       onRefresh: () async {
         ref.invalidate(eventTemplatesProvider);
@@ -293,6 +298,8 @@ Widget _rewardThumb(
             width: 78,
             height: 78,
             fit: BoxFit.cover,
+            // 로딩 중 셔머 → 로드 완료 시 이미지로 교체
+            frameBuilder: shimmerImageFrameBuilder,
             errorBuilder: (_, __, ___) => fallback,
           ),
   );
