@@ -10,6 +10,7 @@ import '../../../core/widgets/address_card.dart';
 import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../auth/application/auth_providers.dart';
+import '../../signup/kcp_cert_webview_screen.dart';
 import '../data/member_repository.dart';
 import '../domain/member_info.dart';
 import '../../../core/theme/app_colors.dart';
@@ -36,6 +37,7 @@ class MyInfoScreen extends ConsumerStatefulWidget {
 
 class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   String? _customBirthDate; // 사용자가 휠 피커로 변경한 생년월일(목업)
+  bool _isChangingPhone = false; // 휴대폰 번호 변경 진행 중(중복 실행 방지)
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +125,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                               showDivider: false,
                               showChevron: true,
                               onPressed: () {
-                                _showMockDialog('휴대폰 번호 변경', '휴대폰 번호 변경을 위해 본인인증을 진행합니다.');
+                                _changePhone(memberInfo.phoneNumber);
                               },
                             ),
                           ],
@@ -408,21 +410,223 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
   }
 
 
-  // 변경 안내 목업 다이얼로그
-  void _showMockDialog(String title, String message) {
-    showDialog(
+  /// 휴대폰 번호 변경 흐름:
+  /// 안내 바텀시트 → 본인인증(KCP, 새 번호 입력·인증) → 변경 확정 →
+  /// memberInfoProvider 재조회로 새 번호 반영 → 성공 다이얼로그.
+  Future<void> _changePhone(String currentPhone) async {
+    if (_isChangingPhone) return;
+    _isChangingPhone = true;
+    try {
+      // 1) 안내 바텀시트 (본인인증 필요 안내 + 현재 번호)
+      final proceed = await _showPhoneChangeIntro(currentPhone);
+      if (!mounted || !proceed) return;
+
+      // 2) 본인인증(KCP) 거래 등록 요청 (purposeCode=CHANGE_PHONE)
+      final repo = ref.read(memberRepositoryProvider);
+      final req = await repo.requestPhoneChangeVerification();
+      if (!mounted) return;
+      if (req.webViewUrl.isEmpty) {
+        ToastUtil.show(context, '본인인증 정보를 받지 못했습니다.');
+        return;
+      }
+
+      // 3) KCP 본인인증 WebView (여기서 새 번호 입력·인증, 완료 시 true)
+      final verified = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(
+          builder: (_) => KcpCertWebViewScreen(webViewUrl: req.webViewUrl),
+        ),
+      );
+      if (!mounted || verified != true) return;
+
+      // 4) 변경 확정 + 재조회 (진행 중 블로킹 로딩)
+      _showBlockingLoading();
+      String newPhone;
+      try {
+        await repo.changePhone(requestToken: req.requestToken);
+        ref.invalidate(memberInfoProvider);
+        // 재조회로 새 번호 확보(+ 화면도 자동 갱신)
+        final updated = await ref.read(memberInfoProvider.future);
+        newPhone = updated.phoneNumber;
+      } finally {
+        if (mounted) Navigator.of(context).pop(); // 로딩 닫기
+      }
+      if (!mounted) return;
+
+      // 5) 성공 다이얼로그(새 번호 표시). 화면 번호는 이미 갱신됨.
+      await _showPhoneChangedDialog(newPhone);
+    } catch (e) {
+      if (mounted) {
+        ToastUtil.show(context, '휴대폰 번호 변경 중 오류가 발생했습니다: $e');
+      }
+    } finally {
+      _isChangingPhone = false;
+    }
+  }
+
+  /// 휴대폰 변경 안내 바텀시트. [본인인증하기] 시 true 반환.
+  Future<bool> _showPhoneChangeIntro(String currentPhone) async {
+    final result = await showModalBottomSheet<bool>(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-          content: Text(message, style: const TextStyle(color: Colors.black87)),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('확인', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  '휴대폰 번호 변경',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1E2024),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  '휴대폰 번호 변경을 위해 본인인증이 필요해요.\n인증 화면에서 새 번호를 입력·인증하면 변경돼요.',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textMuted,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgGray,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      const Text(
+                        '현재 번호',
+                        style: TextStyle(
+                            fontSize: 14, color: AppColors.textTertiary),
+                      ),
+                      const Spacer(),
+                      Text(
+                        _formatPhoneNumber(currentPhone),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textStrong,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(sheetContext).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    child: const Text('본인인증하기'),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
+        );
+      },
+    );
+    return result == true;
+  }
+
+  /// 변경 진행 중 블로킹 로딩(수동 pop).
+  void _showBlockingLoading() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const PopScope(
+        canPop: false,
+        child: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      ),
+    );
+  }
+
+  /// 휴대폰 번호 변경 성공 다이얼로그(확인 1개).
+  Future<void> _showPhoneChangedDialog(String newPhone) {
+    return showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          backgroundColor: Colors.white,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  '휴대폰 번호가 변경되었어요',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1E2024),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  _formatPhoneNumber(newPhone),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    child: const Text('확인'),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

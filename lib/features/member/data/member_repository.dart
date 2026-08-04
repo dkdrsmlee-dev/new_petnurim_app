@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/api/api_client.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../auth/domain/auth_exception.dart';
+import '../../signup/domain/identity_verification.dart';
 import '../domain/member_info.dart';
 import '../domain/member_my_page.dart';
 import '../domain/member_withdrawal.dart';
@@ -22,6 +23,13 @@ abstract interface class MemberRepository {
     required String address1,
     required String address2,
   });
+
+  /// 휴대폰 번호 변경용 본인인증(KCP) 거래 등록 요청.
+  /// (로그인 access token, purposeCode=CHANGE_PHONE)
+  Future<IdentityRequestResponse> requestPhoneChangeVerification();
+
+  /// 본인인증 완료 후 requestToken 으로 휴대폰 번호 변경을 확정한다.
+  Future<void> changePhone({required String requestToken});
 }
 
 class BackendMemberRepository implements MemberRepository {
@@ -71,6 +79,32 @@ class BackendMemberRepository implements MemberRepository {
         'address2': address2,
       },
       fallbackMessage: '주소를 수정하지 못했습니다.',
+    );
+  }
+
+  @override
+  Future<IdentityRequestResponse> requestPhoneChangeVerification() async {
+    final payload = await _apiClient.postJson(
+      '/api/v1/identity-verification/request',
+      bearerToken:
+          await _readAccessToken('로그인 정보가 없어 본인인증을 진행할 수 없습니다.'),
+      body: {'purposeCode': IdentityPurpose.changePhone},
+      fallbackMessage: '본인인증 요청에 실패했습니다.',
+    );
+    if (payload is Map<String, dynamic>) {
+      return IdentityRequestResponse.fromJson(payload);
+    }
+    throw const FormatException('잘못된 응답 형식입니다.');
+  }
+
+  @override
+  Future<void> changePhone({required String requestToken}) async {
+    await _apiClient.patchJson(
+      '/api/v1/member/phone',
+      bearerToken:
+          await _readAccessToken('로그인 정보가 없어 휴대폰 번호를 변경할 수 없습니다.'),
+      body: {'requestToken': requestToken},
+      fallbackMessage: '휴대폰 번호 변경에 실패했습니다.',
     );
   }
 
