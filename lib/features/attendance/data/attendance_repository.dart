@@ -6,11 +6,17 @@ import '../../auth/domain/auth_exception.dart';
 import '../domain/attendance_models.dart';
 
 abstract interface class AttendanceRepository {
-  /// 출석 이벤트 상세 조회 (eventMasterId 기준)
-  Future<AttendanceCurrentResponse> getAttendance(String eventMasterId);
+  /// 출석 이벤트 상세 조회 (eventMasterId + 마이펫 기준). myPetId 필수.
+  Future<AttendanceCurrentResponse> getAttendance(
+    String eventMasterId,
+    String myPetId,
+  );
 
-  /// 오늘 출석 처리 (eventMasterId 기준)
-  Future<AttendanceCheckResponse> checkAttendance(String eventMasterId);
+  /// 오늘 출석 처리 (eventMasterId + 마이펫 기준). myPetId 필수.
+  Future<AttendanceCheckResponse> checkAttendance(
+    String eventMasterId,
+    String myPetId,
+  );
 }
 
 class BackendAttendanceRepository implements AttendanceRepository {
@@ -24,9 +30,16 @@ class BackendAttendanceRepository implements AttendanceRepository {
   final TokenStorage _tokenStorage;
 
   @override
-  Future<AttendanceCurrentResponse> getAttendance(String eventMasterId) async {
+  Future<AttendanceCurrentResponse> getAttendance(
+    String eventMasterId,
+    String myPetId,
+  ) async {
+    final uri = Uri(
+      path: '/api/v1/user/attendance/$eventMasterId',
+      queryParameters: {'myPetId': myPetId},
+    );
     final payload = await _apiClient.getJson(
-      '/api/v1/user/attendance/$eventMasterId',
+      '${uri.path}?${uri.query}',
       bearerToken: await _readAccessToken('로그인 정보가 없어 출석 정보를 조회할 수 없습니다.'),
       fallbackMessage: '출석 정보를 불러오지 못했습니다.',
     );
@@ -39,10 +52,14 @@ class BackendAttendanceRepository implements AttendanceRepository {
   }
 
   @override
-  Future<AttendanceCheckResponse> checkAttendance(String eventMasterId) async {
+  Future<AttendanceCheckResponse> checkAttendance(
+    String eventMasterId,
+    String myPetId,
+  ) async {
     final payload = await _apiClient.postJson(
       '/api/v1/user/attendance/$eventMasterId/check',
       bearerToken: await _readAccessToken('로그인 정보가 없어 출석할 수 없습니다.'),
+      body: {'myPetId': myPetId},
       fallbackMessage: '출석 처리에 실패했습니다.',
     );
 
@@ -69,8 +86,13 @@ final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
   );
 });
 
-/// 출석 이벤트 상세 provider (eventMasterId 기준)
+/// 출석 상세 provider 인자 (이벤트 + 마이펫)
+typedef AttendanceArg = ({String eventMasterId, String myPetId});
+
+/// 출석 이벤트 상세 provider (eventMasterId + myPetId 기준)
 final attendanceProvider = FutureProvider.autoDispose
-    .family<AttendanceCurrentResponse, String>((ref, eventMasterId) async {
-  return ref.read(attendanceRepositoryProvider).getAttendance(eventMasterId);
+    .family<AttendanceCurrentResponse, AttendanceArg>((ref, arg) async {
+  return ref
+      .read(attendanceRepositoryProvider)
+      .getAttendance(arg.eventMasterId, arg.myPetId);
 });

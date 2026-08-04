@@ -17,11 +17,21 @@ import '../../core/utils/toast_util.dart';
 import '../../core/theme/app_colors.dart';
 
 class AttendanceScreen extends ConsumerStatefulWidget {
-  const AttendanceScreen({Key? key, required this.eventMasterId})
-      : super(key: key);
+  const AttendanceScreen({
+    Key? key,
+    required this.eventMasterId,
+    required this.myPetId,
+  }) : super(key: key);
 
   /// 출석 이벤트 마스터 ID (홈 리워드 카드에서 templates.ATTENDANCE 로부터 전달)
   final String eventMasterId;
+
+  /// 출석할 마이펫 ID (펫별 출석 — 필수)
+  final String myPetId;
+
+  /// 출석 상세 provider 인자
+  AttendanceArg get _arg =>
+      (eventMasterId: eventMasterId, myPetId: myPetId);
 
   @override
   ConsumerState<AttendanceScreen> createState() => _AttendanceScreenState();
@@ -90,7 +100,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final attendanceAsync = ref.watch(attendanceProvider(widget.eventMasterId));
+    final attendanceAsync = ref.watch(attendanceProvider(widget._arg));
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const PopupHeader(
@@ -115,8 +125,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   }
 
   Future<void> _refresh() async {
-    ref.invalidate(attendanceProvider(widget.eventMasterId));
-    await ref.read(attendanceProvider(widget.eventMasterId).future);
+    ref.invalidate(attendanceProvider(widget._arg));
+    await ref.read(attendanceProvider(widget._arg).future);
   }
 
   Widget _buildContent(AttendanceCurrentResponse data) {
@@ -173,7 +183,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () =>
-                ref.invalidate(attendanceProvider(widget.eventMasterId)),
+                ref.invalidate(attendanceProvider(widget._arg)),
             icon: const Icon(Icons.refresh, size: 18),
             label: const Text('다시 시도'),
             style: ElevatedButton.styleFrom(
@@ -591,10 +601,10 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       final result =
           await ref
               .read(attendanceRepositoryProvider)
-              .checkAttendance(widget.eventMasterId);
+              .checkAttendance(widget.eventMasterId, widget.myPetId);
       if (!mounted) return;
       // 달력/카운트/연속일/버튼 상태 갱신
-      ref.invalidate(attendanceProvider(widget.eventMasterId));
+      ref.invalidate(attendanceProvider(widget._arg));
       _showCheckInRewardDialog(result);
     } catch (e) {
       if (mounted) {

@@ -13,8 +13,14 @@ import '../../core/widgets/nurim_refreshable.dart';
 import '../../core/widgets/section_title.dart';
 import '../../core/widgets/shimmer_box.dart';
 import '../../core/utils/toast_util.dart';
+import '../../core/widgets/edge_button_dialog.dart';
+import '../../core/widgets/pet_select_card.dart';
 import '../attendance/attendance_screen.dart';
+import '../attendance/attendance_pet_select_screen.dart';
 import '../auth/application/auth_providers.dart';
+import '../member/data/pet_repository.dart';
+import '../member/domain/pet_codes.dart';
+import '../member/domain/pet_models.dart';
 import '../event/data/event_repository.dart';
 import '../../core/widgets/authed_file_image.dart';
 import '../camera/camera_mission_guide_screen.dart';
@@ -209,16 +215,11 @@ class _HomeOverview extends ConsumerWidget {
                 bannerIcon: const Icon(Icons.local_fire_department, color: AppColors.errorSoft, size: 20),
                 onTap: attendance == null
                     ? null
-                    : () {
-                        Navigator.push(
+                    : () => _onAttendanceTap(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => AttendanceScreen(
-                              eventMasterId: attendance.eventMasterId,
-                            ),
-                          ),
-                        );
-                      },
+                          ref,
+                          attendance.eventMasterId,
+                        ),
               ),
               const SizedBox(height: 10),
               NurimCardBanner(
@@ -271,6 +272,86 @@ class _HomeOverview extends ConsumerWidget {
       ],
       ),
     );
+  }
+
+  /// 출석 카드 탭 → 등록 펫 수에 따라 분기(사진 이벤트와 동일 패턴).
+  /// 0마리: 등록 안내 다이얼로그 / 1마리: 바로 출석 화면 / 2마리+: 펫 선택 화면.
+  Future<void> _onAttendanceTap(
+    BuildContext context,
+    WidgetRef ref,
+    String eventMasterId,
+  ) async {
+    List<MyPetListItem> pets;
+    try {
+      final res =
+          await ref.read(petRepositoryProvider).getMyPetsList(limit: 100);
+      pets = res.items;
+    } catch (_) {
+      if (context.mounted) {
+        ToastUtil.show(context, '펫 정보를 불러오지 못했습니다. 다시 시도해 주세요.');
+      }
+      return;
+    }
+    if (!context.mounted) return;
+
+    final cards = pets
+        .map(
+          (item) => PetSelectCardData(
+            petId: item.myPetId,
+            name: item.petName,
+            breed: (item.breedNameKor != null && item.breedNameKor!.isNotEmpty)
+                ? item.breedNameKor!
+                : '믹스',
+            ageText: '${item.petAge}살',
+            genderText:
+                PetGender.label(item.genderCode, serverName: item.genderCodeNm),
+            isFavorite: YesNo.isYes(item.representYn),
+            imageProvider: item.profileFileId != null
+                ? AuthedFileImageX.of(ref, item.profileFileId!, variant: 'thumb')
+                : null,
+          ),
+        )
+        .toList();
+
+    if (cards.isEmpty) {
+      // 0마리: 마이펫 등록 안내 다이얼로그
+      final router = GoRouter.of(context);
+      showDialog(
+        context: context,
+        builder: (_) => EdgeButtonDialog(
+          title: '아이 등록이 필요해요.',
+          content: '아이 등록 후 리워드 이벤트에\n참여할 수 있어요.',
+          cancelText: '닫기',
+          confirmText: '마이펫 등록',
+          onConfirm: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            router.push(AppRoutes.myPetAdd);
+          },
+        ),
+      );
+    } else if (cards.length == 1) {
+      // 1마리: 바로 출석 화면
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => AttendanceScreen(
+            eventMasterId: eventMasterId,
+            myPetId: cards.first.petId!,
+          ),
+        ),
+      );
+    } else {
+      // 2마리 이상: 펫 선택 화면
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => AttendancePetSelectScreen(
+            pets: cards,
+            eventMasterId: eventMasterId,
+          ),
+        ),
+      );
+    }
   }
 }
 

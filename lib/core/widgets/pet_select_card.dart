@@ -33,11 +33,19 @@ class PetSelectCard extends StatelessWidget {
     required this.data,
     this.onTap,
     this.onHistoryTap,
+    this.showHistory = true,
+    this.historyLabel = '촬영 내역',
   });
 
   final PetSelectCardData data;
   final VoidCallback? onTap;
   final VoidCallback? onHistoryTap;
+
+  /// "내역" 버튼 표시 여부. 출석처럼 펫별 내역이 없으면 false.
+  final bool showHistory;
+
+  /// "내역" 버튼 라벨 (기본 "촬영 내역").
+  final String historyLabel;
 
   static const Color _favBadgeBg = Color(0xFFF0C119);
 
@@ -111,37 +119,40 @@ class PetSelectCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        if (showHistory) ...[
+                          const SizedBox(width: 16),
 
-                        // 촬영 내역 버튼
-                        GestureDetector(
-                          onTap: onHistoryTap,
-                          behavior: HitTestBehavior.opaque,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '촬영 내역',
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.4,
-                                    letterSpacing: -0.66,
-                                    color: AppColors.textSecondary,
+                          // 내역 버튼(촬영 내역 등)
+                          GestureDetector(
+                            onTap: onHistoryTap,
+                            behavior: HitTestBehavior.opaque,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 6),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    historyLabel,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.4,
+                                      letterSpacing: -0.66,
+                                      color: AppColors.textSecondary,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 2),
-                                const Icon(
-                                  Icons.arrow_forward_ios_rounded,
-                                  size: 12,
-                                  color: AppColors.textDisabled,
-                                ),
-                              ],
+                                  const SizedBox(width: 2),
+                                  const Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 12,
+                                    color: AppColors.textDisabled,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                     const SizedBox(height: 4),
