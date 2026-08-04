@@ -188,3 +188,32 @@ String? _parseFileId(Object? raw) {
   }
   return null;
 }
+
+/// 마이펫 리워드 요약 (GET /api/v1/users/my-pets/{myPetId}/reward)
+class PetRewardSummary {
+  final int currentReward; // 현재 보유(EARN+RECOVER-USE-EXPIRE)
+  final int totalEarnReward; // 누적 적립
+  final int currentMonthEarnReward; // 이번 달 적립
+  final int currentMonthUseReward; // 이번 달 사용
+
+  const PetRewardSummary({
+    required this.currentReward,
+    required this.totalEarnReward,
+    required this.currentMonthEarnReward,
+    required this.currentMonthUseReward,
+  });
+
+  factory PetRewardSummary.fromJson(Map<String, dynamic> json) {
+    int parseInt(Object? v) {
+      if (v is num) return v.toInt();
+      return int.tryParse(v?.toString() ?? '') ?? 0;
+    }
+
+    return PetRewardSummary(
+      currentReward: parseInt(json['currentReward']),
+      totalEarnReward: parseInt(json['totalEarnReward']),
+      currentMonthEarnReward: parseInt(json['currentMonthEarnReward']),
+      currentMonthUseReward: parseInt(json['currentMonthUseReward']),
+    );
+  }
+}

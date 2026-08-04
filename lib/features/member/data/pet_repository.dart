@@ -32,6 +32,9 @@ abstract interface class PetRepository {
 
   Future<MyPetDetailResponse> getMyPetDetail(String myPetId);
 
+  /// 마이펫 리워드 요약 조회 (총 보유/누적 적립/이번 달 적립·사용)
+  Future<PetRewardSummary> getPetRewardSummary(String myPetId);
+
   Future<CursorPaginationResponse<MyPetListItem>> getMyPetsList({
     String? cursor,
     int? limit,
@@ -176,6 +179,21 @@ class BackendPetRepository implements PetRepository {
   }
 
   @override
+  Future<PetRewardSummary> getPetRewardSummary(String myPetId) async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/users/my-pets/$myPetId/reward',
+      bearerToken: await _readAccessToken('로그인 정보가 없어 리워드 정보를 조회할 수 없습니다.'),
+      fallbackMessage: '리워드 정보를 불러오지 못했습니다.',
+    );
+
+    if (payload is Map<String, dynamic>) {
+      return PetRewardSummary.fromJson(payload);
+    } else {
+      throw const FormatException('잘못된 응답 형식입니다.');
+    }
+  }
+
+  @override
   Future<CursorPaginationResponse<MyPetListItem>> getMyPetsList({
     String? cursor,
     int? limit,
@@ -278,4 +296,10 @@ final petRepositoryProvider = Provider<PetRepository>((ref) {
     apiClient: ref.watch(apiClientProvider),
     tokenStorage: ref.watch(tokenStorageProvider),
   );
+});
+
+/// 마이펫 리워드 요약(총 보유/이번 달 적립·사용). 상세·카드에서 공용 사용.
+final petRewardSummaryProvider =
+    FutureProvider.autoDispose.family<PetRewardSummary, String>((ref, myPetId) async {
+  return ref.read(petRepositoryProvider).getPetRewardSummary(myPetId);
 });

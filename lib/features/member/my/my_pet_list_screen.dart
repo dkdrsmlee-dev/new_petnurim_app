@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
+import '../../../core/utils/number_format.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/authed_file_image.dart';
 
@@ -89,13 +90,17 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
   Widget _buildContent(List<MyPetListItem> serverPets) {
     _serverPets = serverPets;
     _customPetList = serverPets.map((item) {
+        final rewardSummary =
+            ref.watch(petRewardSummaryProvider(item.myPetId)).asData?.value;
         return NurimPetCardData(
           name: item.petName,
           breed: item.breedNameKor ?? '믹스',
           ageText: '${item.petAge}살',
           genderText: PetGender.label(item.genderCode, serverName: item.genderCodeNm),
           membershipTier: YesNo.isYes(item.representYn) ? '브론즈' : '멤버십 가입하기',
-          rewardText: '28,000P',
+          rewardText: rewardSummary != null
+              ? '${formatThousands(rewardSummary.currentReward)}P'
+              : '-',
           isPrimary: YesNo.isYes(item.representYn),
           imageProvider: item.profileFileId != null
               ? AuthedFileImageX.of(ref, item.profileFileId!, variant: 'thumb')

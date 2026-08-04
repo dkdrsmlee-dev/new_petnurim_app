@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/utils/date_format.dart';
+import '../../../core/utils/number_format.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
@@ -18,6 +19,7 @@ final myPetDetailProvider = FutureProvider.autoDispose.family<MyPetDetailRespons
   return await ref.read(petRepositoryProvider).getMyPetDetail(myPetId);
 });
 
+
 class MyPetDetailScreen extends ConsumerWidget {
   const MyPetDetailScreen({
     super.key,
@@ -30,6 +32,10 @@ class MyPetDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final petDetailAsync = ref.watch(myPetDetailProvider(myPetId));
+    // 리워드 요약(총 보유/이번 달 적립·사용) — 로딩/실패 시 '-' 표시
+    final reward = ref.watch(petRewardSummaryProvider(myPetId)).asData?.value;
+    final currentRewardText =
+        reward != null ? '${formatThousands(reward.currentReward)}PR' : '-';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -117,7 +123,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                         : null,
                     isPrimary: isPrimary,
                     membershipTier: '-',
-                    rewardText: '28,000PR',
+                    rewardText: currentRewardText,
                   ),
                   actionLabel: '관리',
                   onActionPressed: () {
@@ -366,9 +372,9 @@ class MyPetDetailScreen extends ConsumerWidget {
                                     height: 24,
                                   ),
                                   const SizedBox(width: 6),
-                                  const Text(
-                                    '28,000PR',
-                                    style: TextStyle(
+                                  Text(
+                                    currentRewardText,
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.textStrong,
@@ -411,9 +417,19 @@ class MyPetDetailScreen extends ConsumerWidget {
                             ),
                             child: Column(
                               children: [
-                                _buildKeyValueRow('이번 달 적립', '6,000PR'),
+                                _buildKeyValueRow(
+                                  '이번 달 적립',
+                                  reward != null
+                                      ? '${formatThousands(reward.currentMonthEarnReward)}PR'
+                                      : '-',
+                                ),
                                 const SizedBox(height: 16),
-                                _buildKeyValueRow('이번 달 사용', '10,000원'),
+                                _buildKeyValueRow(
+                                  '이번 달 사용',
+                                  reward != null
+                                      ? '${formatThousands(reward.currentMonthUseReward)}원'
+                                      : '-',
+                                ),
                               ],
                             ),
                           ),

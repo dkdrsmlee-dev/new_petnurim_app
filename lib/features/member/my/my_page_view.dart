@@ -11,8 +11,10 @@ import '../../../core/widgets/mypage_name.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
 import '../../../core/widgets/section_title.dart';
+import '../../../core/utils/number_format.dart';
 import '../../../core/utils/toast_util.dart';
 import '../data/member_repository.dart';
+import '../data/pet_repository.dart';
 import '../domain/member_my_page.dart';
 import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
@@ -65,13 +67,17 @@ class MyPageView extends ConsumerWidget {
         ),
         data: (serverPets) {
           final mappedPets = serverPets.map((item) {
+            final rewardSummary =
+                ref.watch(petRewardSummaryProvider(item.myPetId)).asData?.value;
             return NurimPetCardData(
               name: item.petName,
               breed: item.breedNameKor ?? '믹스',
               ageText: '${item.petAge}살',
               genderText: PetGender.label(item.genderCode, serverName: item.genderCodeNm),
               membershipTier: YesNo.isYes(item.representYn) ? '브론즈' : '멤버십 가입하기',
-              rewardText: '28,000P',
+              rewardText: rewardSummary != null
+                  ? '${formatThousands(rewardSummary.currentReward)}P'
+                  : '-',
               isPrimary: YesNo.isYes(item.representYn),
               imageProvider: item.profileFileId != null
                   ? AuthedFileImageX.of(ref, item.profileFileId!, variant: 'thumb')
