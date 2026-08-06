@@ -13,6 +13,7 @@ import '../../../core/widgets/pet_info_detail.dart';
 import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
 import '../data/pet_repository.dart';
+import 'membership_benefits_screen.dart';
 import 'pet_reward_history_screen.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -301,7 +302,13 @@ class MyPetDetailScreen extends ConsumerWidget {
                             const SizedBox(height: 24),
                             OutlinedButton(
                               onPressed: () {
-                                // 멤버십 혜택 보기 페이지 연동
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const MembershipBenefitsScreen(),
+                                  ),
+                                );
                               },
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: Colors.white,
