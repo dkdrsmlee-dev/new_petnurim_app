@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/bullit_text.dart';
 import '../../../core/widgets/page_header.dart';
+import 'membership_terms_agreement_screen.dart';
 
 /// 별 SVG를 흰색으로 강제 렌더(디자인 원본 fill이 flutter_svg에서 불안정).
 const ColorFilter _kWhiteFilter =
@@ -16,8 +16,9 @@ const ColorFilter _kWhiteFilter =
 /// 멤버십 혜택 화면 (USR-MBS-010, 멤버십 미이용 상태).
 /// 마이펫 상세의 "멤버십 혜택 보기"에서 진입. 대부분 정적 콘텐츠.
 ///
-/// "멤버십 즉시 구독하기"는 실제 구독(카드 등록/토스 빌링 + 백엔드 구독 API)이
-/// 아직 없어 현재는 "준비 중" 토스트로 처리한다.
+/// "멤버십 즉시 구독하기"는 멤버십 구독 약관 동의 화면
+/// (MembershipTermsAgreementScreen)으로 이동한다. 이후 실제 구독(카드 등록/
+/// 토스 빌링 + 백엔드 구독 API)은 아직 없어 약관 화면의 "다음"이 준비 중 처리된다.
 class MembershipBenefitsScreen extends StatelessWidget {
   const MembershipBenefitsScreen({super.key});
 
@@ -302,8 +303,12 @@ class MembershipBenefitsScreen extends StatelessWidget {
       height: 56,
       child: TextButton(
         onPressed: () {
-          // 실제 구독(카드 등록/토스 빌링 + 백엔드)이 없어 준비 중 처리
-          ToastUtil.show(context, '준비 중인 기능입니다.');
+          // 멤버십 구독 약관 동의 화면으로 이동(이후 카드 등록/빌링은 백엔드 대기).
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const MembershipTermsAgreementScreen(),
+            ),
+          );
         },
         style: TextButton.styleFrom(
           backgroundColor: AppColors.textStrong,
