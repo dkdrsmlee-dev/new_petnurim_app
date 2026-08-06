@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/bottom_action_bar.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../signup/application/signup_providers.dart';
 import '../../signup/domain/signup_terms.dart';
 import '../../signup/terms_detail_screen.dart';
+import 'membership_card_register_screen.dart';
 
 /// 멤버십 구독 약관 동의 화면 (USR-PAY-012).
 ///
@@ -16,9 +16,9 @@ import '../../signup/terms_detail_screen.dart';
 /// 약관은 `GET /api/v1/terms?target=SUBSCRIPTION`(인증 불필요)에서 동적으로 받아
 /// 렌더한다. 상세는 회원가입과 동일한 `TermsDetailScreen`(HTML)을 재사용.
 ///
-/// "다음" 이후의 실제 구독(카드 등록/토스 빌링 + 백엔드 구독 API)이 아직 없어
-/// 현재는 "준비 중" 토스트로 처리한다. 동의 저장 엔드포인트(구독용)도 없어
-/// 동의는 클라이언트 게이트로만 사용한다.
+/// "다음"은 결제카드 등록 화면(`MembershipCardRegisterScreen`, PG 자리)으로
+/// 이동한다. 실제 구독(토스 빌링 + 백엔드 billingKey/구독 API)은 아직 없어
+/// 동의 저장 엔드포인트(구독용)도 없다 → 동의는 클라이언트 게이트로만 사용한다.
 class MembershipTermsAgreementScreen extends ConsumerStatefulWidget {
   const MembershipTermsAgreementScreen({super.key});
 
@@ -157,8 +157,12 @@ class _MembershipTermsAgreementScreenState
   }
 
   void _onNext() {
-    // 실제 구독(카드 등록/토스 빌링 + 백엔드 구독 API)이 없어 준비 중 처리.
-    ToastUtil.show(context, '준비 중인 기능입니다.');
+    // 다음 단계: 결제카드 등록(PG 자리). 실제 구독은 백엔드 PG 연동 후 완성.
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const MembershipCardRegisterScreen(),
+      ),
+    );
   }
 
   void _openTerm(ActiveTerm term) {

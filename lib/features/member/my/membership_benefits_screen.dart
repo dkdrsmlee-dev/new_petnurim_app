@@ -22,6 +22,10 @@ const ColorFilter _kWhiteFilter =
 class MembershipBenefitsScreen extends StatelessWidget {
   const MembershipBenefitsScreen({super.key});
 
+  /// 구독 플로우(약관→카드 등록) 완료 시 이 화면까지 popUntil로 되돌아오기 위한
+  /// route 이름. 마이펫 상세에서 push할 때 RouteSettings.name으로 지정한다.
+  static const String routeName = 'membership_benefits';
+
   // 이 화면 전용(브랜드/1회성) 색상
   static const Color _gradTop = Color(0xFF5F78F2);
   static const Color _gradBottom = Color(0xFF7266DF);

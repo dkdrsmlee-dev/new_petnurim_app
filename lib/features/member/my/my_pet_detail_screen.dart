@@ -305,6 +305,9 @@ class MyPetDetailScreen extends ConsumerWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
+                                    settings: const RouteSettings(
+                                      name: MembershipBenefitsScreen.routeName,
+                                    ),
                                     builder: (_) =>
                                         const MembershipBenefitsScreen(),
                                   ),
