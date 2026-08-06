@@ -10,7 +10,6 @@ import '../../core/widgets/card_banner.dart';
 import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
 import '../../core/widgets/nurim_refreshable.dart';
-import '../../core/widgets/section_title.dart';
 import '../../core/widgets/shimmer_box.dart';
 import '../../core/utils/toast_util.dart';
 import '../../core/widgets/edge_button_dialog.dart';
@@ -165,111 +164,117 @@ class _HomeOverview extends ConsumerWidget {
     // 홈 이미지(배너·리워드 썸네일·출석/촬영 상세)를 백그라운드로 미리 받아둔다.
     // 신규 로그인/새로고침 경로 커버(토큰복원 콜드 진입은 스플래시에서 이미 워밍).
     ref.watch(homeImagePrewarmProvider);
-    return NurimRefreshable(
+    return ColoredBox(
+      color: AppColors.bgGray,
+      child: NurimRefreshable(
       onRefresh: () async {
         ref.invalidate(eventTemplatesProvider);
         await ref.read(eventTemplatesProvider.future);
       },
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(top: 16, bottom: 28),
+        padding: EdgeInsets.zero,
         children: [
-        const HomeEventCarousel(),
-        const SizedBox(height: 32),
-        const NurimSectionTitle(
-          title: '매일 받는 리워드 혜택',
-          padding: EdgeInsets.symmetric(horizontal: 20),
+        // 상단 흰색 블록(배너) — 하단 라운드로 회색 미션 시트가 올라오는 효과
+        Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(14)),
+          ),
+          padding: const EdgeInsets.only(top: 16, bottom: 20),
+          child: const HomeEventCarousel(),
         ),
-        const SizedBox(height: 16),
+        // 매일 받는 리워드 미션 (Figma 116:8397) — 회색 배경 위 2열 컴팩트 카드
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              NurimCardBanner(
-                title: attendance?.title ?? '출석 체크 리워드',
-                subtitle: '매일 출석하고 포인트 받자!',
-                pointText: '+${attendance?.defaultReward?.rewardValue ?? 100}P',
-                statusText: '연속 출석',
-                dayText: attendance != null
-                    ? '${attendance.continuousAttendanceDays}일'
-                    : '-일',
-                bannerImg: _rewardThumb(
-                  ref,
-                  attendance?.thumbnailFileId,
-                  const Color(0xFFFEEEBE),
-                  Stack(
-                    children: [
-                      Positioned(
-                        left: 39 + 10.01 - (77.332 / 2),
-                        top: 39 - 12.44 - (79.802 / 2),
-                        width: 77.332,
-                        height: 79.802,
-                        child: Image.asset(
-                          'assets/images/home/card_img_1.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ],
-                  ),
+              const Text(
+                '매일 받는 리워드 미션',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  height: 1.4,
+                  letterSpacing: -0.66,
+                  color: AppColors.textStrong,
                 ),
-                bannerIcon: const Icon(Icons.local_fire_department, color: AppColors.errorSoft, size: 20),
-                onTap: attendance == null
-                    ? null
-                    : () => _onAttendanceTap(
-                          context,
-                          ref,
-                          attendance.eventMasterId,
-                        ),
               ),
               const SizedBox(height: 10),
-              NurimCardBanner(
-                title: photo?.title ?? '마이펫 촬영 리워드',
-                subtitle: '귀여운 사진 찍고 포인트 받자!',
-                pointText: '+${photo?.defaultReward?.rewardValue ?? 100}P',
-                pointTextColor: const Color(0xFF85B48B),
-                pointBgColor: const Color(0xFFE7FAEA),
-                statusText: '이번 주 촬영',
-                dayText: '3일 / 7일',
-                bannerImg: _rewardThumb(
-                  ref,
-                  photo?.thumbnailFileId,
-                  const Color(0xFFDCEFDE),
-                  Stack(
-                    children: [
-                      Positioned(
-                        left: 39 + 19.5 - (77.033 / 2),
-                        top: 39 + 6.77 - (54.544 / 2),
-                        width: 77.033,
-                        height: 54.544,
-                        child: Transform.scale(
-                          scaleX: -1, // -scale-y-100 + rotate-180 = horizontal flip
-                          child: Image.asset(
-                            'assets/images/home/card_img_2.png',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: NurimCardBannerSmall(
+                      width: double.infinity,
+                      titleLine1: '매일 출석하고',
+                      titleLine2: '포인트 받기',
+                      pointText:
+                          '+${attendance?.defaultReward?.rewardValue ?? 100}P',
+                      statusText: '연속 출석',
+                      dayText: attendance != null
+                          ? '${attendance.continuousAttendanceDays}일'
+                          : '-일',
+                      bannerImg: _missionAvatar(
+                        ref,
+                        attendance?.thumbnailFileId,
+                        const Color(0xFF7FD3F2),
+                        'assets/images/home/mission_char_att.png',
+                        33.4,
+                        47.9,
+                        8.1,
                       ),
-                    ],
+                      onTap: attendance == null
+                          ? null
+                          : () => _onAttendanceTap(
+                                context,
+                                ref,
+                                attendance.eventMasterId,
+                              ),
+                    ),
                   ),
-                ),
-                bannerIcon: const Icon(Icons.camera_alt, color: Color(0xFF85B48B), size: 20), // Figma has IconCamera20 but camera_alt is a good fallback
-                onTap: photo == null
-                    ? null
-                    : () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CameraMissionGuideScreen(
-                              eventMasterId: photo.eventMasterId,
-                            ),
-                          ),
-                        );
-                      },
+                  const SizedBox(width: 11),
+                  Expanded(
+                    child: NurimCardBannerSmall(
+                      width: double.infinity,
+                      titleLine1: '마이펫 사진 찍고',
+                      titleLine2: '리워드 받기',
+                      pointText:
+                          '+${photo?.defaultReward?.rewardValue ?? 100}P',
+                      statusText: '주간 참여',
+                      dayText: '3',
+                      daySuffix: ' / 7일',
+                      bannerImg: _missionAvatar(
+                        ref,
+                        photo?.thumbnailFileId,
+                        const Color(0xFFEEBEF5),
+                        'assets/images/home/mission_char_cam.png',
+                        30.0,
+                        50.2,
+                        7.4,
+                      ),
+                      onTap: photo == null
+                          ? null
+                          : () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      CameraMissionGuideScreen(
+                                    eventMasterId: photo.eventMasterId,
+                                  ),
+                                ),
+                              );
+                            },
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
       ],
+      ),
       ),
     );
   }
@@ -355,33 +360,47 @@ class _HomeOverview extends ConsumerWidget {
   }
 }
 
-/// 리워드 카드 썸네일: 이벤트 thumbnail(fileId) 로드, 없거나 실패 시 기본 일러스트로 폴백
-Widget _rewardThumb(
+/// 미션 카드 아바타: 색 원 안에 **백엔드 이벤트 썸네일**(thumbnailFileId)을 넣고,
+/// 없거나 로드 실패 시 디자인 캐릭터([fallbackAsset])로 폴백한다.
+/// [charW]/[charH]는 폴백 캐릭터 표시 크기(50px 원 안), [top]은 상단 오프셋.
+Widget _missionAvatar(
   WidgetRef ref,
   String? fileId,
   Color bg,
-  Widget fallback,
+  String fallbackAsset,
+  double charW,
+  double charH,
+  double top,
 ) {
-  // 이벤트 썸네일: 작은 'thumb' variant 를 우선 쓰고, 서버에 생성돼 있지 않으면
-  // (404 등) 원본 다운로드로 폴백해 확실히 표시되도록 한다.
+  final Widget fallback = Stack(
+    children: [
+      Positioned(
+        top: top,
+        left: (50 - charW) / 2,
+        width: charW,
+        height: charH,
+        child: Image.asset(fallbackAsset, fit: BoxFit.contain),
+      ),
+    ],
+  );
+  // 이벤트 썸네일: 작은 'thumb' variant 우선, 서버에 없으면(404 등) 원본 폴백.
   final provider = (fileId != null && fileId.isNotEmpty)
       ? AuthedFileImageX.of(ref, fileId, variant: 'thumb', downloadFallback: true)
       : null;
   return Container(
-    width: 78,
-    height: 78,
-    decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+    width: 50,
+    height: 50,
     clipBehavior: Clip.hardEdge,
+    decoration: BoxDecoration(shape: BoxShape.circle, color: bg),
     child: provider == null
         ? fallback
         : Image(
             image: provider,
-            width: 78,
-            height: 78,
+            width: 50,
+            height: 50,
             fit: BoxFit.cover,
-            // 로딩 중 셔머 → 로드 완료 시 이미지로 교체
             frameBuilder: shimmerImageFrameBuilder,
-            errorBuilder: (_, __, ___) => fallback,
+            errorBuilder: (_, _, _) => fallback,
           ),
   );
 }

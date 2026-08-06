@@ -214,6 +214,7 @@ class NurimCardBannerSmall extends StatelessWidget {
     required this.pointText,
     required this.statusText,
     required this.dayText,
+    this.daySuffix,
     this.bannerImg,
     this.onTap,
     this.width = 165,
@@ -225,6 +226,9 @@ class NurimCardBannerSmall extends StatelessWidget {
   final String pointText;
   final String statusText;
   final String dayText;
+
+  /// dayText 뒤에 붙는 회색 접미사(예: "3" + " / 7일"). null이면 미표시.
+  final String? daySuffix;
   final Widget? bannerImg;
   final VoidCallback? onTap;
   final double width;
@@ -364,15 +368,31 @@ class NurimCardBannerSmall extends StatelessWidget {
                     color: _statusTextColor,
                   ),
                 ),
-                Text(
-                  dayText,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    height: 1.4,
-                    letterSpacing: -0.66,
-                    color: _dayTextColor,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      dayText,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        height: 1.4,
+                        letterSpacing: -0.66,
+                        color: _dayTextColor,
+                      ),
+                    ),
+                    if (daySuffix != null)
+                      Text(
+                        daySuffix!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                          color: _statusTextColor,
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
