@@ -103,6 +103,93 @@ class PetMembershipStatus {
   }
 }
 
+/// 멤버십 상세(GET /memberships/{membershipId}). 결제 완료·관리 화면에서 사용.
+class MembershipDetail {
+  const MembershipDetail({
+    required this.membershipId,
+    required this.membershipMasterId,
+    required this.membershipName,
+    required this.statusCode,
+    required this.paymentAmount,
+    required this.paymentCycle,
+    required this.joinDt,
+    required this.periodStartDt,
+    required this.periodEndDt,
+    required this.nextBillingDt,
+    required this.autoRenewYn,
+    required this.cardIssuerName,
+    required this.cardMaskedNumber,
+  });
+
+  final int membershipId;
+  final int membershipMasterId;
+  final String membershipName;
+  final String statusCode; // ACTIVE / CANCEL_REQUEST …
+  final int paymentAmount;
+  final String paymentCycle; // MONTH
+  final String joinDt; // yyyy-MM-dd HH:mm:ss
+  final String periodStartDt; // yyyy-MM-dd
+  final String periodEndDt; // yyyy-MM-dd
+  final String nextBillingDt; // yyyy-MM-dd
+  final String autoRenewYn; // Y / N
+  final String cardIssuerName; // 국민카드
+  final String cardMaskedNumber; // 1234********4205
+
+  /// 구독취소 예정(자동결제 해지, 현재 기간까지 유지) 여부.
+  bool get isCancelScheduled =>
+      statusCode.trim().toUpperCase() == 'CANCEL_REQUEST' ||
+      autoRenewYn.trim().toUpperCase() == 'N';
+
+  /// 결제 주기 표기(MONTH → "월 정기 결제").
+  String get paymentCycleLabel {
+    switch (paymentCycle.trim().toUpperCase()) {
+      case 'MONTH':
+        return '월 정기 결제';
+      default:
+        return paymentCycle.trim().isEmpty ? '월 정기 결제' : paymentCycle.trim();
+    }
+  }
+
+  /// 결제 수단 표기 "국민카드(12**)" — 카드사명 + 마스킹 카드번호 앞 2자리.
+  String get cardLabel {
+    final issuer = cardIssuerName.trim();
+    final masked = cardMaskedNumber.trim();
+    if (issuer.isEmpty && masked.isEmpty) return '-';
+    if (issuer.isEmpty) return masked;
+    final prefix = masked.length >= 2 ? masked.substring(0, 2) : masked;
+    return prefix.isEmpty ? issuer : '$issuer($prefix**)';
+  }
+
+  /// 가입 시작일시 "2026.05.30 10:45:55".
+  String get joinDtDisplay => _dotDate(joinDt);
+
+  /// 자동 갱신일(다음 결제 예정일) "2026.05.30".
+  String get nextBillingDtDisplay =>
+      _dotDate(nextBillingDt.length >= 10 ? nextBillingDt.substring(0, 10) : nextBillingDt);
+
+  factory MembershipDetail.fromJson(Object? payload) {
+    final m = payload is Map ? payload : const {};
+    return MembershipDetail(
+      membershipId: JsonReader.asInt(m['membershipId']),
+      membershipMasterId: JsonReader.asInt(m['membershipMasterId']),
+      membershipName: JsonReader.coerceString(m['membershipName']) ?? '',
+      statusCode: JsonReader.coerceString(m['statusCode']) ?? '',
+      paymentAmount: JsonReader.asInt(m['paymentAmount']),
+      paymentCycle: JsonReader.coerceString(m['paymentCycle']) ?? '',
+      joinDt: JsonReader.coerceString(m['joinDt']) ?? '',
+      periodStartDt: JsonReader.coerceString(m['periodStartDt']) ?? '',
+      periodEndDt: JsonReader.coerceString(m['periodEndDt']) ?? '',
+      nextBillingDt: JsonReader.coerceString(m['nextBillingDt']) ?? '',
+      autoRenewYn: JsonReader.coerceString(m['autoRenewYn']) ?? '',
+      cardIssuerName: JsonReader.coerceString(m['cardIssuerName']) ?? '',
+      cardMaskedNumber: JsonReader.coerceString(m['cardMaskedNumber']) ?? '',
+    );
+  }
+}
+
+/// yyyy-MM-dd[ HH:mm:ss] → yyyy.MM.dd[ HH:mm:ss] 표기 변환.
+String _dotDate(String s) => s.trim().replaceAll('T', ' ').replaceAll('-', '.');
+
 /// 멤버십 가입 결과(POST /memberships).
 class CreateMembershipResult {
   const CreateMembershipResult({

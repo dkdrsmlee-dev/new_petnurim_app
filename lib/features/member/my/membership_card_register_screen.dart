@@ -8,6 +8,7 @@ import '../../../core/widgets/page_header.dart';
 import '../../auth/domain/readable_auth_error.dart';
 import '../data/membership_repository.dart';
 import 'membership_benefits_screen.dart';
+import 'membership_complete_screen.dart';
 import 'toss_billing_test_webview_screen.dart';
 
 /// 멤버십 구독 결제카드 등록 화면 (USR-PAY-011).
@@ -128,7 +129,7 @@ class _MembershipCardRegisterScreenState
 
     setState(() => _submitting = true);
     try {
-      await ref.read(membershipRepositoryProvider).create(
+      final result = await ref.read(membershipRepositoryProvider).create(
             myPetId: widget.myPetId,
             membershipMasterId: widget.membershipMasterId,
             customerKey: customerKey,
@@ -138,7 +139,7 @@ class _MembershipCardRegisterScreenState
       if (!mounted) return;
       // 가입 성공 → 마이펫 상세 멤버십 상태 캐시를 무효화해 복귀 시 자동 갱신.
       ref.invalidate(petMembershipProvider(widget.myPetId.toString()));
-      _showRegistered();
+      await _showRegisteredThenComplete(result.membershipId);
     } catch (error) {
       if (!mounted) return;
       ToastUtil.show(context, readAuthErrorMessage(error, '멤버십 가입에 실패했습니다.'));
@@ -165,24 +166,35 @@ class _MembershipCardRegisterScreenState
     );
   }
 
-  /// 가입 완료 다이얼로그(단일 확인). 확인 시 구독 플로우(카드→약관→혜택)를
+  /// 가입 성공 흐름: ① "결제 카드가 정상적으로 등록되었습니다." 다이얼로그(748:50978)
+  /// → ② 결제 완료 화면(USR-PAY-018, 289:9512) → 구독 플로우(카드→약관→혜택)를
   /// 걷어내고 마이펫 상세로 복귀한다.
-  void _showRegistered() {
-    showDialog(
+  Future<void> _showRegisteredThenComplete(int membershipId) async {
+    // ① 카드 등록 완료 다이얼로그.
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => EdgeButtonDialog(
         title: '결제 카드가 정상적으로\n등록되었습니다.',
         confirmText: '확인',
-        onConfirm: () {
-          // 혜택 화면까지 되돌린 뒤(popUntil) 한 번 더 pop → 마이펫 상세로 복귀.
-          Navigator.of(context).popUntil(
-            (route) => route.settings.name == MembershipBenefitsScreen.routeName,
-          );
-          Navigator.of(context).pop();
-        },
+        onConfirm: () {}, // 다이얼로그는 EdgeButtonDialog가 자동 pop.
       ),
     );
+    if (!mounted) return;
+
+    // ② 결제 완료 화면.
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MembershipCompleteScreen(membershipId: membershipId),
+      ),
+    );
+    if (!mounted) return;
+
+    // ③ 혜택 화면까지 되돌린 뒤(popUntil) 한 번 더 pop → 마이펫 상세로 복귀.
+    Navigator.of(context).popUntil(
+      (route) => route.settings.name == MembershipBenefitsScreen.routeName,
+    );
+    Navigator.of(context).pop();
   }
 }
 

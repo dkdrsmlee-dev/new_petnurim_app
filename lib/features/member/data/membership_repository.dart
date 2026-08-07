@@ -92,6 +92,16 @@ class MembershipRepository {
     throw AuthException('결제 설정(clientKey)을 확인할 수 없습니다.');
   }
 
+  /// 멤버십 상세 조회(결제 완료·관리 화면). 카드사·가입일·다음 결제일 등 포함.
+  Future<MembershipDetail> getMembershipDetail(int membershipId) async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/memberships/$membershipId',
+      bearerToken: await _token('로그인 정보가 없어 멤버십 정보를 조회할 수 없습니다.'),
+      fallbackMessage: '멤버십 상세를 불러오지 못했습니다.',
+    );
+    return MembershipDetail.fromJson(payload);
+  }
+
   /// 펫 멤버십 상태 조회(마이펫 상세). 미가입/가입중/구독취소예정.
   Future<PetMembershipStatus> getPetMembership(int myPetId) async {
     final payload = await _apiClient.getJson(
@@ -122,6 +132,12 @@ final membershipRepositoryProvider = Provider<MembershipRepository>((ref) {
 final membershipGuideProvider =
     FutureProvider.autoDispose<List<MembershipGuideItem>>((ref) {
   return ref.watch(membershipRepositoryProvider).getGuide();
+});
+
+/// 멤버십 상세(결제 완료·관리 화면). key = membershipId.
+final membershipDetailProvider = FutureProvider.autoDispose
+    .family<MembershipDetail, int>((ref, membershipId) {
+  return ref.watch(membershipRepositoryProvider).getMembershipDetail(membershipId);
 });
 
 /// 펫 멤버십 상태(마이펫 상세). key = myPetId(문자열, 내부에서 int 변환).
