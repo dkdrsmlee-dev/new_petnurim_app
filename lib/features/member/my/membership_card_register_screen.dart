@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/api/api_exception.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
@@ -142,10 +143,36 @@ class _MembershipCardRegisterScreenState
       await _showRegisteredThenComplete(result.membershipId);
     } catch (error) {
       if (!mounted) return;
-      ToastUtil.show(context, readAuthErrorMessage(error, '멤버십 가입에 실패했습니다.'));
+      _showFailed(error);
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+
+  /// 가입/카드 등록 실패 다이얼로그(USR-PAY-012, Figma 277:14440).
+  /// 확인 시 다이얼로그만 닫히고 카드 등록 화면에 남아 재시도할 수 있다.
+  void _showFailed(Object error) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => EdgeButtonDialog(
+        title: '등록 실패',
+        content: _failMessage(error),
+        confirmText: '확인',
+        onConfirm: () {}, // 다이얼로그는 EdgeButtonDialog가 자동 pop.
+      ),
+    );
+  }
+
+  /// 실패 다이얼로그 본문: 백엔드 메시지 + [에러코드](있으면).
+  String _failMessage(Object error) {
+    if (error is ApiException) {
+      final message = error.message.trim().isNotEmpty
+          ? error.message.trim()
+          : '카드 등록에 실패했습니다.';
+      final code = error.code?.trim();
+      return (code != null && code.isNotEmpty) ? '$message [$code]' : message;
+    }
+    return readAuthErrorMessage(error, '카드 등록에 실패했습니다.');
   }
 
   /// 카드 등록 중단 확인(디자인: "카드등록을 중단하시겠어요?").
