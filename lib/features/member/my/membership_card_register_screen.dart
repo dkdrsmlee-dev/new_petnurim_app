@@ -16,9 +16,9 @@ import 'toss_billing_test_webview_screen.dart';
 /// "카드 등록하고 구독하기" → 토스 Billing Auth(카드 등록창)에서 authKey 를 받고,
 /// 그 authKey/customerKey 로 `POST /api/v1/memberships` 를 호출해 실제 구독을 생성한다.
 ///
-/// 현재는 토스 **공개 테스트 clientKey**를 쓰므로 실제 청구는 없지만, 백엔드 가입은
-/// 실제로 이뤄진다. 실 상점 clientKey 준비 시 [TossBillingTestWebViewScreen] 의
-/// 키만 교체하면 된다.
+/// 토스 clientKey 는 `GET /api/v1/payments/config`(백엔드 secretKey 와 짝인 상점 키)
+/// 에서 받아 [TossBillingTestWebViewScreen] 에 전달한다. 현재 백엔드가 TEST 환경이면
+/// 실제 청구는 없지만 백엔드 가입은 실제로 이뤄진다.
 class MembershipCardRegisterScreen extends ConsumerStatefulWidget {
   const MembershipCardRegisterScreen({
     super.key,
@@ -99,15 +99,29 @@ class _MembershipCardRegisterScreenState
     );
   }
 
-  /// 1) 토스 Billing Auth(카드 등록창) → authKey  2) POST /memberships 로 구독 생성.
+  /// 0) 백엔드에서 상점 clientKey 조회  1) 토스 Billing Auth → authKey
+  /// 2) POST /memberships 로 구독 생성.
   Future<void> _startBilling() async {
+    // 백엔드 secretKey 와 짝이 되는 상점 clientKey 를 받아온다(Billing Auth 필수).
+    final String clientKey;
+    try {
+      clientKey = await ref.read(membershipRepositoryProvider).getTossClientKey();
+    } catch (error) {
+      if (!mounted) return;
+      ToastUtil.show(context, readAuthErrorMessage(error, '결제 설정을 불러오지 못했습니다.'));
+      return;
+    }
+    if (!mounted) return;
+
     // customerKey 는 Billing Auth 와 가입 API 에 동일하게 전달해야 한다.
     final customerKey =
         'pn_${widget.myPetId}_${DateTime.now().millisecondsSinceEpoch}';
     final authKey = await Navigator.of(context).push<String>(
       MaterialPageRoute(
-        builder: (_) =>
-            TossBillingTestWebViewScreen(customerKey: customerKey),
+        builder: (_) => TossBillingTestWebViewScreen(
+          customerKey: customerKey,
+          clientKey: clientKey,
+        ),
       ),
     );
     if (!mounted || authKey == null || authKey.isEmpty) return; // 취소/실패
@@ -122,6 +136,8 @@ class _MembershipCardRegisterScreenState
             termsHistoryIds: widget.termsHistoryIds,
           );
       if (!mounted) return;
+      // 가입 성공 → 마이펫 상세 멤버십 상태 캐시를 무효화해 복귀 시 자동 갱신.
+      ref.invalidate(petMembershipProvider(widget.myPetId.toString()));
       _showRegistered();
     } catch (error) {
       if (!mounted) return;

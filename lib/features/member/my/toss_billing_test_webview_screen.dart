@@ -5,26 +5,30 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/page_header.dart';
 
-/// 토스페이먼츠 자동결제(빌링) 카드 등록창을 **테스트 모드**로 띄우는 임시 화면.
+/// 토스페이먼츠 자동결제(빌링) 카드 등록창을 띄우는 화면.
 ///
-/// 토스 **공개 테스트 clientKey**로 카드 등록 UI를 띄우고, 카드 입력 후 토스가
+/// [clientKey]는 백엔드 `GET /api/v1/payments/config`에서 받은 **상점 clientKey**
+/// (백엔드 secretKey 와 짝). 이 키로 카드 등록 UI를 띄우고, 카드 입력 후 토스가
 /// successUrl 로 리다이렉트하면 그 URL 에서 **authKey 를 추출해 반환**한다(취소/실패
 /// 시 null). 실제 billingKey 발급은 백엔드가 authKey/customerKey 로 처리한다.
 ///
-/// 실 상점 clientKey 가 준비되면 [_testClientKey] 만 교체하면 된다. WebView 콜백
-/// 감지 패턴은 휴대폰 변경 `KcpCertWebViewScreen`과 동일.
+/// WebView 콜백 감지 패턴은 휴대폰 변경 `KcpCertWebViewScreen`과 동일.
 class TossBillingTestWebViewScreen extends StatefulWidget {
-  const TossBillingTestWebViewScreen({super.key, required this.customerKey});
+  const TossBillingTestWebViewScreen({
+    super.key,
+    required this.customerKey,
+    required this.clientKey,
+  });
 
   /// 토스 Billing Auth 에 사용할 CustomerKey(가입 시 백엔드로도 함께 전달).
   final String customerKey;
 
+  /// 백엔드에서 받은 토스 상점 clientKey(secretKey 와 짝).
+  final String clientKey;
+
   // 토스가 카드 등록 완료/실패 시 리다이렉트하는 더미 URL(실제 로드 전에 가로챔).
   static const String _successPath = '/toss/billing/success';
   static const String _failPath = '/toss/billing/fail';
-
-  // 토스페이먼츠 공개 테스트 clientKey(v1 SDK 샘플). 실제 상점 키가 아니며 테스트 전용.
-  static const String _testClientKey = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
 
   @override
   State<TossBillingTestWebViewScreen> createState() =>
@@ -54,7 +58,7 @@ class _TossBillingTestWebViewScreenState
   (function () {
     function show(t){ var m=document.getElementById('msg'); if(m){ m.innerText=t; } }
     try {
-      var tp = TossPayments('${TossBillingTestWebViewScreen._testClientKey}');
+      var tp = TossPayments('${widget.clientKey}');
       tp.requestBillingAuth('카드', {
         customerKey: '${widget.customerKey}',
         successUrl: 'https://petnurim.kr${TossBillingTestWebViewScreen._successPath}',

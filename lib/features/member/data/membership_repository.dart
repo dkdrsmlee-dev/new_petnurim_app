@@ -75,6 +75,23 @@ class MembershipRepository {
     return CreateMembershipResult.fromJson(payload);
   }
 
+  /// 토스 결제 clientKey 조회(GET /api/v1/payments/config, public).
+  ///
+  /// 백엔드 secretKey 와 **짝이 되는 상점 clientKey**를 내려준다. Billing Auth 는
+  /// 반드시 이 키로 실행해야 백엔드가 authKey→billingKey 발급에 성공한다.
+  Future<String> getTossClientKey() async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/payments/config',
+      fallbackMessage: '결제 설정을 불러오지 못했습니다.',
+    );
+    final toss = payload is Map ? payload['toss'] : null;
+    final clientKey = toss is Map ? toss['clientKey'] : null;
+    if (clientKey is String && clientKey.trim().isNotEmpty) {
+      return clientKey.trim();
+    }
+    throw AuthException('결제 설정(clientKey)을 확인할 수 없습니다.');
+  }
+
   /// 펫 멤버십 상태 조회(마이펫 상세). 미가입/가입중/구독취소예정.
   Future<PetMembershipStatus> getPetMembership(int myPetId) async {
     final payload = await _apiClient.getJson(
