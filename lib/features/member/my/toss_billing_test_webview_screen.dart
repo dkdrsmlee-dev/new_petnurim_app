@@ -7,15 +7,17 @@ import '../../../core/widgets/page_header.dart';
 
 /// 토스페이먼츠 자동결제(빌링) 카드 등록창을 **테스트 모드**로 띄우는 임시 화면.
 ///
-/// 백엔드 PG 연동(상점 clientKey/secretKey, billingKey 발급 API)이 아직 없어,
-/// 토스 **공개 테스트 clientKey**로 카드 등록 UI만 미리 확인한다. 실제 billingKey
-/// 발급(시크릿키·서버)·카드 저장은 하지 않으며, 카드 입력 후 토스가 successUrl로
-/// 리다이렉트하면 그 도달(= authKey 수신)만 감지해 `true`를 반환한다.
+/// 토스 **공개 테스트 clientKey**로 카드 등록 UI를 띄우고, 카드 입력 후 토스가
+/// successUrl 로 리다이렉트하면 그 URL 에서 **authKey 를 추출해 반환**한다(취소/실패
+/// 시 null). 실제 billingKey 발급은 백엔드가 authKey/customerKey 로 처리한다.
 ///
-/// 백엔드가 준비되면 이 화면은 실제 clientKey + 서버 billingKey 발급 흐름으로
-/// 교체한다. WebView 콜백 감지 패턴은 휴대폰 변경 `KcpCertWebViewScreen`과 동일.
+/// 실 상점 clientKey 가 준비되면 [_testClientKey] 만 교체하면 된다. WebView 콜백
+/// 감지 패턴은 휴대폰 변경 `KcpCertWebViewScreen`과 동일.
 class TossBillingTestWebViewScreen extends StatefulWidget {
-  const TossBillingTestWebViewScreen({super.key});
+  const TossBillingTestWebViewScreen({super.key, required this.customerKey});
+
+  /// 토스 Billing Auth 에 사용할 CustomerKey(가입 시 백엔드로도 함께 전달).
+  final String customerKey;
 
   // 토스가 카드 등록 완료/실패 시 리다이렉트하는 더미 URL(실제 로드 전에 가로챔).
   static const String _successPath = '/toss/billing/success';
@@ -54,7 +56,7 @@ class _TossBillingTestWebViewScreenState
     try {
       var tp = TossPayments('${TossBillingTestWebViewScreen._testClientKey}');
       tp.requestBillingAuth('카드', {
-        customerKey: 'preview-customer-0001',
+        customerKey: '${widget.customerKey}',
         successUrl: 'https://petnurim.kr${TossBillingTestWebViewScreen._successPath}',
         failUrl: 'https://petnurim.kr${TossBillingTestWebViewScreen._failPath}'
       }).catch(function (e) {
@@ -79,11 +81,11 @@ class _TossBillingTestWebViewScreenState
           onNavigationRequest: (request) {
             final url = request.url;
             if (url.contains(TossBillingTestWebViewScreen._successPath)) {
-              _finish(true);
+              _success(url);
               return NavigationDecision.prevent;
             }
             if (url.contains(TossBillingTestWebViewScreen._failPath)) {
-              _finish(false);
+              _cancel();
               return NavigationDecision.prevent;
             }
             if (url.startsWith('http://') ||
@@ -97,11 +99,11 @@ class _TossBillingTestWebViewScreenState
           },
           onPageStarted: (url) {
             if (url.contains(TossBillingTestWebViewScreen._successPath)) {
-              _finish(true);
+              _success(url);
               return;
             }
             if (url.contains(TossBillingTestWebViewScreen._failPath)) {
-              _finish(false);
+              _cancel();
               return;
             }
             if (mounted) setState(() => _loading = true);
@@ -114,10 +116,19 @@ class _TossBillingTestWebViewScreenState
       ..loadHtmlString(_html, baseUrl: 'https://petnurim.kr');
   }
 
-  void _finish(bool success) {
+  /// 성공 콜백 URL 에서 authKey 를 추출해 반환(가입 API 로 전달).
+  void _success(String url) {
     if (_finished) return;
     _finished = true;
-    if (mounted) Navigator.of(context).pop(success);
+    final authKey = Uri.tryParse(url)?.queryParameters['authKey'];
+    if (mounted) Navigator.of(context).pop(authKey);
+  }
+
+  /// 취소/실패 시 null 반환.
+  void _cancel() {
+    if (_finished) return;
+    _finished = true;
+    if (mounted) Navigator.of(context).pop(null);
   }
 
   Future<void> _launchExternal(String url) async {
@@ -135,13 +146,13 @@ class _TossBillingTestWebViewScreenState
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _finish(false);
+        if (!didPop) _cancel();
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: NurimPageHeader(
           title: '카드 등록 (테스트)',
-          onBackPressed: () => _finish(false),
+          onBackPressed: () => _cancel(),
         ),
         body: SafeArea(
           child: Stack(

@@ -26,6 +26,7 @@ enum TermsCategory {
 class ActiveTerm {
   const ActiveTerm({
     required this.termsId,
+    required this.termsHistoryId,
     required this.termsKey,
     required this.termsName,
     required this.content,
@@ -43,6 +44,8 @@ class ActiveTerm {
     return ActiveTerm(
       // 백엔드 약관 API 개편(target 기준 조회) 대응: 신규 키 우선, 구 키 fallback
       termsId: _readString(payload, 'termsMasterId', fallbackKey: 'termsId'),
+      // 현재 버전 이력 PK(멤버십 가입 검증/동의 저장에 사용).
+      termsHistoryId: _readString(payload, 'termsHistoryId'),
       termsKey: _readString(payload, 'termsKey'),
       termsName: _readString(payload, 'termsName', fallbackKey: 'termsNm'),
       content: _readString(payload, 'content'),
@@ -60,6 +63,9 @@ class ActiveTerm {
   }
 
   final String termsId;
+
+  /// 현재 버전 이력 PK(TERMS_HISTORY_ID). 멤버십 가입 검증/동의 저장에 사용.
+  final String termsHistoryId;
   final String termsKey;
   final String termsName;
   final String content;
@@ -69,6 +75,9 @@ class ActiveTerm {
   final String status;
 
   bool get isRequired => requiredType.trim().toUpperCase() == 'REQUIRED';
+
+  /// termsHistoryId 정수 변환(파싱 실패 시 null).
+  int? get termsHistoryIdInt => int.tryParse(termsHistoryId.trim());
 
   String get requiredLabel => isRequired ? '필수' : '선택';
 

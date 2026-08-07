@@ -1,44 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../auth/domain/readable_auth_error.dart';
+import '../data/membership_repository.dart';
 import 'membership_benefits_screen.dart';
 import 'toss_billing_test_webview_screen.dart';
 
-/// 멤버십 구독 결제카드 등록 화면 (USR-PAY-011) — PG(토스페이먼츠) 연동 자리.
+/// 멤버십 구독 결제카드 등록 화면 (USR-PAY-011).
 ///
-/// 국내 표준상 카드번호/CVC/비밀번호는 앱이 직접 받지 않고 PG의 보안 결제창에서
-/// 입력받는다(카드정보 직접취급 회피). 따라서 Figma의 커스텀 카드 폼은 사용하지
-/// 않고, 이 화면에는 **토스 자동결제(빌링) WebView**가 들어간다.
+/// 국내 표준상 카드정보는 앱이 직접 받지 않고 PG(토스페이먼츠) 결제창에서 입력받는다.
+/// "카드 등록하고 구독하기" → 토스 Billing Auth(카드 등록창)에서 authKey 를 받고,
+/// 그 authKey/customerKey 로 `POST /api/v1/memberships` 를 호출해 실제 구독을 생성한다.
 ///
-/// 현재는 백엔드 PG 연동(상점 clientKey/secretKey, billingKey 발급·저장 API)이
-/// 없어, 흐름 확인을 위해 **토스 공개 테스트 clientKey**로 카드 등록창(테스트)만
-/// 미리 띄운다([TossBillingTestWebViewScreen]). 실제 billingKey 발급·카드 저장·
-/// 구독 생성은 백엔드가 준비되면 연결한다. 완료/중단 다이얼로그는 디자인대로.
-class MembershipCardRegisterScreen extends StatefulWidget {
-  const MembershipCardRegisterScreen({super.key});
+/// 현재는 토스 **공개 테스트 clientKey**를 쓰므로 실제 청구는 없지만, 백엔드 가입은
+/// 실제로 이뤄진다. 실 상점 clientKey 준비 시 [TossBillingTestWebViewScreen] 의
+/// 키만 교체하면 된다.
+class MembershipCardRegisterScreen extends ConsumerStatefulWidget {
+  const MembershipCardRegisterScreen({
+    super.key,
+    required this.myPetId,
+    required this.membershipMasterId,
+    required this.termsHistoryIds,
+  });
+
+  final int myPetId;
+  final int membershipMasterId;
+  final List<int> termsHistoryIds;
 
   @override
-  State<MembershipCardRegisterScreen> createState() =>
+  ConsumerState<MembershipCardRegisterScreen> createState() =>
       _MembershipCardRegisterScreenState();
 }
 
 class _MembershipCardRegisterScreenState
-    extends State<MembershipCardRegisterScreen> {
+    extends ConsumerState<MembershipCardRegisterScreen> {
+  bool _submitting = false;
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
+        if (didPop || _submitting) return;
         _confirmCancel();
       },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: NurimPageHeader(
           title: '결제 카드 등록',
-          onBackPressed: _confirmCancel,
+          onBackPressed: _submitting ? null : _confirmCancel,
         ),
         body: SafeArea(
           child: Column(
@@ -46,57 +60,36 @@ class _MembershipCardRegisterScreenState
               const Expanded(child: _PgPlaceholder()),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // 토스 테스트 카드 등록창 열기(실동작 대신 UI 미리보기).
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: FilledButton(
-                        onPressed: _openTossTest,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text(
-                          '카드 등록창 열기 (토스 테스트)',
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            letterSpacing: -0.66,
-                          ),
-                        ),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: FilledButton(
+                    onPressed: _submitting ? null : _startBilling,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      disabledBackgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    // 토스 테스트창 없이 흐름(완료 다이얼로그)만 확인하는 폴백.
-                    SizedBox(
-                      width: double.infinity,
-                      height: 48,
-                      child: OutlinedButton(
-                        onPressed: _showRegistered,
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: AppColors.border),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    child: _submitting
+                        ? const SizedBox.square(
+                            dimension: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Text(
+                            '카드 등록하고 구독하기',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              letterSpacing: -0.66,
+                            ),
                           ),
-                        ),
-                        child: const Text(
-                          '등록 완료 미리보기 (임시)',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textSecondary,
-                            letterSpacing: -0.66,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -106,16 +99,35 @@ class _MembershipCardRegisterScreenState
     );
   }
 
-  /// 토스 테스트 카드 등록창을 띄우고, success 콜백(authKey 도달) 시 완료 처리.
-  Future<void> _openTossTest() async {
-    final ok = await Navigator.of(context).push<bool>(
+  /// 1) 토스 Billing Auth(카드 등록창) → authKey  2) POST /memberships 로 구독 생성.
+  Future<void> _startBilling() async {
+    // customerKey 는 Billing Auth 와 가입 API 에 동일하게 전달해야 한다.
+    final customerKey =
+        'pn_${widget.myPetId}_${DateTime.now().millisecondsSinceEpoch}';
+    final authKey = await Navigator.of(context).push<String>(
       MaterialPageRoute(
-        builder: (_) => const TossBillingTestWebViewScreen(),
+        builder: (_) =>
+            TossBillingTestWebViewScreen(customerKey: customerKey),
       ),
     );
-    if (!mounted) return;
-    if (ok == true) {
+    if (!mounted || authKey == null || authKey.isEmpty) return; // 취소/실패
+
+    setState(() => _submitting = true);
+    try {
+      await ref.read(membershipRepositoryProvider).create(
+            myPetId: widget.myPetId,
+            membershipMasterId: widget.membershipMasterId,
+            customerKey: customerKey,
+            authKey: authKey,
+            termsHistoryIds: widget.termsHistoryIds,
+          );
+      if (!mounted) return;
       _showRegistered();
+    } catch (error) {
+      if (!mounted) return;
+      ToastUtil.show(context, readAuthErrorMessage(error, '멤버십 가입에 실패했습니다.'));
+    } finally {
+      if (mounted) setState(() => _submitting = false);
     }
   }
 
@@ -137,7 +149,7 @@ class _MembershipCardRegisterScreenState
     );
   }
 
-  /// 등록 완료 다이얼로그(단일 확인). 확인 시 구독 플로우(카드→약관→혜택)를
+  /// 가입 완료 다이얼로그(단일 확인). 확인 시 구독 플로우(카드→약관→혜택)를
   /// 걷어내고 마이펫 상세로 복귀한다.
   void _showRegistered() {
     showDialog(
@@ -196,9 +208,9 @@ class _PgPlaceholder extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             const Text(
-              '아래 버튼을 누르면 토스 카드 등록창(테스트)이 열립니다.\n'
-              '지금은 테스트 모드라 실제 결제·카드 저장은 되지 않으며,\n'
-              '백엔드 PG 연동이 준비되면 실제 등록으로 연결됩니다.',
+              '아래 버튼을 누르면 토스 카드 등록창이 열립니다.\n'
+              '카드 등록을 마치면 멤버십 구독이 완료됩니다.\n'
+              '(현재 토스 테스트 모드 — 실제 카드 청구는 없습니다.)',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,

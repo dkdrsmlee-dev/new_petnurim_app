@@ -308,8 +308,9 @@ class MyPetDetailScreen extends ConsumerWidget {
                                     settings: const RouteSettings(
                                       name: MembershipBenefitsScreen.routeName,
                                     ),
-                                    builder: (_) =>
-                                        const MembershipBenefitsScreen(),
+                                    builder: (_) => MembershipBenefitsScreen(
+                                      myPetId: int.parse(myPetId),
+                                    ),
                                   ),
                                 );
                               },

@@ -2,11 +2,15 @@ import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/number_format.dart';
 import '../../../core/widgets/bullit_text.dart';
 import '../../../core/widgets/page_header.dart';
+import '../data/membership_repository.dart';
+import '../domain/membership_models.dart';
 import 'membership_terms_agreement_screen.dart';
 
 /// 별 SVG를 흰색으로 강제 렌더(디자인 원본 fill이 flutter_svg에서 불안정).
@@ -16,11 +20,14 @@ const ColorFilter _kWhiteFilter =
 /// 멤버십 혜택 화면 (USR-MBS-010, 멤버십 미이용 상태).
 /// 마이펫 상세의 "멤버십 혜택 보기"에서 진입. 대부분 정적 콘텐츠.
 ///
-/// "멤버십 즉시 구독하기"는 멤버십 구독 약관 동의 화면
-/// (MembershipTermsAgreementScreen)으로 이동한다. 이후 실제 구독(카드 등록/
-/// 토스 빌링 + 백엔드 구독 API)은 아직 없어 약관 화면의 "다음"이 준비 중 처리된다.
-class MembershipBenefitsScreen extends StatelessWidget {
-  const MembershipBenefitsScreen({super.key});
+/// 가격·상품명은 `GET /memberships/guide`(membershipGuideProvider)에서 받아 바인딩,
+/// "멤버십 즉시 구독하기"는 약관 동의 화면으로 이동한다. 멤버십은 펫별이라
+/// [myPetId]를 구독 플로우 전체(약관→카드→가입)에 관통시킨다.
+class MembershipBenefitsScreen extends ConsumerWidget {
+  const MembershipBenefitsScreen({super.key, required this.myPetId});
+
+  /// 가입 대상 마이펫 ID.
+  final int myPetId;
 
   /// 구독 플로우(약관→카드 등록) 완료 시 이 화면까지 popUntil로 되돌아오기 위한
   /// route 이름. 마이펫 상세에서 push할 때 RouteSettings.name으로 지정한다.
@@ -40,7 +47,9 @@ class MembershipBenefitsScreen extends StatelessWidget {
   static const Color _badgeText = Color(0xFF6C737F);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final list = ref.watch(membershipGuideProvider).asData?.value;
+    final item = (list != null && list.isNotEmpty) ? list.first : null;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: NurimPageHeader(
@@ -51,7 +60,7 @@ class MembershipBenefitsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildHero(context),
+            _buildHero(context, item),
             _buildNotice(context),
           ],
         ),
@@ -59,7 +68,7 @@ class MembershipBenefitsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHero(BuildContext context) {
+  Widget _buildHero(BuildContext context, MembershipGuideItem? item) {
     return Container(
       width: double.infinity,
       clipBehavior: Clip.hardEdge,
@@ -112,13 +121,13 @@ class MembershipBenefitsScreen extends StatelessWidget {
                       letterSpacing: -1,
                     )),
                 const SizedBox(height: 28),
-                _buildPriceCard(context),
+                _buildPriceCard(context, item),
                 const SizedBox(height: 28),
                 _buildBenefitBadge(),
                 const SizedBox(height: 16),
                 _buildBenefitBox(),
                 const SizedBox(height: 32),
-                _buildSubscribeButton(context),
+                _buildSubscribeButton(context, item),
               ],
             ),
           ),
@@ -131,7 +140,7 @@ class MembershipBenefitsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceCard(BuildContext context) {
+  Widget _buildPriceCard(BuildContext context, MembershipGuideItem? item) {
     final f = MediaQuery.of(context).size.width / 375; // 디자인 프레임 폭
     final card = Container(
       width: double.infinity,
@@ -168,8 +177,8 @@ class MembershipBenefitsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
-              const Text('브론즈 멤버십',
-                  style: TextStyle(
+              Text(item?.membershipName ?? '브론즈 멤버십',
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textStrong,
@@ -183,8 +192,8 @@ class MembershipBenefitsScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Text('10,000',
-                  style: TextStyle(
+              Text(item != null ? formatThousands(item.monthlyFee) : '10,000',
+                  style: const TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textStrong,
@@ -301,19 +310,24 @@ class MembershipBenefitsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSubscribeButton(BuildContext context) {
+  Widget _buildSubscribeButton(BuildContext context, MembershipGuideItem? item) {
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: TextButton(
-        onPressed: () {
-          // 멤버십 구독 약관 동의 화면으로 이동(이후 카드 등록/빌링은 백엔드 대기).
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const MembershipTermsAgreementScreen(),
-            ),
-          );
-        },
+        // guide 미로딩(item==null) 시 비활성. 로딩되면 약관 동의로 이동.
+        onPressed: item == null
+            ? null
+            : () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => MembershipTermsAgreementScreen(
+                      myPetId: myPetId,
+                      membershipMasterId: item.membershipMasterId,
+                    ),
+                  ),
+                );
+              },
         style: TextButton.styleFrom(
           backgroundColor: AppColors.textStrong,
           shape: RoundedRectangleBorder(

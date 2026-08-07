@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/bottom_action_bar.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../auth/domain/readable_auth_error.dart';
 import '../../signup/application/signup_providers.dart';
 import '../../signup/domain/signup_terms.dart';
 import '../../signup/terms_detail_screen.dart';
+import '../data/membership_repository.dart';
 import 'membership_card_register_screen.dart';
 
 /// 멤버십 구독 약관 동의 화면 (USR-PAY-012).
@@ -16,11 +19,22 @@ import 'membership_card_register_screen.dart';
 /// 약관은 `GET /api/v1/terms?target=SUBSCRIPTION`(인증 불필요)에서 동적으로 받아
 /// 렌더한다. 상세는 회원가입과 동일한 `TermsDetailScreen`(HTML)을 재사용.
 ///
-/// "다음"은 결제카드 등록 화면(`MembershipCardRegisterScreen`, PG 자리)으로
-/// 이동한다. 실제 구독(토스 빌링 + 백엔드 billingKey/구독 API)은 아직 없어
-/// 동의 저장 엔드포인트(구독용)도 없다 → 동의는 클라이언트 게이트로만 사용한다.
+/// "다음" → `POST /memberships/validate`(가입 사전 검증) 통과 시 결제카드 등록
+/// 화면(`MembershipCardRegisterScreen`)으로 이동한다. 동의한 약관의 termsHistoryId
+/// 를 수집해 검증·가입에 사용한다. 멤버십은 펫별이라 [myPetId]·[membershipMasterId]
+/// 를 관통시킨다.
 class MembershipTermsAgreementScreen extends ConsumerStatefulWidget {
-  const MembershipTermsAgreementScreen({super.key});
+  const MembershipTermsAgreementScreen({
+    super.key,
+    required this.myPetId,
+    required this.membershipMasterId,
+  });
+
+  /// 가입 대상 마이펫 ID.
+  final int myPetId;
+
+  /// 가입할 멤버십 종류 ID(guide 의 membershipId).
+  final int membershipMasterId;
 
   @override
   ConsumerState<MembershipTermsAgreementScreen> createState() =>
@@ -30,6 +44,7 @@ class MembershipTermsAgreementScreen extends ConsumerStatefulWidget {
 class _MembershipTermsAgreementScreenState
     extends ConsumerState<MembershipTermsAgreementScreen> {
   final Map<String, bool> _checkedTerms = {};
+  bool _validating = false;
 
   @override
   Widget build(BuildContext context) {
@@ -127,6 +142,7 @@ class _MembershipTermsAgreementScreenState
         NurimBottomActionBar(
           primaryLabel: '다음',
           primaryEnabled: requiredChecked,
+          isLoading: _validating,
           onPrimaryPressed: _onNext,
         ),
       ],
@@ -156,13 +172,43 @@ class _MembershipTermsAgreementScreenState
     });
   }
 
-  void _onNext() {
-    // 다음 단계: 결제카드 등록(PG 자리). 실제 구독은 백엔드 PG 연동 후 완성.
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => const MembershipCardRegisterScreen(),
-      ),
-    );
+  /// 가입 사전 검증(POST /memberships/validate) 통과 시 결제카드 등록으로 이동.
+  Future<void> _onNext() async {
+    final terms =
+        ref.read(subscriptionTermsProvider).value ?? const <ActiveTerm>[];
+    final termsHistoryIds = terms
+        .where(_isChecked)
+        .map((t) => t.termsHistoryIdInt)
+        .whereType<int>()
+        .toList();
+
+    setState(() => _validating = true);
+    try {
+      final valid = await ref.read(membershipRepositoryProvider).validate(
+            myPetId: widget.myPetId,
+            membershipMasterId: widget.membershipMasterId,
+            termsHistoryIds: termsHistoryIds,
+          );
+      if (!mounted) return;
+      if (!valid) {
+        ToastUtil.show(context, '지금은 가입할 수 없는 상태입니다. 다시 확인해 주세요.');
+        return;
+      }
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => MembershipCardRegisterScreen(
+            myPetId: widget.myPetId,
+            membershipMasterId: widget.membershipMasterId,
+            termsHistoryIds: termsHistoryIds,
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ToastUtil.show(context, readAuthErrorMessage(error, '가입 검증에 실패했습니다.'));
+    } finally {
+      if (mounted) setState(() => _validating = false);
+    }
   }
 
   void _openTerm(ActiveTerm term) {
