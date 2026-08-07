@@ -4,14 +4,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
-import '../../../core/utils/date_format.dart';
 import '../../../core/utils/number_format.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
 import '../../../core/widgets/pet_info_detail.dart';
+import '../domain/membership_models.dart';
 import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
+import '../data/membership_repository.dart';
 import '../data/pet_repository.dart';
 import 'membership_benefits_screen.dart';
 import 'pet_reward_history_screen.dart';
@@ -38,6 +40,9 @@ class MyPetDetailScreen extends ConsumerWidget {
     final reward = ref.watch(petRewardSummaryProvider(myPetId)).asData?.value;
     final currentRewardText =
         reward != null ? '${formatThousands(reward.currentReward)}PR' : '-';
+    // 멤버십 상태(실데이터): 미가입/가입중/구독취소예정
+    final membershipAsync = ref.watch(petMembershipProvider(myPetId));
+    final MembershipInfo? membership = membershipAsync.asData?.value.membership;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -105,11 +110,6 @@ class MyPetDetailScreen extends ConsumerWidget {
             final genderText = PetGender.label(pet.genderCode, serverName: pet.genderCodeNm);
             final breedText = pet.breedNameKor ?? '믹스';
 
-            // Calculate mock next payment date (1 month from today)
-            final now = DateTime.now();
-            final nextPaymentDate = DateTime(now.year, now.month + 1, now.day);
-            final nextPaymentStr = nextPaymentDate.toDotDate(spaced: false);
-
             return ListView(
               children: [
                 // 1. Pet Profile Card Section (Figma node: 234:21712)
@@ -124,7 +124,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                             variant: 'medium', downloadFallback: true)
                         : null,
                     isPrimary: isPrimary,
-                    membershipTier: '-',
+                    membershipTier: membership?.membershipName ?? '-',
                     rewardText: currentRewardText,
                   ),
                   actionLabel: '관리',
@@ -158,7 +158,21 @@ class MyPetDetailScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      if (isPrimary) ...[
+                      if (membershipAsync.isLoading) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(
+                            child: SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ] else if (membership != null) ...[
                         // Subscribed Membership View (Figma node: 231:19551)
                         Column(
                           children: [
@@ -184,9 +198,9 @@ class MyPetDetailScreen extends ConsumerWidget {
                                       ),
                                     ),
                                     const SizedBox(width: 6),
-                                    const Text(
-                                      '브론즈',
-                                      style: TextStyle(
+                                    Text(
+                                      membership.membershipName,
+                                      style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.textStrong,
@@ -199,9 +213,11 @@ class MyPetDetailScreen extends ConsumerWidget {
                                         color: AppColors.bgGray,
                                         borderRadius: BorderRadius.circular(6),
                                       ),
-                                      child: const Text(
-                                        '현재 이용 중',
-                                        style: TextStyle(
+                                      child: Text(
+                                        membership.isCancelScheduled
+                                            ? '구독취소 예정'
+                                            : '현재 이용 중',
+                                        style: const TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.textTertiary,
@@ -212,7 +228,8 @@ class MyPetDetailScreen extends ConsumerWidget {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    // 결제 내역 화면 연동
+                                    // 결제 내역 화면 연동(Phase 3)
+                                    ToastUtil.show(context, '준비 중인 기능입니다.');
                                   },
                                   child: const Row(
                                     children: [
@@ -245,13 +262,20 @@ class MyPetDetailScreen extends ConsumerWidget {
                               ),
                               child: Column(
                                 children: [
-                                  _buildKeyValueRow('다음 결제일', nextPaymentStr),
+                                  _buildKeyValueRow(
+                                    membership.isCancelScheduled
+                                        ? '이용 종료일'
+                                        : '다음 결제일',
+                                    membership.nextBillingDt.replaceAll('-', '.'),
+                                  ),
                                   const SizedBox(height: 16),
-                                  _buildKeyValueRow('월 구독료', '10,000원'),
+                                  _buildKeyValueRow('월 구독료',
+                                      '${formatThousands(membership.monthlyFee)}원'),
                                   const SizedBox(height: 16),
                                   ElevatedButton(
                                     onPressed: () {
-                                      // 멤버십 관리 페이지 연동
+                                      // 멤버십 관리 페이지 연동(Phase 3)
+                                      ToastUtil.show(context, '준비 중인 기능입니다.');
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFF7F6FF), // violet/10

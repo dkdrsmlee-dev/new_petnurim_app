@@ -75,6 +75,16 @@ class MembershipRepository {
     return CreateMembershipResult.fromJson(payload);
   }
 
+  /// 펫 멤버십 상태 조회(마이펫 상세). 미가입/가입중/구독취소예정.
+  Future<PetMembershipStatus> getPetMembership(int myPetId) async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/users/my-pets/$myPetId/membership',
+      bearerToken: await _token('로그인 정보가 없어 멤버십 상태를 조회할 수 없습니다.'),
+      fallbackMessage: '멤버십 상태를 불러오지 못했습니다.',
+    );
+    return PetMembershipStatus.fromJson(payload);
+  }
+
   Future<String> _token(String emptyMessage) async {
     final token = await _tokenStorage.readAccessToken();
     if (token == null || token.trim().isEmpty) {
@@ -95,4 +105,14 @@ final membershipRepositoryProvider = Provider<MembershipRepository>((ref) {
 final membershipGuideProvider =
     FutureProvider.autoDispose<List<MembershipGuideItem>>((ref) {
   return ref.watch(membershipRepositoryProvider).getGuide();
+});
+
+/// 펫 멤버십 상태(마이펫 상세). key = myPetId(문자열, 내부에서 int 변환).
+final petMembershipProvider = FutureProvider.autoDispose
+    .family<PetMembershipStatus, String>((ref, myPetId) {
+  final id = int.tryParse(myPetId);
+  if (id == null) {
+    return Future.value(const PetMembershipStatus(isMembership: false));
+  }
+  return ref.watch(membershipRepositoryProvider).getPetMembership(id);
 });
