@@ -102,6 +102,39 @@ class MembershipRepository {
     return MembershipDetail.fromJson(payload);
   }
 
+  /// 해지 화면 정보 조회(GET /memberships/{id}/cancel-info).
+  /// 남은 일수·이용 종료일·해지 사유 목록(공통코드)을 받아 해지 화면을 렌더한다.
+  Future<MembershipCancelInfo> getCancelInfo(int membershipId) async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/memberships/$membershipId/cancel-info',
+      bearerToken: await _token('로그인 정보가 없어 해지 정보를 조회할 수 없습니다.'),
+      fallbackMessage: '해지 정보를 불러오지 못했습니다.',
+    );
+    return MembershipCancelInfo.fromJson(payload);
+  }
+
+  /// 멤버십 해지 신청(POST /memberships/{id}/cancel). 현재 결제 기간까지는 유지된다.
+  /// cancelReasonCodes(최소 1개)·noticeAgreed(true) 필수, ETC 선택 시 cancelReasonText 필수.
+  Future<MembershipCancelResult> cancelMembership(
+    int membershipId, {
+    required List<String> cancelReasonCodes,
+    String? cancelReasonText,
+    required bool noticeAgreed,
+  }) async {
+    final payload = await _apiClient.postJson(
+      '/api/v1/memberships/$membershipId/cancel',
+      bearerToken: await _token('로그인 정보가 없어 해지를 진행할 수 없습니다.'),
+      body: {
+        'cancelReasonCodes': cancelReasonCodes,
+        if (cancelReasonText != null && cancelReasonText.trim().isNotEmpty)
+          'cancelReasonText': cancelReasonText.trim(),
+        'noticeAgreed': noticeAgreed,
+      },
+      fallbackMessage: '멤버십 해지에 실패했습니다.',
+    );
+    return MembershipCancelResult.fromJson(payload);
+  }
+
   /// 펫 멤버십 상태 조회(마이펫 상세). 미가입/가입중/구독취소예정.
   Future<PetMembershipStatus> getPetMembership(int myPetId) async {
     final payload = await _apiClient.getJson(
@@ -138,6 +171,12 @@ final membershipGuideProvider =
 final membershipDetailProvider = FutureProvider.autoDispose
     .family<MembershipDetail, int>((ref, membershipId) {
   return ref.watch(membershipRepositoryProvider).getMembershipDetail(membershipId);
+});
+
+/// 해지 화면 정보(남은 일수·이용 종료일·사유 목록). key = membershipId.
+final membershipCancelInfoProvider = FutureProvider.autoDispose
+    .family<MembershipCancelInfo, int>((ref, membershipId) {
+  return ref.watch(membershipRepositoryProvider).getCancelInfo(membershipId);
 });
 
 /// 펫 멤버십 상태(마이펫 상세). key = myPetId(문자열, 내부에서 int 변환).

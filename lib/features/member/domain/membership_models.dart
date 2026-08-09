@@ -190,6 +190,92 @@ class MembershipDetail {
 /// yyyy-MM-dd[ HH:mm:ss] → yyyy.MM.dd[ HH:mm:ss] 표기 변환.
 String _dotDate(String s) => s.trim().replaceAll('T', ' ').replaceAll('-', '.');
 
+/// 해지 사유 항목(공통코드 CANCEL_REASON_CODE). cancel-info 의 cancelReasons[].
+class CancelReasonItem {
+  const CancelReasonItem({required this.code, required this.name});
+
+  final String code;
+  final String name;
+
+  bool get isEtc => code.trim().toUpperCase() == 'ETC';
+
+  factory CancelReasonItem.fromJson(Object? payload) {
+    final m = payload is Map ? payload : const {};
+    return CancelReasonItem(
+      code: JsonReader.coerceString(m['code']) ?? '',
+      name: JsonReader.coerceString(m['name']) ?? '',
+    );
+  }
+}
+
+/// 멤버십 해지 화면 정보(GET /memberships/{id}/cancel-info).
+class MembershipCancelInfo {
+  const MembershipCancelInfo({
+    required this.membershipId,
+    required this.membershipName,
+    required this.statusCode,
+    required this.autoRenewYn,
+    required this.benefitEndDate,
+    required this.benefitRemainingDays,
+    required this.cancelReasons,
+  });
+
+  final int membershipId;
+  final String membershipName;
+  final String statusCode;
+  final String autoRenewYn;
+  final String benefitEndDate; // yyyy-MM-dd
+  final int benefitRemainingDays;
+  final List<CancelReasonItem> cancelReasons;
+
+  factory MembershipCancelInfo.fromJson(Object? payload) {
+    final m = payload is Map ? payload : const {};
+    final raw = m['cancelReasons'];
+    return MembershipCancelInfo(
+      membershipId: JsonReader.asInt(m['membershipId']),
+      membershipName: JsonReader.coerceString(m['membershipName']) ?? '',
+      statusCode: JsonReader.coerceString(m['statusCode']) ?? '',
+      autoRenewYn: JsonReader.coerceString(m['autoRenewYn']) ?? '',
+      benefitEndDate: JsonReader.coerceString(m['benefitEndDate']) ?? '',
+      benefitRemainingDays: JsonReader.asInt(m['benefitRemainingDays']),
+      cancelReasons: raw is List
+          ? raw.map(CancelReasonItem.fromJson).toList()
+          : const [],
+    );
+  }
+}
+
+/// 멤버십 해지 신청 결과(POST /memberships/{id}/cancel).
+class MembershipCancelResult {
+  const MembershipCancelResult({
+    required this.membershipId,
+    required this.statusCode,
+    required this.autoRenewYn,
+    required this.cancelRequestDate,
+    required this.benefitEndDate,
+    required this.message,
+  });
+
+  final int membershipId;
+  final String statusCode; // CANCEL_REQUEST
+  final String autoRenewYn; // N
+  final String cancelRequestDate; // yyyy-MM-dd (해지 신청일)
+  final String benefitEndDate; // yyyy-MM-dd (이용 종료일)
+  final String message;
+
+  factory MembershipCancelResult.fromJson(Object? payload) {
+    final m = payload is Map ? payload : const {};
+    return MembershipCancelResult(
+      membershipId: JsonReader.asInt(m['membershipId']),
+      statusCode: JsonReader.coerceString(m['statusCode']) ?? '',
+      autoRenewYn: JsonReader.coerceString(m['autoRenewYn']) ?? '',
+      cancelRequestDate: JsonReader.coerceString(m['cancelRequestDate']) ?? '',
+      benefitEndDate: JsonReader.coerceString(m['benefitEndDate']) ?? '',
+      message: JsonReader.coerceString(m['message']) ?? '',
+    );
+  }
+}
+
 /// 멤버십 가입 결과(POST /memberships).
 class CreateMembershipResult {
   const CreateMembershipResult({

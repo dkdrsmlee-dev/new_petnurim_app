@@ -210,17 +210,21 @@ class MyPetDetailScreen extends ConsumerWidget {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: AppColors.bgGray,
+                                        color: membership.isCancelScheduled
+                                            ? const Color(0xFFFFECEC)
+                                            : AppColors.bgGray,
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
                                         membership.isCancelScheduled
-                                            ? '구독취소 예정'
+                                            ? '해지 신청'
                                             : '현재 이용 중',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
-                                          color: AppColors.textTertiary,
+                                          color: membership.isCancelScheduled
+                                              ? const Color(0xFFFF5F5F)
+                                              : AppColors.textTertiary,
                                         ),
                                       ),
                                     ),
@@ -274,8 +278,18 @@ class MyPetDetailScreen extends ConsumerWidget {
                                   const SizedBox(height: 16),
                                   ElevatedButton(
                                     onPressed: () {
-                                      // 멤버십 관리 페이지 연동(Phase 3)
-                                      ToastUtil.show(context, '준비 중인 기능입니다.');
+                                      // 구독 중 멤버십 혜택 보기(Figma 231:19551) → 혜택 화면.
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          settings: const RouteSettings(
+                                            name: MembershipBenefitsScreen.routeName,
+                                          ),
+                                          builder: (_) => MembershipBenefitsScreen(
+                                            myPetId: int.parse(myPetId),
+                                          ),
+                                        ),
+                                      );
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: const Color(0xFFF7F6FF), // violet/10
@@ -287,7 +301,7 @@ class MyPetDetailScreen extends ConsumerWidget {
                                       ),
                                     ),
                                     child: const Text(
-                                      '멤버십 관리',
+                                      '멤버십 혜택 보기',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,

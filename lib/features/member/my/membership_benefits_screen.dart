@@ -7,10 +7,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/number_format.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/bullit_text.dart';
 import '../../../core/widgets/page_header.dart';
 import '../data/membership_repository.dart';
 import '../domain/membership_models.dart';
+import '../widgets/membership_benefit_list.dart';
+import 'membership_cancel_screen.dart';
 import 'membership_terms_agreement_screen.dart';
 
 /// 별 SVG를 흰색으로 강제 렌더(디자인 원본 fill이 flutter_svg에서 불안정).
@@ -48,22 +51,69 @@ class MembershipBenefitsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final list = ref.watch(membershipGuideProvider).asData?.value;
-    final item = (list != null && list.isNotEmpty) ? list.first : null;
+    final petMem = ref.watch(petMembershipProvider(myPetId.toString()));
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: NurimPageHeader(
         title: '멤버십 혜택',
         onBackPressed: () => Navigator.of(context).pop(),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildHero(context, item),
-            _buildNotice(context),
-          ],
+      body: petMem.when(
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
+        // 상태 조회 실패 시 가입 안내(미가입 뷰)로 폴백.
+        error: (_, _) => _unsubscribedBody(context, ref),
+        data: (status) {
+          final membership = status.membership;
+          return membership != null
+              ? _subscribedBody(context, ref, membership)
+              : _unsubscribedBody(context, ref);
+        },
+      ),
+    );
+  }
+
+  /// 미가입 상태(263:9035) — 데코 히어로 + 가격 + "즉시 구독하기".
+  Widget _unsubscribedBody(BuildContext context, WidgetRef ref) {
+    final list = ref.watch(membershipGuideProvider).asData?.value;
+    final item = (list != null && list.isNotEmpty) ? list.first : null;
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHero(context, item),
+          _buildNotice(context),
+        ],
+      ),
+    );
+  }
+
+  /// 구독 중 상태(547:12592) — 구독 정보 + 혜택 + 유의사항 + 해지 버튼.
+  Widget _subscribedBody(
+    BuildContext context,
+    WidgetRef ref,
+    MembershipInfo membership,
+  ) {
+    final detailAsync = ref.watch(membershipDetailProvider(membership.membershipId));
+    final guide = ref.watch(membershipGuideProvider).asData?.value;
+    final benefits = (guide != null && guide.isNotEmpty)
+        ? guide.first.benefits
+        : const <MembershipBenefit>[];
+    return detailAsync.when(
+      loading: () => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
+      error: (_, _) => const Center(
+        child: Text(
+          '멤버십 정보를 불러오지 못했습니다.',
+          style: TextStyle(fontSize: 15, color: AppColors.textSecondary),
+        ),
+      ),
+      data: (detail) => _SubscribedView(
+        myPetId: myPetId,
+        detail: detail,
+        benefits: benefits,
       ),
     );
   }
@@ -523,5 +573,323 @@ class _HeroDecorations extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+/// 멤버십 혜택 화면 "구독 중" 상태 본문 (Figma 547:12592).
+/// 구독 정보·혜택·유의사항(접이식)·해지 버튼. 유의사항 토글 상태를 위해 Stateful.
+class _SubscribedView extends StatefulWidget {
+  const _SubscribedView({
+    required this.myPetId,
+    required this.detail,
+    required this.benefits,
+  });
+
+  final int myPetId;
+  final MembershipDetail detail;
+  final List<MembershipBenefit> benefits;
+
+  @override
+  State<_SubscribedView> createState() => _SubscribedViewState();
+}
+
+class _SubscribedViewState extends State<_SubscribedView> {
+  bool _noticeExpanded = true;
+
+  static const Color _crownBg = Color(0xFFF2EFFF); // violet/20
+  static const Color _crownBorder = Color(0xFFDBD4FF); // violet/40
+  static const Color _crownIcon = Color(0xFF7025FF); // violet/100
+  static const Color _subtle = Color(0xFF909AA9); // text/subtle
+
+  @override
+  Widget build(BuildContext context) {
+    final d = widget.detail;
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 24),
+          // 크라운 + 상품명 + 자동결제 안내
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: _crownBg,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: _crownBorder, width: 1),
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/images/membership/crown.svg',
+                    width: 17,
+                    height: 15,
+                    colorFilter: const ColorFilter.mode(_crownIcon, BlendMode.srcIn),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  d.membershipName.isEmpty ? '멤버십' : d.membershipName,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textStrong,
+                    letterSpacing: -0.66,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${_billingDateKor(d.nextBillingDt)}에\n등록한 신용카드로 자동 결제 됩니다.',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary,
+                    letterSpacing: -0.66,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          // 구독 정보 박스
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.bgGray,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _infoRow(
+                    '구독 금액',
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          formatThousands(d.paymentAmount),
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textStrong,
+                            letterSpacing: -0.66,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 4),
+                          child: Text(
+                            '원/월',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: _subtle,
+                              letterSpacing: -0.66,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    labelColor: _subtle,
+                  ),
+                  const SizedBox(height: 10),
+                  _infoRow('구독 방식', _value(d.paymentCycleLabel)),
+                  const SizedBox(height: 10),
+                  _infoRow('이용 기간', _value(_periodText(d))),
+                  const SizedBox(height: 10),
+                  _infoRow('결제 수단', _value(d.cardLabel)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Container(height: 6, color: AppColors.bgGray),
+          const SizedBox(height: 24),
+          // 멤버십 혜택
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '멤버십 혜택',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textMuted,
+                    letterSpacing: -0.66,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                MembershipBenefitList(benefits: widget.benefits),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          // 유의사항(접이식)
+          Container(height: 6, color: AppColors.bgGray),
+          InkWell(
+            onTap: () => setState(() => _noticeExpanded = !_noticeExpanded),
+            child: Container(
+              height: 56,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              alignment: Alignment.center,
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      '유의사항',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textMuted,
+                        letterSpacing: -0.66,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    _noticeExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    size: 24,
+                    color: AppColors.textMuted,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(height: 6, color: AppColors.bgGray),
+          if (_noticeExpanded)
+            Container(
+              width: double.infinity,
+              color: AppColors.bgGray,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '가입 시 안내사항',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textMuted,
+                      letterSpacing: -0.66,
+                    ),
+                  ),
+                  SizedBox(height: 12),
+                  BullitText(text: '리워드는 결제일에 자동으로 리워드 지갑에 적립됩니다.'),
+                  SizedBox(height: 8),
+                  BullitText(
+                      text: '결제는 카드 결제만 가능하며, 멤버십 가입일 기준으로 월 단위 선납 방식으로 진행됩니다.'),
+                  SizedBox(height: 8),
+                  BullitText(text: '회원탈퇴 시 잔여 기간을 모두 사용 후 멤버십 탈퇴가 가능합니다.'),
+                ],
+              ),
+            ),
+          const SizedBox(height: 24),
+          // 해지 / 해지 취소 버튼
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 24 + bottomInset),
+            child: _actionButton(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionButton(BuildContext context) {
+    final cancelScheduled = widget.detail.isCancelScheduled;
+    return SizedBox(
+      height: 48,
+      child: OutlinedButton(
+        onPressed: () {
+          if (cancelScheduled) {
+            // 재구독(해지 취소)은 다음 단계에서 연동.
+            ToastUtil.show(context, '준비 중인 기능입니다.');
+            return;
+          }
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => MembershipCancelScreen(
+                myPetId: widget.myPetId.toString(),
+                membershipId: widget.detail.membershipId,
+              ),
+            ),
+          );
+        },
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Colors.white,
+          side: const BorderSide(color: AppColors.border),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+        child: Text(
+          cancelScheduled ? '해지 취소하기' : '멤버십 해지하기',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textMuted,
+            letterSpacing: -0.66,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _infoRow(String label, Widget value, {Color labelColor = AppColors.textSecondary}) {
+    return SizedBox(
+      height: 36,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: labelColor,
+                letterSpacing: -0.66,
+              ),
+            ),
+          ),
+          value,
+        ],
+      ),
+    );
+  }
+
+  Widget _value(String text) => Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textMuted,
+          letterSpacing: -0.66,
+        ),
+      );
+
+  /// yyyy-MM-dd → "yyyy년 M월 dd일".
+  String _billingDateKor(String ymd) {
+    final s = ymd.length >= 10 ? ymd.substring(0, 10) : ymd;
+    final parts = s.split('-');
+    if (parts.length != 3) return s;
+    final m = int.tryParse(parts[1]) ?? parts[1];
+    return '${parts[0]}년 $m월 ${parts[2]}일';
+  }
+
+  /// 이용 기간 "yyyy.MM.dd~yyyy.MM.dd".
+  String _periodText(MembershipDetail d) {
+    String dot(String s) =>
+        (s.length >= 10 ? s.substring(0, 10) : s).replaceAll('-', '.');
+    if (d.periodStartDt.isEmpty && d.periodEndDt.isEmpty) return '-';
+    return '${dot(d.periodStartDt)}~${dot(d.periodEndDt)}';
   }
 }
