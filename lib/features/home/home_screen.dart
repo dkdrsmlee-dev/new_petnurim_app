@@ -113,6 +113,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         bottomNavigationBar: CustomGnb(
           currentIndex: _selectedIndex >= 5 ? -1 : _selectedIndex,
           onTap: (index) {
+            // 홈 외 탭(기프트/문진/경품메타/이벤트)은 준비 중 — 토스트만, 화면 이동 없음.
+            if (index != 0) {
+              ToastUtil.show(context, '준비 중인 기능입니다.');
+              return;
+            }
             setState(() {
               _selectedIndex = index;
             });
