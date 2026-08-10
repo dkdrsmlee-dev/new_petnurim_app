@@ -156,7 +156,8 @@ class _MembershipCancelScreenState extends ConsumerState<MembershipCancelScreen>
           const SizedBox(height: 16),
           for (final reason in info.cancelReasons) ...[
             _reasonRow(reason),
-            if (reason.isEtc) ...[
+            // 직접 입력(ETC) 라디오를 선택했을 때만 입력 칸 노출.
+            if (reason.isEtc && _selectedCode == reason.code) ...[
               const SizedBox(height: 12),
               _directInput(),
             ],

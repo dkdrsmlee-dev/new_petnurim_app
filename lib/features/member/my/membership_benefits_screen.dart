@@ -648,12 +648,17 @@ class _SubscribedViewState extends ConsumerState<_SubscribedView> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '${_billingDateKor(d.nextBillingDt)}에\n등록한 신용카드로 자동 결제 됩니다.',
+                  // 해지 신청 상태면 해지 안내, 아니면 자동결제 안내(MBS-020).
+                  d.isCancelScheduled
+                      ? '해지 신청된 멤버십입니다.\n종료일까지 혜택을 이용할 수 있어요.'
+                      : '${_billingDateKor(d.nextBillingDt)}에\n등록한 신용카드로 자동 결제 됩니다.',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary,
+                    color: d.isCancelScheduled
+                        ? const Color(0xFFFF5F5F) // 해지 신청 강조(red/60)
+                        : AppColors.textSecondary,
                     letterSpacing: -0.66,
                     height: 1.4,
                   ),
