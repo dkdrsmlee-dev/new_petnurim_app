@@ -153,6 +153,21 @@ class MembershipRepository {
     return MembershipCancelResult.fromJson(payload);
   }
 
+  /// 멤버십 결제 내역 조회(GET /memberships/{id}/payments). 최신순 페이징.
+  /// page 는 1-indexed(백엔드 규약).
+  Future<MembershipPaymentPage> getMembershipPayments(
+    int membershipId, {
+    int page = 1,
+    int size = 100,
+  }) async {
+    final payload = await _apiClient.getJson(
+      '/api/v1/memberships/$membershipId/payments?page=$page&size=$size',
+      bearerToken: await _token('로그인 정보가 없어 결제 내역을 조회할 수 없습니다.'),
+      fallbackMessage: '결제 내역을 불러오지 못했습니다.',
+    );
+    return MembershipPaymentPage.fromJson(payload);
+  }
+
   /// 펫 멤버십 상태 조회(마이펫 상세). 미가입/가입중/구독취소예정.
   Future<PetMembershipStatus> getPetMembership(int myPetId) async {
     final payload = await _apiClient.getJson(
@@ -189,6 +204,12 @@ final membershipGuideProvider =
 final membershipDetailProvider = FutureProvider.autoDispose
     .family<MembershipDetail, int>((ref, membershipId) {
   return ref.watch(membershipRepositoryProvider).getMembershipDetail(membershipId);
+});
+
+/// 멤버십 결제 내역(최신순). key = membershipId.
+final membershipPaymentsProvider = FutureProvider.autoDispose
+    .family<MembershipPaymentPage, int>((ref, membershipId) {
+  return ref.watch(membershipRepositoryProvider).getMembershipPayments(membershipId);
 });
 
 /// 해지 화면 정보(남은 일수·이용 종료일·사유 목록). key = membershipId.

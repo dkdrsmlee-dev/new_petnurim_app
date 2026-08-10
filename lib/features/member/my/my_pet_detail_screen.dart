@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/app_routes.dart';
 import '../../../core/utils/number_format.dart';
-import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
@@ -16,6 +15,7 @@ import '../domain/pet_models.dart';
 import '../data/membership_repository.dart';
 import '../data/pet_repository.dart';
 import 'membership_benefits_screen.dart';
+import 'membership_payment_history_screen.dart';
 import 'pet_reward_history_screen.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -232,8 +232,16 @@ class MyPetDetailScreen extends ConsumerWidget {
                                 ),
                                 InkWell(
                                   onTap: () {
-                                    // 결제 내역 화면 연동(Phase 3)
-                                    ToastUtil.show(context, '준비 중인 기능입니다.');
+                                    // 멤버십 결제 내역 화면(USR-MBS-012)으로 이동.
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            MembershipPaymentHistoryScreen(
+                                          membershipId: membership.membershipId,
+                                        ),
+                                      ),
+                                    );
                                   },
                                   child: const Row(
                                     children: [

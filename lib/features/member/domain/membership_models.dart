@@ -276,6 +276,88 @@ class MembershipCancelResult {
   }
 }
 
+/// 멤버십 결제 내역 항목(GET /memberships/{id}/payments 의 items[]).
+class MembershipPayment {
+  const MembershipPayment({
+    required this.membershipPaymentId,
+    required this.billingMonth,
+    required this.membershipName,
+    required this.paymentAmount,
+    required this.paymentStatusCode,
+    required this.paidDt,
+    required this.cardIssuerName,
+    required this.cardMaskedNumber,
+  });
+
+  final int membershipPaymentId;
+  final String billingMonth; // YYYYMM
+  final String membershipName;
+  final int paymentAmount;
+  final String paymentStatusCode; // SUCCESS …
+  final String paidDt; // yyyy-MM-dd HH:mm:ss
+  final String cardIssuerName;
+  final String cardMaskedNumber;
+
+  /// 결제일 "2026.05.10" (paidDt 의 날짜 부분).
+  String get paidDtDisplay {
+    final s = paidDt.length >= 10 ? paidDt.substring(0, 10) : paidDt;
+    return s.replaceAll('-', '.');
+  }
+
+  /// 결제 수단 "삼성카드 (12**)" — 카드사명 + 마스킹 앞 2자리.
+  String get cardLabel {
+    final issuer = cardIssuerName.trim();
+    final masked = cardMaskedNumber.trim();
+    if (issuer.isEmpty && masked.isEmpty) return '-';
+    if (issuer.isEmpty) return masked;
+    final prefix = masked.length >= 2 ? masked.substring(0, 2) : masked;
+    return prefix.isEmpty ? issuer : '$issuer ($prefix**)';
+  }
+
+  factory MembershipPayment.fromJson(Object? payload) {
+    final m = payload is Map ? payload : const {};
+    return MembershipPayment(
+      membershipPaymentId: JsonReader.asInt(m['membershipPaymentId']),
+      billingMonth: JsonReader.coerceString(m['billingMonth']) ?? '',
+      membershipName: JsonReader.coerceString(m['membershipName']) ?? '',
+      paymentAmount: JsonReader.asInt(m['paymentAmount']),
+      paymentStatusCode: JsonReader.coerceString(m['paymentStatusCode']) ?? '',
+      paidDt: JsonReader.coerceString(m['paidDt']) ?? '',
+      cardIssuerName: JsonReader.coerceString(m['cardIssuerName']) ?? '',
+      cardMaskedNumber: JsonReader.coerceString(m['cardMaskedNumber']) ?? '',
+    );
+  }
+}
+
+/// 멤버십 결제 내역 페이지(GET /memberships/{id}/payments).
+class MembershipPaymentPage {
+  const MembershipPaymentPage({
+    required this.totalCount,
+    required this.items,
+    required this.page,
+    required this.size,
+    required this.totalPages,
+  });
+
+  final int totalCount;
+  final List<MembershipPayment> items;
+  final int page;
+  final int size;
+  final int totalPages;
+
+  factory MembershipPaymentPage.fromJson(Object? payload) {
+    final m = payload is Map ? payload : const {};
+    final raw = m['items'];
+    return MembershipPaymentPage(
+      totalCount: JsonReader.asInt(m['totalCount']),
+      items: raw is List ? raw.map(MembershipPayment.fromJson).toList() : const [],
+      page: JsonReader.asInt(m['page']),
+      size: JsonReader.asInt(m['size']),
+      totalPages: JsonReader.asInt(m['totalPages']),
+    );
+  }
+}
+
 /// 멤버십 가입 결과(POST /memberships).
 class CreateMembershipResult {
   const CreateMembershipResult({
