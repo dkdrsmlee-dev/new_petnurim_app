@@ -9,6 +9,7 @@ import '../../../core/api/api_exception.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/common_dialog.dart';
+import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/selection_control.dart';
 import '../data/common_code_repository.dart';
@@ -271,6 +272,30 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
     );
   }
 
+  /// 구독 기간이 남아 탈퇴가 보류된 경우 안내 팝업(USR-MIF-025, Figma 201:5927).
+  /// 확인만 있는 단일 버튼. 로그인 상태는 유지된다.
+  void _showSubscriptionActiveDialog(String effectiveDt) {
+    showDialog(
+      context: context,
+      barrierColor: const Color(0x99000000),
+      builder: (_) => EdgeButtonDialog(
+        title: '${_effectiveDateKor(effectiveDt)}까지\n구독 중인 서비스가 있어요.',
+        content: '남은 구독 기간이 종료된 후\n다시 탈퇴를 신청해 주세요.',
+        confirmText: '확인',
+        onConfirm: () {},
+      ),
+    );
+  }
+
+  /// yyyy-MM-dd[ HH:mm:ss] → "yyyy년 M월 dd일".
+  String _effectiveDateKor(String dt) {
+    final s = dt.trim().length >= 10 ? dt.trim().substring(0, 10) : dt.trim();
+    final parts = s.split('-');
+    if (parts.length != 3) return s;
+    final m = int.tryParse(parts[1]) ?? parts[1];
+    return '${parts[0]}년 $m월 ${parts[2]}일';
+  }
+
   // 실제 API를 통한 회원탈퇴 수행
   Future<void> _executeWithdraw() async {
     setState(() {
@@ -297,18 +322,27 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
     }
 
     try {
-      await ref.read(memberRepositoryProvider).withdraw(
+      final result = await ref.read(memberRepositoryProvider).withdraw(
             reasonCode: reasonCode,
             reasonText: reasonText,
           );
 
+      if (!mounted) return;
+
+      // 구독 기간이 남아 탈퇴 보류(PENDING) → 로그아웃하지 않고 안내 팝업(201:5927).
+      if (result.isPending) {
+        _showSubscriptionActiveDialog(result.effectiveDt);
+        return;
+      }
+
+      // 즉시 탈퇴 완료(COMPLETED) → 토큰 정리 후 로그인 화면으로.
       await ref.read(tokenStorageProvider).clearTokens();
       ref.invalidate(appBootstrapStateProvider);
 
       if (!mounted) return;
 
       ToastUtil.show(context, '회원탈퇴가 성공적으로 처리되었습니다.');
-      
+
       context.go(AppRoutes.authStart);
     } catch (e) {
       if (!mounted) return;
