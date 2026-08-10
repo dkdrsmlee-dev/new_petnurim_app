@@ -20,7 +20,7 @@
 - **다국어/로컬라이제이션**: `flutter_localizations` 설정을 추가하여 날짜 휠 피커 등 네이티브 위젯 한글화 대응
 - **앱 진입점**: `ProviderScope` + `PetnurimApp`
 - **회원가입 흐름**: 약관 조회/저장, PASS 스타일 본인인증 처리, 초기 프로필 조회, 우편번호 주소검색 웹뷰, 회원정보 저장 및 가입 완료 API 연동
-- **나의 정보 및 회원탈퇴**: 나의 정보 화면에서의 생년월일(CupertinoDatePicker)/주소 변경, 로그아웃 확인 및 회원탈퇴(WithdrawScreen) 사유 선택/동의/서버 연동 플로우 완료. 탈퇴 응답의 **`withdrawalStatus`로 분기** — `COMPLETED`면 토큰 정리·로그아웃, **`PENDING`(구독 기간 남음)이면 로그아웃하지 않고 안내 팝업**(USR-MIF-025, Figma 201:5927): "{`effectiveDt`를 yyyy년 M월 dd일}까지 구독 중인 서비스가 있어요. / 남은 구독 기간이 종료된 후 다시 탈퇴를 신청해 주세요."(`EdgeButtonDialog` 단일 확인). ※ 탈퇴 종료일은 `effectiveDt`(탈퇴 효력일시)이며 `benefitEndDate`(cancel API 전용)가 아니다.
+- **나의 정보 및 회원탈퇴**: 나의 정보 화면에서의 생년월일(CupertinoDatePicker)/주소 변경, 로그아웃 확인 및 회원탈퇴(WithdrawScreen) 사유 선택/동의/서버 연동 플로우 완료. 탈퇴 응답의 **`withdrawalStatus`로 분기** — `COMPLETED`면 토큰 정리·로그아웃, **`PENDING`(구독 기간 남음)이면 로그아웃하지 않고 안내 팝업**(USR-MIF-025, Figma 201:5927): "{`effectiveDt`를 yyyy년 M월 dd일}까지 구독 중인 서비스가 있어요. / 남은 구독 기간이 종료된 후 다시 탈퇴를 신청해 주세요."(`EdgeButtonDialog` 단일 확인). ※ 탈퇴 종료일은 `effectiveDt`(탈퇴 효력일시)이며 `benefitEndDate`(cancel API 전용)가 아니다. 탈퇴 화면 상단엔 **활성 구독 안내 박스**(USR-MIF-024 "구독 서비스 있음", Figma 196:7510)를 표시 — 회원 단위 구독 조회 API가 없어 **펫별 API를 집계**(`withdrawActiveSubscriptionsProvider`: 펫 목록 → 각 펫 멤버십 → 가입 펫만 `GET /memberships/{id}`로 `periodEndDt` 조회)해 구독 중인 펫을 **모두** "구독 멤버십 · {상품명} ({periodEndDt}까지)"(빨강)로 나열하고, 구독이 없으면 박스를 숨긴다.
 - **로그인 후 홈 구조**: 홈, 진료, 반려동물, 마이 하단 내비게이션
 - **메인 커스텀 헤더 (MainHeader)**: 피그마 원본 SVG(로고, 알림 종, 프로필) 연동 및 아이콘 사이즈 제약 최적화, 마이페이지 및 알림 센터 라우팅 연결
 - **고객센터 (CustomerCenterScreen)**: 아코디언 확장형 공지사항 목록 및 자주 묻는 질문/1:1문의 탭바 기반 화면 연동. 특히 **1:1 문의**는 피그마 Node 644:10773 ("1:1문의_목록")에 기반하여 답변준비/답변완료 배지 구분, Cursor 기반 무한 스크롤 페이지네이션 연동 완료.

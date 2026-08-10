@@ -4,6 +4,7 @@ import '../../../core/api/api_client.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../auth/domain/auth_exception.dart';
 import '../domain/membership_models.dart';
+import 'pet_repository.dart';
 
 /// 멤버십(구독) API. Phase 1 = 가입 플로우(guide/validate/create).
 /// (카드 변경/취소/재구독/상태 조회는 이후 Phase 에서 확장)
@@ -204,6 +205,26 @@ final membershipGuideProvider =
 final membershipDetailProvider = FutureProvider.autoDispose
     .family<MembershipDetail, int>((ref, membershipId) {
   return ref.watch(membershipRepositoryProvider).getMembershipDetail(membershipId);
+});
+
+/// 회원 탈퇴 화면용: 이 회원의 **모든 활성 구독(멤버십 상세)** 집계.
+/// 회원 단위 구독 조회 API가 없어, 펫 목록 → 각 펫 멤버십(가입 여부) →
+/// 가입인 펫만 상세(`periodEndDt` 포함)를 모아 반환한다. (탈퇴 상단 안내 박스용)
+final withdrawActiveSubscriptionsProvider =
+    FutureProvider.autoDispose<List<MembershipDetail>>((ref) async {
+  final petRepo = ref.watch(petRepositoryProvider);
+  final memRepo = ref.watch(membershipRepositoryProvider);
+  final pets = await petRepo.getMyPetsList(limit: 100);
+  final result = <MembershipDetail>[];
+  for (final pet in pets.items) {
+    final petId = int.tryParse(pet.myPetId);
+    if (petId == null) continue;
+    final status = await memRepo.getPetMembership(petId);
+    final membership = status.membership;
+    if (membership == null) continue; // 미가입
+    result.add(await memRepo.getMembershipDetail(membership.membershipId));
+  }
+  return result;
 });
 
 /// 멤버십 결제 내역(최신순). key = membershipId.

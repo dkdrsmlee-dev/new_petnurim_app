@@ -14,7 +14,9 @@ import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/selection_control.dart';
 import '../data/common_code_repository.dart';
 import '../data/member_repository.dart';
+import '../data/membership_repository.dart';
 import '../domain/common_code.dart';
+import '../domain/membership_models.dart';
 import '../../../core/theme/app_colors.dart';
 
 class WithdrawScreen extends ConsumerStatefulWidget {
@@ -59,6 +61,10 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
     final fetched = ref.watch(withdrawReasonsProvider).asData?.value;
     final reasons =
         (fetched != null && fetched.isNotEmpty) ? fetched : _fallbackReasons;
+    // 활성 구독 목록(있으면 상단 안내 박스 표시 — 196:7510 "구독 서비스 있음").
+    final activeSubs =
+        ref.watch(withdrawActiveSubscriptionsProvider).asData?.value ??
+            const <MembershipDetail>[];
     return Scaffold(
       appBar: const NurimPageHeader(title: '회원 탈퇴'),
       backgroundColor: Colors.white,
@@ -80,6 +86,11 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  // 구독 서비스 있음(196:7510): 활성 구독을 모두 표시.
+                  if (activeSubs.isNotEmpty) ...[
+                    _buildActiveSubscriptionBox(activeSubs),
+                    const SizedBox(height: 16),
+                  ],
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -270,6 +281,58 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
         );
       },
     );
+  }
+
+  /// 활성 구독 안내 박스(196:7510) — 구독 펫마다 "구독 멤버십 | 브론즈 (종료일까지)".
+  Widget _buildActiveSubscriptionBox(List<MembershipDetail> subs) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.borderLight),
+      ),
+      child: Column(
+        children: [
+          for (int i = 0; i < subs.length; i++) ...[
+            if (i > 0) const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '구독 멤버십',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary,
+                    letterSpacing: -0.66,
+                  ),
+                ),
+                Flexible(
+                  child: Text(
+                    '${subs[i].membershipName} (${_periodDot(subs[i].periodEndDt)}까지)',
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFFFF5F5F), // red/60 강조
+                      letterSpacing: -0.66,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// yyyy-MM-dd[ HH:mm:ss] → "yyyy.MM.dd".
+  String _periodDot(String dt) {
+    final s = dt.trim().length >= 10 ? dt.trim().substring(0, 10) : dt.trim();
+    return s.replaceAll('-', '.');
   }
 
   /// 구독 기간이 남아 탈퇴가 보류된 경우 안내 팝업(USR-MIF-025, Figma 201:5927).
