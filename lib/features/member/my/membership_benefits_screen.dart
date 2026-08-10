@@ -9,7 +9,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/number_format.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/bullit_text.dart';
+import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../auth/domain/readable_auth_error.dart';
 import '../data/membership_repository.dart';
 import '../domain/membership_models.dart';
 import '../widgets/membership_benefit_list.dart';
@@ -578,7 +580,7 @@ class _HeroDecorations extends StatelessWidget {
 
 /// 멤버십 혜택 화면 "구독 중" 상태 본문 (Figma 547:12592).
 /// 구독 정보·혜택·유의사항(접이식)·해지 버튼. 유의사항 토글 상태를 위해 Stateful.
-class _SubscribedView extends StatefulWidget {
+class _SubscribedView extends ConsumerStatefulWidget {
   const _SubscribedView({
     required this.myPetId,
     required this.detail,
@@ -590,11 +592,12 @@ class _SubscribedView extends StatefulWidget {
   final List<MembershipBenefit> benefits;
 
   @override
-  State<_SubscribedView> createState() => _SubscribedViewState();
+  ConsumerState<_SubscribedView> createState() => _SubscribedViewState();
 }
 
-class _SubscribedViewState extends State<_SubscribedView> {
+class _SubscribedViewState extends ConsumerState<_SubscribedView> {
   bool _noticeExpanded = true;
+  bool _resubmitting = false;
 
   static const Color _crownBg = Color(0xFFF2EFFF); // violet/20
   static const Color _crownBorder = Color(0xFFDBD4FF); // violet/40
@@ -811,37 +814,83 @@ class _SubscribedViewState extends State<_SubscribedView> {
     return SizedBox(
       height: 48,
       child: OutlinedButton(
-        onPressed: () {
-          if (cancelScheduled) {
-            // 재구독(해지 취소)은 다음 단계에서 연동.
-            ToastUtil.show(context, '준비 중인 기능입니다.');
-            return;
-          }
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => MembershipCancelScreen(
-                myPetId: widget.myPetId.toString(),
-                membershipId: widget.detail.membershipId,
-              ),
-            ),
-          );
-        },
+        onPressed: _resubmitting
+            ? null
+            : () {
+                if (cancelScheduled) {
+                  // 해지 신청 상태 → 재구독(해지 취소).
+                  _confirmResubscribe();
+                  return;
+                }
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => MembershipCancelScreen(
+                      myPetId: widget.myPetId.toString(),
+                      membershipId: widget.detail.membershipId,
+                    ),
+                  ),
+                );
+              },
         style: OutlinedButton.styleFrom(
           backgroundColor: Colors.white,
           side: const BorderSide(color: AppColors.border),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        child: Text(
-          cancelScheduled ? '해지 취소하기' : '멤버십 해지하기',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textMuted,
-            letterSpacing: -0.66,
-          ),
-        ),
+        child: _resubmitting
+            ? const SizedBox.square(
+                dimension: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: AppColors.primary,
+                ),
+              )
+            : Text(
+                cancelScheduled ? '해지 취소하기' : '멤버십 해지하기',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textMuted,
+                  letterSpacing: -0.66,
+                ),
+              ),
       ),
     );
+  }
+
+  /// 재구독(해지 취소) 확인 다이얼로그(Figma 900:39130).
+  void _confirmResubscribe() {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => EdgeButtonDialog(
+        title: '멤버십 해지를 취소하시겠어요?',
+        content: '해지를 취소하면 멤버십이 유지되고\n자동 결제가 재개됩니다.',
+        cancelText: '닫기',
+        confirmText: '해지 취소하기',
+        onCancel: () {},
+        onConfirm: _doResubscribe,
+      ),
+    );
+  }
+
+  /// 재구독(`POST /memberships` 최소 payload — 기존 billingKey 재사용).
+  /// 성공 시 완료 토스트(900:39304) + 상태 캐시 무효화로 ACTIVE 자동 갱신.
+  Future<void> _doResubscribe() async {
+    setState(() => _resubmitting = true);
+    try {
+      await ref.read(membershipRepositoryProvider).resubscribe(
+            myPetId: widget.myPetId,
+            membershipMasterId: widget.detail.membershipMasterId,
+          );
+      if (!mounted) return;
+      ToastUtil.show(context, '멤버십 해지가 취소되었습니다.\n멤버십이 계속 유지됩니다.');
+      ref.invalidate(membershipDetailProvider(widget.detail.membershipId));
+      ref.invalidate(petMembershipProvider(widget.myPetId.toString()));
+    } catch (error) {
+      if (!mounted) return;
+      ToastUtil.show(context, readAuthErrorMessage(error, '재구독에 실패했습니다.'));
+    } finally {
+      if (mounted) setState(() => _resubmitting = false);
+    }
   }
 
   Widget _infoRow(String label, Widget value, {Color labelColor = AppColors.textSecondary}) {

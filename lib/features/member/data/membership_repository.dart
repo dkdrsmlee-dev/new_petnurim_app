@@ -102,6 +102,24 @@ class MembershipRepository {
     return MembershipDetail.fromJson(payload);
   }
 
+  /// 재구독(해지 취소, 자동결제 복구). 기존 billingKey 재사용 —
+  /// customerKey/authKey/terms 불필요, `{myPetId, membershipMasterId}`만 전송.
+  Future<CreateMembershipResult> resubscribe({
+    required int myPetId,
+    required int membershipMasterId,
+  }) async {
+    final payload = await _apiClient.postJson(
+      '/api/v1/memberships',
+      bearerToken: await _token('로그인 정보가 없어 재구독을 진행할 수 없습니다.'),
+      body: {
+        'myPetId': myPetId,
+        'membershipMasterId': membershipMasterId,
+      },
+      fallbackMessage: '재구독에 실패했습니다.',
+    );
+    return CreateMembershipResult.fromJson(payload);
+  }
+
   /// 해지 화면 정보 조회(GET /memberships/{id}/cancel-info).
   /// 남은 일수·이용 종료일·해지 사유 목록(공통코드)을 받아 해지 화면을 렌더한다.
   Future<MembershipCancelInfo> getCancelInfo(int membershipId) async {
