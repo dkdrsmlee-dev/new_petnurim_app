@@ -871,7 +871,6 @@ class _SubscribedViewState extends ConsumerState<_SubscribedView> {
         content: '해지를 취소하면 멤버십이 유지되고\n자동 결제가 재개됩니다.',
         cancelText: '닫기',
         confirmText: '해지 취소하기',
-        onCancel: () {},
         onConfirm: _doResubscribe,
       ),
     );

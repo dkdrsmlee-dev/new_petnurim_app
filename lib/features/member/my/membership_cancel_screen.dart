@@ -364,7 +364,6 @@ class _MembershipCancelScreenState extends ConsumerState<MembershipCancelScreen>
         content: '멤버십 해지 시 혜택 및\n모든 데이터는 복구되지 않아요.',
         cancelText: '취소',
         confirmText: '해지하기',
-        onCancel: () {},
         onConfirm: _doCancel,
       ),
     );
