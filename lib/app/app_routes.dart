@@ -21,6 +21,7 @@ abstract final class AppRoutes {
   static const customerCenter = '/my/customer-center';
   static const serviceTerms = '/my/service-terms';
   static const notificationCenter = '/notification-center';
+  static const paymentMethods = '/my/payment-methods';
 }
 
 abstract final class AppRouteNames {
@@ -46,4 +47,5 @@ abstract final class AppRouteNames {
   static const customerCenter = 'customerCenter';
   static const serviceTerms = 'serviceTerms';
   static const notificationCenter = 'notificationCenter';
+  static const paymentMethods = 'paymentMethods';
 }

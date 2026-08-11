@@ -14,6 +14,7 @@ import '../../../core/widgets/section_title.dart';
 import '../../../core/utils/number_format.dart';
 import '../../../core/utils/toast_util.dart';
 import '../data/member_repository.dart';
+import '../data/payment_method_repository.dart';
 import '../data/pet_repository.dart';
 import '../domain/member_my_page.dart';
 import '../domain/pet_codes.dart';
@@ -38,6 +39,19 @@ class MyPageView extends ConsumerWidget {
     final myPageState = ref.watch(memberMyPageProvider);
     final petsState = ref.watch(myPetsListProvider);
     final memberInfoState = ref.watch(memberInfoProvider);
+
+    // 결제 수단 표시: 기본 결제수단(없으면 첫 카드) 라벨, 없으면 "미등록".
+    final paymentLabel = ref.watch(paymentMethodsProvider).maybeWhen(
+          data: (cards) {
+            if (cards.isEmpty) return '미등록';
+            final def = cards.firstWhere(
+              (c) => c.isDefault,
+              orElse: () => cards.first,
+            );
+            return def.cardLabel;
+          },
+          orElse: () => '—',
+        );
 
     Future<void> refresh() async {
       ref.invalidate(memberMyPageProvider);
@@ -96,6 +110,7 @@ class MyPageView extends ConsumerWidget {
             onBackToHome: onBackToHome,
             snsFlatform: snsFlatform,
             onRefresh: refresh,
+            paymentLabel: paymentLabel,
           );
         },
       ),
@@ -111,6 +126,7 @@ class MyPageView extends ConsumerWidget {
     required this.isLoggingOut,
     required this.onLogout,
     required this.onRefresh,
+    required this.paymentLabel,
     this.onBackToHome,
     this.snsFlatform,
   });
@@ -121,6 +137,7 @@ class MyPageView extends ConsumerWidget {
   final bool isLoggingOut;
   final VoidCallback onLogout;
   final Future<void> Function() onRefresh;
+  final String paymentLabel;
   final VoidCallback? onBackToHome;
   final String? snsFlatform;
 
@@ -191,10 +208,10 @@ class _MyPageContentState extends State<_MyPageContent> {
                       NurimMyInfoRow(
                         labelText: '결제 수단',
                         primaryValue: email,
-                        secondaryValue: '삼성카드(12**)',
+                        secondaryValue: widget.paymentLabel,
                         actionLabel: '변경',
                         onActionPressed: () =>
-                            ToastUtil.show(context, '준비 중인 기능입니다.'),
+                            context.push(AppRoutes.paymentMethods),
                         showDivider: false,
                       ),
                     ],

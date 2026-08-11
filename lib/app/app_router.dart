@@ -13,6 +13,7 @@ import '../features/splash/splash_screen.dart';
 import '../features/webview/address_webview_screen.dart';
 import '../features/member/my/customer_center_screen.dart';
 import '../features/member/my/service_terms_screen.dart';
+import '../features/member/my/payment_method_screen.dart';
 import '../features/member/my/my_pet_list_screen.dart';
 import '../features/member/my/my_pet_detail_screen.dart';
 import '../features/member/my/my_pet_edit_screen.dart';
@@ -189,6 +190,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.notificationCenter,
         name: AppRouteNames.notificationCenter,
         builder: (context, state) => const NotificationScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.paymentMethods,
+        name: AppRouteNames.paymentMethods,
+        builder: (context, state) => const PaymentMethodScreen(),
       ),
     ],
   );

@@ -51,6 +51,7 @@ flutter:
     - assets/images/home/
     - assets/images/banner/
     - assets/images/membership/
+    - assets/images/card_issuers/
 
   fonts:
     - family: Pretendard
