@@ -22,6 +22,7 @@ import '../domain/membership_models.dart';
 import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
 import 'my_pet_list_screen.dart';
+import 'membership_benefits_screen.dart';
 import '../../../core/theme/app_colors.dart';
 
 class MyPageView extends ConsumerWidget {
@@ -108,6 +109,24 @@ class MyPageView extends ConsumerWidget {
               imageProvider: item.profileFileId != null
                   ? AuthedFileImageX.of(ref, item.profileFileId!, variant: 'thumb')
                   : null,
+              onMembershipJoinTap: () {
+                final petId = int.tryParse(item.myPetId);
+                if (petId == null) return;
+                Navigator.of(context)
+                    .push(
+                      MaterialPageRoute(
+                        settings: const RouteSettings(
+                          name: MembershipBenefitsScreen.routeName,
+                        ),
+                        builder: (_) =>
+                            MembershipBenefitsScreen(myPetId: petId),
+                      ),
+                    )
+                    .then((_) {
+                  ref.invalidate(myPetsListProvider);
+                  ref.invalidate(petMembershipProvider);
+                });
+              },
             );
           }).toList();
 

@@ -17,6 +17,7 @@ import '../domain/pet_models.dart';
 import '../domain/membership_models.dart';
 import '../data/pet_repository.dart';
 import '../data/membership_repository.dart';
+import 'membership_benefits_screen.dart';
 import '../../../core/theme/app_colors.dart';
 
 final myPetsListProvider = FutureProvider.autoDispose<List<MyPetListItem>>((ref) async {
@@ -90,6 +91,24 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
     await ref.read(myPetsListProvider.future);
   }
 
+  /// "멤버십 가입하기" 칩(미가입) → 해당 펫 멤버십 혜택 화면(구독 진입점).
+  void _openBenefits(String myPetId) {
+    final petId = int.tryParse(myPetId);
+    if (petId == null) return;
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            settings:
+                const RouteSettings(name: MembershipBenefitsScreen.routeName),
+            builder: (_) => MembershipBenefitsScreen(myPetId: petId),
+          ),
+        )
+        .then((_) {
+      ref.invalidate(myPetsListProvider);
+      ref.invalidate(petMembershipProvider);
+    });
+  }
+
   Widget _buildContent(List<MyPetListItem> serverPets) {
     _serverPets = serverPets;
     _customPetList = serverPets.map((item) {
@@ -111,6 +130,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
           imageProvider: item.profileFileId != null
               ? AuthedFileImageX.of(ref, item.profileFileId!, variant: 'thumb')
               : null,
+          onMembershipJoinTap: () => _openBenefits(item.myPetId),
         );
       }).toList();
 

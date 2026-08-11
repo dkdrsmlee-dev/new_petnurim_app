@@ -13,6 +13,7 @@ class NurimPetCardData {
     required this.rewardText,
     this.isPrimary = false,
     this.imageProvider,
+    this.onMembershipJoinTap,
   });
 
   final String name;
@@ -23,6 +24,9 @@ class NurimPetCardData {
   final String rewardText;
   final bool isPrimary;
   final ImageProvider? imageProvider;
+
+  /// "멤버십 가입하기" 칩(미가입) 탭 시 동작(혜택 화면 이동). 미가입일 때만 사용.
+  final VoidCallback? onMembershipJoinTap;
 
   List<String> get descriptionList => [
     breed,
@@ -225,7 +229,10 @@ class NurimPetCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 12),
-                            _MembershipChip(label: pet.membershipTier),
+                            _MembershipChip(
+                              label: pet.membershipTier,
+                              onTap: pet.onMembershipJoinTap,
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -507,16 +514,17 @@ class _PrimaryPetBadge extends StatelessWidget {
 }
 
 class _MembershipChip extends StatelessWidget {
-  const _MembershipChip({required this.label});
+  const _MembershipChip({required this.label, this.onTap});
 
   final String label;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final isJoinPrompt = label == '멤버십 가입하기';
     final isNone = label == '-';
 
-    return Container(
+    final chip = Container(
       width: isNone ? 24 : null,
       height: 24,
       padding: isNone ? EdgeInsets.zero : EdgeInsets.symmetric(horizontal: isJoinPrompt ? 6 : 8),
@@ -553,6 +561,16 @@ class _MembershipChip extends StatelessWidget {
         ],
       ),
     );
+
+    // "멤버십 가입하기" 칩만 탭 가능(혜택 화면 이동). 브론즈 배지는 비탭.
+    if (isJoinPrompt && onTap != null) {
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: chip,
+      );
+    }
+    return chip;
   }
 }
 
