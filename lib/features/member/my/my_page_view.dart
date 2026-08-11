@@ -40,18 +40,24 @@ class MyPageView extends ConsumerWidget {
     final petsState = ref.watch(myPetsListProvider);
     final memberInfoState = ref.watch(memberInfoProvider);
 
-    // 결제 수단 표시: 기본 결제수단(없으면 첫 카드) 라벨, 없으면 "미등록".
-    final paymentLabel = ref.watch(paymentMethodsProvider).maybeWhen(
-          data: (cards) {
-            if (cards.isEmpty) return '미등록';
-            final def = cards.firstWhere(
-              (c) => c.isDefault,
-              orElse: () => cards.first,
-            );
-            return def.cardLabel;
-          },
-          orElse: () => '—',
+    // 결제 수단 등록/미등록 분기: 등록됨 → 기본 카드 라벨 + "변경",
+    // 미등록 → "미등록" + "등록".
+    final paymentMethodsAsync = ref.watch(paymentMethodsProvider);
+    final hasPaymentMethod = paymentMethodsAsync.maybeWhen(
+      data: (cards) => cards.isNotEmpty,
+      orElse: () => false,
+    );
+    final paymentLabel = paymentMethodsAsync.maybeWhen(
+      data: (cards) {
+        if (cards.isEmpty) return '결제 수단을 등록해 주세요.';
+        final def = cards.firstWhere(
+          (c) => c.isDefault,
+          orElse: () => cards.first,
         );
+        return def.cardLabel;
+      },
+      orElse: () => '—',
+    );
 
     Future<void> refresh() async {
       ref.invalidate(memberMyPageProvider);
@@ -111,6 +117,7 @@ class MyPageView extends ConsumerWidget {
             snsFlatform: snsFlatform,
             onRefresh: refresh,
             paymentLabel: paymentLabel,
+            hasPaymentMethod: hasPaymentMethod,
           );
         },
       ),
@@ -127,6 +134,7 @@ class MyPageView extends ConsumerWidget {
     required this.onLogout,
     required this.onRefresh,
     required this.paymentLabel,
+    required this.hasPaymentMethod,
     this.onBackToHome,
     this.snsFlatform,
   });
@@ -138,6 +146,7 @@ class MyPageView extends ConsumerWidget {
   final VoidCallback onLogout;
   final Future<void> Function() onRefresh;
   final String paymentLabel;
+  final bool hasPaymentMethod;
   final VoidCallback? onBackToHome;
   final String? snsFlatform;
 
@@ -207,9 +216,8 @@ class _MyPageContentState extends State<_MyPageContent> {
                       ),
                       NurimMyInfoRow(
                         labelText: '결제 수단',
-                        primaryValue: email,
-                        secondaryValue: widget.paymentLabel,
-                        actionLabel: '변경',
+                        primaryValue: widget.paymentLabel,
+                        actionLabel: widget.hasPaymentMethod ? '변경' : '등록',
                         onActionPressed: () =>
                             context.push(AppRoutes.paymentMethods),
                         showDivider: false,
