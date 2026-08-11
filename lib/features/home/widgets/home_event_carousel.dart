@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:math' as math;
 import 'dart:async';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/authed_file_image.dart';
 import '../../../core/widgets/shimmer_box.dart';
 import '../../event/data/event_repository.dart';
@@ -286,8 +287,13 @@ class _DesignFriendBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          LayoutBuilder(
-            builder: (context, constraints) => _card(constraints.maxWidth),
+          // 친구초대(이벤트) 배너는 아직 백엔드 미연동 → 탭 시 준비 중 토스트.
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => ToastUtil.show(context, '준비 중인 기능입니다.'),
+            child: LayoutBuilder(
+              builder: (context, constraints) => _card(constraints.maxWidth),
+            ),
           ),
           const SizedBox(height: 16),
           // 페이저(현재 배너 1개 → 활성 dot 1개). 배너 추가 시 개수 반영.
