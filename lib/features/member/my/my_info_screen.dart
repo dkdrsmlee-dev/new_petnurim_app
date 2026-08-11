@@ -7,7 +7,6 @@ import '../../../app/app_routes.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/address_card.dart';
-import '../../../core/widgets/nurim_date_picker.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../auth/application/auth_providers.dart';
 import '../../signup/kcp_cert_webview_screen.dart';
@@ -36,7 +35,6 @@ class MyInfoScreen extends ConsumerStatefulWidget {
 }
 
 class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
-  String? _customBirthDate; // 사용자가 휠 피커로 변경한 생년월일(목업)
   bool _isChangingPhone = false; // 휴대폰 번호 변경 진행 중(중복 실행 방지)
 
   @override
@@ -71,9 +69,8 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
             ),
           ),
           data: (memberInfo) {
-            // API 생년월일 포맷팅
-            final formattedApiBirthDate = _formatApiBirthDate(memberInfo.birthDate);
-            final displayBirthDate = _customBirthDate ?? formattedApiBirthDate;
+            // 생년월일은 표시 전용(수정 불가) — 기획서 USR_MYP_010
+            final displayBirthDate = _formatApiBirthDate(memberInfo.birthDate);
 
             return ListView(
               padding: const EdgeInsets.symmetric(vertical: 24),
@@ -117,7 +114,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                             _CustomInfoRow(
                               title: '생년월일',
                               infoText: displayBirthDate,
-                              onPressed: () => _showBirthDatePicker(memberInfo.birthDate),
                             ),
                             _CustomInfoRow(
                               title: '휴대폰 번호',
@@ -237,60 +233,6 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
       return '${clean.substring(0, 3)}-${clean.substring(3, 6)}-${clean.substring(6)}';
     }
     return phone.isNotEmpty ? phone : '010-1234-1234';
-  }
-
-  // CupertinoDatePicker Bottom Sheet (Wheel Picker 방식)
-  Future<void> _showBirthDatePicker(String apiBirthDate) async {
-    DateTime initialDate = DateTime(2010, 3, 7);
-    if (_customBirthDate != null) {
-      initialDate = _parseDisplayBirthDate(_customBirthDate!);
-    } else if (apiBirthDate.length == 8) {
-      initialDate = _parseApiBirthDate(apiBirthDate);
-    }
-
-    final selected = await NurimDatePickerBottomSheet.show(
-      context: context,
-      title: '생년월일',
-      initialDate: initialDate,
-      minimumDate: DateTime(1900),
-      maximumDate: DateTime.now(),
-    );
-
-    if (selected != null && mounted) {
-      setState(() {
-        _customBirthDate =
-            "${selected.year}년 ${selected.month}월 ${selected.day}일";
-      });
-    }
-  }
-
-  DateTime _parseDisplayBirthDate(String displayStr) {
-    try {
-      final clean = displayStr
-          .replaceAll('년', '')
-          .replaceAll('월', '')
-          .replaceAll('일', '');
-      final parts = clean.split(' ').where((s) => s.isNotEmpty).toList();
-      if (parts.length >= 3) {
-        final y = int.parse(parts[0]);
-        final m = int.parse(parts[1]);
-        final d = int.parse(parts[2]);
-        return DateTime(y, m, d);
-      }
-    } catch (_) {}
-    return DateTime(2010, 3, 7);
-  }
-
-  DateTime _parseApiBirthDate(String apiStr) {
-    try {
-      if (apiStr.length == 8) {
-        final y = int.parse(apiStr.substring(0, 4));
-        final m = int.parse(apiStr.substring(4, 6));
-        final d = int.parse(apiStr.substring(6, 8));
-        return DateTime(y, m, d);
-      }
-    } catch (_) {}
-    return DateTime(2010, 3, 7);
   }
 
   // 로그아웃 확인 팝업 (기획서 디자인에 맞춘 커스텀 다이얼로그)
