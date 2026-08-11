@@ -14,7 +14,9 @@ import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/pet_card.dart';
 import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
+import '../domain/membership_models.dart';
 import '../data/pet_repository.dart';
+import '../data/membership_repository.dart';
 import '../../../core/theme/app_colors.dart';
 
 final myPetsListProvider = FutureProvider.autoDispose<List<MyPetListItem>>((ref) async {
@@ -84,6 +86,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
 
   Future<void> _refresh() async {
     ref.invalidate(myPetsListProvider);
+    ref.invalidate(petMembershipProvider); // 펫별 멤버십 칩 갱신
     await ref.read(myPetsListProvider.future);
   }
 
@@ -97,7 +100,10 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
           breed: item.breedNameKor ?? '믹스',
           ageText: '${item.petAge}살',
           genderText: PetGender.label(item.genderCode, serverName: item.genderCodeNm),
-          membershipTier: YesNo.isYes(item.representYn) ? '브론즈' : '멤버십 가입하기',
+          membershipTier: ref.watch(petMembershipProvider(item.myPetId)).maybeWhen(
+            data: (status) => status.petCardChipLabel,
+            orElse: () => '-',
+          ),
           rewardText: rewardSummary != null
               ? '${formatThousands(rewardSummary.currentReward)}P'
               : '-',
@@ -217,6 +223,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                               pathParameters: {'myPetId': petItem.myPetId},
                             ).then((_) {
                               ref.invalidate(myPetsListProvider);
+                              ref.invalidate(petMembershipProvider);
                             });
                           }
                         }

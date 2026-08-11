@@ -103,6 +103,19 @@ class PetMembershipStatus {
   }
 }
 
+extension PetMembershipStatusLabel on PetMembershipStatus {
+  /// 마이펫 카드 멤버십 칩 라벨. 가입 시 티어명("브론즈 멤버십"→"브론즈"),
+  /// 미가입 시 "멤버십 가입하기". ([NurimPetCardData.membershipTier]에 사용)
+  String get petCardChipLabel {
+    final m = membership;
+    if (!isMembership || m == null) return '멤버십 가입하기';
+    final name = m.membershipName.trim();
+    if (name.isEmpty) return '브론즈';
+    final short = name.replaceAll('멤버십', '').trim();
+    return short.isEmpty ? name : short;
+  }
+}
+
 /// 멤버십 상세(GET /memberships/{membershipId}). 결제 완료·관리 화면에서 사용.
 class MembershipDetail {
   const MembershipDetail({

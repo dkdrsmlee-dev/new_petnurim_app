@@ -16,7 +16,9 @@ import '../../../core/utils/toast_util.dart';
 import '../data/member_repository.dart';
 import '../data/payment_method_repository.dart';
 import '../data/pet_repository.dart';
+import '../data/membership_repository.dart';
 import '../domain/member_my_page.dart';
+import '../domain/membership_models.dart';
 import '../domain/pet_codes.dart';
 import '../domain/pet_models.dart';
 import 'my_pet_list_screen.dart';
@@ -63,6 +65,7 @@ class MyPageView extends ConsumerWidget {
       ref.invalidate(memberMyPageProvider);
       ref.invalidate(myPetsListProvider);
       ref.invalidate(memberInfoProvider);
+      ref.invalidate(petMembershipProvider); // 펫별 멤버십 칩 갱신
       await Future.wait([
         ref.read(memberMyPageProvider.future),
         ref.read(myPetsListProvider.future),
@@ -94,7 +97,10 @@ class MyPageView extends ConsumerWidget {
               breed: item.breedNameKor ?? '믹스',
               ageText: '${item.petAge}살',
               genderText: PetGender.label(item.genderCode, serverName: item.genderCodeNm),
-              membershipTier: YesNo.isYes(item.representYn) ? '브론즈' : '멤버십 가입하기',
+              membershipTier: ref.watch(petMembershipProvider(item.myPetId)).maybeWhen(
+                data: (status) => status.petCardChipLabel,
+                orElse: () => '-',
+              ),
               rewardText: rewardSummary != null
                   ? '${formatThousands(rewardSummary.currentReward)}P'
                   : '-',
