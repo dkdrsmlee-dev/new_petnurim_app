@@ -270,6 +270,9 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
       ref.invalidate(myPetsListProvider); // invalidate lists as well
 
       if (mounted) {
+        // 저장 성공 토스트. ToastUtil은 루트 Overlay에 삽입되므로
+        // pop 직전에 호출해도 상세 화면 복귀 후까지 유지된다.
+        ToastUtil.show(context, '펫 정보가 수정되었어요.');
         context.pop();
       }
     } catch (e) {
