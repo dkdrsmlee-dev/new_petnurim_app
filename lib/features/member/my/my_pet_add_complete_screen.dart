@@ -201,25 +201,42 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 32),
                         // 3. 마이펫 등록 정보 요약 카드 (Round 16px)
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: AppColors.border),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: Column(
-                            children: [
-                              _buildInfoRow('이름', detail.petName),
-                              _buildInfoRow('품종', detail.breedNameKor ?? '믹스'),
-                              _buildInfoRow('나이', '${detail.petAge}살'),
-                              _buildInfoRow('가족이 된 날', _formatDate(detail.familyDt)),
-                              _buildInfoRow('성별', PetGender.label(detail.genderCode, serverName: detail.genderCodeNm)),
-                              _buildInfoRow('중성화', YesNo.isYes(detail.neuteredYn) ? '했어요' : '안했어요'),
-                              _buildInfoRow('체중', '${detail.weightKg}Kg'),
-                              _buildInfoRow('체중 측정일', _formatDate(detail.weightMeasureDt), isLast: true),
-                            ],
-                          ),
+                        Builder(
+                          builder: (context) {
+                            // 선택 입력항목(품종·가족이 된 날·체중 측정일)은 미입력 시
+                            // 항목명 포함 행 전체를 숨긴다(기획서 USR_MYP_035).
+                            final breed = detail.breedNameKor;
+                            final rows = <MapEntry<String, String>>[
+                              MapEntry('이름', detail.petName),
+                              if (breed != null && breed.trim().isNotEmpty)
+                                MapEntry('품종', breed),
+                              MapEntry('나이', '${detail.petAge}살'),
+                              if (detail.familyDt.trim().isNotEmpty)
+                                MapEntry('가족이 된 날', _formatDate(detail.familyDt)),
+                              MapEntry('성별',
+                                  PetGender.label(detail.genderCode, serverName: detail.genderCodeNm)),
+                              MapEntry('중성화',
+                                  YesNo.isYes(detail.neuteredYn) ? '했어요' : '안했어요'),
+                              MapEntry('체중', '${detail.weightKg}Kg'),
+                              if (detail.weightMeasureDt.trim().isNotEmpty)
+                                MapEntry('체중 측정일', _formatDate(detail.weightMeasureDt)),
+                            ];
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: AppColors.border),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Column(
+                                children: [
+                                  for (int i = 0; i < rows.length; i++)
+                                    _buildInfoRow(rows[i].key, rows[i].value,
+                                        isLast: i == rows.length - 1),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 24),
                       ],
