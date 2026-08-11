@@ -240,7 +240,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
       }
 
       if (mounted) {
-        context.go(AppRoutes.signupVerify);
+        context.go(AppRoutes.signupProfile);
       }
     } catch (error) {
       if (mounted) {

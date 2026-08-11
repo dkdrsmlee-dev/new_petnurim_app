@@ -79,7 +79,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
-          onPressed: _submitting ? null : () => context.go(AppRoutes.signupTerms),
+          onPressed: _submitting ? null : _confirmCancelSignup,
         ),
         title: const Text(
           '본인인증',
@@ -308,7 +308,7 @@ class _VerifyScreenState extends ConsumerState<VerifyScreen> {
                 width: double.infinity,
                 height: 54,
                 child: ElevatedButton(
-                  onPressed: () => context.go(AppRoutes.signupProfile),
+                  onPressed: () => context.go(AppRoutes.signupTerms),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,

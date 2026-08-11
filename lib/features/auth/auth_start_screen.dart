@@ -158,7 +158,7 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
           break;
         case SocialLoginNextStep.signup:
           ref.read(signupFlowProvider.notifier).startFromSocialLogin(result);
-          context.go(AppRoutes.signupTerms);
+          context.go(AppRoutes.signupVerify);
           break;
       }
     } catch (error) {
@@ -201,7 +201,7 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
     );
     ref.read(pendingSocialLoginResultProvider.notifier).setResult(mockResult);
     ref.read(signupFlowProvider.notifier).startFromSocialLogin(mockResult);
-    context.go(AppRoutes.signupTerms);
+    context.go(AppRoutes.signupVerify);
   }
 
   // [디버그 전용] 클립보드의 토큰을 읽어 로그인 상태로 진입한다.

@@ -180,7 +180,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           scrolledUnderElevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
-            onPressed: _saving ? null : () => context.go(AppRoutes.signupVerify),
+            onPressed: _saving ? null : () => context.go(AppRoutes.signupTerms),
           ),
           title: const Text(
             '회원 정보 입력',
