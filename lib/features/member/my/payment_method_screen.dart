@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
+import '../data/membership_repository.dart';
 import '../data/payment_method_repository.dart';
 import '../domain/payment_method_models.dart';
 import '../widgets/card_issuer_icon.dart';
+import 'toss_billing_test_webview_screen.dart';
 
 /// 결제수단 관리 화면(USR-PAY-011, Figma 281:16702).
 /// `GET /payment-methods` 목록 + 기본 결제수단 변경(탭) + 카드 삭제(⋮ → 확인 → DELETE).
@@ -46,8 +49,7 @@ class PaymentMethodScreen extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(16),
               child: OutlinedButton(
-                onPressed: () =>
-                    ToastUtil.show(context, '준비 중인 기능입니다.'),
+                onPressed: () => _addCard(context, ref),
                 style: OutlinedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: AppColors.primary,
@@ -145,22 +147,26 @@ class PaymentMethodScreen extends ConsumerWidget {
         if (value == 'delete') _confirmDelete(context, ref, pm);
       },
       itemBuilder: (_) => [
-        const PopupMenuItem<String>(
+        PopupMenuItem<String>(
           value: 'delete',
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 '카드 삭제하기',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.textStrong,
+                  color: Color(0xFF51565F), // Figma text-color/primary
                   letterSpacing: -0.66,
                 ),
               ),
-              SizedBox(width: 10),
-              Icon(Icons.delete_outline, size: 20, color: AppColors.textMuted),
+              const SizedBox(width: 6),
+              SvgPicture.asset(
+                'assets/images/ic_trash_20.svg',
+                width: 20,
+                height: 20,
+              ),
             ],
           ),
         ),
@@ -211,6 +217,50 @@ class PaymentMethodScreen extends ConsumerWidget {
           .read(paymentMethodRepositoryProvider)
           .setDefaultPaymentMethod(pm.userPaymentMethodId);
       ref.invalidate(paymentMethodsProvider);
+    } catch (e) {
+      if (context.mounted) {
+        ToastUtil.show(context, e.toString().replaceAll('Exception: ', ''));
+      }
+    }
+  }
+
+  /// 결제카드 추가: 토스 Billing Auth(카드 등록창) → authKey →
+  /// `POST /payment-methods`. 등록 폼은 토스 PG(보안·PCI)가 담당한다.
+  Future<void> _addCard(BuildContext context, WidgetRef ref) async {
+    // 백엔드 secretKey 와 짝인 상점 clientKey(Billing Auth 필수).
+    final String clientKey;
+    try {
+      clientKey =
+          await ref.read(membershipRepositoryProvider).getTossClientKey();
+    } catch (_) {
+      if (context.mounted) {
+        ToastUtil.show(context, '결제 설정을 불러오지 못했습니다.');
+      }
+      return;
+    }
+    if (!context.mounted) return;
+
+    // 회원 지갑용 customerKey. Billing Auth 와 등록 API 에 동일하게 전달해야 한다.
+    final customerKey = 'pn_user_${DateTime.now().millisecondsSinceEpoch}';
+    final authKey = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (_) => TossBillingTestWebViewScreen(
+          customerKey: customerKey,
+          clientKey: clientKey,
+        ),
+      ),
+    );
+    if (!context.mounted || authKey == null || authKey.isEmpty) return;
+
+    try {
+      await ref.read(paymentMethodRepositoryProvider).registerPaymentMethod(
+            authKey: authKey,
+            customerKey: customerKey,
+          );
+      ref.invalidate(paymentMethodsProvider);
+      if (context.mounted) {
+        ToastUtil.show(context, '결제 카드 등록이 완료되었습니다.');
+      }
     } catch (e) {
       if (context.mounted) {
         ToastUtil.show(context, e.toString().replaceAll('Exception: ', ''));

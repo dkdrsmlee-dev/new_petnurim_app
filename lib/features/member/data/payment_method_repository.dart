@@ -30,6 +30,20 @@ class PaymentMethodRepository {
     return const [];
   }
 
+  /// 결제수단 등록. 토스 Billing Auth 결과(authKey)와 동일 customerKey 를 전송하면
+  /// 백엔드가 billingKey 를 발급해 카드를 저장한다.
+  Future<void> registerPaymentMethod({
+    required String authKey,
+    required String customerKey,
+  }) async {
+    await _apiClient.postJson(
+      '/api/v1/payment-methods',
+      bearerToken: await _token('로그인 정보가 없어 카드를 등록할 수 없습니다.'),
+      body: {'authKey': authKey, 'customerKey': customerKey},
+      fallbackMessage: '카드 등록에 실패했습니다.',
+    );
+  }
+
   /// 결제수단 삭제(비활성화). 기본카드 삭제 시 백엔드가 다음 카드를 기본으로 재지정.
   Future<PaymentMethodDeleteResult> deletePaymentMethod(
     int userPaymentMethodId,
