@@ -76,6 +76,30 @@ class MembershipRepository {
     return CreateMembershipResult.fromJson(payload);
   }
 
+  /// 멤버십 가입(이미 등록된 결제수단 사용). userPaymentMethodId 를 전송하면
+  /// Billing Auth(authKey/customerKey) 없이 해당 카드로 가입한다.
+  Future<CreateMembershipResult> subscribeWithPaymentMethod({
+    required int myPetId,
+    required int membershipMasterId,
+    required int userPaymentMethodId,
+    required List<int> termsHistoryIds,
+  }) async {
+    final payload = await _apiClient.postJson(
+      '/api/v1/memberships',
+      bearerToken: await _token('로그인 정보가 없어 가입을 진행할 수 없습니다.'),
+      body: {
+        'myPetId': myPetId,
+        'membershipMasterId': membershipMasterId,
+        'userPaymentMethodId': userPaymentMethodId,
+        'terms': termsHistoryIds
+            .map((id) => {'termsHistoryId': id})
+            .toList(),
+      },
+      fallbackMessage: '멤버십 가입에 실패했습니다.',
+    );
+    return CreateMembershipResult.fromJson(payload);
+  }
+
   /// 토스 결제 clientKey 조회(GET /api/v1/payments/config, public).
   ///
   /// 백엔드 secretKey 와 **짝이 되는 상점 clientKey**를 내려준다. Billing Auth 는

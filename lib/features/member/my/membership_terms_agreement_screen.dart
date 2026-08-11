@@ -4,13 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/bottom_action_bar.dart';
+import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../auth/domain/readable_auth_error.dart';
 import '../../signup/application/signup_providers.dart';
 import '../../signup/domain/signup_terms.dart';
 import '../../signup/terms_detail_screen.dart';
 import '../data/membership_repository.dart';
-import 'membership_card_register_screen.dart';
+import '../data/payment_method_repository.dart';
+import '../domain/payment_method_models.dart';
+import 'membership_benefits_screen.dart';
+import 'membership_complete_screen.dart';
+import 'toss_billing_test_webview_screen.dart';
 
 /// 멤버십 구독 약관 동의 화면 (USR-PAY-012).
 ///
@@ -19,10 +24,11 @@ import 'membership_card_register_screen.dart';
 /// 약관은 `GET /api/v1/terms?target=SUBSCRIPTION`(인증 불필요)에서 동적으로 받아
 /// 렌더한다. 상세는 회원가입과 동일한 `TermsDetailScreen`(HTML)을 재사용.
 ///
-/// "다음" → `POST /memberships/validate`(가입 사전 검증) 통과 시 결제카드 등록
-/// 화면(`MembershipCardRegisterScreen`)으로 이동한다. 동의한 약관의 termsHistoryId
-/// 를 수집해 검증·가입에 사용한다. 멤버십은 펫별이라 [myPetId]·[membershipMasterId]
-/// 를 관통시킨다.
+/// "다음" → `POST /memberships/validate`(가입 사전 검증) 통과 후 결제수단 유무로
+/// 분기한다: 등록된 카드가 있으면 그 카드(userPaymentMethodId)로 바로 구독,
+/// 없으면 (디자인에 없는 중간 화면 없이) 토스 카드 등록창을 띄워 지갑에 등록한 뒤
+/// 그 카드로 구독한다. 동의한 약관의 termsHistoryId 를 수집해 검증·가입에 사용하며,
+/// 멤버십은 펫별이라 [myPetId]·[membershipMasterId]를 관통시킨다.
 class MembershipTermsAgreementScreen extends ConsumerStatefulWidget {
   const MembershipTermsAgreementScreen({
     super.key,
@@ -194,21 +200,133 @@ class _MembershipTermsAgreementScreenState
         ToastUtil.show(context, '지금은 가입할 수 없는 상태입니다. 다시 확인해 주세요.');
         return;
       }
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => MembershipCardRegisterScreen(
-            myPetId: widget.myPetId,
-            membershipMasterId: widget.membershipMasterId,
-            termsHistoryIds: termsHistoryIds,
-          ),
-        ),
-      );
+      // 결제수단 분기: 등록된 활성 카드가 있으면 그 카드로 바로 구독(카드 등록 생략),
+      // 없으면 토스 카드 등록 화면으로 이동.
+      List<PaymentMethod> cards;
+      try {
+        cards = await ref.read(paymentMethodsProvider.future);
+      } catch (_) {
+        cards = const [];
+      }
+      if (!mounted) return;
+      final active = cards.where((c) => c.isActive).toList();
+      if (active.isNotEmpty) {
+        final card =
+            active.firstWhere((c) => c.isDefault, orElse: () => active.first);
+        await _subscribeWithExistingCard(
+            card.userPaymentMethodId, termsHistoryIds);
+      } else {
+        await _registerCardThenSubscribe(termsHistoryIds);
+      }
     } catch (error) {
       if (!mounted) return;
       ToastUtil.show(context, readAuthErrorMessage(error, '가입 검증에 실패했습니다.'));
     } finally {
       if (mounted) setState(() => _validating = false);
     }
+  }
+
+  /// 등록된 결제수단으로 바로 구독(카드 등록 단계 생략) → 결제 완료 화면.
+  Future<void> _subscribeWithExistingCard(
+    int userPaymentMethodId,
+    List<int> termsHistoryIds,
+  ) async {
+    try {
+      final result = await ref
+          .read(membershipRepositoryProvider)
+          .subscribeWithPaymentMethod(
+            myPetId: widget.myPetId,
+            membershipMasterId: widget.membershipMasterId,
+            userPaymentMethodId: userPaymentMethodId,
+            termsHistoryIds: termsHistoryIds,
+          );
+      await _goComplete(result.membershipId);
+    } catch (error) {
+      if (!mounted) return;
+      ToastUtil.show(
+          context, readAuthErrorMessage(error, '멤버십 가입에 실패했습니다.'));
+    }
+  }
+
+  /// 결제수단 미등록: (디자인에 없는 중간 화면 없이) 약관 "다음"에서 바로 토스
+  /// 카드 등록창을 띄운 뒤, 등록한 카드를 지갑에 남기고 그 카드로 구독한다.
+  Future<void> _registerCardThenSubscribe(List<int> termsHistoryIds) async {
+    final String clientKey;
+    try {
+      clientKey =
+          await ref.read(membershipRepositoryProvider).getTossClientKey();
+    } catch (_) {
+      if (mounted) ToastUtil.show(context, '결제 설정을 불러오지 못했습니다.');
+      return;
+    }
+    if (!mounted) return;
+
+    final customerKey = 'pn_user_${DateTime.now().millisecondsSinceEpoch}';
+    final authKey = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (_) => TossBillingTestWebViewScreen(
+          customerKey: customerKey,
+          clientKey: clientKey,
+        ),
+      ),
+    );
+    if (!mounted || authKey == null || authKey.isEmpty) return; // 취소/실패
+
+    try {
+      // 토스 카드를 결제수단 지갑에 먼저 등록해 목록에도 남긴 뒤, 그 카드로 구독.
+      await ref
+          .read(paymentMethodRepositoryProvider)
+          .registerPaymentMethod(authKey: authKey, customerKey: customerKey);
+      ref.invalidate(paymentMethodsProvider);
+      final cards = await ref.read(paymentMethodsProvider.future);
+      if (!mounted) return;
+      final active = cards.where((c) => c.isActive).toList();
+      if (active.isEmpty) {
+        throw const FormatException('등록된 결제수단을 확인할 수 없습니다.');
+      }
+      final card =
+          active.firstWhere((c) => c.isDefault, orElse: () => active.first);
+      final result = await ref
+          .read(membershipRepositoryProvider)
+          .subscribeWithPaymentMethod(
+            myPetId: widget.myPetId,
+            membershipMasterId: widget.membershipMasterId,
+            userPaymentMethodId: card.userPaymentMethodId,
+            termsHistoryIds: termsHistoryIds,
+          );
+      if (!mounted) return;
+      // 카드 등록 완료 다이얼로그(748:50978) → 결제 완료 화면.
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => EdgeButtonDialog(
+          title: '결제 카드가 정상적으로\n등록되었습니다.',
+          confirmText: '확인',
+          onConfirm: () {},
+        ),
+      );
+      await _goComplete(result.membershipId);
+    } catch (error) {
+      if (!mounted) return;
+      ToastUtil.show(
+          context, readAuthErrorMessage(error, '카드 등록/구독에 실패했습니다.'));
+    }
+  }
+
+  /// 결제 완료 화면 → 혜택 화면까지 popUntil 후 pop → 마이펫 상세 복귀.
+  Future<void> _goComplete(int membershipId) async {
+    ref.invalidate(petMembershipProvider(widget.myPetId.toString()));
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MembershipCompleteScreen(membershipId: membershipId),
+      ),
+    );
+    if (!mounted) return;
+    Navigator.of(context).popUntil(
+      (route) => route.settings.name == MembershipBenefitsScreen.routeName,
+    );
+    Navigator.of(context).pop();
   }
 
   void _openTerm(ActiveTerm term) {
