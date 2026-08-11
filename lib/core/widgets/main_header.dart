@@ -2,8 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
-import '../../app/app_routes.dart';
 import '../theme/app_colors.dart';
 import '../utils/toast_util.dart';
 
@@ -46,8 +44,9 @@ class MainHeader extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 16), // Gap between icons
                 // Bell Icon with notification dot (Figma Node: Icon/Bell/24)
+                // 알림 화면은 백엔드 API 미제공(Mock)이라 진입 대신 준비 중 토스트만 노출.
                 GestureDetector(
-                  onTap: () => context.push(AppRoutes.notificationCenter),
+                  onTap: () => ToastUtil.show(context, '준비 중인 기능입니다.'),
                   child: SizedBox(
                     width: 24,
                     height: 24,
