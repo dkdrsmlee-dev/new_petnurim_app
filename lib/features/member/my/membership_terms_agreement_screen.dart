@@ -221,16 +221,23 @@ class _MembershipTermsAgreementScreenState
       if (active.isNotEmpty) {
         final defaultCard =
             active.firstWhere((c) => c.isDefault, orElse: () => active.first);
-        final selectedId = await showPaymentCardSelectSheet(
-          context,
-          cards: active,
-          selectedId: defaultCard.userPaymentMethodId,
-        );
-        if (!mounted || selectedId == null) return; // X·바깥 탭 = 취소
-        final selectedCard = active.firstWhere(
-          (c) => c.userPaymentMethodId == selectedId,
-          orElse: () => defaultCard,
-        );
+        // 카드가 2개 이상일 때만 "본인 명의 카드 선택" 시트로 고른다.
+        // 1개뿐이면 선택지가 없으므로 시트를 생략하고 그 카드로 바로 진행.
+        final PaymentMethod selectedCard;
+        if (active.length == 1) {
+          selectedCard = active.first;
+        } else {
+          final selectedId = await showPaymentCardSelectSheet(
+            context,
+            cards: active,
+            selectedId: defaultCard.userPaymentMethodId,
+          );
+          if (!mounted || selectedId == null) return; // X·바깥 탭 = 취소
+          selectedCard = active.firstWhere(
+            (c) => c.userPaymentMethodId == selectedId,
+            orElse: () => defaultCard,
+          );
+        }
         // 결제 직전 구독 확인 화면 → "N원 결제하기"에서 실제 구독.
         await Navigator.of(context).push(
           MaterialPageRoute(

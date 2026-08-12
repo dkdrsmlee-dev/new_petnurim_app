@@ -359,13 +359,15 @@ class _SubscribeConfirmScreenState
 
   // ── 결제 수단 ──────────────────────────────────────────────
   Widget _paymentMethod() {
+    // 카드가 2개 이상일 때만 변경 가능(> 화살표·탭). 1개면 변경 대상이 없음.
+    final canChange = widget.activeCards.length > 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const _SectionTitle('결제 수단'),
         const SizedBox(height: 12),
         InkWell(
-          onTap: _changeCard,
+          onTap: canChange ? _changeCard : null,
           borderRadius: BorderRadius.circular(10),
           child: Container(
             height: 52,
@@ -391,8 +393,9 @@ class _SubscribeConfirmScreenState
                     ),
                   ),
                 ),
-                const Icon(Icons.chevron_right,
-                    size: 20, color: AppColors.textDisabled),
+                if (canChange)
+                  const Icon(Icons.chevron_right,
+                      size: 20, color: AppColors.textDisabled),
               ],
             ),
           ),
