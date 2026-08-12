@@ -15,6 +15,7 @@ import '../data/payment_method_repository.dart';
 import '../domain/payment_method_models.dart';
 import 'membership_benefits_screen.dart';
 import 'membership_complete_screen.dart';
+import 'payment_method_select_sheet.dart';
 import 'toss_billing_test_webview_screen.dart';
 
 /// 멤버십 구독 약관 동의 화면 (USR-PAY-012).
@@ -200,8 +201,8 @@ class _MembershipTermsAgreementScreenState
         ToastUtil.show(context, '지금은 가입할 수 없는 상태입니다. 다시 확인해 주세요.');
         return;
       }
-      // 결제수단 분기: 등록된 활성 카드가 있으면 그 카드로 바로 구독(카드 등록 생략),
-      // 없으면 토스 카드 등록 화면으로 이동.
+      // 결제수단 분기: 등록된 활성 카드가 있으면 "본인 명의 카드 선택" 시트로
+      // 결제할 카드를 고른 뒤 구독, 없으면 토스 카드 등록 화면으로 이동.
       List<PaymentMethod> cards;
       try {
         cards = await ref.read(paymentMethodsProvider.future);
@@ -211,10 +212,15 @@ class _MembershipTermsAgreementScreenState
       if (!mounted) return;
       final active = cards.where((c) => c.isActive).toList();
       if (active.isNotEmpty) {
-        final card =
+        final defaultCard =
             active.firstWhere((c) => c.isDefault, orElse: () => active.first);
-        await _subscribeWithExistingCard(
-            card.userPaymentMethodId, termsHistoryIds);
+        final selectedId = await showPaymentCardSelectSheet(
+          context,
+          cards: active,
+          selectedId: defaultCard.userPaymentMethodId,
+        );
+        if (!mounted || selectedId == null) return; // X·바깥 탭 = 취소
+        await _subscribeWithExistingCard(selectedId, termsHistoryIds);
       } else {
         await _registerCardThenSubscribe(termsHistoryIds);
       }
