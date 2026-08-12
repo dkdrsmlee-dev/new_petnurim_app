@@ -376,6 +376,8 @@ class MembershipBenefitsScreen extends ConsumerWidget {
                     builder: (_) => MembershipTermsAgreementScreen(
                       myPetId: myPetId,
                       membershipMasterId: item.membershipMasterId,
+                      membershipName: item.membershipName,
+                      monthlyFee: item.monthlyFee,
                     ),
                   ),
                 );

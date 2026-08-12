@@ -52,6 +52,10 @@ abstract final class AppColors {
   /// 회색 배경(섹션 구분 바/아이콘 배경).
   static const Color bgGray = Color(0xFFF4F6F8);
 
+  /// 섹션 구분 갭 배경(흰 섹션 사이). 디자인 토큰 #F4F6F8은 기기에서 흰색과
+  /// 구분이 거의 안 되어, 디자인 렌더의 "보이는 밝은 회색"에 맞춘 값.
+  static const Color sectionGap = Color(0xFFEDF0F4);
+
   /// 은은한 배경.
   static const Color bgSoft = Color(0xFFF8F9FB);
 

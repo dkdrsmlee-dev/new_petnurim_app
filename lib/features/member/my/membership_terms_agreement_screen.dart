@@ -16,6 +16,7 @@ import '../domain/payment_method_models.dart';
 import 'membership_benefits_screen.dart';
 import 'membership_complete_screen.dart';
 import 'payment_method_select_sheet.dart';
+import 'subscribe_confirm_screen.dart';
 import 'toss_billing_test_webview_screen.dart';
 
 /// 멤버십 구독 약관 동의 화면 (USR-PAY-012).
@@ -35,6 +36,8 @@ class MembershipTermsAgreementScreen extends ConsumerStatefulWidget {
     super.key,
     required this.myPetId,
     required this.membershipMasterId,
+    this.membershipName = '',
+    this.monthlyFee = 0,
   });
 
   /// 가입 대상 마이펫 ID.
@@ -42,6 +45,10 @@ class MembershipTermsAgreementScreen extends ConsumerStatefulWidget {
 
   /// 가입할 멤버십 종류 ID(guide 의 membershipId).
   final int membershipMasterId;
+
+  /// 구독 확인 화면 표기용 멤버십명/월 구독료(guide 에서 전달).
+  final String membershipName;
+  final int monthlyFee;
 
   @override
   ConsumerState<MembershipTermsAgreementScreen> createState() =>
@@ -220,7 +227,25 @@ class _MembershipTermsAgreementScreenState
           selectedId: defaultCard.userPaymentMethodId,
         );
         if (!mounted || selectedId == null) return; // X·바깥 탭 = 취소
-        await _subscribeWithExistingCard(selectedId, termsHistoryIds);
+        final selectedCard = active.firstWhere(
+          (c) => c.userPaymentMethodId == selectedId,
+          orElse: () => defaultCard,
+        );
+        // 결제 직전 구독 확인 화면 → "N원 결제하기"에서 실제 구독.
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => SubscribeConfirmScreen(
+              myPetId: widget.myPetId,
+              membershipMasterId: widget.membershipMasterId,
+              membershipName: widget.membershipName,
+              monthlyFee: widget.monthlyFee,
+              initialCard: selectedCard,
+              activeCards: active,
+              termsHistoryIds: termsHistoryIds,
+              terms: terms,
+            ),
+          ),
+        );
       } else {
         await _registerCardThenSubscribe(termsHistoryIds);
       }
@@ -229,28 +254,6 @@ class _MembershipTermsAgreementScreenState
       ToastUtil.show(context, readAuthErrorMessage(error, '가입 검증에 실패했습니다.'));
     } finally {
       if (mounted) setState(() => _validating = false);
-    }
-  }
-
-  /// 등록된 결제수단으로 바로 구독(카드 등록 단계 생략) → 결제 완료 화면.
-  Future<void> _subscribeWithExistingCard(
-    int userPaymentMethodId,
-    List<int> termsHistoryIds,
-  ) async {
-    try {
-      final result = await ref
-          .read(membershipRepositoryProvider)
-          .subscribeWithPaymentMethod(
-            myPetId: widget.myPetId,
-            membershipMasterId: widget.membershipMasterId,
-            userPaymentMethodId: userPaymentMethodId,
-            termsHistoryIds: termsHistoryIds,
-          );
-      await _goComplete(result.membershipId);
-    } catch (error) {
-      if (!mounted) return;
-      ToastUtil.show(
-          context, readAuthErrorMessage(error, '멤버십 가입에 실패했습니다.'));
     }
   }
 
