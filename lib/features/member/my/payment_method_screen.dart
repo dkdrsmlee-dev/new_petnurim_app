@@ -35,14 +35,20 @@ class PaymentMethodScreen extends ConsumerWidget {
                   child: CircularProgressIndicator(color: AppColors.primary),
                 ),
                 error: (err, _) => _buildError(context, ref, err),
-                data: (cards) => cards.isEmpty
-                    ? _buildEmpty()
-                    : ListView(
-                        padding: EdgeInsets.zero,
-                        children: [
-                          for (final pm in cards) _buildRow(context, ref, pm),
-                        ],
-                      ),
+                data: (cards) {
+                  if (cards.isEmpty) return _buildEmpty();
+                  // 최신 등록순(id 내림차순) 안정 정렬 — 기본 결제수단을 바꿔도
+                  // 행 위치는 고정되고 ✓ 체크만 이동한다(기획서 USR_MYP_022).
+                  final sorted = [...cards]
+                    ..sort((a, b) => b.userPaymentMethodId
+                        .compareTo(a.userPaymentMethodId));
+                  return ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      for (final pm in sorted) _buildRow(context, ref, pm),
+                    ],
+                  );
+                },
               ),
             ),
             // 결제카드 추가 — 별도 등록 플로우(준비 중)
