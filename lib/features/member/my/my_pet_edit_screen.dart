@@ -651,6 +651,13 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                     // 대표 펫 설정 Checkbox
                     GestureDetector(
                       onTap: () {
+                        // 현재 대표펫은 해제 불가 — 대표는 반드시 한 마리 지정되어야
+                        // 하므로 다른 펫을 대표로 설정하면 그때 자동으로 변경된다.
+                        if (_initialIsPrimary) {
+                          ToastUtil.show(context,
+                              '대표 펫은 최소 한 마리 지정되어야 해요.\n다른 펫을 대표로 설정하면 자동으로 변경됩니다.');
+                          return;
+                        }
                         setState(() {
                           _isPrimary = !_isPrimary;
                         });
