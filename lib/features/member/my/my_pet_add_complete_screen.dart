@@ -250,7 +250,8 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                     onPressed: () {
                       ref.invalidate(myPetsListProvider);
                       ref.invalidate(memberMyPageProvider);
-                      context.go('${AppRoutes.home}?tab=5');
+                      // 펫 등록 후 마이페이지로(별도 라우트). 뒤로가기는 홈으로.
+                      context.go(AppRoutes.myPage);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,

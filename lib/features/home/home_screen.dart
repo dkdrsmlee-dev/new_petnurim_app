@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../app/app_bootstrap.dart';
 import '../../app/app_routes.dart';
-import '../../core/storage/token_storage.dart';
 import '../../core/widgets/card_banner.dart';
 import '../../core/widgets/custom_gnb.dart';
 import '../../core/widgets/main_header.dart';
@@ -16,14 +14,12 @@ import '../../core/widgets/edge_button_dialog.dart';
 import '../../core/widgets/pet_select_card.dart';
 import '../attendance/attendance_screen.dart';
 import '../attendance/attendance_pet_select_screen.dart';
-import '../auth/application/auth_providers.dart';
 import '../member/data/pet_repository.dart';
 import '../member/domain/pet_codes.dart';
 import '../member/domain/pet_models.dart';
 import '../event/data/event_repository.dart';
 import '../../core/widgets/authed_file_image.dart';
 import '../camera/camera_mission_guide_screen.dart';
-import '../member/my/my_page_view.dart';
 import 'home_image_preloader.dart';
 import 'widgets/home_event_carousel.dart';
 import '../../core/theme/app_colors.dart';
@@ -42,13 +38,16 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late int _selectedIndex;
-  bool _isLoggingOut = false;
   DateTime? _lastBackPressedAt; // 홈에서 '뒤로 두 번 종료' 판정용
+
+  // 홈 탭은 0~4(홈/기프트/문진/경품메타/이벤트)만 존재한다. 마이페이지는 별도
+  // 라우트라 tab 인덱스로 오지 않지만, 방어적으로 범위를 벗어난 값은 홈(0)으로.
+  int _clampTab(int? tab) => (tab != null && tab >= 0 && tab <= 4) ? tab : 0;
 
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.initialTab ?? 0;
+    _selectedIndex = _clampTab(widget.initialTab);
   }
 
   @override
@@ -56,7 +55,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.didUpdateWidget(oldWidget);
     if (widget.initialTab != null && widget.initialTab != oldWidget.initialTab) {
       setState(() {
-        _selectedIndex = widget.initialTab!;
+        _selectedIndex = _clampTab(widget.initialTab);
       });
     }
   }
@@ -84,15 +83,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ToastUtil.show(context, '한 번 더 누르면 종료됩니다.');
       },
       child: Scaffold(
-        appBar: _selectedIndex == 5
-            ? null
-            : MainHeader(
-                onTapProfile: () {
-                  setState(() {
-                    _selectedIndex = 5;
-                  });
-                },
-              ),
+        appBar: MainHeader(
+          // 마이페이지는 홈 탭이 아니라 별도 라우트로 push한다(GNB 미표시).
+          onTapProfile: () => context.push(AppRoutes.myPage),
+        ),
         body: SafeArea(
           child: IndexedStack(
             index: _selectedIndex,
@@ -102,16 +96,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const _CareTabView(),
               const _PetTabView(),
               const _EventTabView(),
-              MyPageView(
-                isLoggingOut: _isLoggingOut,
-                onLogout: _logout,
-                onBackToHome: () => setState(() => _selectedIndex = 0),
-              ),
             ],
           ),
         ),
         bottomNavigationBar: CustomGnb(
-          currentIndex: _selectedIndex >= 5 ? -1 : _selectedIndex,
+          currentIndex: _selectedIndex,
           onTap: (index) {
             // 홈 외 탭(기프트/문진/경품메타/이벤트)은 준비 중 — 토스트만, 화면 이동 없음.
             if (index != 0) {
@@ -127,32 +116,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Future<void> _logout() async {
-    if (_isLoggingOut) {
-      return;
-    }
-
-    setState(() {
-      _isLoggingOut = true;
-    });
-
-    try {
-      await ref
-          .read(authRepositoryProvider)
-          .logout()
-          .timeout(const Duration(seconds: 3));
-    } catch (_) {
-      // 서버 로그아웃 실패/지연 시에도 로컬 로그아웃은 계속 진행 (best-effort)
-    }
-    await ref.read(tokenStorageProvider).clearTokens();
-    ref.invalidate(appBootstrapStateProvider);
-
-    if (!mounted) {
-      return;
-    }
-
-    context.go(AppRoutes.authStart);
-  }
 }
 
 class _HomeOverview extends ConsumerWidget {

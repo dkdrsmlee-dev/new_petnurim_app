@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../features/auth/auth_start_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/member/my/my_info_screen.dart';
+import '../features/member/my/my_page_screen.dart';
 import '../features/member/my/withdraw_screen.dart';
 import '../features/signup/complete_screen.dart';
 import '../features/signup/profile_screen.dart';
@@ -68,6 +69,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final initialTab = tabStr != null ? int.tryParse(tabStr) : null;
           return HomeScreen(initialTab: initialTab);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.myPage,
+        name: AppRouteNames.myPage,
+        builder: (context, state) => const MyPageScreen(),
       ),
       GoRoute(
         path: AppRoutes.myInfo,

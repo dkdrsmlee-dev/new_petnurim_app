@@ -6,6 +6,7 @@ abstract final class AppRoutes {
   static const signupProfile = '/signup/profile';
   static const signupComplete = '/signup/complete';
   static const home = '/home';
+  static const myPage = '/my/page';
   static const myInfo = '/my/info';
   static const myWithdraw = '/my/withdraw';
   static const myPetList = '/my/pets';
@@ -32,6 +33,7 @@ abstract final class AppRouteNames {
   static const signupProfile = 'signupProfile';
   static const signupComplete = 'signupComplete';
   static const home = 'home';
+  static const myPage = 'myPage';
   static const myInfo = 'myInfo';
   static const myWithdraw = 'myWithdraw';
   static const myPetList = 'myPetList';
