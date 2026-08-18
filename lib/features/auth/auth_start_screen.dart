@@ -19,6 +19,11 @@ import 'domain/social_provider.dart';
 import '../signup/application/signup_providers.dart';
 import '../../core/theme/app_colors.dart';
 
+/// 로그인 화면의 개발용 디버그 도구(신규 가입 강제진입·클립보드 토큰 주입) 노출 여부.
+/// 기본 false(숨김). 필요할 때 빌드 시 플래그로 켠다:
+///   flutter build apk --debug --dart-define=SHOW_LOGIN_DEBUG=true --dart-define-from-file=dart_defines.json
+const bool _kShowLoginDebug = bool.fromEnvironment('SHOW_LOGIN_DEBUG');
+
 class AuthStartScreen extends ConsumerStatefulWidget {
   const AuthStartScreen({super.key});
 
@@ -75,7 +80,7 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
                   onSelectProvider: _startSocialLogin,
                 ),
                 const Spacer(flex: 4),
-                if (kDebugMode) ...[
+                if (_kShowLoginDebug) ...[
                   OutlinedButton.icon(
                     onPressed:
                         _pendingProvider == null ? _startDebugSignup : null,
