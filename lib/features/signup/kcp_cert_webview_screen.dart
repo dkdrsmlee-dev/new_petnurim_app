@@ -29,6 +29,7 @@ class _KcpCertWebViewScreenState extends State<KcpCertWebViewScreen> {
   late final WebViewController _controller;
   bool _loading = true;
   bool _finished = false; // 중복 pop 방지
+  bool _callbackReached = false; // KCP 결과 콜백 진입 감지(종료는 로드 완료까지 대기)
   bool _installPromptShowing = false; // 설치 안내 다이얼로그 중복 방지
 
   @override
@@ -41,18 +42,24 @@ class _KcpCertWebViewScreenState extends State<KcpCertWebViewScreen> {
           onNavigationRequest: (request) {
             final url = request.url;
 
-            // 1) 백엔드 콜백 도달 → 인증 절차 종료(성공 처리)
-            if (url.contains(KcpCertWebViewScreen._callbackPath)) {
-              _finish(true);
-              return NavigationDecision.prevent;
-            }
-
-            // 2) http/https 는 WebView 내에서 로드
+            // 1) 백엔드 콜백(KCP 결과 전달) 및 일반 http/https 는 WebView 에서 그대로 로드한다.
+            //    콜백은 KCP 결과 페이지의 폼 POST 로 진입하는데, iOS(WKWebView)는 POST
+            //    네비게이션에서도 onNavigationRequest 가 호출된다. 여기서 prevent 하면 KCP
+            //    결과를 백엔드로 전달하는 그 POST 자체가 취소되어 인증이 서버에 기록되지
+            //    않는다(→ 이후 휴대폰변경 PATCH 404). 따라서 콜백으로의 이동도 막지 않고
+            //    진행시키며, 완료 감지는 onPageFinished 의 콜백 로드 완료로 처리한다.
+            //    (Android 는 POST 에서 onNavigationRequest 가 호출되지 않으므로 동작 변화 없음.)
             if (url.startsWith('http://') || url.startsWith('https://')) {
               return NavigationDecision.navigate;
             }
 
-            // 3) 그 외 스킴(intent://, 통신사 PASS 앱 등) → 외부 앱으로 실행.
+            // about:blank 은 KCP 서브프레임/중간 전환에서 발생하는 빈 페이지다. 외부 앱
+            //   실행 대상이 아니므로 외부실행 없이 막기만 한다(오해성 실행실패 스낵바 방지).
+            if (url.startsWith('about:')) {
+              return NavigationDecision.prevent;
+            }
+
+            // 2) 그 외 스킴(intent://, 통신사 PASS 앱 등) → 외부 앱으로 실행.
             //    WebView 는 http(s) 만 로드하므로, 통신사 PASS 앱 실행 스킴은
             //    외부 앱 실행으로 위임한다(미설치 시 마켓/웹 폴백).
             debugPrint('[KcpCert] 외부 스킴 감지 → 외부 실행 시도: $url');
@@ -60,16 +67,24 @@ class _KcpCertWebViewScreenState extends State<KcpCertWebViewScreen> {
             return NavigationDecision.prevent;
           },
           onPageStarted: (url) {
-            // 콜백 URL 은 KCP 결과 페이지의 폼 POST 로 진입하는데,
-            // Android 의 onNavigationRequest 는 POST 네비게이션에서 호출되지
-            // 않으므로 여기서도 콜백 도달을 감지해 화면을 종료한다.
+            // 콜백 URL(KCP 결과 전달) 진입을 감지하되, 여기서 바로 종료하지 않는다.
+            // onPageStarted 는 콜백 POST 가 '시작'된 시점(응답 수신 전)이라, 이때 화면을
+            // 닫고 changePhone 을 호출하면 백엔드가 KCP 결과를 기록하기 전에 변경 API 가
+            // 먼저 도착해 404(IDENTITY_VERIFICATION.NOT_FOUND) 가 난다(iOS 에서 재현되는
+            // 타이밍 레이스). 따라서 진입만 표시하고, 실제 종료는 로드 '완료'(onPageFinished)
+            // 시점으로 미뤄 백엔드 기록 완료를 보장한다.
             if (url.contains(KcpCertWebViewScreen._callbackPath)) {
-              _finish(true);
-              return;
+              _callbackReached = true;
             }
             if (mounted) setState(() => _loading = true);
           },
-          onPageFinished: (_) {
+          onPageFinished: (url) {
+            // 콜백 진입 이후 첫 로드 완료 = 백엔드가 KCP 결과를 기록 완료한 시점 → 이제 종료.
+            //   (콜백이 리다이렉트를 반환하더라도 최종 페이지 로드 완료까지 기다리므로 안전)
+            if (_callbackReached) {
+              _finish(true);
+              return;
+            }
             if (mounted) setState(() => _loading = false);
           },
           // KCP 의 통신사 PASS 앱 실행은 intent:// 스킴으로 시도되는데,
@@ -79,7 +94,8 @@ class _KcpCertWebViewScreenState extends State<KcpCertWebViewScreen> {
             final failingUrl = error.url ?? '';
             if (failingUrl.isNotEmpty &&
                 !failingUrl.startsWith('http://') &&
-                !failingUrl.startsWith('https://')) {
+                !failingUrl.startsWith('https://') &&
+                !failingUrl.startsWith('about:')) {
               debugPrint('[KcpCert] 알 수 없는 스킴(에러 경로) → 외부 실행: $failingUrl');
               _launchExternal(failingUrl);
             }
