@@ -245,7 +245,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       ),
       width: double.infinity,
       fit: BoxFit.fitWidth,
-      // 로딩 중엔 디자인 비율(375:558)로 공간 확보 + 셔머 → 로드 완료 시 교체.
+      // 로딩 중엔 실제 배너 비율(11:6)로 공간 확보 + 셔머 → 로드 완료 시 교체.
       // (캐시 히트 시엔 셔머 없이 즉시 표시)
       frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
         if (wasSynchronouslyLoaded) return child;
@@ -254,7 +254,9 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           child: frame == null
               ? AspectRatio(
                   key: const ValueKey('shimmer'),
-                  aspectRatio: 375 / 558,
+                  // 실제 배너 이미지 비율(1408x768 = 11:6). 375폭 기준 ~205px 로 잡아
+                  // 로드 완료 시 크기 점프 없이 교체된다(레거시 폴백 558 과 무관).
+                  aspectRatio: 1408 / 768,
                   child: const ShimmerBox(),
                 )
               : KeyedSubtree(key: const ValueKey('image'), child: child),
