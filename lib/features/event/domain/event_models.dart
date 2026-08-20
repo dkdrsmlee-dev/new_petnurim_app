@@ -102,7 +102,8 @@ class EventTemplate {
   final String? endDt;
   final String? noEndDateYn;
   final String progressStatus; // ONGOING / SCHEDULED / ENDED
-  final int continuousAttendanceDays;
+  final int continuousAttendanceDays; // 연속 출석일수(ATTENDANCE 항목만, 비로그인 0)
+  final int participationCount; // 사진 미션 참여 횟수(PHOTO 항목만, 비로그인 0)
   final DefaultReward? defaultReward;
 
   const EventTemplate({
@@ -116,6 +117,7 @@ class EventTemplate {
     this.noEndDateYn,
     required this.progressStatus,
     required this.continuousAttendanceDays,
+    this.participationCount = 0,
     this.defaultReward,
   });
 
@@ -141,6 +143,7 @@ class EventTemplate {
       noEndDateYn: json['noEndDateYn']?.toString(),
       progressStatus: json['progressStatus']?.toString() ?? '',
       continuousAttendanceDays: _parseInt(json['continuousAttendanceDays']),
+      participationCount: _parseInt(json['participationCount']),
       defaultReward: json['defaultReward'] is Map<String, dynamic>
           ? DefaultReward.fromJson(json['defaultReward'] as Map<String, dynamic>)
           : null,

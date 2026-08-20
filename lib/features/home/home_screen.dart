@@ -210,7 +210,8 @@ class _HomeOverview extends ConsumerWidget {
                       pointText:
                           '+${photo?.defaultReward?.rewardValue ?? 100}P',
                       statusText: '주간 참여',
-                      dayText: '3',
+                      // 사진 미션 주간 참여 횟수(백엔드 participationCount, 비로그인 0)
+                      dayText: photo != null ? '${photo.participationCount}' : '-',
                       daySuffix: ' / 7일',
                       bannerImg: _missionAvatar(
                         ref,
@@ -223,8 +224,8 @@ class _HomeOverview extends ConsumerWidget {
                       ),
                       onTap: photo == null
                           ? null
-                          : () {
-                              Navigator.push(
+                          : () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
@@ -233,6 +234,10 @@ class _HomeOverview extends ConsumerWidget {
                                   ),
                                 ),
                               );
+                              // 미션 완료 후 홈 복귀 시 주간참여 등 최신화
+                              if (context.mounted) {
+                                ref.invalidate(eventTemplatesProvider);
+                              }
                             },
                     ),
                   ),
@@ -304,7 +309,7 @@ class _HomeOverview extends ConsumerWidget {
       );
     } else if (cards.length == 1) {
       // 1마리: 바로 출석 화면
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => AttendanceScreen(
@@ -313,9 +318,11 @@ class _HomeOverview extends ConsumerWidget {
           ),
         ),
       );
+      // 출석 완료 후 홈 복귀 시 연속출석 등 최신화
+      if (context.mounted) ref.invalidate(eventTemplatesProvider);
     } else {
       // 2마리 이상: 펫 선택 화면
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => AttendancePetSelectScreen(
@@ -324,6 +331,7 @@ class _HomeOverview extends ConsumerWidget {
           ),
         ),
       );
+      if (context.mounted) ref.invalidate(eventTemplatesProvider);
     }
   }
 }
