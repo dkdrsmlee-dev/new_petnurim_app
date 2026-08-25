@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
@@ -18,7 +19,7 @@ import 'core/storage/token_storage.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print("💤 [FCM 백그라운드 수신]: ${message.messageId}");
+  if (kDebugMode) debugPrint("💤 [FCM 백그라운드 수신]: ${message.messageId}");
   // 여기서 알림 데이터를 파싱하거나 로컬 데이터 저장 등의 백그라운드 처리를 수행할 수 있습니다.
 }
 
@@ -48,20 +49,20 @@ void main() async {
     badge: true,
     sound: true,
   );
-  print('사용자 알림 동의 상태: ${settings.authorizationStatus}');
+  if (kDebugMode) debugPrint('사용자 알림 동의 상태: ${settings.authorizationStatus}');
 
   // 5. 최초 FCM 토큰 발급 시도 (NestJS 백엔드 저장용)
   try {
     String? token = await messaging.getToken();
-    print("🚨 [FCM 디바이스 토큰]: $token");
+    if (kDebugMode) debugPrint("🚨 [FCM 디바이스 토큰]: $token");
     // TODO: 로그인 상태인 경우, 즉시 이 토큰을 백엔드 서버에 전송해 두는 것이 안전합니다.
   } catch (e) {
-    print("🚨 [FCM 디바이스 토큰 발급 실패]: $e");
+    if (kDebugMode) debugPrint("🚨 [FCM 디바이스 토큰 발급 실패]: $e");
   }
 
   // 6. 실시간 FCM 토큰 변경(갱신) 리스너 감지
   FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-    print("🔄 [FCM 토큰 갱신됨]: $newToken");
+    if (kDebugMode) debugPrint("🔄 [FCM 토큰 갱신됨]: $newToken");
     // TODO: 로그인 상태인 경우, 즉시 백엔드 API로 새 토큰을 보내 회원 DB에 동기화해야 합니다.
   });
 

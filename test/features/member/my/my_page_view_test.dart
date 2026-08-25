@@ -9,6 +9,7 @@ import 'package:new_petnurim_app/features/member/domain/member_info.dart';
 import 'package:new_petnurim_app/features/member/domain/member_my_page.dart';
 import 'package:new_petnurim_app/features/member/domain/member_withdrawal.dart';
 import 'package:new_petnurim_app/features/member/domain/pet_models.dart';
+import 'package:new_petnurim_app/features/signup/domain/identity_verification.dart';
 import 'package:new_petnurim_app/features/member/my/my_page_view.dart';
 import 'package:new_petnurim_app/features/member/my/my_pet_list_screen.dart';
 import 'package:new_petnurim_app/core/widgets/section_title.dart';
@@ -55,6 +56,17 @@ class _FakeMemberRepository implements MemberRepository {
     required String address1,
     required String address2,
   }) async {}
+
+  @override
+  Future<IdentityRequestResponse> requestPhoneChangeVerification() async {
+    return const IdentityRequestResponse(
+      requestToken: 'fake_request_token',
+      webViewUrl: 'https://example.com/kcp',
+    );
+  }
+
+  @override
+  Future<void> changePhone({required String requestToken}) async {}
 }
 
 List<MyPetListItem> _fakePets() => [
