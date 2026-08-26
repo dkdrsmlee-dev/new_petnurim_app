@@ -9,6 +9,7 @@ import '../../core/widgets/camera_widgets.dart';
 import '../../core/widgets/edge_button_dialog.dart';
 import '../member/data/file_repository.dart';
 import 'data/photo_event_repository.dart';
+import '../event/data/mission_refresh_providers.dart';
 import 'shooting_history_screen.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -193,6 +194,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
 
       if (!mounted) return;
       setState(() => _isSaving = false);
+
+      // 홈 "주간 참여"를 즉시 +1 낙관 갱신하기 위한 참여 성공 신호(①/②).
+      // /events/templates 집계 반영 지연을 우회한다(홈이 소비 후 리셋).
+      ref.read(photoParticipatedProvider.notifier).set(petId);
 
       final reward =
           result.rewardValue > 0 ? result.rewardValue : (widget.rewardValueHint ?? 0);

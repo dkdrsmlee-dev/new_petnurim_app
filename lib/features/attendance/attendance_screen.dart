@@ -11,6 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/reward_milestone_stamp.dart';
 import 'domain/attendance_models.dart';
 import 'data/attendance_repository.dart';
+import '../event/data/mission_refresh_providers.dart';
 import '../../core/widgets/authed_file_image.dart';
 import '../../core/api/api_exception.dart';
 import '../../core/utils/toast_util.dart';
@@ -610,6 +611,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
       if (!mounted) return;
       // 달력/카운트/연속일/버튼 상태 갱신
       ref.invalidate(attendanceProvider(widget._arg));
+      // 홈 "연속 출석"을 write 응답의 확정값으로 즉시 갱신하기 위한 신호(①).
+      // /events/templates 집계 반영 지연을 우회한다(홈이 소비 후 리셋).
+      ref.read(attendanceCheckResultProvider.notifier).set((
+        petId: widget.myPetId,
+        continuousAttendanceDays: result.continuousAttendanceDays,
+      ));
       _showCheckInRewardDialog(result);
     } catch (e) {
       if (mounted) {

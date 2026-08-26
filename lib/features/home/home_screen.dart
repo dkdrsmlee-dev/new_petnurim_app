@@ -18,6 +18,8 @@ import '../member/data/pet_repository.dart';
 import '../member/domain/pet_codes.dart';
 import '../member/domain/pet_models.dart';
 import '../event/data/event_repository.dart';
+import '../event/data/mission_refresh_providers.dart';
+import '../event/domain/event_models.dart';
 import '../../core/widgets/authed_file_image.dart';
 import '../camera/camera_mission_guide_screen.dart';
 import 'home_image_preloader.dart';
@@ -129,6 +131,13 @@ class _HomeOverview extends ConsumerWidget {
     final templates = ref.watch(eventTemplatesProvider).value;
     final attendance = templates?.attendance;
     final photo = templates?.photo;
+    // 미션 완료 직후 홈 수치를 확정값/낙관값으로 즉시 표시하기 위한 override(①).
+    // override가 있으면 templates 집계 지연과 무관하게 그 값을 보여준다.
+    final missionOverride = ref.watch(homeMissionOverrideProvider);
+    final attendanceDays =
+        missionOverride.attendanceDays ?? attendance?.continuousAttendanceDays;
+    final participationCount =
+        missionOverride.participationCount ?? photo?.participationCount;
     // 홈 이미지(배너·리워드 썸네일·출석/촬영 상세)를 백그라운드로 미리 받아둔다.
     // 신규 로그인/새로고침 경로 커버(토큰복원 콜드 진입은 스플래시에서 이미 워밍).
     ref.watch(homeImagePrewarmProvider);
@@ -138,6 +147,10 @@ class _HomeOverview extends ConsumerWidget {
       onRefresh: () async {
         ref.invalidate(eventTemplatesProvider);
         await ref.read(eventTemplatesProvider.future);
+        // 수동 새로고침은 최신 집계이므로 임시 override를 걷어낸다.
+        ref
+            .read(homeMissionOverrideProvider.notifier)
+            .set(const HomeMissionOverride());
       },
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -180,9 +193,8 @@ class _HomeOverview extends ConsumerWidget {
                       pointText:
                           '+${attendance?.defaultReward?.rewardValue ?? 100}P',
                       statusText: '연속 출석',
-                      dayText: attendance != null
-                          ? '${attendance.continuousAttendanceDays}일'
-                          : '-일',
+                      dayText:
+                          attendanceDays != null ? '$attendanceDays일' : '-일',
                       bannerImg: _missionAvatar(
                         ref,
                         attendance?.thumbnailFileId,
@@ -211,7 +223,8 @@ class _HomeOverview extends ConsumerWidget {
                           '+${photo?.defaultReward?.rewardValue ?? 100}P',
                       statusText: '주간 참여',
                       // 사진 미션 주간 참여 횟수(백엔드 participationCount, 비로그인 0)
-                      dayText: photo != null ? '${photo.participationCount}' : '-',
+                      dayText:
+                          participationCount != null ? '$participationCount' : '-',
                       daySuffix: ' / 7일',
                       bannerImg: _missionAvatar(
                         ref,
@@ -225,6 +238,10 @@ class _HomeOverview extends ConsumerWidget {
                       onTap: photo == null
                           ? null
                           : () async {
+                              // 이번 촬영 플로우의 결과만 반영되도록 이전 신호를 비운다.
+                              ref
+                                  .read(photoParticipatedProvider.notifier)
+                                  .set(null);
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -234,10 +251,18 @@ class _HomeOverview extends ConsumerWidget {
                                   ),
                                 ),
                               );
-                              // 미션 완료 후 홈 복귀 시 주간참여 등 최신화
-                              if (context.mounted) {
-                                ref.invalidate(eventTemplatesProvider);
-                              }
+                              // 미션 완료 후 홈 복귀 시 주간참여 최신화(①/②+③).
+                              if (!context.mounted) return;
+                              final participatedPetId =
+                                  ref.read(photoParticipatedProvider);
+                              ref
+                                  .read(photoParticipatedProvider.notifier)
+                                  .set(null);
+                              await _afterPhoto(
+                                ref,
+                                context,
+                                participatedPetId,
+                              );
                             },
                     ),
                   ),
@@ -271,6 +296,11 @@ class _HomeOverview extends ConsumerWidget {
       return;
     }
     if (!context.mounted) return;
+
+    // 홈 "연속 출석"은 대표펫 기준 → 대표펫으로 출석했을 때만 override 적용.
+    final representPetId = _representPetId(pets);
+    // 이번 출석 플로우의 결과만 반영되도록 이전 신호를 비운다.
+    ref.read(attendanceCheckResultProvider.notifier).set(null);
 
     final cards = pets
         .map(
@@ -318,8 +348,8 @@ class _HomeOverview extends ConsumerWidget {
           ),
         ),
       );
-      // 출석 완료 후 홈 복귀 시 연속출석 등 최신화
-      if (context.mounted) ref.invalidate(eventTemplatesProvider);
+      // 출석 완료 후 홈 복귀 시 연속출석 최신화(①+③).
+      if (context.mounted) await _afterAttendance(ref, context, representPetId);
     } else {
       // 2마리 이상: 펫 선택 화면
       await Navigator.push(
@@ -331,9 +361,126 @@ class _HomeOverview extends ConsumerWidget {
           ),
         ),
       );
-      if (context.mounted) ref.invalidate(eventTemplatesProvider);
+      if (context.mounted) await _afterAttendance(ref, context, representPetId);
     }
   }
+}
+
+/// 펫 목록에서 대표펫의 id를 찾는다(없으면 null).
+String? _representPetId(List<MyPetListItem> pets) {
+  for (final p in pets) {
+    if (YesNo.isYes(p.representYn)) return p.myPetId;
+  }
+  return null;
+}
+
+/// 출석 완료 후 홈 복귀 시 "연속 출석"을 최신화한다.
+/// 출석 화면이 발행한 확정값([attendanceCheckResultProvider])을 소비하되,
+/// **대표펫으로 출석했을 때만** 홈(대표 기준) 수치를 즉시 갱신하고 폴링한다(①+③).
+Future<void> _afterAttendance(
+  WidgetRef ref,
+  BuildContext context,
+  String? representPetId,
+) async {
+  final sig = ref.read(attendanceCheckResultProvider);
+  ref.read(attendanceCheckResultProvider.notifier).set(null); // 소비 후 리셋
+  if (sig != null && representPetId != null && sig.petId == representPetId) {
+    await _reconcileMission(
+      ref,
+      context,
+      attendanceTarget: sig.continuousAttendanceDays,
+    );
+  } else {
+    // 미출석 또는 비대표펫 출석: 홈 수치는 불변 → 일반 재조회만.
+    ref.invalidate(eventTemplatesProvider);
+  }
+}
+
+/// 촬영 참여 후 홈 복귀 시 "주간 참여"를 최신화한다.
+/// **대표펫으로 참여했을 때만** 홈(대표 기준)을 +1 낙관 갱신 후 폴링한다(①/②+③).
+Future<void> _afterPhoto(
+  WidgetRef ref,
+  BuildContext context,
+  String? participatedPetId,
+) async {
+  if (participatedPetId == null) {
+    // 참여 없이 돌아온 경우: 일반 재조회만.
+    ref.invalidate(eventTemplatesProvider);
+    return;
+  }
+  // 참여한 펫이 대표펫인지 확인(홈 주간참여는 대표펫 기준).
+  String? representPetId;
+  try {
+    final res = await ref.read(petRepositoryProvider).getMyPetsList(limit: 100);
+    representPetId = _representPetId(res.items);
+  } catch (_) {
+    representPetId = null;
+  }
+  if (!context.mounted) return;
+  if (representPetId != null && participatedPetId == representPetId) {
+    final cur =
+        ref.read(eventTemplatesProvider).value?.photo?.participationCount ?? 0;
+    await _reconcileMission(ref, context, photoTarget: cur + 1);
+  } else {
+    // 비대표펫 참여(또는 대표 확인 실패): 홈 수치 불변 → 일반 재조회만.
+    ref.invalidate(eventTemplatesProvider);
+  }
+}
+
+/// 미션 완료 후 홈 수치 재조정(①+③).
+/// - ① 목표값([attendanceTarget]/[photoTarget])을 override로 즉시 표시
+/// - ③ `/events/templates`가 목표값에 도달할 때까지 짧게 폴링 → 도달한 필드만 해제
+///   (지연이 폴링 창을 넘겨도 확정값을 계속 노출하므로 stale 0이 보이지 않는다)
+Future<void> _reconcileMission(
+  WidgetRef ref,
+  BuildContext context, {
+  int? attendanceTarget,
+  int? photoTarget,
+}) async {
+  final notifier = ref.read(homeMissionOverrideProvider.notifier);
+  // ① 즉시 확정값 override(제공된 필드만 설정, 나머지는 유지).
+  final before = ref.read(homeMissionOverrideProvider);
+  notifier.set(HomeMissionOverride(
+    attendanceDays: attendanceTarget ?? before.attendanceDays,
+    participationCount: photoTarget ?? before.participationCount,
+  ));
+
+  // ③ 집계가 목표값에 도달할 때까지 폴링.
+  const maxAttempts = 5;
+  const interval = Duration(milliseconds: 500);
+  EventTemplates? latest;
+  for (var i = 0; i < maxAttempts; i++) {
+    if (!context.mounted) return; // 홈 이탈 시 중단
+    ref.invalidate(eventTemplatesProvider);
+    try {
+      latest = await ref.read(eventTemplatesProvider.future);
+    } catch (_) {
+      latest = null; // 조회 실패 시 다음 시도
+    }
+    final attReached = attendanceTarget == null ||
+        (latest?.attendance?.continuousAttendanceDays ?? -1) >=
+            attendanceTarget;
+    final photoReached = photoTarget == null ||
+        (latest?.photo?.participationCount ?? -1) >= photoTarget;
+    if (attReached && photoReached) break;
+    if (i < maxAttempts - 1) await Future.delayed(interval);
+  }
+
+  if (!context.mounted) return;
+  // 도달한 필드만 override 해제(미도달 필드는 확정값을 계속 노출).
+  final cur = ref.read(eventTemplatesProvider).value;
+  final s = ref.read(homeMissionOverrideProvider);
+  notifier.set(HomeMissionOverride(
+    attendanceDays: (attendanceTarget != null &&
+            (cur?.attendance?.continuousAttendanceDays ?? -1) >=
+                attendanceTarget)
+        ? null
+        : s.attendanceDays,
+    participationCount: (photoTarget != null &&
+            (cur?.photo?.participationCount ?? -1) >= photoTarget)
+        ? null
+        : s.participationCount,
+  ));
 }
 
 /// 미션 카드 아바타: 색 원 안에 **백엔드 이벤트 썸네일**(thumbnailFileId)을 넣고,
