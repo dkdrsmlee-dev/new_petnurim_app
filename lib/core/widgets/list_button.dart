@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme/app_colors.dart';
 
@@ -55,10 +56,17 @@ class NurimListButton extends StatelessWidget {
               ),
               if (showTrailingIcon) ...[
                 const SizedBox(width: 16),
-                Icon(
-                  Icons.chevron_right,
-                  size: 24,
-                  color: enabled ? AppColors.textSecondary : AppColors.placeholder,
+                // Figma Icon/ArrowRight/24 (#909AA9), 비활성 시에만 색 교체
+                SvgPicture.asset(
+                  'assets/images/ic_arrow_right_24.svg',
+                  width: 24,
+                  height: 24,
+                  colorFilter: enabled
+                      ? null
+                      : const ColorFilter.mode(
+                          AppColors.placeholder,
+                          BlendMode.srcIn,
+                        ),
                 ),
               ],
             ],
