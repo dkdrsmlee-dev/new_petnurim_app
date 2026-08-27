@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/app_colors.dart';
 
 enum GnbMenu {
-  home('홈', 'ic_home', Icons.home_outlined, Icons.home),
-  gift('기프트', 'ic_gift', Icons.card_giftcard_outlined, Icons.card_giftcard),
-  check('문진', 'ic_check', Icons.assignment_outlined, Icons.assignment),
-  meta('경품메타', 'ic_meta', Icons.emoji_events_outlined, Icons.emoji_events),
-  event('이벤트', 'ic_event', Icons.campaign_outlined, Icons.campaign);
+  // assetName은 Figma 아이콘 컴포넌트명(Icon/Home·Gift·Mycam·Rank·Event/24) 기준.
+  home('홈', 'home'),
+  gift('기프트', 'gift'),
+  check('문진', 'mycam'),
+  meta('경품메타', 'rank'),
+  event('이벤트', 'event');
 
   final String label;
   final String assetName;
-  final IconData defaultIcon;
-  final IconData activeIcon;
 
-  const GnbMenu(this.label, this.assetName, this.defaultIcon, this.activeIcon);
+  const GnbMenu(this.label, this.assetName);
+
+  /// Figma에서 내려받은 on/off 아이콘 경로 (활성 #7F4FFF · 비활성 #6C737F 색상 내장)
+  String iconAsset(bool isActive) =>
+      'assets/images/gnb/ic_gnb_${assetName}_${isActive ? 'on' : 'off'}.svg';
 }
 
 class CustomGnb extends StatelessWidget {
@@ -76,9 +80,9 @@ class _GnbOnOffItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Figma: 활성 violet/100 #7025FF · 비활성 gray/90 #6C737F
     final textColor = isActive ? AppColors.primaryStrong : AppColors.textTertiary;
     final fontWeight = isActive ? FontWeight.w600 : FontWeight.w500;
-    final stateStr = isActive ? 'active' : 'inactive';
 
     return GestureDetector(
       onTap: onTap,
@@ -86,32 +90,23 @@ class _GnbOnOffItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // 1. 아이콘 영역 (24px x 24px)
-          SizedBox(
+          // 1. 아이콘 영역 (24px x 24px) — Figma SVG 원본(색상 내장)
+          SvgPicture.asset(
+            menu.iconAsset(isActive),
             width: 24,
             height: 24,
-            child: Image.asset(
-              'assets/icons/${menu.assetName}_$stateStr.png',
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                // 에셋이 준비되지 않았을 경우 디폴트 Material 아이콘을 그립니다.
-                return Icon(
-                  isActive ? menu.activeIcon : menu.defaultIcon,
-                  size: 20,
-                  color: textColor,
-                );
-              },
-            ),
           ),
           const SizedBox(height: 2), // Figma Gap: 2px
-          // 2. 텍스트 라벨 (12px, Pretendard)
+          // 2. 텍스트 라벨 (Body/3xs: Pretendard 12px, line-height 1.4)
           Text(
             menu.label,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 12,
               fontWeight: fontWeight,
               color: textColor,
               letterSpacing: -0.66,
+              height: 1.4,
             ),
           ),
         ],
