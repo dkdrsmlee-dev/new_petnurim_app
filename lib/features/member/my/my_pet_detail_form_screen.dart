@@ -201,8 +201,8 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                 right: 0,
                                 bottom: 0,
                                 child: Container(
-                                  width: 38, // Figma: padding 6 + 아이콘 24
-                                  height: 38,
+                                  width: 36, // Figma Pic upload 36 (padding 6 + 아이콘 24)
+                                  height: 36,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle,

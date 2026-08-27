@@ -386,7 +386,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16), // Figma: 헤더 아래 16
                     // Profile Image Selector
                     Center(
                       child: GestureDetector(
@@ -428,15 +428,21 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 right: 0,
                                 bottom: 0,
                                 child: Container(
-                                  width: 32,
-                                  height: 32,
+                                  width: 36, // Figma Pic upload 36
+                                  height: 36,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: AppColors.border, width: 1),
+                                    border: Border.all(
+                                        color: AppColors.textDisabled, width: 1),
                                   ),
-                                  child: const Center(
-                                    child: Icon(Icons.camera_alt_outlined, size: 18, color: AppColors.textMuted),
+                                  child: Center(
+                                    // Figma Icon/Camera/24
+                                    child: SvgPicture.asset(
+                                      'assets/images/ic_camera_24.svg',
+                                      width: 24,
+                                      height: 24,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -445,7 +451,7 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24), // Figma: 사진 ↔ 입력 24
 
                     // 이름
                     _buildLabelRow('이름', isRequired: true),
@@ -481,7 +487,12 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 ),
                               ),
                             ),
-                            const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary, size: 24),
+                            // Figma Icon/ArrowBottom/24 (#A2ADBE)
+                            SvgPicture.asset(
+                              'assets/images/ic_arrow_bottom_24.svg',
+                              width: 24,
+                              height: 24,
+                            ),
                           ],
                         ),
                       ),
@@ -512,7 +523,12 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 ),
                               ),
                             ),
-                            const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary, size: 24),
+                            // Figma Icon/ArrowBottom/24 (#A2ADBE)
+                            SvgPicture.asset(
+                              'assets/images/ic_arrow_bottom_24.svg',
+                              width: 24,
+                              height: 24,
+                            ),
                           ],
                         ),
                       ),
@@ -543,7 +559,12 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 ),
                               ),
                             ),
-                            const Icon(Icons.calendar_today_outlined, color: AppColors.textSecondary, size: 20),
+                            // Figma Icon/Calendar/24
+                            SvgPicture.asset(
+                              'assets/images/ic_calendar_24.svg',
+                              width: 24,
+                              height: 24,
+                            ),
                           ],
                         ),
                       ),
@@ -641,7 +662,12 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                                 ),
                               ),
                             ),
-                            const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary, size: 24),
+                            // Figma Icon/ArrowBottom/24 (#A2ADBE)
+                            SvgPicture.asset(
+                              'assets/images/ic_arrow_bottom_24.svg',
+                              width: 24,
+                              height: 24,
+                            ),
                           ],
                         ),
                       ),
@@ -664,10 +690,24 @@ class _MyPetEditScreenState extends ConsumerState<MyPetEditScreen> {
                       },
                       child: Row(
                         children: [
-                          Icon(
-                            _isPrimary ? Icons.check_circle : Icons.check_circle_outline,
-                            color: _isPrimary ? AppColors.primary : AppColors.border,
-                            size: 24,
+                          // Figma: 원형 테두리 + 보라 체크(채움 없음)
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              border: Border.all(
+                                color: _isPrimary
+                                    ? AppColors.primary
+                                    : AppColors.border,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: _isPrimary
+                                ? const Icon(Icons.check,
+                                    size: 16, color: AppColors.primary)
+                                : null,
                           ),
                           const SizedBox(width: 8),
                           const Text(

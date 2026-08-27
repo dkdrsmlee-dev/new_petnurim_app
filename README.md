@@ -193,6 +193,7 @@ flutter run \
   - **마이펫 리스트·편집 화면 피그마 반영 (`MyPetListScreen`/`NurimPetCard`, Figma 204:7650·215:10463·215:10701)**: 타이틀 색상(전체·개수·편집)과 여백을 디자인값으로 정정하고, 펫 카드 높이 204→192·편집 모드 라디오 상단 정렬·선택 카드 보더 1.5→1.0·비활성 버튼 텍스트 색을 맞췄다.
   - **마이펫 추가(종류 선택) 화면 피그마 반영 (`MyPetAddScreen`, Figma 215:11766·215:12157)**: 선택 카드 높이 176→156, 선택 보더 1.5→1.0, 질문 텍스트 상단 여백 20→16으로 정정.
   - **마이펫 추가 플로우·나이 시트 피그마 반영 (Figma 217:4465·227:15114·227:15328·228:18885·226:14092)**: 프로필·이야기·건강·완료 4단계의 제목 여백/간격과 아이콘(셀렉트 화살표·달력·카메라)을 피그마 SVG로 맞추고, 선택 상태 색(성별·중성화 `#30343C`, 대표펫 체크)을 정정. 나이 선택 바텀시트도 여백·타이포·행 구분선·체크 표시 방식을 디자인대로 재구성.
+  - **마이펫 정보 수정 화면 피그마 반영 (`MyPetEditScreen`, Figma 239:24174)**: 여백·카메라 버튼(36+피그마 아이콘)·셀렉트 화살표·달력 아이콘을 맞추고, 공용 `NurimSelectableTab`의 선택 색(`#30343C`)·미선택 색(`#A2ADBE`)과 대표펫 체크 표시를 디자인대로 정정.
 - **플랫폼 빌드/배포**: Android 실단말 디버그 실행(`SM G991N`, `R3CR209JAWX`) 및 iOS 빌드 확인(`flutter build ios --no-codesign`) 완료. Firebase App Distribution(`web3-petnurim`) 테스트 빌드 배포. 배포 절차·초기 세팅(macOS 처음 시작 기준)은 [`docs/firebase-app-distribution.md`](docs/firebase-app-distribution.md) 참고. **로그인 디버그 도구 노출 빌드**: `flutter build apk --debug --dart-define=SHOW_LOGIN_DEBUG=true --dart-define-from-file=dart_defines.json`
 
 

@@ -67,8 +67,9 @@ class NurimSelectableTab extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
+            // Figma: 선택/미선택 모두 1px, 색만 달라진다.
             color: selected ? AppColors.primary : AppColors.border,
-            width: selected ? 1.5 : 1,
+            width: 1,
           ),
         ),
         child: Text(
@@ -76,7 +77,10 @@ class NurimSelectableTab extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-            color: selected ? AppColors.primaryStrong : AppColors.textSecondary,
+            height: 1.4,
+            letterSpacing: -0.66,
+            // Figma: 선택 #30343C / 미선택 #A2ADBE
+            color: selected ? AppColors.textStrong : AppColors.placeholder,
           ),
         ),
       ),
