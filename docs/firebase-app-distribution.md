@@ -15,7 +15,7 @@
 | **Android 앱 ID** | `1:840547817589:android:42f6129b6888888d59803c` |
 | **iOS 앱 ID** | `1:840547817589:ios:ac9f954d4e910b0d59803c` |
 | 패키지/번들 ID | `com.dkdr.newpetnurim` |
-| 앱 버전 | `1.0.0+1` (`pubspec.yaml`의 `version`) |
+| 앱 버전 | `1.0.0+4` (`pubspec.yaml`의 `version`) |
 | Firebase 설정 파일 | `android/app/google-services.json`, `ios/Runner/GoogleService-Info.plist` (이미 커밋됨) |
 
 > 위 값들은 `firebase.json`, `google-services.json`에 들어 있어 별도 조회 없이 그대로 사용하면 된다.
