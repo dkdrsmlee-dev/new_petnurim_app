@@ -70,13 +70,13 @@ class CameraControlBar extends StatelessWidget {
 
 /// 하단 카메라 액션 버튼 바 (촬영 후)
 class CameraButtonBar extends StatelessWidget {
-  final VoidCallback onCancel;
+  final VoidCallback onRetake;
   final VoidCallback onSave;
   final Color backgroundColor;
 
   const CameraButtonBar({
     Key? key,
-    required this.onCancel,
+    required this.onRetake,
     required this.onSave,
     this.backgroundColor = Colors.white,
   }) : super(key: key);
@@ -94,7 +94,7 @@ class CameraButtonBar extends StatelessWidget {
         children: [
           Expanded(
             child: GestureDetector(
-              onTap: onCancel,
+              onTap: onRetake,
               child: Container(
                 height: 56,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -106,10 +106,15 @@ class CameraButtonBar extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.close, color: AppColors.textMuted, size: 24),
+                    // Figma Icon/Refresh/24 (색 #51565F 내장)
+                    SvgPicture.asset(
+                      'assets/images/ic_refresh_24.svg',
+                      width: 24,
+                      height: 24,
+                    ),
                     const SizedBox(width: 6),
                     Text(
-                      '취소',
+                      '다시 촬영',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -143,7 +148,7 @@ class CameraButtonBar extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     const Text(
-                      '저장',
+                      '저장하기',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

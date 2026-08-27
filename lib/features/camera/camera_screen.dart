@@ -435,7 +435,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
               right: 0,
               child: _isCaptured
                   ? CameraButtonBar(
-                      onCancel: _retake,
+                      onRetake: _retake,
                       onSave: _savePicture,
                       backgroundColor: Colors.white,
                     )
