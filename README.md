@@ -190,6 +190,7 @@ flutter run \
   - **카메라 촬영 후 하단 버튼 피그마 반영 (`CameraButtonBar`, Figma 573:12016)**: 문구를 `취소`·`저장` → **`다시 촬영`·`저장하기`**로, 좌측 아이콘을 Material `close` → 피그마 `Icon/Refresh/24`로 교체(동작은 원래 재촬영이라 변경 없음).
   - **홈 미션 카드 피그마 반영 (`NurimCardBannerSmall`, Figma 132:9673/116:8397)**: 화살표가 카드 오른쪽 끝으로 밀려 있던 배치를 문구 바로 뒤로 옮기고 Material 아이콘(12px) → 피그마 chevron SVG(16px `#909AA9`)로 교체. 카드 높이 174→178, 카드 간격 11→12, 섹션 하단 여백 28→24로 정정.
   - **마이펫 상세 아이콘·간격 피그마 반영 (`MyPetDetailScreen`/`PetInfoDetail`, Figma 231:19551·541:9055)**: 구독 중 상태의 대표펫 배지(Material 별 → `ic_favorite.svg`)·"브론즈" 앞 아이콘(금색 원+별 → 보라 크라운 `ic_crown_24.svg`)·결제/리워드 내역 화살표를 피그마 SVG로 교체하고, 미가입 상태의 타이틀↔안내 간격(40→24)과 버튼 화살표를 정정.
+  - **마이펫 리스트·편집 화면 피그마 반영 (`MyPetListScreen`/`NurimPetCard`, Figma 204:7650·215:10463·215:10701)**: 타이틀 색상(전체·개수·편집)과 여백을 디자인값으로 정정하고, 펫 카드 높이 204→192·편집 모드 라디오 상단 정렬·선택 카드 보더 1.5→1.0·비활성 버튼 텍스트 색을 맞췄다.
 - **플랫폼 빌드/배포**: Android 실단말 디버그 실행(`SM G991N`, `R3CR209JAWX`) 및 iOS 빌드 확인(`flutter build ios --no-codesign`) 완료. Firebase App Distribution(`web3-petnurim`) 테스트 빌드 배포. 배포 절차·초기 세팅(macOS 처음 시작 기준)은 [`docs/firebase-app-distribution.md`](docs/firebase-app-distribution.md) 참고. **로그인 디버그 도구 노출 빌드**: `flutter build apk --debug --dart-define=SHOW_LOGIN_DEBUG=true --dart-define-from-file=dart_defines.json`
 
 

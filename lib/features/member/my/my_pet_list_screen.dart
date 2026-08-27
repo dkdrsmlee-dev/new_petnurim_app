@@ -139,7 +139,8 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 16),
+          // Figma: content 좌우 16 + Title 자체 px 4 = 20, 헤더 아래 16
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -151,7 +152,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.66,
-                      color: AppColors.textMuted,
+                      color: AppColors.textSecondary, // Figma #87909E
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -161,7 +162,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: -0.66,
-                      color: AppColors.primary,
+                      color: AppColors.textStrong, // Figma #30343C
                     ),
                   ),
                 ],
@@ -179,7 +180,7 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     letterSpacing: -0.66,
-                    color: AppColors.textMuted,
+                    color: AppColors.textSecondary, // Figma #87909E
                   ),
                 ),
               ),
@@ -265,8 +266,8 @@ class _MyPetListScreenState extends ConsumerState<MyPetListScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    disabledBackgroundColor: AppColors.borderLight,
-                    disabledForegroundColor: AppColors.textDisabled,
+                    disabledBackgroundColor: AppColors.borderLight, // Figma #E8EBF1
+                    disabledForegroundColor: AppColors.placeholder, // Figma #A2ADBE
                     minimumSize: const Size.fromHeight(56),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

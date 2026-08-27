@@ -43,7 +43,7 @@ class NurimPetCard extends StatelessWidget {
     required this.pet,
     this.onPressed,
     this.width,
-    this.height = 204,
+    this.height = 192, // Figma Pet card(215:6440) 높이
     this.showSelectionControl = false,
     this.isSelected = false,
     this.onSelectionChanged,
@@ -105,8 +105,9 @@ class NurimPetCard extends StatelessWidget {
         color: _backgroundColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
+          // Figma: 선택/미선택 모두 1px, 색만 달라진다.
           color: isSelected ? AppColors.primary : AppColors.border,
-          width: isSelected ? 1.5 : 1.0,
+          width: 1.0,
         ),
       ),
       child: Row(
@@ -118,7 +119,7 @@ class NurimPetCard extends StatelessWidget {
               child: Container(
                 width: 21,
                 height: 21,
-                margin: const EdgeInsets.only(top: 13.5),
+                // Figma: 카드 패딩(16) 기준 상단 정렬 — 별도 오프셋 없음
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
