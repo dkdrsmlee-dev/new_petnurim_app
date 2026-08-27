@@ -178,7 +178,12 @@ class NurimPetCard extends StatelessWidget {
                                 ),
                                 if (pet.isPrimary) ...[
                                   const SizedBox(width: 4),
-                                  const _PrimaryPetBadge(),
+                                  // Figma Icon/Favorite/24 (금색 원 + 흰 별)
+                                  SvgPicture.asset(
+                                    'assets/images/ic_favorite.svg',
+                                    width: 24,
+                                    height: 24,
+                                  ),
                                 ],
                               ],
                             ),
@@ -188,10 +193,11 @@ class NurimPetCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        color: AppColors.textDisabled,
+                      // Figma Icon/ArrowRight/24
+                      SvgPicture.asset(
+                        'assets/images/ic_arrow_right_24.svg',
+                        width: 24,
+                        height: 24,
                       ),
                     ],
                   ),
@@ -209,9 +215,11 @@ class NurimPetCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const _CrownIcon(
-                              size: 20,
-                              color: AppColors.textSecondary,
+                            // Figma Icon/Crown/20
+                            SvgPicture.asset(
+                              'assets/images/ic_crown_20.svg',
+                              width: 20,
+                              height: 20,
                             ),
                             const SizedBox(width: 6),
                             const Expanded(
@@ -240,10 +248,11 @@ class NurimPetCard extends StatelessWidget {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            const _CoinStackIcon(
-                              size: 20,
-                              color: AppColors.textSecondary,
-                              bgColor: AppColors.bgSoft,
+                            // Figma Icon/Coin/20 (ic_coin.svg와 동일 지오메트리, 회색 #51565F)
+                            SvgPicture.asset(
+                              'assets/images/ic_coin_20.svg',
+                              width: 20,
+                              height: 20,
                             ),
                             const SizedBox(width: 6),
                             const Expanded(
@@ -500,19 +509,6 @@ class _PetAvatar extends StatelessWidget {
   }
 }
 
-class _PrimaryPetBadge extends StatelessWidget {
-  const _PrimaryPetBadge();
-
-  @override
-  Widget build(BuildContext context) {
-    return const CircleAvatar(
-      radius: 12,
-      backgroundColor: AppColors.gold,
-      child: Icon(Icons.star_rounded, size: 16, color: Colors.white),
-    );
-  }
-}
-
 class _MembershipChip extends StatelessWidget {
   const _MembershipChip({required this.label, this.onTap});
 
@@ -678,148 +674,5 @@ class _DashedRoundedRectPainter extends CustomPainter {
   @override
   bool shouldRepaint(_DashedRoundedRectPainter oldDelegate) {
     return color != oldDelegate.color;
-  }
-}
-
-class _CrownIcon extends StatelessWidget {
-  const _CrownIcon({this.size = 20, this.color = AppColors.textDisabled});
-  final double size;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: _CrownPainter(color: color),
-    );
-  }
-}
-
-class _CrownPainter extends CustomPainter {
-  const _CrownPainter({required this.color});
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final path = Path();
-    final double w = size.width;
-    final double h = size.height;
-
-    path.moveTo(4, h - 3);
-    path.lineTo(w - 4, h - 3);
-    path.lineTo(w - 3, h * 0.45);
-    path.lineTo(w * 0.78, h * 0.22);
-    path.lineTo(w * 0.62, h * 0.6);
-    path.lineTo(w * 0.5, h * 0.12);
-    path.lineTo(w * 0.38, h * 0.6);
-    path.lineTo(w * 0.22, h * 0.22);
-    path.lineTo(3, h * 0.45);
-    path.close();
-
-    path.moveTo(4, h - 7);
-    path.lineTo(w - 4, h - 7);
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_CrownPainter oldDelegate) => color != oldDelegate.color;
-}
-
-class _CoinStackIcon extends StatelessWidget {
-  const _CoinStackIcon({
-    this.size = 20,
-    this.color = AppColors.textDisabled,
-    this.bgColor = AppColors.bgSoft,
-  });
-  final double size;
-  final Color color;
-  final Color bgColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: _CoinStackPainter(color: color, bgColor: bgColor),
-    );
-  }
-}
-
-class _CoinStackPainter extends CustomPainter {
-  const _CoinStackPainter({required this.color, required this.bgColor});
-  final Color color;
-  final Color bgColor;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final strokePaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final fillPaint = Paint()
-      ..color = bgColor
-      ..style = PaintingStyle.fill;
-
-    final double w = size.width;
-    final double h = size.height;
-    final double cw = w * 0.65;
-    final double ch = h * 0.22;
-    final double thick = h * 0.16;
-
-    final List<double> centersY = [
-      h * 0.72,
-      h * 0.50,
-      h * 0.28,
-    ];
-
-    for (final cy in centersY) {
-      final bodyPath = Path()
-        ..addOval(Rect.fromCenter(center: Offset(w / 2, cy), width: cw, height: ch))
-        ..moveTo(w / 2 - cw / 2, cy)
-        ..lineTo(w / 2 - cw / 2, cy + thick)
-        ..arcTo(Rect.fromCenter(center: Offset(w / 2, cy + thick), width: cw, height: ch), math.pi, -math.pi, false)
-        ..lineTo(w / 2 + cw / 2, cy)
-        ..close();
-      canvas.drawPath(bodyPath, fillPaint);
-
-      canvas.drawArc(
-        Rect.fromCenter(center: Offset(w / 2, cy + thick), width: cw, height: ch),
-        0,
-        math.pi,
-        false,
-        strokePaint,
-      );
-
-      canvas.drawLine(
-        Offset(w / 2 - cw / 2, cy),
-        Offset(w / 2 - cw / 2, cy + thick),
-        strokePaint,
-      );
-      canvas.drawLine(
-        Offset(w / 2 + cw / 2, cy),
-        Offset(w / 2 + cw / 2, cy + thick),
-        strokePaint,
-      );
-
-      canvas.drawOval(
-        Rect.fromCenter(center: Offset(w / 2, cy), width: cw, height: ch),
-        strokePaint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_CoinStackPainter oldDelegate) {
-    return color != oldDelegate.color || bgColor != oldDelegate.bgColor;
   }
 }
