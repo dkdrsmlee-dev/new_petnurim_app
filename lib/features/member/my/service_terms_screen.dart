@@ -23,7 +23,7 @@ class ServiceTermsScreen extends ConsumerWidget {
       backgroundColor: Colors.white,
       appBar: NurimPageHeader(
         title: '서비스 약관',
-        showDivider: false,
+        showDivider: true, // Figma 약관 화면은 헤더 아래 구분선 있음(USR-AUT-051~056)
         onBackPressed: () => Navigator.of(context).pop(),
       ),
       body: SafeArea(

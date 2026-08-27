@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:path_provider/path_provider.dart';
@@ -332,21 +333,23 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
             // Header with left arrow and right settings gear
             NurimPageHeader(
               title: '고객센터',
+              // Figma: 헤더 아래 구분선 없음(가로선은 탭 하단 보더 하나뿐)
+              showDivider: false,
               onBackPressed: () => Navigator.of(context).pop(),
             ),
             // Custom TabBar
             TabBar(
               controller: _tabController,
               labelColor: AppColors.textStrong,
-              unselectedLabelColor: AppColors.textTertiary,
+              unselectedLabelColor: AppColors.textDisabled, // Figma #909AA9
               labelStyle: const TextStyle(
                 fontFamily: 'Pretendard',
-                fontSize: 15,
+                fontSize: 16, // Figma Body/semibold/md
                 fontWeight: FontWeight.w600,
               ),
               unselectedLabelStyle: const TextStyle(
                 fontFamily: 'Pretendard',
-                fontSize: 15,
+                fontSize: 16, // Figma Body/medium/md
                 fontWeight: FontWeight.w500,
               ),
               indicatorColor: AppColors.primary,
@@ -355,7 +358,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               tabs: const [
                 Tab(text: '공지사항'),
                 Tab(text: '자주 묻는 질문'),
-                Tab(text: '1 : 1 문의'),
+                Tab(text: '1:1 문의'),
               ],
             ),
             // Divider Line under TabBar
@@ -473,7 +476,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
           final isDetailLoading = _loadingDetails.contains(notice.boardId);
 
           return Container(
-            margin: const EdgeInsets.only(bottom: 16),
+            margin: const EdgeInsets.only(bottom: 12), // Figma: 카드 간격 12
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -534,8 +537,8 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                               'N',
                                               style: TextStyle(
                                                 fontFamily: 'Pretendard',
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w700,
+                                                fontSize: 12, // Figma Body/semibold/3xs
+                                                fontWeight: FontWeight.w600,
                                                 color: Colors.white,
                                                 height: 1.0,
                                               ),
@@ -572,10 +575,14 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Icon(
-                          isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                          color: AppColors.textTertiary,
-                          size: 20,
+                        // Figma Icon/ArrowBottom(Top)/20 — 펼침 시 180° 회전
+                        RotatedBox(
+                          quarterTurns: isExpanded ? 2 : 0,
+                          child: SvgPicture.asset(
+                            'assets/images/ic_arrow_bottom_20.svg',
+                            width: 20,
+                            height: 20,
+                          ),
                         ),
                       ],
                     ),
@@ -681,7 +688,11 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                           ),
                                         ),
                                         IconButton(
-                                          icon: const Icon(Icons.file_download_outlined, color: AppColors.textTertiary),
+                                          icon: SvgPicture.asset(
+                                            'assets/images/ic_download_24.svg',
+                                            width: 24,
+                                            height: 24,
+                                          ),
                                           onPressed: () => _downloadFileToDevice(file),
                                         ),
                                       ],
@@ -700,6 +711,26 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
         },
       ),
     );
+  }
+
+  /// 1:1 문의 유형 코드 → 표시 라벨 (문의 상세 화면과 동일 매핑)
+  String _qnaTypeLabel(String code) {
+    switch (code) {
+      case 'PAYMENT':
+        return '결제';
+      case 'QUESTIONNAIRE':
+        return '문진';
+      case 'REWARD':
+        return '리워드';
+      case 'SUGGESTION':
+        return '제안';
+      case 'USER':
+        return '회원';
+      case 'ETC':
+        return '기타';
+      default:
+        return code;
+    }
   }
 
   bool _isRecentNotice(String regDtString) {
@@ -803,7 +834,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
           final isDetailLoading = _faqLoadingDetails.contains(faq.boardId);
 
           return Container(
-            margin: const EdgeInsets.only(bottom: 16),
+            margin: const EdgeInsets.only(bottom: 12), // Figma: 카드 간격 12
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -877,10 +908,14 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Icon(
-                          isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                          color: AppColors.textTertiary,
-                          size: 20,
+                        // Figma Icon/ArrowBottom(Top)/20 — 펼침 시 180° 회전
+                        RotatedBox(
+                          quarterTurns: isExpanded ? 2 : 0,
+                          child: SvgPicture.asset(
+                            'assets/images/ic_arrow_bottom_20.svg',
+                            width: 20,
+                            height: 20,
+                          ),
                         ),
                       ],
                     ),
@@ -1098,8 +1133,9 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                       ),
                     ),
                     const SizedBox(height: 4),
+                    // Figma: "카테고리 | 날짜"
                     Text(
-                      _formatDate(qna.regDt),
+                      '${_qnaTypeLabel(qna.qnaTypeCode)}  |  ${_formatDate(qna.regDt)}',
                       style: const TextStyle(
                         fontFamily: 'Pretendard',
                         fontSize: 13,
@@ -1171,7 +1207,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
           borderRadius: BorderRadius.circular(12),
           child: const Center(
             child: Text(
-              '1:1 문의하기',
+              '문의 등록하기',
               style: TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 18,

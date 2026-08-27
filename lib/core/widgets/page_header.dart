@@ -13,7 +13,9 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.showBackButton = true,
     this.actions,
-    this.showDivider = true,
+    // Figma 공용 헤더(Page_header 89:5687)에는 하단 구분선이 없다.
+    // 선이 필요한 화면만 showDivider: true 를 명시한다.
+    this.showDivider = false,
   });
 
   /// 헤더 중앙에 표시될 타이틀 텍스트
