@@ -115,10 +115,11 @@ class NurimPetInfoDetail extends StatelessWidget {
                     ),
                     if (pet.isPrimary) ...[
                       const SizedBox(width: 4),
-                      const Icon(
-                        Icons.star_rounded,
-                        color: AppColors.gold,
-                        size: 24,
+                      // Figma Icon/Favorite/24 (금색 원 + 흰 별)
+                      SvgPicture.asset(
+                        'assets/images/ic_favorite.svg',
+                        width: 24,
+                        height: 24,
                       ),
                     ],
                   ],

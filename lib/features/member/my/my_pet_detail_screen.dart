@@ -181,21 +181,11 @@ class MyPetDetailScreen extends ConsumerWidget {
                               children: [
                                 Row(
                                   children: [
-                                    // Bronze icon or circle
-                                    Container(
+                                    // Figma Icon/Crown/24 (보라 크라운, #7F4FFF)
+                                    SvgPicture.asset(
+                                      'assets/images/ic_crown_24.svg',
                                       width: 24,
                                       height: 24,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: AppColors.gold, // Bronze color
-                                      ),
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.star,
-                                          color: Colors.white,
-                                          size: 14,
-                                        ),
-                                      ),
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
@@ -243,9 +233,9 @@ class MyPetDetailScreen extends ConsumerWidget {
                                       ),
                                     );
                                   },
-                                  child: const Row(
+                                  child: Row(
                                     children: [
-                                      Text(
+                                      const Text(
                                         '결제 내역',
                                         style: TextStyle(
                                           fontSize: 15,
@@ -253,11 +243,12 @@ class MyPetDetailScreen extends ConsumerWidget {
                                           color: AppColors.textSecondary,
                                         ),
                                       ),
-                                      SizedBox(width: 2),
-                                      Icon(
-                                        Icons.chevron_right,
-                                        color: AppColors.textSecondary,
-                                        size: 16,
+                                      const SizedBox(width: 2),
+                                      // Figma Icon/ArrowRight/16 (#909AA9)
+                                      SvgPicture.asset(
+                                        'assets/images/ic_arrow_right_16.svg',
+                                        width: 16,
+                                        height: 16,
                                       ),
                                     ],
                                   ),
@@ -325,7 +316,8 @@ class MyPetDetailScreen extends ConsumerWidget {
                         // No Membership View (Figma node: 541:9055)
                         Column(
                           children: [
-                            const SizedBox(height: 24),
+                            // 섹션 타이틀 아래 공통 16 + 8 = 24 (Figma 간격)
+                            const SizedBox(height: 8),
                             const Text(
                               '이용 중인 멤버십이 없어요.',
                               textAlign: TextAlign.center,
@@ -368,10 +360,10 @@ class MyPetDetailScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
+                                  const Text(
                                     '멤버십 혜택 보기',
                                     style: TextStyle(
                                       fontSize: 16,
@@ -379,11 +371,16 @@ class MyPetDetailScreen extends ConsumerWidget {
                                       color: AppColors.primaryStrong,
                                     ),
                                   ),
-                                  SizedBox(width: 4),
-                                  Icon(
-                                    Icons.chevron_right,
-                                    color: AppColors.primaryStrong,
-                                    size: 16,
+                                  const SizedBox(width: 4),
+                                  // Figma Icon/ArrowRight/16 (버튼 텍스트색 #7025FF)
+                                  SvgPicture.asset(
+                                    'assets/images/ic_arrow_right_16.svg',
+                                    width: 16,
+                                    height: 16,
+                                    colorFilter: const ColorFilter.mode(
+                                      AppColors.primaryStrong,
+                                      BlendMode.srcIn,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -451,9 +448,9 @@ class MyPetDetailScreen extends ConsumerWidget {
                                     ),
                                   );
                                 },
-                                child: const Row(
+                                child: Row(
                                   children: [
-                                    Text(
+                                    const Text(
                                       '리워드 내역',
                                       style: TextStyle(
                                         fontSize: 15,
@@ -461,11 +458,12 @@ class MyPetDetailScreen extends ConsumerWidget {
                                         color: AppColors.textSecondary,
                                       ),
                                     ),
-                                    SizedBox(width: 2),
-                                    Icon(
-                                      Icons.chevron_right,
-                                      color: AppColors.textSecondary,
-                                      size: 16,
+                                    const SizedBox(width: 2),
+                                    // Figma Icon/ArrowRight/16 (#909AA9)
+                                    SvgPicture.asset(
+                                      'assets/images/ic_arrow_right_16.svg',
+                                      width: 16,
+                                      height: 16,
                                     ),
                                   ],
                                 ),
