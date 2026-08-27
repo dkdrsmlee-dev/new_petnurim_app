@@ -290,8 +290,9 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.borderLight),
+        // Figma Membership info(203:6021): radius 12, 보더 #D6DBE4
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         children: [
@@ -304,8 +305,9 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                   '구독 멤버십',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w600, // Figma Body/semibold/md
+                    height: 1.4,
+                    color: AppColors.textMuted, // #51565F
                     letterSpacing: -0.66,
                   ),
                 ),
@@ -314,8 +316,9 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                     '${subs[i].membershipName} (${_periodDot(subs[i].periodEndDt)}까지)',
                     textAlign: TextAlign.right,
                     style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 15, // Figma Body/medium/sm
+                      fontWeight: FontWeight.w500,
+                      height: 1.4,
                       color: Color(0xFFFF5F5F), // red/60 강조
                       letterSpacing: -0.66,
                     ),
