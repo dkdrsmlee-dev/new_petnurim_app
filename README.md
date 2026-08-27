@@ -184,6 +184,7 @@ flutter run \
   - **하단 GNB 아이콘 피그마 반영 (`CustomGnb`, Figma 339:20717)**: 참조 경로(`assets/icons/`)가 없어 Material 폴백 아이콘이 그려지던 문제 수정. 피그마 SVG 10종을 `assets/images/gnb/`에 추가하고 `SvgPicture.asset`으로 교체.
   - **펫 카드 아이콘 피그마 반영 (`NurimPetCard`, Figma 215:6440)**: 멤버십·리워드·대표펫 배지·화살표 아이콘이 `CustomPainter` 손그림이라 디자인과 달랐던 문제 수정. 피그마 SVG(`ic_crown_20`/`ic_coin_20`/`ic_favorite`/`ic_arrow_right_24`)로 교체하고 손그림 클래스 제거.
   - **촬영 펫 선택 화면 대표펫 배지 (`PetSelectCard`, Figma 559:7019)**: 촬영 펫 목록 API가 대표펫 여부를 주지 않아 배지가 표시되지 않던 문제 수정 — 마이펫 목록(`representYn`)을 함께 조회해 판정하고, 배지·화살표를 피그마 SVG로 교체.
+  - **멤버십 혜택 아이콘·화살표 피그마 반영 (`MembershipBenefitList`/`MembershipBenefitsScreen`, Figma 534:20157)**: 혜택 3종 아이콘(Material) → 피그마 SVG(`ic_benefit_{gift,coin,medal}_24.svg`)로 교체하고, 구독 버튼·유의사항 접이식 화살표도 피그마 chevron으로 교체(유의사항 아이콘 색 `#51565F` → `#909AA9` 교정).
 - **플랫폼 빌드/배포**: Android 실단말 디버그 실행(`SM G991N`, `R3CR209JAWX`) 및 iOS 빌드 확인(`flutter build ios --no-codesign`) 완료. Firebase App Distribution(`web3-petnurim`) 테스트 빌드 배포. 배포 절차·초기 세팅(macOS 처음 시작 기준)은 [`docs/firebase-app-distribution.md`](docs/firebase-app-distribution.md) 참고. **로그인 디버그 도구 노출 빌드**: `flutter build apk --debug --dart-define=SHOW_LOGIN_DEBUG=true --dart-define-from-file=dart_defines.json`
 
 

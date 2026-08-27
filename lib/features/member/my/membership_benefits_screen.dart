@@ -388,19 +388,27 @@ class MembershipBenefitsScreen extends ConsumerWidget {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('멤버십 즉시 구독하기',
+            const Text('멤버십 즉시 구독하기',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
                   letterSpacing: -0.66,
                 )),
-            SizedBox(width: 4),
-            // 화살표는 디자인상 회색(Color/Gray/90 #6C737F)
-            Icon(Icons.chevron_right, color: Color(0xFF6C737F), size: 22),
+            const SizedBox(width: 4),
+            // Figma Icon/ArrowRight/24 — 화살표는 디자인상 회색(Color/Gray/90 #6C737F)
+            SvgPicture.asset(
+              'assets/images/ic_arrow_right_24.svg',
+              width: 24,
+              height: 24,
+              colorFilter: const ColorFilter.mode(
+                Color(0xFF6C737F),
+                BlendMode.srcIn,
+              ),
+            ),
           ],
         ),
       ),
@@ -768,10 +776,18 @@ class _SubscribedViewState extends ConsumerState<_SubscribedView> {
                       ),
                     ),
                   ),
-                  Icon(
-                    _noticeExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                    size: 24,
-                    color: AppColors.textMuted,
+                  // Figma Icon/ArrowTop/24 — ArrowRight/24를 회전해 쓰는 컴포넌트(Color/Gray/70)
+                  RotatedBox(
+                    quarterTurns: _noticeExpanded ? 3 : 1,
+                    child: SvgPicture.asset(
+                      'assets/images/ic_arrow_right_24.svg',
+                      width: 24,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.textDisabled, // Color/Gray/70 #909AA9
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../domain/membership_models.dart';
@@ -17,10 +18,11 @@ class MembershipBenefitList extends StatelessWidget {
     Color(0xFF34EF9B), // green/70
     Color(0xFF5C9AF7), // blue
   ];
-  static const List<IconData> _iconGlyphs = [
-    Icons.card_giftcard,
-    Icons.paid,
-    Icons.workspace_premium,
+  /// Figma Membership info icon(534:20157)의 Basic/PR/Service 아이콘
+  static const List<String> _iconAssets = [
+    'assets/images/membership/ic_benefit_gift_24.svg',
+    'assets/images/membership/ic_benefit_coin_24.svg',
+    'assets/images/membership/ic_benefit_medal_24.svg',
   ];
 
   static const List<MembershipBenefit> _fallback = [
@@ -53,13 +55,13 @@ class MembershipBenefitList extends StatelessWidget {
 
   Widget _row(MembershipBenefit b, int i) {
     final bg = _iconBgs[i % _iconBgs.length];
-    final glyph = _iconGlyphs[i % _iconGlyphs.length];
+    final asset = _iconAssets[i % _iconAssets.length];
     return Row(
       children: [
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-          child: Icon(glyph, size: 24, color: Colors.white),
+          child: SvgPicture.asset(asset, width: 24, height: 24),
         ),
         const SizedBox(width: 12),
         Expanded(
