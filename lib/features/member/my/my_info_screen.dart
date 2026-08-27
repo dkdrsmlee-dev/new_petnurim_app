@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app/app_bootstrap.dart';
 import '../../../app/app_routes.dart';
@@ -8,6 +9,8 @@ import '../../../core/storage/token_storage.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/address_card.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../../core/widgets/popup_header.dart';
+import '../../../core/widgets/edge_button_dialog.dart';
 import '../../auth/application/auth_providers.dart';
 import '../../signup/kcp_cert_webview_screen.dart';
 import '../data/member_repository.dart';
@@ -235,122 +238,37 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     return phone.isNotEmpty ? phone : '010-1234-1234';
   }
 
-  // 로그아웃 확인 팝업 (기획서 디자인에 맞춘 커스텀 다이얼로그)
+  // 로그아웃 확인 팝업 (공용 EdgeButtonDialog 사용)
   Future<void> _showLogoutDialog() async {
-    final shouldLogout = await showDialog<bool>(
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          backgroundColor: Colors.white,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      '로그아웃하시겠어요?',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1E2024),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () => Navigator.of(context).pop(false),
-                      child: const Icon(
-                        Icons.close,
-                        color: AppColors.textSecondary,
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  '현재 계정에서 로그아웃됩니다.',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textMuted,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppColors.textMuted,
-                          side: const BorderSide(color: AppColors.border),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          textStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        child: const Text('취소'),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          textStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        child: const Text('확인'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+      builder: (dialogContext) => EdgeButtonDialog(
+        title: '로그아웃하시겠어요?',
+        content: '현재 계정에서 로그아웃됩니다.',
+        cancelText: '취소',
+        confirmText: '확인',
+        onConfirm: _logout,
+      ),
     );
-
-    if (shouldLogout == true) {
-      try {
-        await ref
-            .read(authRepositoryProvider)
-            .logout()
-            .timeout(const Duration(seconds: 3));
-      } catch (_) {
-        // 서버 로그아웃 실패/지연 시에도 로컬 로그아웃은 계속 진행 (best-effort)
-      }
-      await ref.read(tokenStorageProvider).clearTokens();
-      ref.invalidate(appBootstrapStateProvider);
-      if (mounted) {
-        context.go(AppRoutes.authStart);
-      }
-    }
   }
 
+  /// 서버 로그아웃(best-effort) → 로컬 토큰 삭제 → 로그인 화면으로 이동
+  Future<void> _logout() async {
+    try {
+      await ref
+          .read(authRepositoryProvider)
+          .logout()
+          .timeout(const Duration(seconds: 3));
+    } catch (_) {
+      // 서버 로그아웃 실패/지연 시에도 로컬 로그아웃은 계속 진행 (best-effort)
+    }
+    await ref.read(tokenStorageProvider).clearTokens();
+    ref.invalidate(appBootstrapStateProvider);
+    if (mounted) {
+      context.go(AppRoutes.authStart);
+    }
+  }
 
   /// 휴대폰 번호 변경 흐름:
   /// 안내 바텀시트 → 본인인증(KCP, 새 번호 입력·인증) → 변경 확정 →
@@ -589,125 +507,115 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 공용 팝업 헤더(뒤로가기만 노출)
+              PopupHeader(
+                title: '주소 설정',
+                showCloseButton: false,
+                onBackPressed: () => Navigator.pop(context),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: const Icon(Icons.arrow_back, color: Color(0xFF1E2024)),
+                  Text(
+                    baseAddress,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1E2024),
                     ),
-                    const Expanded(
-                      child: Center(
-                        child: Text(
-                          '주소 설정',
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0F5FF),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          '도로명',
                           style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF1E2024),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF2B66FF),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 24),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  baseAddress,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1E2024),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF0F5FF),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Text(
-                        '도로명',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF2B66FF),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          baseAddress,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        baseAddress,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  '상세 주소를 입력해 주세요.',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1E2024),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: controller,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    hintText: '상세 주소 입력',
-                    hintStyle: const TextStyle(color: AppColors.placeholder),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: AppColors.border),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () {
-                    final detail = controller.text.trim();
-                    Navigator.pop(context, detail);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    minimumSize: const Size.fromHeight(52),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    textStyle: const TextStyle(
+                  const SizedBox(height: 24),
+                  const Text(
+                    '상세 주소를 입력해 주세요.',
+                    style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1E2024),
                     ),
                   ),
-                  child: const Text('확인'),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: controller,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: '상세 주소 입력',
+                      hintStyle: const TextStyle(color: AppColors.placeholder),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: AppColors.border),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: () {
+                      final detail = controller.text.trim();
+                      Navigator.pop(context, detail);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      minimumSize: const Size.fromHeight(52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    child: const Text('확인'),
+                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
@@ -865,7 +773,16 @@ class _CustomInfoRow extends StatelessWidget {
           ),
           if (showChevron) ...[
             const SizedBox(width: 2),
-            const Icon(Icons.chevron_right, size: 16, color: AppColors.textSecondary),
+            // Figma Icon/ArrowRight/16
+            SvgPicture.asset(
+              'assets/images/ic_arrow_right_16.svg',
+              width: 16,
+              height: 16,
+              colorFilter: const ColorFilter.mode(
+                AppColors.textSecondary,
+                BlendMode.srcIn,
+              ),
+            ),
           ],
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/app_colors.dart';
 
 class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
@@ -27,7 +28,12 @@ class PopupHeader extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       leading: showBackButton
           ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.textStrong),
+              // Figma Page_header의 Icon/ArrowLeft/24 (색 #51565F 내장)
+              icon: SvgPicture.asset(
+                'assets/images/ic_arrow_left_24.svg',
+                width: 24,
+                height: 24,
+              ),
               onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
             )
           : null,

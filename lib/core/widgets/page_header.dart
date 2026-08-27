@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../theme/app_colors.dart';
 
 /// Figma `Page_header` 컴포넌트 스펙 기반의 헤더 위젯.
@@ -64,10 +65,11 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
             ? IconButton(
                 tooltip: '뒤로',
                 onPressed: onBackPressed ?? () => Navigator.of(context).maybePop(),
-                icon: const Icon(
-                  Icons.arrow_back,
-                  size: 24,
-                  color: AppColors.textStrong,
+                // Figma Page_header의 Icon/ArrowLeft/24 (색 #51565F 내장)
+                icon: SvgPicture.asset(
+                  'assets/images/ic_arrow_left_24.svg',
+                  width: 24,
+                  height: 24,
                 ),
               )
             : null,

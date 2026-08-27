@@ -72,11 +72,15 @@ class NurimAddressCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            // Right chevron icon
-            const Icon(
-              Icons.chevron_right,
-              color: AppColors.textSecondary,
-              size: 20,
+            // Figma Icon/ArrowRight/16 (내 정보 행 화살표와 동일 규격)
+            SvgPicture.asset(
+              'assets/images/ic_arrow_right_16.svg',
+              width: 16,
+              height: 16,
+              colorFilter: const ColorFilter.mode(
+                AppColors.textSecondary,
+                BlendMode.srcIn,
+              ),
             ),
           ],
         ),
