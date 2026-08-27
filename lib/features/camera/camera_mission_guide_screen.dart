@@ -12,9 +12,26 @@ import '../../core/widgets/edge_button_dialog.dart';
 import '../../core/utils/toast_util.dart';
 import 'domain/photo_event_models.dart';
 import 'data/photo_event_repository.dart';
+import '../member/data/pet_repository.dart';
+import '../member/domain/pet_codes.dart';
+import '../member/domain/pet_models.dart';
 import 'camera_screen.dart';
 import 'pet_select_screen.dart';
 import '../../core/theme/app_colors.dart';
+
+/// 대표펫(마이펫 목록의 `representYn = Y`) 1건을 조회한다.
+/// 촬영 펫 목록 API에는 대표펫 정보가 없어 별도로 가져오며, 실패하면 null(배지 미표시).
+Future<MyPetListItem?> _fetchRepresentPet(WidgetRef ref) async {
+  try {
+    final res = await ref.read(petRepositoryProvider).getMyPetsList(limit: 100);
+    for (final pet in res.items) {
+      if (YesNo.isYes(pet.representYn)) return pet;
+    }
+  } catch (_) {
+    // 대표펫 표시는 부가 정보라 실패해도 촬영 플로우를 막지 않는다.
+  }
+  return null;
+}
 
 /// 성별 코드/값을 표시용 문자열로 변환
 String _genderText(String? gender) {
@@ -754,11 +771,25 @@ class CameraMissionGuideScreen extends ConsumerWidget {
       }
       return;
     }
+
+    // 촬영 펫 목록 API(/pets)는 대표펫 여부를 주지 않으므로 마이펫 목록에서 가져온다.
+    // (조회 실패해도 촬영 플로우는 그대로 진행 — 대표펫 배지만 표시되지 않음)
+    final representPet = await _fetchRepresentPet(ref);
     if (!context.mounted) return;
 
     // 참여 결과에 리워드가 없을 때 사용할 예비 리워드 값(상세 API의 리워드)
     final rewardHint =
         ref.read(photoEventDetailProvider(eventMasterId)).value?.rewardValue;
+
+    bool isRepresent(PhotoEventPet pet) {
+      if (representPet == null) return false;
+      // 두 API의 펫 식별자가 동일하다는 보장이 없어 ID 우선 매칭 후 이름으로 폴백한다.
+      final idMatched =
+          pets.any((p) => p.petId == representPet.myPetId);
+      return idMatched
+          ? pet.petId == representPet.myPetId
+          : pet.petName == representPet.petName;
+    }
 
     // PhotoEventPet → PetSelectCardData 매핑
     final List<PetSelectCardData> registeredPets = pets
@@ -772,7 +803,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
             // age 필드는 백엔드에서 이미 "3살" 형태로 내려오므로 그대로 사용
             ageText: pet.age ?? '',
             genderText: _genderText(pet.gender),
-            isFavorite: false,
+            isFavorite: isRepresent(pet),
             imageProvider: pet.thumbnailFileId != null
                 ? AuthedFileImageX.of(ref, pet.thumbnailFileId!, variant: 'thumb')
                 : null,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme/app_colors.dart';
 
@@ -46,8 +47,6 @@ class PetSelectCard extends StatelessWidget {
 
   /// "내역" 버튼 라벨 (기본 "촬영 내역").
   final String historyLabel;
-
-  static const Color _favBadgeBg = Color(0xFFF0C119);
 
   @override
   Widget build(BuildContext context) {
@@ -102,18 +101,11 @@ class PetSelectCard extends StatelessWidget {
                               ),
                               if (data.isFavorite) ...[
                                 const SizedBox(width: 4),
-                                Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: const BoxDecoration(
-                                    color: _favBadgeBg,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.star_rounded,
-                                    size: 14,
-                                    color: Colors.white,
-                                  ),
+                                // Figma Icon/Favorite/24 (대표펫 배지)
+                                SvgPicture.asset(
+                                  'assets/images/ic_favorite.svg',
+                                  width: 24,
+                                  height: 24,
                                 ),
                               ],
                             ],
@@ -143,10 +135,11 @@ class PetSelectCard extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 2),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    size: 12,
-                                    color: AppColors.textDisabled,
+                                  // Figma Icon/ArrowRight/16
+                                  SvgPicture.asset(
+                                    'assets/images/ic_arrow_right_16.svg',
+                                    width: 16,
+                                    height: 16,
                                   ),
                                 ],
                               ),
