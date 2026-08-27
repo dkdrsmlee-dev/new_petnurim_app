@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme/app_colors.dart';
 
@@ -205,7 +206,7 @@ class NurimCardBanner extends StatelessWidget {
 }
 
 /// Card_banne2 (피그마 오타 그대로) 에 해당하는 소형 세로 배너 카드.
-/// 165 × 174 크기의 컴팩트 카드로, 가로 스크롤 목록 등에 사용됩니다.
+/// 165 × 178 크기의 컴팩트 카드로, 가로 스크롤 목록 등에 사용됩니다.
 class NurimCardBannerSmall extends StatelessWidget {
   const NurimCardBannerSmall({
     super.key,
@@ -218,7 +219,7 @@ class NurimCardBannerSmall extends StatelessWidget {
     this.bannerImg,
     this.onTap,
     this.width = 165,
-    this.height = 174,
+    this.height = 178, // Figma 홈(116:8397) 카드 인스턴스 높이
   });
 
   final String titleLine1;
@@ -323,11 +324,15 @@ class NurimCardBannerSmall extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 2),
+              // Figma: 화살표는 텍스트 바로 뒤(gap 2)에 붙는다.
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
+                  Flexible(
                     child: Text(
                       titleLine2,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -338,10 +343,11 @@ class NurimCardBannerSmall extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 2),
-                  const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12,
-                    color: _titleColor,
+                  // Figma ArrowRight16_Icon (#909AA9)
+                  SvgPicture.asset(
+                    'assets/images/ic_arrow_right_16.svg',
+                    width: 16,
+                    height: 16,
                   ),
                 ],
               ),

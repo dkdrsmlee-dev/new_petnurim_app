@@ -167,7 +167,7 @@ class _HomeOverview extends ConsumerWidget {
         ),
         // 매일 받는 리워드 미션 (Figma 116:8397) — 회색 배경 위 2열 컴팩트 카드
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -213,7 +213,7 @@ class _HomeOverview extends ConsumerWidget {
                               ),
                     ),
                   ),
-                  const SizedBox(width: 11),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: NurimCardBannerSmall(
                       width: double.infinity,
