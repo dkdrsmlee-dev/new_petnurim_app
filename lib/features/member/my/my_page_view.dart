@@ -228,7 +228,7 @@ class _MyPageContentState extends State<_MyPageContent> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       NurimMyInfoRow(
-                        labelText: '내 정보 관리',
+                        labelText: '내 정보',
                         primaryValue: email,
                         secondaryValue: widget.snsFlatform?.toUpperCase() == 'NAVER'
                             ? '(네이버)'
