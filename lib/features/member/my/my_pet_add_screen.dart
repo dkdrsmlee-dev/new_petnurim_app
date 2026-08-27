@@ -34,13 +34,14 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
           });
         },
         child: Container(
-          height: 176,
+          height: 156, // Figma Select pet(215:12140): py24 + 이미지70 + gap16 + 라벨
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
+              // Figma: 선택/미선택 모두 1px, 색만 달라진다.
               color: isSelected ? AppColors.primary : AppColors.border,
-              width: isSelected ? 1.5 : 1.0,
+              width: 1.0,
             ),
           ),
           child: Column(
@@ -112,7 +113,7 @@ class _MyPetAddScreenState extends ConsumerState<MyPetAddScreen> {
           children: [
             // 상단 질문 영역
             const Padding(
-              padding: EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 32),
+              padding: EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 32),
               child: Text(
                 '어떤 반려동물과\n함께하고 있나요?',
                 style: TextStyle(
