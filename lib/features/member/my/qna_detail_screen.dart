@@ -281,12 +281,11 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              const Text(
-                                '|',
-                                style: TextStyle(
-                                  color: AppColors.borderLight,
-                                  fontSize: 12,
-                                ),
+                              // Figma: 텍스트가 아니라 1×11 세로 구분선
+                              Container(
+                                width: 1,
+                                height: 11,
+                                color: AppColors.borderLight,
                               ),
                               const SizedBox(width: 8),
                               Text(
@@ -480,7 +479,7 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
       child: Text(
         statusText,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 14, // Figma Body/semibold/xs
           fontWeight: FontWeight.w600,
           color: isComplete ? AppColors.primary : AppColors.textSecondary,
           height: 1.0,
@@ -608,11 +607,12 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
           const SizedBox(width: 16),
           IconButton(
             onPressed: () => _downloadFileToDevice(file),
-            icon: const Icon(
-              Icons.file_download_outlined,
-              color: AppColors.textSecondary,
-              size: 24,
-            ),
+            icon: // Figma Icon/Download/24
+ SvgPicture.asset(
+   'assets/images/ic_download_24.svg',
+   width: 24,
+   height: 24,
+ ),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
           ),
