@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -112,7 +113,8 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                   children: [
                     // 상단 서브 타이틀
                     const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
+                      // Figma: 헤더 아래 16, 제목↔본문 32(=20+12)
+                      padding: EdgeInsets.only(top: 16, bottom: 20),
                       child: Text(
                         '아이의 이야기를\n조금 더 들려주세요.',
                         style: TextStyle(
@@ -153,10 +155,11 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     ),
                                   ),
                                 ),
-                                const Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: AppColors.textDisabled,
-                                  size: 24,
+                                // Figma Icon/ArrowBottom/24 (#A2ADBE)
+                                SvgPicture.asset(
+                                  'assets/images/ic_arrow_bottom_24.svg',
+                                  width: 24,
+                                  height: 24,
                                 ),
                               ],
                             ),
@@ -195,10 +198,11 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     ),
                                   ),
                                 ),
-                                const Icon(
-                                  Icons.calendar_today_outlined,
-                                  color: AppColors.textDisabled,
-                                  size: 20,
+                                // Figma Icon/Calendar/24 (#A2ADBE)
+                                SvgPicture.asset(
+                                  'assets/images/ic_calendar_24.svg',
+                                  width: 24,
+                                  height: 24,
                                 ),
                               ],
                             ),
@@ -240,7 +244,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: _selectedGender == PetGender.male ? FontWeight.w600 : FontWeight.w500,
-                                      color: _selectedGender == PetGender.male ? AppColors.primary : AppColors.placeholder,
+                                      color: _selectedGender == PetGender.male ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),
@@ -273,7 +277,7 @@ class _MyPetStoryFormScreenState extends ConsumerState<MyPetStoryFormScreen> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: _selectedGender == PetGender.female ? FontWeight.w600 : FontWeight.w500,
-                                      color: _selectedGender == PetGender.female ? AppColors.primary : AppColors.placeholder,
+                                      color: _selectedGender == PetGender.female ? AppColors.textStrong : AppColors.placeholder,
                                       letterSpacing: -0.66,
                                     ),
                                   ),

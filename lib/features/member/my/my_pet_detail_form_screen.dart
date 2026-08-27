@@ -142,7 +142,8 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                   children: [
                     // 상단 질문 텍스트
                     const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
+                      // Figma: 헤더 아래 16, 제목↔사진 32(=20+12)
+                      padding: EdgeInsets.only(top: 16, bottom: 20),
                       child: Text(
                         '우리 아이의 첫 프로필을\n만들어 볼까요?',
                         style: TextStyle(
@@ -200,8 +201,8 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                 right: 0,
                                 bottom: 0,
                                 child: Container(
-                                  width: 34,
-                                  height: 34,
+                                  width: 38, // Figma: padding 6 + 아이콘 24
+                                  height: 38,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     shape: BoxShape.circle,
@@ -210,11 +211,12 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                       width: 1.0,
                                     ),
                                   ),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.camera_alt_outlined,
-                                      size: 18,
-                                      color: AppColors.textMuted,
+                                  child: Center(
+                                    // Figma Icon/Camera/24
+                                    child: SvgPicture.asset(
+                                      'assets/images/ic_camera_24.svg',
+                                      width: 24,
+                                      height: 24,
                                     ),
                                   ),
                                 ),
@@ -224,7 +226,7 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24), // Figma: 사진 ↔ 입력 24
                     // 이름 입력 필드 (필수)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,10 +292,11 @@ class _MyPetDetailFormScreenState extends ConsumerState<MyPetDetailFormScreen> {
                                     ),
                                   ),
                                 ),
-                                const Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: AppColors.textDisabled,
-                                  size: 24,
+                                // Figma Icon/ArrowBottom/24 (#A2ADBE)
+                                SvgPicture.asset(
+                                  'assets/images/ic_arrow_bottom_24.svg',
+                                  width: 24,
+                                  height: 24,
                                 ),
                               ],
                             ),

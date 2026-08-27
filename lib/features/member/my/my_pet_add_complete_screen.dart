@@ -141,7 +141,8 @@ class MyPetAddCompleteScreen extends ConsumerWidget {
                       children: [
                         // 1. 상단 서브 타이틀
                         const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
+                          // Figma: 헤더 아래 16, 제목↔본문 32(=20+12)
+                          padding: EdgeInsets.only(top: 16, bottom: 20),
                           child: Text(
                             '등록이 완료되었어요!\n이제 맞춤 케어를 시작해볼까요?',
                             style: TextStyle(
