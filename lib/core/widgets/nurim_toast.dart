@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 
 /// Figma `Toast box` (node-id: 698:12443) 스펙 기반의 공통 토스트 위젯.
 ///
@@ -33,28 +32,23 @@ class NurimToast extends StatelessWidget {
           child: Material(
             color: Colors.transparent,
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              // Figma: 좌우 16 여백(= 343 폭), 안쪽 패딩 16 균일
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.textStrong.withOpacity(0.85),
+                color: const Color(0x99000000), // Figma scrim/60 = rgba(0,0,0,0.6)
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
               ),
               child: Text(
                 message,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500, // Body/medium/md
                   color: Colors.white,
                   height: 1.4,
-                  letterSpacing: -0.42,
+                  letterSpacing: -0.66,
                 ),
               ),
             ),
