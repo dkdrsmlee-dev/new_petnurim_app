@@ -207,7 +207,7 @@ class ShootingHistoryScreen extends ConsumerWidget {
   }
 }
 
-/// 촬영 내역 목록
+/// 촬영 내역 목록 (Figma USR-EVT-019: List header + Camera list)
 class _HistoryList extends StatelessWidget {
   const _HistoryList({required this.items});
 
@@ -215,12 +215,66 @@ class _HistoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+    // index 0 = 목록 헤더("전체 N" / "최신 내역 순"), 이후 = 내역 행
+    return ListView.builder(
+      padding: EdgeInsets.zero,
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) => _HistoryItemTile(item: items[index]),
+      itemCount: items.length + 1,
+      itemBuilder: (context, index) {
+        if (index == 0) return _HistoryListHeader(total: items.length);
+        return _HistoryItemTile(item: items[index - 1]);
+      },
+    );
+  }
+}
+
+/// Figma `List header`(582:10431) — 전체 건수 + 정렬 상태 라벨.
+/// 백엔드가 최신순 고정으로만 내려주므로(정렬 파라미터 없음) 라벨은 정적 표기.
+class _HistoryListHeader extends StatelessWidget {
+  const _HistoryListHeader({required this.total});
+
+  final int total;
+
+  static const TextStyle _label = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    height: 1.4,
+    letterSpacing: -0.66,
+    color: AppColors.textSecondary,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: AppColors.borderLight)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('전체', style: _label),
+              const SizedBox(width: 4),
+              Text('$total',
+                  style: _label.copyWith(color: AppColors.textStrong)),
+            ],
+          ),
+          const Text(
+            '최신 내역 순',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              height: 1.4,
+              letterSpacing: -0.66,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -237,20 +291,20 @@ class _HistoryItemTile extends ConsumerWidget {
     final image =
         fileId != null ? AuthedFileImageX.of(ref, fileId, variant: 'thumb') : null;
 
+    // Figma `Camera list`(582:10484): 전체폭 + 하단 구분선, 상하 패딩 24
     return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border, width: 1),
+        border: Border(bottom: BorderSide(color: AppColors.borderLight)),
       ),
       child: Row(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(7.2),
             child: SizedBox(
-              width: 56,
-              height: 56,
+              width: 48,
+              height: 48,
               child: image != null
                   ? Image(
                       image: image,
@@ -269,9 +323,10 @@ class _HistoryItemTile extends ConsumerWidget {
                 const Text(
                   '촬영 미션 완료',
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textStrong,
+                    color: AppColors.textMuted,
+                    height: 1.4,
                     letterSpacing: -0.66,
                   ),
                 ),
@@ -279,21 +334,24 @@ class _HistoryItemTile extends ConsumerWidget {
                 Text(
                   _formatDate(item.participatedDt),
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 15,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary,
+                    color: AppColors.textDisabled,
+                    height: 1.4,
                     letterSpacing: -0.66,
                   ),
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 16), // Figma: 텍스트 ↔ 리워드 16
           Text(
             '+${item.rewardValue}PR',
             style: const TextStyle(
-              fontSize: 15,
+              fontSize: 16,
               fontWeight: FontWeight.w700,
               color: AppColors.primary,
+              height: 1.4,
               letterSpacing: -0.66,
             ),
           ),
