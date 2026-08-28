@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -93,7 +94,7 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
       children: [
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16), // Figma: 16
             children: [
               const Text(
                 '서비스 이용을 위해\n약관에 동의해 주세요.',
@@ -105,32 +106,23 @@ class _TermsScreenState extends ConsumerState<TermsScreen> {
                   letterSpacing: -0.66,
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 32), // Figma: 타이틀 ↔ 박스 32
               // 전체 동의 카드 (배경 박스)
               GestureDetector(
                 onTap: terms.isEmpty || _submitting
                     ? null
                     : () => _toggleAll(!allChecked),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 16,
-                  ),
+                  // Figma: 패딩 12 (박스 높이 46)
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: AppColors.bgGray,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        allChecked
-                            ? Icons.check_circle
-                            : Icons.check_circle_outline,
-                        color: allChecked
-                            ? AppColors.primary
-                            : const Color(0xFFCBD5E1),
-                        size: 24,
-                      ),
+                      // Figma Selection control(Md/Round box/Filled) 22
+                      _TermsCheckIcon(checked: allChecked, size: 22, filled: true),
                       const SizedBox(width: 8),
                       Text(
                         '약관 전체 동의',
@@ -298,13 +290,8 @@ class _TermTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Row(
                   children: [
-                    Icon(
-                      checked ? Icons.check_circle : Icons.check_circle_outline,
-                      color: checked
-                          ? AppColors.primary
-                          : const Color(0xFFCBD5E1),
-                      size: 18,
-                    ),
+                    // Figma Selection control(Sm/Radio/Outline) 21
+                    _TermsCheckIcon(checked: checked, size: 21, filled: false),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -327,12 +314,13 @@ class _TermTile extends StatelessWidget {
           GestureDetector(
             onTap: onOpen,
             behavior: HitTestBehavior.opaque,
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: Icon(
-                Icons.chevron_right,
-                color: Color(0xFFCBD5E1),
-                size: 16,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              // Figma Icon/ArrowRight/16
+              child: SvgPicture.asset(
+                'assets/images/ic_arrow_right_16.svg',
+                width: 16,
+                height: 16,
               ),
             ),
           ),
@@ -386,6 +374,51 @@ class _NoticeBox extends StatelessWidget {
             context,
           ).textTheme.bodyMedium?.copyWith(color: const Color(0xFF9A3412)),
         ),
+      ),
+    );
+  }
+}
+
+/// Figma `Selection control` 체크 아이콘.
+/// - filled=true(전체 동의): 미선택도 회색(#E8EBF1) 원 + 흰 체크
+/// - filled=false(개별 약관): 미선택은 흰 원 + #D6DBE4 보더(체크 없음)
+class _TermsCheckIcon extends StatelessWidget {
+  const _TermsCheckIcon({
+    required this.checked,
+    required this.size,
+    required this.filled,
+  });
+
+  final bool checked;
+  final double size;
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!checked && !filled) {
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.border, width: 1.05),
+        ),
+      );
+    }
+    return Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: checked ? AppColors.primary : AppColors.borderLight,
+        shape: BoxShape.circle,
+      ),
+      child: SvgPicture.asset(
+        'assets/images/ic_check_24.svg',
+        width: size,
+        height: size,
+        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
       ),
     );
   }
