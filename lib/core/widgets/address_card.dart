@@ -51,7 +51,7 @@ class NurimAddressCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textStrong,
+                          color: AppColors.textMuted, // Figma #51565F
                           height: 1.4,
                         ),
                       ),
@@ -62,7 +62,7 @@ class NurimAddressCard extends StatelessWidget {
                   Text(
                     address,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 15, // Figma Body/medium/sm
                       fontWeight: FontWeight.w500,
                       color: hasAddress ? AppColors.textSecondary : AppColors.placeholder,
                       height: 1.4,
@@ -71,7 +71,7 @@ class NurimAddressCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 16), // Figma: 콘텐츠 ↔ 화살표 16
             // Figma Icon/ArrowRight/16 (내 정보 행 화살표와 동일 규격)
             SvgPicture.asset(
               'assets/images/ic_arrow_right_16.svg',

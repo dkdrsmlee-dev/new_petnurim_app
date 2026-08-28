@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:new_petnurim_app/features/auth/domain/social_provider.dart';
 
 class SocialLoginButton extends StatelessWidget {
@@ -58,13 +59,13 @@ class SocialLoginButton extends StatelessWidget {
                         color: colors.foreground,
                       ),
                     )
-                  : SizedBox.square(
-                      dimension: 24,
-                      child: CustomPaint(
-                        painter: provider == SocialProvider.kakao
-                            ? KakaoLogoPainter(color: colors.foreground)
-                            : NaverLogoPainter(color: colors.foreground),
-                      ),
+                  : SvgPicture.asset(
+                      // Figma Icon/Kakao(Naver)/24
+                      provider == SocialProvider.kakao
+                          ? 'assets/images/ic_kakao_24.svg'
+                          : 'assets/images/ic_naver_24.svg',
+                      width: 24,
+                      height: 24,
                     ),
             ),
           ],
@@ -176,8 +177,8 @@ class SocialLoginButtonColors {
     switch (provider) {
       case SocialProvider.kakao:
         return const SocialLoginButtonColors(
-          background: Color(0xFFFEE500),
-          foreground: Color(0xFF111827),
+          background: Color(0xFFFAE524), // Figma
+          foreground: Color(0xFF30343C), // gray/120
         );
       case SocialProvider.naver:
         return const SocialLoginButtonColors(

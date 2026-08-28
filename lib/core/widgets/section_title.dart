@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme/app_colors.dart';
 
@@ -36,10 +37,10 @@ class NurimSectionTitle extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  height: 1.375,
+                  fontWeight: FontWeight.w600, // Figma Body/semibold/md
+                  height: 1.4,
                   letterSpacing: -0.66,
-                  color: AppColors.textStrong,
+                  color: AppColors.textMuted, // #51565F
                 ),
               ),
             ),
@@ -73,18 +74,19 @@ class _SectionTitleAction extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-            fontSize: 12,
+            fontSize: 15, // Figma Body/medium/sm
             fontWeight: FontWeight.w500,
-            height: 1.5,
+            height: 1.4,
             letterSpacing: -0.66,
             color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(width: 2),
-        const Icon(
-          Icons.chevron_right,
-          size: 14,
-          color: AppColors.textSecondary,
+        // Figma Icon/ArrowRight/16
+        SvgPicture.asset(
+          'assets/images/ic_arrow_right_16.svg',
+          width: 16,
+          height: 16,
         ),
       ],
     );

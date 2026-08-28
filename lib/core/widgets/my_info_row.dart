@@ -104,7 +104,7 @@ class NurimMyInfoRow extends StatelessWidget {
                         ),
                       ),
                       if (secondaryValue != null && secondaryValue!.isNotEmpty) ...[
-                        const SizedBox(width: 4.0),
+                        const SizedBox(width: 2.0), // Figma gap 2
                         Text(
                           secondaryValue!,
                           style: const TextStyle(

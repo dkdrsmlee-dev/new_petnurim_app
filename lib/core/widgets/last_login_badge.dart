@@ -7,7 +7,7 @@ class LastLoginBadge extends StatelessWidget {
   const LastLoginBadge({super.key});
 
   static const _label = '최근에 로그인 했어요';
-  static const _badgeColor = Color(0xFF1F2937);
+  static const _badgeColor = Color(0xFF30343C); // Figma color/gray/120
   static const _textColor = Colors.white;
   static const _tailHeight = 6.0;
   static const _tailWidth = 10.0;
@@ -31,7 +31,7 @@ class LastLoginBadge extends StatelessWidget {
         ),
         // 말풍선 본체
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
             color: _badgeColor,
             borderRadius: BorderRadius.circular(8),
@@ -39,7 +39,7 @@ class LastLoginBadge extends StatelessWidget {
           child: const Text(
             _label,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 12, // Figma Body/semibold/3xs
               fontWeight: FontWeight.w600,
               color: _textColor,
               letterSpacing: -0.3,
