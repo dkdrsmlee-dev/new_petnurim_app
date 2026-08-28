@@ -586,7 +586,8 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        height: 44,
+        // Figma Photo bottom sheet(226:13545, showFile): 항목 높이 48
+        height: 48,
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
           children: [
