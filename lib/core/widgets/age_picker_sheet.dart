@@ -73,7 +73,8 @@ Future<void> showAgePickerSheet(
                     },
                     child: Container(
                       height: 54,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      // 헤더(좌우 16)와 좌측 정렬을 맞춘다.
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: const BoxDecoration(
                         border: Border(
                           bottom: BorderSide(color: AppColors.borderLight),
