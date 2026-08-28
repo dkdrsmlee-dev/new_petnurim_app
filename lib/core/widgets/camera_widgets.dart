@@ -423,13 +423,41 @@ class CameraRewardPopup extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
               child: Column(
                 children: [
-                  // 코인 이미지 (임시로 배너 코인 사용)
+                  // 코인 + 별 장식 (출석 리워드 팝업과 동일 조합, Figma 577:12221)
                   SizedBox(
                     width: 60,
                     height: 60,
-                    child: Image.asset(
-                      'assets/images/home/banner_coin.png',
-                      fit: BoxFit.contain,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 1,
+                          bottom: 1,
+                          width: 56,
+                          height: 56,
+                          child: Image.asset(
+                            'assets/images/ic_coin.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          width: 12,
+                          height: 12,
+                          child: SvgPicture.asset(
+                            'assets/images/ic_star_large.svg',
+                          ),
+                        ),
+                        Positioned(
+                          left: 0,
+                          bottom: 0,
+                          width: 9,
+                          height: 9,
+                          child: SvgPicture.asset(
+                            'assets/images/ic_star_small.svg',
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 16),
