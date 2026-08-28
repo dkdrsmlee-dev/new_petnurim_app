@@ -55,27 +55,35 @@ class PetEmptyScreen extends StatelessWidget {
               SizedBox(
                 width: 283,
                 height: 56,
-                child: ElevatedButton.icon(
+                // Figma: "마이 펫 추가 +" — 아이콘이 텍스트 뒤, 간격 4
+                child: ElevatedButton(
                   onPressed: onAddPetPressed,
-                  icon: const Icon(Icons.add_rounded, color: Colors.white, size: 24),
-                  label: const Text(
-                    '마이 펫 추가',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      height: 1.4,
-                      letterSpacing: -0.66,
-                      color: Colors.white,
-                    ),
-                  ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7E4FFF),
+                    backgroundColor: AppColors.primary, // Figma #7F4FFF
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '마이 펫 추가',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Icon(Icons.add_rounded, color: Colors.white, size: 24),
+                    ],
                   ),
                 ),
               ),
