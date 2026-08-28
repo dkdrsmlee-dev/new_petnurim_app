@@ -71,7 +71,7 @@ class _AuthStartScreenState extends ConsumerState<AuthStartScreen> {
                     color: AppColors.textStrong,
                   ),
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 40), // Figma: 타이틀 ↔ 버튼 40
                 _AuthProviderButtons(
                   config: config,
                   pendingProvider: _pendingProvider,

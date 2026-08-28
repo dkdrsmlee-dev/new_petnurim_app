@@ -198,7 +198,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  // Figma: Content y=122.5 (헤더 106 + 16)
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   children: [
                     const Text(
                       '추가 정보를 입력하고\n회원가입을 완료해 주세요.',
