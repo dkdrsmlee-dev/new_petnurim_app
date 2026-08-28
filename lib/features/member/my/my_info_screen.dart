@@ -427,68 +427,16 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     );
   }
 
-  /// 휴대폰 번호 변경 성공 다이얼로그(확인 1개).
+  /// 휴대폰 번호 변경 성공 다이얼로그(Figma 186:5328 — 확인 1개, 꽉 찬 버튼).
   Future<void> _showPhoneChangedDialog(String newPhone) {
     return showDialog<void>(
       context: context,
-      builder: (dialogContext) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          backgroundColor: Colors.white,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  '휴대폰 번호가 변경되었어요',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF1E2024),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  _formatPhoneNumber(newPhone),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    child: const Text('확인'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+      builder: (dialogContext) => EdgeButtonDialog(
+        title: '휴대폰 번호가\n변경되었습니다.',
+        content: _formatPhoneNumber(newPhone),
+        confirmText: '확인',
+        onConfirm: () {},
+      ),
     );
   }
 
@@ -518,7 +466,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                 onBackPressed: () => Navigator.pop(context),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24), // Figma: 좌우 16
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -575,12 +523,21 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     ],
                   ),
                   const SizedBox(height: 24),
+                  // Figma Line6 — 시트 폭 전체를 가로지르는 6px 구분 바
+                  Container(
+                    height: 6,
+                    margin: const EdgeInsets.symmetric(horizontal: -16),
+                    color: AppColors.bgGray,
+                  ),
+                  const SizedBox(height: 24),
                   const Text(
                     '상세 주소를 입력해 주세요.',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF1E2024),
+                      color: AppColors.textStrong,
+                      height: 1.4,
+                      letterSpacing: -0.66,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -590,7 +547,8 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     decoration: InputDecoration(
                       hintText: '상세 주소 입력',
                       hintStyle: const TextStyle(color: AppColors.placeholder),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      // Figma Input field base: 높이 52
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: const BorderSide(color: AppColors.border),
@@ -611,13 +569,15 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      minimumSize: const Size.fromHeight(52),
+                      // Figma Navi button: h56, radius 12, 18 SemiBold
+                      minimumSize: const Size.fromHeight(56),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       textStyle: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
+                        letterSpacing: -0.66,
                       ),
                     ),
                     child: const Text('확인'),

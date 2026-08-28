@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import '../../../core/widgets/bullit_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,7 +9,6 @@ import '../../../app/app_routes.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/storage/token_storage.dart';
 import '../../../core/utils/toast_util.dart';
-import '../../../core/widgets/common_dialog.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
 import '../../../core/widgets/selection_control.dart';
@@ -74,7 +74,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
             Positioned.fill(
               bottom: 90, // Leave space for bottom buttons
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24), // Figma: 좌우 16
                 children: [
                   // 1. 유의사항 안내 섹션
                   const Text(
@@ -85,32 +85,32 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                       color: AppColors.textStrong,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12), // Figma: 타이틀 ↔ 박스 12
                   // 구독 서비스 있음(196:7510): 활성 구독을 모두 표시.
                   if (activeSubs.isNotEmpty) ...[
                     _buildActiveSubscriptionBox(activeSubs),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
                   ],
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppColors.bgSoft,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(12), // Figma Notice
                     ),
                     child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _BulletItem(text: '탈퇴 시 계정 및 데이터는 복구되지 않습니다.'),
+                        _NoticeBullet('탈퇴 시 계정 및 데이터는 복구되지 않습니다.'),
                         SizedBox(height: 8),
-                        _BulletItem(text: '보유 중인 리워드/포인트는 모두 소멸됩니다.'),
+                        _NoticeBullet('보유 중인 리워드/포인트는 모두 소멸됩니다.'),
                         SizedBox(height: 8),
-                        _BulletItem(text: '진행 중인 서비스/구독은 잔여 기간을 모두 소진한 후 탈퇴 가능합니다.'),
+                        _NoticeBullet('진행 중인 서비스/구독은 잔여 기간을 모두 소진한 후 탈퇴 가능합니다.'),
                         SizedBox(height: 8),
-                        _BulletItem(text: '탈퇴 후 30일 동안 재가입이 불가합니다.'),
+                        _NoticeBullet('탈퇴 후 30일 동안 재가입이 불가합니다.'),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 32), // Figma: 박스 ↔ 탈퇴 사유 32
 
                   // 2. 탈퇴 사유 선택 섹션
                   const Text(
@@ -121,7 +121,7 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                       color: AppColors.textStrong,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12), // Figma: 타이틀 ↔ 목록 12
                   ...reasons.map((reason) {
                     return SelectionControl<String>(
                       style: SelectionControlStyle.radio,
@@ -272,7 +272,8 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
       barrierDismissible: false,
       barrierColor: const Color(0x99000000),
       builder: (context) {
-        return CommonDialog(
+        // Figma 201:5663 — 버튼이 카드 모서리까지 꽉 찬 형태
+        return EdgeButtonDialog(
           title: '정말 탈퇴하시겠어요?',
           content: '탈퇴 후에는 계정 정보와\n이용 내역을 복구할 수 없어요.',
           cancelText: '취소',
@@ -442,36 +443,24 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
 }
 
 // 불릿 항목 위젯
-class _BulletItem extends StatelessWidget {
-  const _BulletItem({required this.text});
+/// Figma `Bullet text`(198:4561) 인스턴스 — 점 #A2ADBE, 텍스트 15 Medium #87909E.
+class _NoticeBullet extends StatelessWidget {
+  const _NoticeBullet(this.text);
 
   final String text;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          '• ',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textSecondary,
-          ),
-        ),
-        Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 15,
-              color: AppColors.textSecondary,
-              height: 1.4,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
+    return BullitText(
+      text: text,
+      bulletColor: AppColors.placeholder, // Figma Bulit #A2ADBE
+      textStyle: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+        color: AppColors.textSecondary,
+        height: 1.4,
+        letterSpacing: -0.66,
+      ),
     );
   }
 }

@@ -48,7 +48,8 @@ class SelectionControl<T> extends StatelessWidget {
       },
       borderRadius: BorderRadius.circular(4),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        // Figma: 행 높이 45 (아이콘 24 + 상하 10.5)
+        padding: const EdgeInsets.symmetric(vertical: 10.5),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
