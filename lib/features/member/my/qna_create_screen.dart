@@ -194,22 +194,30 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Figma Popup(692:31546): 좌우 20, 타이틀 20(h28), Icon/X/24
                   Padding(
-                    padding: const EdgeInsets.only(left: 16, right: 8, top: 16, bottom: 8),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           '문의 유형',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 20,
                             fontWeight: FontWeight.w700,
+                            height: 1.4,
+                            letterSpacing: -0.66,
                             color: AppColors.textStrong,
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.close, color: AppColors.textStrong, size: 24),
-                          onPressed: () => Navigator.pop(context),
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          behavior: HitTestBehavior.opaque,
+                          child: SvgPicture.asset(
+                            'assets/images/ic_x_24.svg',
+                            width: 24,
+                            height: 24,
+                          ),
                         ),
                       ],
                     ),
@@ -227,8 +235,9 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                               Navigator.pop(context);
                             },
                             child: Container(
-                              height: 56,
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              // Figma List button: h54, 좌우 20
+                              height: 54,
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
                               decoration: const BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
@@ -867,7 +876,8 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                     ),
                     const SizedBox(height: 12),
                     Container(
-                      height: 56,
+                      // Figma Attachment section: h52, border primary
+                      height: 52,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
@@ -888,13 +898,15 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.primary,
+                                  height: 1.4,
+                                  letterSpacing: -0.66,
+                                  color: AppColors.primaryStrong, // Figma #7025FF
                                 ),
                               ),
                               SizedBox(width: 4),
                               Icon(
                                 Icons.add,
-                                color: AppColors.primary,
+                                color: AppColors.primaryStrong,
                                 size: 20,
                               ),
                             ],
@@ -976,12 +988,13 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                                     });
                                   },
                                   borderRadius: BorderRadius.circular(12),
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(4),
-                                    child: Icon(
-                                      Icons.close,
-                                      color: AppColors.textSecondary,
-                                      size: 16,
+                                  // Figma Icon/X/24
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: SvgPicture.asset(
+                                      'assets/images/ic_x_24.svg',
+                                      width: 24,
+                                      height: 24,
                                     ),
                                   ),
                                 ),
@@ -992,22 +1005,25 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       ),
                     ],
                     const SizedBox(height: 8),
-                    const Row(
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.info_outline_rounded,
-                          color: AppColors.textSecondary,
-                          size: 16,
+                        // Figma Info16_Icon
+                        SvgPicture.asset(
+                          'assets/images/ic_info_16.svg',
+                          width: 16,
+                          height: 16,
                         ),
-                        SizedBox(width: 4),
-                        Expanded(
+                        const SizedBox(width: 4),
+                        const Expanded(
                           child: Text(
                             '첨부파일은 최대 3개, 30MB까지 등록 가능합니다.',
                             style: TextStyle(
                               fontSize: 13,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                              height: 1.4,
+                              letterSpacing: -0.66,
+                              color: AppColors.textDisabled, // Figma #909AA9
                             ),
                           ),
                         ),
