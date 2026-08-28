@@ -130,12 +130,11 @@ class _EmergencyIcon extends StatelessWidget {
                 color: AppColors.errorSoft, // #FF5F5F
                 shape: BoxShape.circle,
               ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(width: 5, height: 1.8, color: Colors.white),
-                  Container(width: 1.8, height: 5, color: Colors.white),
-                ],
+              // Figma Group 1000005122 — 6×6, stroke 2, round cap
+              child: SvgPicture.asset(
+                'assets/images/ic_emergency_cross.svg',
+                width: 6,
+                height: 6,
               ),
             ),
           ),

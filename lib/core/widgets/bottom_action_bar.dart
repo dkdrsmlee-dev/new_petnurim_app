@@ -12,7 +12,8 @@ class NurimBottomActionBar extends StatelessWidget {
     this.primaryEnabled = true,
     this.secondaryEnabled = true,
     this.isLoading = false,
-    this.padding = const EdgeInsets.fromLTRB(16, 8, 16, 24),
+    // Figma Navi button: 상단 4 / 좌우 16. 하단 24는 Android SafeArea 보정용 여백.
+    this.padding = const EdgeInsets.fromLTRB(16, 4, 16, 24),
   });
 
   final String primaryLabel;

@@ -147,8 +147,12 @@ class PaymentMethodScreen extends ConsumerWidget {
       icon: const Icon(Icons.more_vert, size: 24, color: AppColors.textDisabled),
       padding: EdgeInsets.zero,
       color: Colors.white,
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      // Figma Edit list(531:15268): border #D6DBE4 + 옅은 그림자
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: AppColors.border),
+      ),
       onSelected: (value) {
         if (value == 'delete') _confirmDelete(context, ref, pm);
       },
@@ -165,6 +169,7 @@ class PaymentMethodScreen extends ConsumerWidget {
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF51565F), // Figma text-color/primary
                   letterSpacing: -0.66,
+                  height: 1.4,
                 ),
               ),
               const SizedBox(width: 6),

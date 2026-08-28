@@ -100,7 +100,8 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
             child: Material(
               color: Colors.transparent,
               child: Container(
-                width: 280,
+                // Figma Tool tip box(988:48623)
+                width: 240,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -109,7 +110,7 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                   boxShadow: const [
                     BoxShadow(
                       color: Color(0x1A51565F),
-                      blurRadius: 8,
+                      blurRadius: 4,
                       offset: Offset(0, 0),
                     ),
                   ],
@@ -126,27 +127,29 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textStrong,
+                            color: AppColors.textMuted,
                             letterSpacing: -0.66,
+                            height: 1.4,
                           ),
                         ),
                         GestureDetector(
                           onTap: _hideTooltip,
-                          child: const Icon(
-                            Icons.close,
-                            color: AppColors.textMuted,
-                            size: 18,
+                          // Figma Icon/X/16-1
+                          child: SvgPicture.asset(
+                            'assets/images/ic_x_16.svg',
+                            width: 16,
+                            height: 16,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 6),
                     const Text(
-                      'jpg, jpeg, png, gif, pdf, xls, xlsx, txt,\ndoc, docx, ppt, pptx, zip, hwp, hwpx',
+                      'jpg, jpeg, png, gif, pdf, xls, xlsx, txt, doc, docx, ppt, pptx, zip, hwp, hwpx',
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textDisabled,
                         height: 1.4,
                         letterSpacing: -0.66,
                       ),

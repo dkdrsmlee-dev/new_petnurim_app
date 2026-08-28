@@ -523,29 +523,37 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                  // Figma Address lnfo(196:6918)
                   Text(
                     baseAddress,
                     style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF1E2024),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textMuted,
+                      letterSpacing: -0.66,
+                      height: 1.4,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        height: 24,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF0F5FF),
-                          borderRadius: BorderRadius.circular(4),
+                          color: Colors.white,
+                          border: Border.all(color: AppColors.border),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
                           '도로명',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF2B66FF),
+                            color: AppColors.primary,
+                            letterSpacing: -0.66,
+                            height: 1.4,
                           ),
                         ),
                       ),
@@ -556,9 +564,11 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: AppColors.textSecondary,
+                            letterSpacing: -0.66,
+                            height: 1.4,
                           ),
                         ),
                       ),

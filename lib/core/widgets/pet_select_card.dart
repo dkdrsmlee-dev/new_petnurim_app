@@ -119,8 +119,9 @@ class PetSelectCard extends StatelessWidget {
                             onTap: onHistoryTap,
                             behavior: HitTestBehavior.opaque,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 6),
+                              // Figma: 버튼 패딩 없음(카드 우측 16 정렬).
+                              // 우측만 0으로 두고 좌/상/하는 탭 영역용으로 유지.
+                              padding: const EdgeInsets.fromLTRB(8, 6, 0, 6),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [

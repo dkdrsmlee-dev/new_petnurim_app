@@ -33,10 +33,10 @@ class NurimPetInfoDetail extends StatelessWidget {
             width: 48,
             height: 48,
             clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFFF0F2F5),
-              border: Border.all(color: AppColors.border, width: 1),
+              color: Color(0xFFF0F2F5),
+              // Figma: 보더 없음
             ),
             child: pet.imageProvider != null
                 ? Image(
@@ -181,7 +181,7 @@ class NurimPetInfoDetail extends StatelessWidget {
             ),
           ),
           if (showActionButton) ...[
-            const SizedBox(width: 12),
+            const SizedBox(width: 16), // Figma: 펫 정보 ↔ 버튼 16
             // Edit Button (Outline Button, height 32px)
             OutlinedButton(
               onPressed: onActionPressed,

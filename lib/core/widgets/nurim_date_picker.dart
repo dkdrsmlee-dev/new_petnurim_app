@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../theme/app_colors.dart';
 
@@ -79,6 +80,15 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
     return DateTime(year, month + 1, 0).day;
   }
 
+  /// Figma `Day list` 휠 항목 스타일: 20 SemiBold, 선택 #30343C / 비선택 #D6DBE4.
+  TextStyle _wheelStyle(bool selected) => TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+        letterSpacing: -0.66,
+        color: selected ? AppColors.textStrong : AppColors.border,
+      );
+
   @override
   Widget build(BuildContext context) {
     final maxDays = _daysInMonth(_tempYear, _tempMonth);
@@ -98,21 +108,29 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                 Expanded(
                   child: Text(
                     widget.title,
+                    // Figma Popup title: 20 Bold, line-height 28(=1.4), ls -0.66
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
+                      height: 1.4,
+                      letterSpacing: -0.66,
                       color: AppColors.textStrong,
                     ),
                   ),
                 ),
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
-                  child: const Icon(Icons.close, size: 24, color: AppColors.textStrong),
+                  // Figma Icon/X/24
+                  child: SvgPicture.asset(
+                    'assets/images/ic_x_24.svg',
+                    width: 24,
+                    height: 24,
+                  ),
                 ),
               ],
             ),
           ),
-          const Divider(color: AppColors.border),
+          // Figma Popup title/Calandar_select: 헤더 아래 구분선 없음
           // 2. CupertinoPicker 스크롤 휠 영역
           Stack(
             alignment: Alignment.center,
@@ -120,7 +138,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
               // 뒷배경에 피그마 명세 가로 라인 표시 (전체 너비를 횡단하는 구분선)
               IgnorePointer(
                 child: Container(
-                  height: 44, // 휠 높이에 맞춰 조정한 선택 행 높이
+                  height: 60, // Figma Day list: 행 높이 60
                   decoration: const BoxDecoration(
                     border: Border(
                       top: BorderSide(color: AppColors.borderLight, width: 1.0),
@@ -139,7 +157,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                         scrollController: FixedExtentScrollController(
                           initialItem: _years.contains(_tempYear) ? _years.indexOf(_tempYear) : 0,
                         ),
-                        itemExtent: 40,
+                        itemExtent: 60, // Figma Day list
                         selectionOverlay: const SizedBox.shrink(), // 기본 회색 박스 제거
                         onSelectedItemChanged: (index) {
                           setState(() {
@@ -147,10 +165,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                           });
                         },
                         children: _years.map((y) => Center(
-                          child: Text(
-                            '$y년',
-                            style: const TextStyle(fontSize: 16),
-                          ),
+                          child: Text('$y년', style: _wheelStyle(y == _tempYear)),
                         )).toList(),
                       ),
                     ),
@@ -160,7 +175,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                         scrollController: FixedExtentScrollController(
                           initialItem: _months.indexOf(_tempMonth),
                         ),
-                        itemExtent: 40,
+                        itemExtent: 60, // Figma Day list
                         selectionOverlay: const SizedBox.shrink(), // 기본 회색 박스 제거
                         onSelectedItemChanged: (index) {
                           setState(() {
@@ -170,7 +185,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                         children: _months.map((m) => Center(
                           child: Text(
                             '${m.toString().padLeft(2, '0')}월',
-                            style: const TextStyle(fontSize: 16),
+                            style: _wheelStyle(m == _tempMonth),
                           ),
                         )).toList(),
                       ),
@@ -181,7 +196,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                         scrollController: FixedExtentScrollController(
                           initialItem: days.contains(_tempDay) ? days.indexOf(_tempDay) : 0,
                         ),
-                        itemExtent: 40,
+                        itemExtent: 60, // Figma Day list
                         selectionOverlay: const SizedBox.shrink(), // 기본 회색 박스 제거
                         onSelectedItemChanged: (index) {
                           setState(() {
@@ -191,7 +206,7 @@ class _NurimDatePickerBottomSheetState extends State<NurimDatePickerBottomSheet>
                         children: days.map((d) => Center(
                           child: Text(
                             '${d.toString().padLeft(2, '0')}일',
-                            style: const TextStyle(fontSize: 16),
+                            style: _wheelStyle(d == _tempDay),
                           ),
                         )).toList(),
                       ),

@@ -30,7 +30,7 @@ Future<void> showAgePickerSheet(
           children: [
             // 헤더: 제목 20 Bold + 닫기(Icon/X/24). 리스트와는 구분선 없이 16 간격.
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0), // Figma: 좌우 16
               child: Row(
                 children: [
                   const Expanded(

@@ -102,11 +102,13 @@ class _MembershipCancelScreenState extends ConsumerState<MembershipCancelScreen>
               children: [
                 Text(
                   info.membershipName.isEmpty ? '멤버십' : info.membershipName,
+                  // Figma Membership text info box_1(590:7909)
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: AppColors.textStrong,
                     letterSpacing: -0.66,
+                    height: 1.4,
                   ),
                 ),
                 Text(
@@ -116,6 +118,7 @@ class _MembershipCancelScreenState extends ConsumerState<MembershipCancelScreen>
                     fontWeight: FontWeight.w500,
                     color: AppColors.textSecondary,
                     letterSpacing: -0.66,
+                    height: 1.4,
                   ),
                 ),
               ],

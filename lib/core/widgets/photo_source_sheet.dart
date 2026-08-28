@@ -78,26 +78,32 @@ class _PhotoSourceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: SvgPicture.asset(
-        iconAsset,
-        width: 24,
-        height: 24,
-        colorFilter: const ColorFilter.mode(
-          AppColors.textMuted,
-          BlendMode.srcIn,
-        ),
-      ),
-      title: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textMuted,
-          letterSpacing: -0.66,
-        ),
-      ),
+    // Figma: 항목 높이 48, 좌우 16, 아이콘 ↔ 라벨 8
+    return InkWell(
       onTap: onTap,
+      child: SizedBox(
+        height: 48,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              // 색은 에셋 원색(#909AA9)을 그대로 사용
+              SvgPicture.asset(iconAsset, width: 24, height: 24),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textMuted,
+                  height: 1.4,
+                  letterSpacing: -0.66,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

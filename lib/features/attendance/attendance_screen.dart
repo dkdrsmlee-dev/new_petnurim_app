@@ -526,6 +526,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: isOutsideMonth ? FontWeight.w500 : FontWeight.w600,
+                        letterSpacing: -0.48, // Figma Calandar
                         color: isOutsideMonth
                             ? AppColors.border
                             : AppColors.textTertiary,
