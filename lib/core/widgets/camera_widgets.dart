@@ -12,7 +12,7 @@ class CameraControlBar extends StatelessWidget {
     Key? key,
     required this.onCapture,
     this.onFlipCamera,
-    this.backgroundColor = const Color(0x42000000), // rgba(0,0,0,0.26)
+    this.backgroundColor = const Color(0x66000000), // Figma rgba(0,0,0,0.4)
   }) : super(key: key);
 
   @override

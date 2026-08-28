@@ -73,22 +73,20 @@ class NurimTextCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2.0),
-                          child: icon ??
-                              SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/images/icon_bell_solid.svg',
-                                    width: 16,
-                                    height: 14.43,
-                                  ),
+                        // Figma: 아이콘 24×24, 상단 오프셋 없이 제목과 top 정렬
+                        icon ??
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/images/icon_bell_solid.svg',
+                                  width: 16,
+                                  height: 14.43,
                                 ),
                               ),
-                        ),
-                        const SizedBox(width: 8),
+                            ),
+                        const SizedBox(width: 6), // Figma: 아이콘 ↔ 제목 6
                         Expanded(
                           child: Text(
                             title,
@@ -122,10 +120,10 @@ class NurimTextCard extends StatelessWidget {
                     ),
 
                     // 불릿 상세 정보 (펼쳐진 상태이고 정보가 존재할 때만 표시)
-                    if (isExpanded && bullets != null && bullets!.isNotEmpty) ...[
-                      const SizedBox(height: 12),
+                    if (isExpanded && bullets != null && bullets!.isNotEmpty)
+                      // Figma: 텍스트 박스 요소 간격은 모두 8
                       ...bullets!.map((bullet) => Padding(
-                            padding: const EdgeInsets.only(bottom: 4.0),
+                            padding: const EdgeInsets.only(top: 8.0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -153,7 +151,6 @@ class NurimTextCard extends StatelessWidget {
                               ],
                             ),
                           )),
-                    ],
                     const SizedBox(height: 8),
 
                     // 날짜
@@ -163,6 +160,7 @@ class NurimTextCard extends StatelessWidget {
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                         color: AppColors.placeholder,
+                        height: 1.4,
                         letterSpacing: -0.66,
                       ),
                     ),
@@ -190,14 +188,19 @@ class NurimTextCard extends StatelessWidget {
                             fontSize: 13,
                             fontWeight: FontWeight.w500, // Medium
                             color: AppColors.textSecondary,
+                            height: 1.4,
                             letterSpacing: -0.66,
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                          color: AppColors.textSecondary,
-                          size: 18,
+                        const SizedBox(width: 16), // Figma: 텍스트 ↔ 화살표 16
+                        // Figma Icon/ArrowBottom/24-2 (18px, 접기는 180° 회전)
+                        RotatedBox(
+                          quarterTurns: isExpanded ? 2 : 0,
+                          child: SvgPicture.asset(
+                            'assets/images/ic_arrow_bottom_18.svg',
+                            width: 18,
+                            height: 18,
+                          ),
                         ),
                       ],
                     ),
@@ -217,7 +220,7 @@ class NurimTextCard extends StatelessWidget {
               width: 6,
               height: 6,
               decoration: const BoxDecoration(
-                color: AppColors.errorSoft,
+                color: AppColors.error, // Figma #FF3D3D
                 shape: BoxShape.circle,
               ),
             ),

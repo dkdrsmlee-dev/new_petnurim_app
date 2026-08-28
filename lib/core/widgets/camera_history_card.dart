@@ -81,25 +81,16 @@ class _PetInfoSection extends StatelessWidget {
               Positioned(
                 bottom: 0,
                 right: 0,
-                child: Container(
+                child: SvgPicture.asset(
+                  // Figma Icon/Favorite/24
+                  'assets/images/ic_favorite.svg',
                   width: 24,
                   height: 24,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF0C119), // 골드 옐로우 배경
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.star_rounded,
-                      size: 15,
-                      color: Colors.white, // 흰색 별 아이콘
-                    ),
-                  ),
                 ),
               ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 6), // Figma: 사진 ↔ 이름 6
 
         // 반려동물 이름
         Text(
@@ -112,7 +103,6 @@ class _PetInfoSection extends StatelessWidget {
             color: AppColors.textMuted,
           ),
         ),
-        const SizedBox(height: 4),
 
         // 반려동물 나이 · 품종 · 성별 정보 행
         _PetDetailsRow(
@@ -143,7 +133,7 @@ class _CircularAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: AppColors.bgGray,
-        border: Border.all(color: const Color(0xFFE6EBF2), width: 1.5),
+        // Figma: 보더 없음
       ),
       child: ClipOval(
         // 이미지가 없거나 로드 실패(예: 404) 시 동일한 발바닥 아이콘으로 폴백

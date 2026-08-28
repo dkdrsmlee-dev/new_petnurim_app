@@ -442,7 +442,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
                   : CameraControlBar(
                       onCapture: _takePicture,
                       onFlipCamera: _flipCamera,
-                      backgroundColor: const Color(0x42000000), // rgba(0,0,0,0.26)
+                      backgroundColor: const Color(0x66000000), // Figma rgba(0,0,0,0.4)
                     ),
             ),
 
