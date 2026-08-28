@@ -196,7 +196,8 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                 children: [
                   // Figma Popup(692:31546): 좌우 20, 타이틀 20(h28), Icon/X/24
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+                    // 우측 8 = 닫기 터치영역(48) 안에서 아이콘이 우측 20dp 에 오도록
+                    padding: const EdgeInsets.fromLTRB(20, 20, 8, 16),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -213,10 +214,17 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
                           behavior: HitTestBehavior.opaque,
-                          child: SvgPicture.asset(
-                            'assets/images/ic_x_24.svg',
-                            width: 24,
-                            height: 24,
+                          // IconButton 제거로 줄어든 터치 영역(24)을 48 로 복원
+                          child: SizedBox(
+                            width: 48,
+                            height: 48,
+                            child: Center(
+                              child: SvgPicture.asset(
+                                'assets/images/ic_x_24.svg',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
                           ),
                         ),
                       ],
