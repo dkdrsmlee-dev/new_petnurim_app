@@ -133,8 +133,11 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                         // A. 타이틀 배지 및 일러스트 그래픽 영역 (반응형 스케일링 적용)
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            final double screenWidth = MediaQuery.of(context).size.width;
-                            final double s = screenWidth / 375; // 기준 해상도 375px 대비 스케일 비율
+                            final double screenWidth = MediaQuery.of(
+                              context,
+                            ).size.width;
+                            final double s =
+                                screenWidth / 375; // 기준 해상도 375px 대비 스케일 비율
                             // 이 Stack 은 Padding(horizontal: 16) 안에 있어
                             // 좌표 원점이 화면 좌측이 아니라 16dp 지점이다.
                             // 화면 폭 기준으로 잡으면 일러스트가 통째로 16dp
@@ -394,33 +397,36 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                       angle: -4.6 * (3.14159 / 180),
                                       child: _OuterHardShadow(
                                         child: _GradientStadiumBorder(
-                                        topAlpha: 0.35,
-                                        bottomAlpha: 0.18,
-                                        child: Container(
-                                        // 피그마는 알약 크기를 명시한다. 패딩+글자폭으로
-                                        // 정하면 폰트(Gmarket Sans → Pretendard)가 달라
-                                        // 폭이 어긋나므로 명시값을 그대로 쓴다.
-                                        width: 225.693 * s,
-                                        height: 56.844 * s,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF423F99).withValues(alpha: 0.5),
-                                          borderRadius: BorderRadius.circular(9999),
-                                        ),
-                                        child: Text(
-                                          '리워드 받아요!',
-                                          style: TextStyle(
-                                            // 피그마 스펙 32. Pretendard 가 Gmarket Sans 보다 1.13배
-                                            // 좁아 알약 안 여백은 더 넓어지지만, 크기를 키우면 글자
-                                            // 자체가 13% 커진다(실측 32 → 높이 35.1 = 피그마 35.3).
-                                            fontSize: 32 * s,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
-                                            letterSpacing: -0.96 * s,
+                                          topAlpha: 0.35,
+                                          bottomAlpha: 0.18,
+                                          child: Container(
+                                            // 피그마는 알약 크기를 명시한다. 패딩+글자폭으로
+                                            // 정하면 폰트(Gmarket Sans → Pretendard)가 달라
+                                            // 폭이 어긋나므로 명시값을 그대로 쓴다.
+                                            width: 225.693 * s,
+                                            height: 56.844 * s,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color: const Color(
+                                                0xFF423F99,
+                                              ).withValues(alpha: 0.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(9999),
+                                            ),
+                                            child: Text(
+                                              '리워드 받아요!',
+                                              style: TextStyle(
+                                                // 피그마 스펙 32. Pretendard 가 Gmarket Sans 보다 1.13배
+                                                // 좁아 알약 안 여백은 더 넓어지지만, 크기를 키우면 글자
+                                                // 자체가 13% 커진다(실측 32 → 높이 35.1 = 피그마 35.3).
+                                                fontSize: 32 * s,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white,
+                                                letterSpacing: -0.96 * s,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      ),
                                       ),
                                     ),
                                   ),
@@ -433,39 +439,40 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                       angle: 2.58 * (3.14159 / 180),
                                       child: _OuterHardShadow(
                                         child: _GradientStadiumBorder(
-                                        topAlpha: 0.70,
-                                        bottomAlpha: 0.50,
-                                        child: Container(
-                                        // 피그마는 알약 크기를 명시한다. 패딩+글자폭으로
-                                        // 정하면 폰트(Gmarket Sans → Pretendard)가 달라
-                                        // 폭이 어긋나므로 명시값을 그대로 쓴다.
-                                        width: 253.664 * s,
-                                        height: 56.843 * s,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          // 피그마 레이어 속성은 흰색 20% 반투명이지만,
-                                          // 실제 피그마 렌더에서는 아래 리워드 배지가
-                                          // 전혀 비치지 않는다(x=741·859·900·940 어디서도
-                                          // 채움이 균일). 앱에서 반투명으로 두면 두 배지가
-                                          // 살짝 겹치는 구간에서 리워드가 비쳐 보이므로,
-                                          // 렌더 결과와 같은 합성 단색을 쓴다.
-                                          color: const Color(0xFF7C83EE),
-                                          borderRadius: BorderRadius.circular(9999),
-                                        ),
-                                        child: Text(
-                                          '마이 펫 촬영하고',
-                                          style: TextStyle(
-                                            // 피그마 스펙 32. Pretendard 가 Gmarket Sans 보다 1.13배
-                                            // 좁아 알약 안 여백은 더 넓어지지만, 크기를 키우면 글자
-                                            // 자체가 13% 커진다(실측 32 → 높이 35.1 = 피그마 35.3).
-                                            fontSize: 32 * s,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
-                                            letterSpacing: -0.96 * s,
+                                          topAlpha: 0.70,
+                                          bottomAlpha: 0.50,
+                                          child: Container(
+                                            // 피그마는 알약 크기를 명시한다. 패딩+글자폭으로
+                                            // 정하면 폰트(Gmarket Sans → Pretendard)가 달라
+                                            // 폭이 어긋나므로 명시값을 그대로 쓴다.
+                                            width: 253.664 * s,
+                                            height: 56.843 * s,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              // 피그마 레이어 속성은 흰색 20% 반투명이지만,
+                                              // 실제 피그마 렌더에서는 아래 리워드 배지가
+                                              // 전혀 비치지 않는다(x=741·859·900·940 어디서도
+                                              // 채움이 균일). 앱에서 반투명으로 두면 두 배지가
+                                              // 살짝 겹치는 구간에서 리워드가 비쳐 보이므로,
+                                              // 렌더 결과와 같은 합성 단색을 쓴다.
+                                              color: const Color(0xFF7C83EE),
+                                              borderRadius:
+                                                  BorderRadius.circular(9999),
+                                            ),
+                                            child: Text(
+                                              '마이 펫 촬영하고',
+                                              style: TextStyle(
+                                                // 피그마 스펙 32. Pretendard 가 Gmarket Sans 보다 1.13배
+                                                // 좁아 알약 안 여백은 더 넓어지지만, 크기를 키우면 글자
+                                                // 자체가 13% 커진다(실측 32 → 높이 35.1 = 피그마 35.3).
+                                                fontSize: 32 * s,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white,
+                                                letterSpacing: -0.96 * s,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      ),
                                       ),
                                     ),
                                   ),
@@ -513,7 +520,9 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                               const TextSpan(text: '미션 수행 시 매일 '),
                               TextSpan(
                                 text: '${detail?.rewardValue ?? 100}PR ',
-                                style: const TextStyle(color: Color(0xFFFF8FE7)),
+                                style: const TextStyle(
+                                  color: Color(0xFFFF8FE7),
+                                ),
                               ),
                               const TextSpan(text: '지급!'),
                             ],
@@ -538,7 +547,10 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                         // D. 오늘의 수행 미션 카드 (Mission Box)
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 24,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
@@ -559,7 +571,10 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                             children: [
                               // "오늘의 수행 미션" 뱃지
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColors.bgGray,
                                   borderRadius: BorderRadius.circular(9999),
@@ -589,7 +604,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(height: 16),
-                              
+
                               // 이미지 예시 카드 영역
                               Stack(
                                 children: [
@@ -615,33 +630,45 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                       child: detailAsync.isLoading
                                           ? const ShimmerBox()
                                           : (detail?.detailImageFileId != null
-                                              ? Image(
-                                                  image: AuthedFileImageX.of(
-                                                    ref,
-                                                    detail!.detailImageFileId!,
-                                                    variant: 'medium',
-                                                  ),
-                                                  fit: BoxFit.cover,
-                                                  alignment:
-                                                      const Alignment(0, 0.235),
-                                                  // 이미지 다운로드 중 셔머 →
-                                                  // 로드 완료 시 교체.
-                                                  frameBuilder:
-                                                      shimmerImageFrameBuilder,
-                                                  errorBuilder: (_, __, ___) =>
-                                                      Image.asset(
+                                                ? Image(
+                                                    image: AuthedFileImageX.of(
+                                                      ref,
+                                                      detail!
+                                                          .detailImageFileId!,
+                                                      variant: 'medium',
+                                                    ),
+                                                    fit: BoxFit.cover,
+                                                    alignment: const Alignment(
+                                                      0,
+                                                      0.235,
+                                                    ),
+                                                    // 이미지 다운로드 중 셔머 →
+                                                    // 로드 완료 시 교체.
+                                                    frameBuilder:
+                                                        shimmerImageFrameBuilder,
+                                                    errorBuilder:
+                                                        (
+                                                          _,
+                                                          __,
+                                                          ___,
+                                                        ) => Image.asset(
+                                                          'assets/images/banner/fangs_guide.png',
+                                                          fit: BoxFit.cover,
+                                                          alignment:
+                                                              const Alignment(
+                                                                0,
+                                                                0.235,
+                                                              ),
+                                                        ),
+                                                  )
+                                                : Image.asset(
                                                     'assets/images/banner/fangs_guide.png',
                                                     fit: BoxFit.cover,
-                                                    alignment:
-                                                        const Alignment(0, 0.235),
-                                                  ),
-                                                )
-                                              : Image.asset(
-                                                  'assets/images/banner/fangs_guide.png',
-                                                  fit: BoxFit.cover,
-                                                  alignment:
-                                                      const Alignment(0, 0.235),
-                                                )),
+                                                    alignment: const Alignment(
+                                                      0,
+                                                      0.235,
+                                                    ),
+                                                  )),
                                     ),
                                   ),
                                   // 촬영 예시 빨간 뱃지
@@ -649,7 +676,10 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                     bottom: 8,
                                     right: 8,
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: AppColors.errorSoft,
                                         borderRadius: BorderRadius.circular(6),
@@ -669,7 +699,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                 ],
                               ),
                               const SizedBox(height: 16),
-                              
+
                               // 설명 텍스트 (guideContent HTML → 평문, 기존 디자인 유지)
                               Text(
                                 _htmlToPlainText(detail?.guideContent) ??
@@ -688,8 +718,9 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 40), // 미션 카드 ~ 참여 버튼 간격 (Figma 40px)
-
+                        const SizedBox(
+                          height: 40,
+                        ), // 미션 카드 ~ 참여 버튼 간격 (Figma 40px)
                         // E. 미션 참여하기 버튼
                         Container(
                           width: double.infinity,
@@ -698,7 +729,9 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0x4D47287C), // rgba(71, 40, 124, 0.3)
+                                color: const Color(
+                                  0x4D47287C,
+                                ), // rgba(71, 40, 124, 0.3)
                                 offset: const Offset(0, 4),
                                 blurRadius: 3,
                               ),
@@ -709,13 +742,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                               _onMissionParticipate(context, ref);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.textStrong, // Figma 검정/진회색 배경
+                              backgroundColor:
+                                  AppColors.textStrong, // Figma 검정/진회색 배경
                               foregroundColor: Colors.white,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
                             ),
                             child: const Text(
                               '미션 참여하기',
@@ -729,7 +766,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 40), // 버튼 ~ 블루 영역 하단 여백
                       ],
                     ),
@@ -742,7 +779,12 @@ class CameraMissionGuideScreen extends ConsumerWidget {
             Container(
               width: double.infinity,
               color: AppColors.bgGray, // var(--color/gray/20)
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 50),
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 32,
+                bottom: 50,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -761,17 +803,13 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                     text: '미션 수행 시 ${detail?.rewardValue ?? 100}PR이 즉시 지급됩니다.',
                   ),
                   const SizedBox(height: 8),
-                  const BullitText(
-                    text: '1일 1회 참여 가능하며, 중복 참여는 불가합니다.',
-                  ),
+                  const BullitText(text: '1일 1회 참여 가능하며, 중복 참여는 불가합니다.'),
                   const SizedBox(height: 8),
-                  const BullitText(
-                    text: '부적절한 사진은 통보 없이 삭제될 수 있습니다.',
-                  ),
+                  const BullitText(text: '부적절한 사진은 통보 없이 삭제될 수 있습니다.'),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 40),
           ],
         ),
@@ -791,8 +829,9 @@ class CameraMissionGuideScreen extends ConsumerWidget {
     // 촬영 이벤트 전용 펫 목록(/pets)을 조회해 화면을 분기한다.
     List<PhotoEventPet> pets;
     try {
-      pets =
-          await ref.read(photoEventRepositoryProvider).getPets(eventMasterId);
+      pets = await ref
+          .read(photoEventRepositoryProvider)
+          .getPets(eventMasterId);
     } catch (_) {
       if (context.mounted) {
         ToastUtil.show(context, '펫 정보를 불러오지 못했습니다. 다시 시도해 주세요.');
@@ -806,14 +845,15 @@ class CameraMissionGuideScreen extends ConsumerWidget {
     if (!context.mounted) return;
 
     // 참여 결과에 리워드가 없을 때 사용할 예비 리워드 값(상세 API의 리워드)
-    final rewardHint =
-        ref.read(photoEventDetailProvider(eventMasterId)).value?.rewardValue;
+    final rewardHint = ref
+        .read(photoEventDetailProvider(eventMasterId))
+        .value
+        ?.rewardValue;
 
     bool isRepresent(PhotoEventPet pet) {
       if (representPet == null) return false;
       // 두 API의 펫 식별자가 동일하다는 보장이 없어 ID 우선 매칭 후 이름으로 폴백한다.
-      final idMatched =
-          pets.any((p) => p.petId == representPet.myPetId);
+      final idMatched = pets.any((p) => p.petId == representPet.myPetId);
       return idMatched
           ? pet.petId == representPet.myPetId
           : pet.petName == representPet.petName;
@@ -833,7 +873,11 @@ class CameraMissionGuideScreen extends ConsumerWidget {
             genderText: _genderText(pet.gender),
             isFavorite: isRepresent(pet),
             imageProvider: pet.thumbnailFileId != null
-                ? AuthedFileImageX.of(ref, pet.thumbnailFileId!, variant: 'thumb')
+                ? AuthedFileImageX.of(
+                    ref,
+                    pet.thumbnailFileId!,
+                    variant: 'thumb',
+                  )
                 : null,
           ),
         )
@@ -967,8 +1011,14 @@ class _OuterHardShadowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
-    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(size.height / 2));
-    canvas.saveLayer(rect.inflate(_OuterHardShadow._offset.distance + 4), Paint());
+    final rrect = RRect.fromRectAndRadius(
+      rect,
+      Radius.circular(size.height / 2),
+    );
+    canvas.saveLayer(
+      rect.inflate(_OuterHardShadow._offset.distance + 4),
+      Paint(),
+    );
     canvas.drawRRect(
       rrect.shift(_OuterHardShadow._offset),
       Paint()..color = _OuterHardShadow._color,
