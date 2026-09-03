@@ -196,6 +196,10 @@ flutter run \
   - **마이펫 정보 수정 화면 피그마 반영 (`MyPetEditScreen`, Figma 239:24174)**: 여백·카메라 버튼(36+피그마 아이콘)·셀렉트 화살표·달력 아이콘을 맞추고, 공용 `NurimSelectableTab`의 선택 색(`#30343C`)·미선택 색(`#A2ADBE`)과 대표펫 체크 표시를 디자인대로 정정.
   - **고객센터 3개 탭 피그마 반영 (`CustomerCenterScreen`, Figma 644:8413·602:12213·644:10773)**: 탭 라벨/폰트/비활성 색, 카드 간격 12, 아코디언·다운로드 아이콘을 피그마 SVG로 교체하고, 1:1 문의 목록에 카테고리를 표시하며 하단 버튼을 "문의 등록하기"로 정정.
   - **공용 헤더 구분선 기본값 변경 (`NurimPageHeader`, Figma 89:5687)**: 공용 헤더 디자인에는 하단 구분선이 없어 `showDivider` 기본값을 `false`로 뒤집었다. 구분선이 있는 약관 화면(USR-AUT-051~056)만 `showDivider: true`를 명시한다.
+  - **공용 헤더 높이 정정 (`NurimPageHeader`, Figma 89:5687)**: 헤더가 좁아 보인다는 디자인 검수 지적에 따라 디자인 스펙(56)과 어긋나 있던 높이를 맞췄다. 이 헤더를 쓰는 28개 화면 전체에 적용된다.
+  - **홈 알림(벨) 재연결 (`MainHeader`/`HomeScreen`)**: 디자인 검수에 알림 목록 확인이 필요해 "준비 중" 토스트로 막아 두었던 벨을 알림 센터 진입으로 되돌렸다(위 "홈 알림(벨) 준비 중 처리" 결정을 대체). 알림 데이터는 여전히 화면 내 임시 데이터라 백엔드 알림 API 연동 전 운영 배포 시에는 재검토가 필요하다.
+  - **홈 미션 시트 라운딩 방향 정정 (`HomeScreen`, Figma 116:8398)**: 흰색 배너 블록 하단에 걸려 있던 라운드(14)를 디자인대로 회색 미션 시트 상단으로 옮겼다.
+  - **알림 센터 디자인 반영 (`NotificationScreen`/`NurimTextCard`, Figma 514:6335)**: 누락돼 있던 상단 안내 바("최근 30일 알림만 표시돼요.")를 추가하고, 제목 2줄 말줄임·불릿 뒤 장문 문단을 지원하도록 카드 위젯을 보완했다. 목업 데이터는 디자인의 4개 상태(Short·Truncated·Expanded·제목 2줄)를 그대로 재현한다. 알림 상세(푸시알림 403:25245)는 보류 상태라 카드 탭 시 "준비 중인 기능입니다." 토스트만 노출한다.
 - **플랫폼 빌드/배포**: Android 실단말 디버그 실행(`SM G991N`, `R3CR209JAWX`) 및 iOS 빌드 확인(`flutter build ios --no-codesign`) 완료. Firebase App Distribution(`web3-petnurim`) 테스트 빌드 배포. 배포 절차·초기 세팅(macOS 처음 시작 기준)은 [`docs/firebase-app-distribution.md`](docs/firebase-app-distribution.md) 참고. **로그인 디버그 도구 노출 빌드**: `flutter build apk --debug --dart-define=SHOW_LOGIN_DEBUG=true --dart-define-from-file=dart_defines.json`
 
 
