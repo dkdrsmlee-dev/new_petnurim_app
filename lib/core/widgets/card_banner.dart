@@ -219,7 +219,10 @@ class NurimCardBannerSmall extends StatelessWidget {
     this.bannerImg,
     this.onTap,
     this.width = 165,
-    this.height = 178, // Figma 홈(116:8397) 카드 인스턴스 높이
+    // 디자인 검수(4행 ③) 요청으로 178 -> 186. space-between이라 늘어난 8을
+    // 두 간격이 나눠 가져 이미지↔텍스트·텍스트↔상태바가 10 -> 14가 된다.
+    // (피그마 116:8397 카드 인스턴스 높이는 178)
+    this.height = 186,
   });
 
   final String titleLine1;

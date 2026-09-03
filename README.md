@@ -201,6 +201,7 @@ flutter run \
   - **홈 미션 시트 라운딩 방향 정정 (`HomeScreen`, Figma 116:8398)**: 흰색 배너 블록 하단에 걸려 있던 라운드(14)를 디자인대로 회색 미션 시트 상단으로 옮겼다.
   - **알림 센터 디자인 반영 (`NotificationScreen`/`NurimTextCard`, Figma 514:6335)**: 누락돼 있던 상단 안내 바("최근 30일 알림만 표시돼요.")를 추가하고, 제목 2줄 말줄임·불릿 뒤 장문 문단을 지원하도록 카드 위젯을 보완했다. 목업 데이터는 디자인의 4개 상태(Short·Truncated·Expanded·제목 2줄)를 그대로 재현한다. 알림 상세(푸시알림 403:25245)는 보류 상태라 카드 탭 시 "준비 중인 기능입니다." 토스트만 노출한다.
   - **홈 미션 카드 썸네일 기하 통일 (`HomeScreen`, Figma 132:9671·132:9672)**: 로컬 폴백은 디자인 기하대로였으나 백엔드 썸네일만 원을 꽉 채워(cover) 확대돼 보이던 것을 같은 기하로 통일했다. 투명 배경 캐릭터 일러스트 기준이라 일반 사진을 등록하면 원 안에 작게 들어간다.
+  - **홈 미션 카드 세로 간격 확대 (`NurimCardBannerSmall`)**: 디자인 검수 요청으로 카드 높이를 178 → 186으로 올려 이미지↔텍스트·텍스트↔상태바 간격을 각각 10 → 14로 넓혔다(`space-between`이라 늘어난 높이를 두 간격이 나눠 가짐). 디자인 시안보다 카드가 8 길어진다.
 - **플랫폼 빌드/배포**: Android 실단말 디버그 실행(`SM G991N`, `R3CR209JAWX`) 및 iOS 빌드 확인(`flutter build ios --no-codesign`) 완료. Firebase App Distribution(`web3-petnurim`) 테스트 빌드 배포. 배포 절차·초기 세팅(macOS 처음 시작 기준)은 [`docs/firebase-app-distribution.md`](docs/firebase-app-distribution.md) 참고. **로그인 디버그 도구 노출 빌드**: `flutter build apk --debug --dart-define=SHOW_LOGIN_DEBUG=true --dart-define-from-file=dart_defines.json`
 
 
