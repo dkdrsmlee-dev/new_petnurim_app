@@ -51,4 +51,23 @@ void main() {
     // 뒤로가기 버튼이 렌더링되지 않음을 확인
     expect(find.byType(IconButton), findsNothing);
   });
+
+  testWidgets('NurimPageHeader height matches Figma Page_header (56px)', (
+    WidgetTester tester,
+  ) async {
+    const header = NurimPageHeader(title: '높이 검증');
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          appBar: header,
+          body: SizedBox(),
+        ),
+      ),
+    );
+
+    // Figma `Page_header`(89:5687) 높이는 56px이다.
+    expect(header.preferredSize.height, 56.0);
+    expect(tester.getSize(find.byType(AppBar)).height, 56.0);
+  });
 }

@@ -48,7 +48,7 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
             : null,
       ),
       child: AppBar(
-        toolbarHeight: 48, // Figma Page_header height is 48px (py-12 + icon 24px)
+        toolbarHeight: 56, // Figma Page_header height: 56px (89:5687)
         title: Text(
           title,
           style: const TextStyle(
@@ -81,5 +81,5 @@ class NurimPageHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(48.0);
+  Size get preferredSize => const Size.fromHeight(56.0);
 }
