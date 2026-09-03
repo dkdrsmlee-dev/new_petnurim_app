@@ -603,7 +603,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                   letterSpacing: -0.66,
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 18),  // Figma 18
 
                               // 이미지 예시 카드 영역
                               Stack(
@@ -698,7 +698,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 18),  // Figma 18
 
                               // 설명 텍스트 (guideContent HTML → 평문, 기존 디자인 유지)
                               Text(
@@ -719,8 +719,8 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                         ),
 
                         const SizedBox(
-                          height: 40,
-                        ), // 미션 카드 ~ 참여 버튼 간격 (Figma 40px)
+                          height: 20,
+                        ), // 미션 카드 ~ 참여 버튼 간격 (Figma: 박스 하단 707 → 버튼 727 = 20)
                         // E. 미션 참여하기 버튼
                         Container(
                           width: double.infinity,
