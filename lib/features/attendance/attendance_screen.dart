@@ -871,7 +871,6 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         '친구에게',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'Gmarket Sans',
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -910,7 +909,6 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         '소문내기',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'Gmarket Sans',
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w500,

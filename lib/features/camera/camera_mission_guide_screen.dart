@@ -393,7 +393,6 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                         child: Text(
                                           '리워드 받아요!',
                                           style: TextStyle(
-                                            fontFamily: 'Gmarket Sans',
                                             fontSize: 32 * s,
                                             fontWeight: FontWeight.w700,
                                             color: Colors.white,
@@ -425,7 +424,6 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                         child: Text(
                                           '마이 펫 촬영하고',
                                           style: TextStyle(
-                                            fontFamily: 'Gmarket Sans',
                                             fontSize: 32 * s,
                                             fontWeight: FontWeight.w700,
                                             color: Colors.white,
@@ -547,7 +545,6 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                     ? detail!.title
                                     : '송곳니를 촬영해 주세요!',
                                 style: const TextStyle(
-                                  fontFamily: 'Gmarket Sans',
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.textMuted,

@@ -58,12 +58,6 @@ flutter:
     - family: Pretendard
       fonts:
         - asset: assets/fonts/PretendardVariable.ttf
-    - family: Gmarket Sans
-      fonts:
-        - asset: assets/fonts/GmarketSansMedium.ttf
-          weight: 500
-        - asset: assets/fonts/GmarketSansBold.ttf
-          weight: 700
 
 flutter_native_splash:
   color: "#7F4FFF"

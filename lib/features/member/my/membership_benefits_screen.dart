@@ -145,7 +145,6 @@ class MembershipBenefitsScreen extends ConsumerWidget {
                 const Text('멤버십으로',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Gmarket Sans',
                       fontSize: 24,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -155,7 +154,6 @@ class MembershipBenefitsScreen extends ConsumerWidget {
                 const Text('더 크게 돌려받는',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Gmarket Sans',
                       fontSize: 25,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -165,7 +163,6 @@ class MembershipBenefitsScreen extends ConsumerWidget {
                 const Text('리워드 혜택',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontFamily: 'Gmarket Sans',
                       fontSize: 35,
                       fontWeight: FontWeight.w700,
                       color: _heroYellow,
@@ -333,7 +330,6 @@ class MembershipBenefitsScreen extends ConsumerWidget {
       ),
       child: const Text('멤버십 혜택',
           style: TextStyle(
-            fontFamily: 'Gmarket Sans',
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: Colors.white,
