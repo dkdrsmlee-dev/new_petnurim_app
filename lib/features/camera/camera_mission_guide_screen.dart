@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -104,15 +106,22 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                       fit: BoxFit.fill,
                     ),
                   ),
-                  // 그라데이션 동그라미 데코레이션 2 (Figma Ellipse 1593)
+                  // 그라데이션 동그라미 데코레이션 2 (Figma Ellipse 1593: 46,73.4 / 283×283)
+                  // SVG에 담긴 feGaussianBlur(σ=42)를 flutter_svg가 지원하지 않아
+                  // 선명한 원으로 렌더됐다. 원을 직접 그리고 같은 σ로 블러를 건다.
                   Positioned(
-                    left: MediaQuery.of(context).size.width / 2 - 225.5,
-                    top: -10.6,
-                    child: SvgPicture.asset(
-                      'assets/images/banner/ellipse1593.svg',
-                      width: 451,
-                      height: 451,
-                      fit: BoxFit.fill,
+                    left: MediaQuery.of(context).size.width / 2 - 141.5,
+                    top: 73.4,
+                    child: ImageFiltered(
+                      imageFilter: ui.ImageFilter.blur(sigmaX: 42, sigmaY: 42),
+                      child: Container(
+                        width: 283,
+                        height: 283,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0x4DABBCFF), // #ABBCFF 30%
+                        ),
+                      ),
                     ),
                   ),
 
@@ -121,8 +130,6 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       children: [
-                        const SizedBox(height: 34), // Figma top-[34px]
-
                         // A. 타이틀 배지 및 일러스트 그래픽 영역 (반응형 스케일링 적용)
                         LayoutBuilder(
                           builder: (context, constraints) {
@@ -130,7 +137,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                             final double s = screenWidth / 375; // 기준 해상도 375px 대비 스케일 비율
                             final double cx = screenWidth / 2; // 화면 중앙 X
                             return SizedBox(
-                              height: 330 * s,
+                              height: 344 * s, // Figma: 아래 '미션 수행 시' 텍스트가 y=344
                               width: double.infinity,
                               child: Stack(
                                 alignment: Alignment.topCenter,
@@ -374,7 +381,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 14. 하단 배지 (리워드 받아요!)
                                   Positioned(
-                                    top: 97.25 * s,
+                                    top: 91.25 * s, // Figma 484:26018
                                     child: Transform.rotate(
                                       angle: -4.6 * (3.14159 / 180),
                                       child: Container(
@@ -496,7 +503,8 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 30), // 텍스트 ~ 미션 카드 간격 (Figma 30px)
+                        // 텍스트 프레임 344~392, 미션 박스 416 → 간격 24 (Figma 492:26040)
+                        const SizedBox(height: 24),
 
                         // D. 오늘의 수행 미션 카드 (Mission Box)
                         Container(
@@ -558,59 +566,53 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(16),
+                                    // 표시 창(가로 전체 × 92)에 직접 맞춘다.
+                                    //
+                                    // 이전에는 Figma의 img 노드(551:6866)가 358×358인
+                                    // 것을 그대로 옮겨 358 정사각형에 cover 로 채웠는데,
+                                    // 백엔드가 내려주는 이미지는 이미 이 창 크기(311×92)로
+                                    // 잘라 등록된 최종본이라 짧은 변을 358에 맞추느라
+                                    // 3.89배 확대되고 가로가 30%만 남았다.
+                                    // Figma가 358인 것은 디자이너가 정사각 사진을 놓고
+                                    // 이 창으로 크롭한 결과일 뿐이다.
+                                    //
+                                    // alignment 0.235 = 정사각 원본이 등록될 때 Figma가
+                                    // 보여주던 띠(이미지 높이의 43.5~69.2%)를 재현하는 값.
                                     child: SizedBox(
                                       width: double.infinity,
                                       height: 92,
-                                      child: LayoutBuilder(
-                                        builder: (context, constraints) {
-                                          final parentWidth = constraints.maxWidth;
-                                          final imgSize = 358.069;
-                                          final leftPos = (parentWidth - imgSize) / 2 - 7.47;
-                                          final topPos = (92 - imgSize) / 2 - 22.61;
-                                          return Stack(
-                                            clipBehavior: Clip.none,
-                                            children: [
-                                              Positioned(
-                                                left: leftPos,
-                                                top: topPos,
-                                                width: imgSize,
-                                                height: imgSize,
-                                                // 상세 로딩 중엔 셔머(에셋 폴백이
-                                                // 잠깐 보이지 않도록) → 로드 후
-                                                // 이미지(있으면)/에셋(없으면).
-                                                child: detailAsync.isLoading
-                                                    ? const ShimmerBox()
-                                                    : (detail?.detailImageFileId !=
-                                                            null
-                                                        ? Image(
-                                                            image:
-                                                                AuthedFileImageX.of(
-                                                              ref,
-                                                              detail!
-                                                                  .detailImageFileId!,
-                                                              variant: 'medium',
-                                                            ),
-                                                            fit: BoxFit.cover,
-                                                            // 이미지 다운로드 중 셔머 →
-                                                            // 로드 완료 시 교체.
-                                                            frameBuilder:
-                                                                shimmerImageFrameBuilder,
-                                                            errorBuilder:
-                                                                (_, __, ___) =>
-                                                                    Image.asset(
-                                                              'assets/images/banner/fangs_guide.png',
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          )
-                                                        : Image.asset(
-                                                            'assets/images/banner/fangs_guide.png',
-                                                            fit: BoxFit.cover,
-                                                          )),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
+                                      // 상세 로딩 중엔 셔머(에셋 폴백이 잠깐 보이지
+                                      // 않도록) → 로드 후 이미지(있으면)/에셋(없으면).
+                                      child: detailAsync.isLoading
+                                          ? const ShimmerBox()
+                                          : (detail?.detailImageFileId != null
+                                              ? Image(
+                                                  image: AuthedFileImageX.of(
+                                                    ref,
+                                                    detail!.detailImageFileId!,
+                                                    variant: 'medium',
+                                                  ),
+                                                  fit: BoxFit.cover,
+                                                  alignment:
+                                                      const Alignment(0, 0.235),
+                                                  // 이미지 다운로드 중 셔머 →
+                                                  // 로드 완료 시 교체.
+                                                  frameBuilder:
+                                                      shimmerImageFrameBuilder,
+                                                  errorBuilder: (_, __, ___) =>
+                                                      Image.asset(
+                                                    'assets/images/banner/fangs_guide.png',
+                                                    fit: BoxFit.cover,
+                                                    alignment:
+                                                        const Alignment(0, 0.235),
+                                                  ),
+                                                )
+                                              : Image.asset(
+                                                  'assets/images/banner/fangs_guide.png',
+                                                  fit: BoxFit.cover,
+                                                  alignment:
+                                                      const Alignment(0, 0.235),
+                                                )),
                                     ),
                                   ),
                                   // 촬영 예시 빨간 뱃지
