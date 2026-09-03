@@ -61,6 +61,7 @@ class ShootingHistoryScreen extends ConsumerWidget {
                     child: _EmptyHistoryView(
                       eventMasterId: eventMasterId,
                       petId: effectivePetId,
+                      petData: petData,
                     ),
                   )
                 : _HistoryList(items: history.items),
@@ -85,6 +86,7 @@ class ShootingHistoryScreen extends ConsumerWidget {
               child: _EmptyHistoryView(
                 eventMasterId: eventMasterId,
                 petId: effectivePetId,
+                petData: petData,
               ),
             ),
           ),
@@ -375,10 +377,13 @@ class _HistoryItemTile extends ConsumerWidget {
 
 /// 내역이 없을 때 노출되는 빈 플레이스홀더 영역
 class _EmptyHistoryView extends StatelessWidget {
-  const _EmptyHistoryView({this.eventMasterId, this.petId});
+  const _EmptyHistoryView({this.eventMasterId, this.petId, this.petData});
 
   final String? eventMasterId;
   final String? petId;
+
+  /// 촬영 화면을 거쳐 내역으로 돌아올 때 요약 카드에 쓸 펫 정보
+  final PetSelectCardData? petData;
 
   @override
   Widget build(BuildContext context) {
@@ -414,6 +419,7 @@ class _EmptyHistoryView extends StatelessWidget {
                     builder: (_) => CameraScreen(
                       eventMasterId: eventMasterId,
                       petId: petId,
+                      petData: petData,
                     ),
                   ),
                 );
@@ -444,11 +450,9 @@ class _EmptyHistoryView extends StatelessWidget {
 
 // 피그마 원본 Icon/Home/24 벡터 패스 (굴뚝 디테일 포함)
 const String _homeIconSvg = '''
-<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M11.3789 3.71573C11.7426 3.42779 12.2574 3.42779 12.6211 3.71573L19.6211 9.25772C19.8605 9.4474 20 9.73645 20 10.0419V18.9491C20 19.5014 19.5523 19.9491 19 19.9491H5C4.44772 19.9491 4 19.5014 4 18.9491V10.0419C4 9.73645 4.1395 9.4474 4.37891 9.25772L11.3789 3.71573Z" stroke="#51565F" stroke-width="2"/>
-  <g transform="translate(12, 15)">
-    <path d="M2 1C2 0.447715 1.55228 0 1 0C0.447715 0 0 0.447715 0 1H1H2ZM1 7H2V1H1H0V7H1Z" fill="#51565F"/>
-  </g>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M11.3789 4.2666C11.7426 3.97866 12.2574 3.97866 12.6211 4.2666L19.6211 9.80859C19.8605 9.99827 20 10.2873 20 10.5928V19.5C20 20.0523 19.5523 20.5 19 20.5H5C4.44772 20.5 4 20.0523 4 19.5V10.5928C4 10.2873 4.1395 9.99827 4.37891 9.80859L11.3789 4.2666Z" stroke="#51565F" stroke-width="2"/>
+  <path d="M13 15C13 14.4477 12.5523 14 12 14C11.4477 14 11 14.4477 11 15L12 15L13 15ZM12 21L13 21L13 15L12 15L11 15L11 21L12 21Z" fill="#51565F"/>
 </svg>
 ''';
 

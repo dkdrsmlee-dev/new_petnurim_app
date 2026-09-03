@@ -10,6 +10,7 @@ import '../../core/widgets/edge_button_dialog.dart';
 import '../member/data/file_repository.dart';
 import 'data/photo_event_repository.dart';
 import '../event/data/mission_refresh_providers.dart';
+import '../../core/widgets/pet_select_card.dart';
 import 'shooting_history_screen.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -19,6 +20,7 @@ class CameraScreen extends ConsumerStatefulWidget {
     this.eventMasterId,
     this.petId,
     this.rewardValueHint,
+    this.petData,
   }) : super(key: key);
 
   /// 촬영 참여 API 호출에 사용할 이벤트 식별자. null이면 백엔드 연동 없이 기존 동작.
@@ -29,6 +31,10 @@ class CameraScreen extends ConsumerStatefulWidget {
 
   /// 참여 결과에 리워드가 없을 때 팝업에 표시할 예비 리워드 값
   final int? rewardValueHint;
+
+  /// 촬영 내역 화면 요약 카드에 표시할 펫 정보(품종·나이·성별 등).
+  /// 백엔드 내역 응답에는 이 정보가 없어 화면 간 전달이 필요하다.
+  final PetSelectCardData? petData;
 
   @override
   ConsumerState<CameraScreen> createState() => _CameraScreenState();
@@ -238,6 +244,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
               builder: (_) => ShootingHistoryScreen(
                 eventMasterId: widget.eventMasterId,
                 petId: widget.petId,
+                petData: widget.petData,
               ),
             ),
           );

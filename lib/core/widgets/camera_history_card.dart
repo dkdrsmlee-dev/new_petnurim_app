@@ -263,7 +263,15 @@ class _MissionHistoryCard extends StatelessWidget {
           const SizedBox(height: 12),
           // Row 2: 누적 촬영 리워드
           _HistoryItemRow(
-            iconWidget: SvgPicture.string(_coinSvg),
+            // 피그마 Icon/Coin/16: 16 박스 안에 13.208 x 11.125 로 들어간다.
+            // viewBox(20x17)를 16 폭에 맞추면 21% 커져 회색 원을 꽉 채운다.
+            iconWidget: Center(
+              child: SizedBox(
+                width: 13.208,
+                height: 11.125,
+                child: SvgPicture.string(_coinSvg, fit: BoxFit.fill),
+              ),
+            ),
             label: '누적 촬영 리워드',
             value: '${accumulatedRewards}PR',
           ),

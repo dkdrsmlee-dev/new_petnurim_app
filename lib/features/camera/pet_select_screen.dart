@@ -68,6 +68,7 @@ class PetSelectScreen extends StatelessWidget {
                               eventMasterId: eventMasterId,
                               petId: pet.petId,
                               rewardValueHint: rewardValueHint,
+                              petData: pet,
                             ),
                           ),
                         );

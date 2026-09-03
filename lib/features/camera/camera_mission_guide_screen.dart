@@ -909,6 +909,7 @@ class CameraMissionGuideScreen extends ConsumerWidget {
             eventMasterId: eventMasterId,
             petId: registeredPets.first.petId,
             rewardValueHint: rewardHint,
+            petData: registeredPets.first,
           ),
         ),
       );
