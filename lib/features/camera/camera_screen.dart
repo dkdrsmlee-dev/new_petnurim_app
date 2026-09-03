@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/api/api_exception.dart';
@@ -423,10 +424,16 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
                     onTap: _confirmExit,
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: _isCaptured ? Colors.black : Colors.white,
-                      size: 24,
+                    // 공용 헤더와 같은 피그마 아이콘(Icon/ArrowLeft/24)을 쓴다.
+                    // 촬영 전에는 어두운 배경 위라 흰색으로 칠한다.
+                    child: SvgPicture.asset(
+                      'assets/images/ic_arrow_left_24.svg',
+                      width: 24,
+                      height: 24,
+                      colorFilter: ColorFilter.mode(
+                        _isCaptured ? AppColors.textStrong : Colors.white,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),

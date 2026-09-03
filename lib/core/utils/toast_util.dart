@@ -76,9 +76,11 @@ class _ToastOverlayWidgetState extends State<_ToastOverlayWidget> with SingleTic
 
   @override
   Widget build(BuildContext context) {
-    // OS 하단 안전지대나 GNB 위에 정상 노출하기 위해 하단 마진 배치
+    // 하단 고정 UI(액션 버튼·GNB) 위에 뜨도록 시스템 내비게이션 인셋을 더한다.
+    // 96 고정값은 인셋을 고려하지 않아 촬영 확인·문의 등록 등 하단 버튼이
+    // 있는 화면에서 버튼을 덮었다(검수 8행 ②).
     return Positioned(
-      bottom: 96.0, 
+      bottom: MediaQuery.of(context).padding.bottom + 80.0,
       left: 0,
       right: 0,
       child: NurimToast(
