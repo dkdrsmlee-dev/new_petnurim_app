@@ -135,7 +135,11 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                           builder: (context, constraints) {
                             final double screenWidth = MediaQuery.of(context).size.width;
                             final double s = screenWidth / 375; // 기준 해상도 375px 대비 스케일 비율
-                            final double cx = screenWidth / 2; // 화면 중앙 X
+                            // 이 Stack 은 Padding(horizontal: 16) 안에 있어
+                            // 좌표 원점이 화면 좌측이 아니라 16dp 지점이다.
+                            // 화면 폭 기준으로 잡으면 일러스트가 통째로 16dp
+                            // 오른쪽으로 밀리므로 Stack 자신의 중앙을 쓴다.
+                            final double cx = constraints.maxWidth / 2;
                             return SizedBox(
                               height: 344 * s, // Figma: 아래 '미션 수행 시' 텍스트가 y=344
                               width: double.infinity,
@@ -149,17 +153,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 1. 카메라 (Figma Node 327:12193)
                                   Positioned(
-                                    left: cx - 187.5 * s + 119.1 * s,
-                                    top: 178.67 * s,
-                                    width: 143.21 * s,
-                                    height: 128.65 * s,
+                                    left: cx - 187.5 * s + 111.42 * s,
+                                    top: 172.64 * s,
+                                    width: 159.12 * s,
+                                    height: 142.947 * s,
                                     child: Center(
                                       child: Transform.rotate(
                                         angle: -5.39 * (3.14159 / 180),
                                         child: Image.asset(
                                           'assets/images/banner/camera1.png',
-                                          width: 132.83 * s,
-                                          height: 116.68 * s,
+                                          width: 147.587 * s,
+                                          height: 129.648 * s,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -168,17 +172,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 2. 강아지 (Figma Node 327:12194)
                                   Positioned(
-                                    left: cx - 187.5 * s + 90.04 * s,
-                                    top: 223.63 * s,
-                                    width: 49.82 * s,
-                                    height: 62.39 * s,
+                                    left: cx - 187.5 * s + 79.13 * s,
+                                    top: 222.59 * s,
+                                    width: 55.353 * s,
+                                    height: 69.323 * s,
                                     child: Center(
                                       child: Transform.rotate(
                                         angle: -2.45 * (3.14159 / 180),
                                         child: Image.asset(
                                           'assets/images/banner/dog11.png',
-                                          width: 47.28 * s,
-                                          height: 60.43 * s,
+                                          width: 52.534 * s,
+                                          height: 67.141 * s,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -187,17 +191,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 3. 고양이 (Figma Node 327:12195)
                                   Positioned(
-                                    left: cx - 187.5 * s + 232.41 * s,
-                                    top: 201.22 * s,
-                                    width: 62.82 * s,
-                                    height: 63.29 * s,
+                                    left: cx - 187.5 * s + 237.32 * s,
+                                    top: 197.69 * s,
+                                    width: 69.796 * s,
+                                    height: 70.324 * s,
                                     child: Center(
                                       child: Transform.rotate(
                                         angle: -24.02 * (3.14159 / 180),
                                         child: Image.asset(
                                           'assets/images/banner/cat41.png',
-                                          width: 47.28 * s,
-                                          height: 48.22 * s,
+                                          width: 52.534 * s,
+                                          height: 53.578 * s,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -206,17 +210,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 4. 동전 5 (Figma Node 551:6819)
                                   Positioned(
-                                    left: cx - 187.5 * s + 102.65 * s,
-                                    top: 184.78 * s,
-                                    width: 26.17 * s,
-                                    height: 27.1 * s,
+                                    left: cx - 187.5 * s + 93.15 * s,
+                                    top: 179.42 * s,
+                                    width: 29.078 * s,
+                                    height: 30.107 * s,
                                     child: Center(
                                       child: Transform.rotate(
                                         angle: -30.5 * (3.14159 / 180),
                                         child: Image.asset(
                                           'assets/images/banner/coin51.png',
-                                          width: 18.14 * s,
-                                          height: 20.76 * s,
+                                          width: 20.161 * s,
+                                          height: 23.066 * s,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -225,17 +229,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 5. 동전 4 (Figma Node 551:6844)
                                   Positioned(
-                                    left: cx - 187.5 * s + 219.84 * s,
-                                    top: 269.3 * s,
-                                    width: 43.45 * s,
-                                    height: 45.59 * s,
+                                    left: cx - 187.5 * s + 223.36 * s,
+                                    top: 273.34 * s,
+                                    width: 48.274 * s,
+                                    height: 50.653 * s,
                                     child: Center(
                                       child: Transform.rotate(
                                         angle: 22.84 * (3.14159 / 180),
                                         child: Image.asset(
                                           'assets/images/banner/coin42.png',
-                                          width: 31.98 * s,
-                                          height: 36.0 * s,
+                                          width: 35.536 * s,
+                                          height: 39.996 * s,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -244,17 +248,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 6. 꽃 8 (Figma Node 338:12544)
                                   Positioned(
-                                    left: cx - 187.5 * s + 93.92 * s,
-                                    top: 298.61 * s,
-                                    width: 14.43 * s,
-                                    height: 14.62 * s,
+                                    left: cx - 187.5 * s + 83.44 * s,
+                                    top: 305.9 * s,
+                                    width: 16.032 * s,
+                                    height: 16.249 * s,
                                     child: Center(
                                       child: Transform.rotate(
                                         angle: 28.87 * (3.14159 / 180),
                                         child: Image.asset(
                                           'assets/images/banner/flower8.png',
-                                          width: 10.44 * s,
-                                          height: 10.94 * s,
+                                          width: 11.604 * s,
+                                          height: 12.157 * s,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -263,17 +267,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 7. 꽃 7 (Figma Node 338:12545)
                                   Positioned(
-                                    left: cx - 187.5 * s + 77.9 * s,
-                                    top: 291.67 * s,
-                                    width: 14.72 * s,
-                                    height: 15.65 * s,
+                                    left: cx - 187.5 * s + 65.65 * s,
+                                    top: 298.19 * s,
+                                    width: 16.351 * s,
+                                    height: 17.39 * s,
                                     child: Center(
                                       child: Transform.rotate(
                                         angle: -11.55 * (3.14159 / 180),
                                         child: Image.asset(
                                           'assets/images/banner/flower7.png',
-                                          width: 12.27 * s,
-                                          height: 13.47 * s,
+                                          width: 13.63 * s,
+                                          height: 14.964 * s,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -282,17 +286,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 8. 꽃 6 (Figma Node 338:12546)
                                   Positioned(
-                                    left: cx - 187.5 * s + 303.21 * s,
-                                    top: 206.27 * s,
-                                    width: 11.71 * s,
-                                    height: 12.12 * s,
+                                    left: cx - 187.5 * s + 315.99 * s,
+                                    top: 203.3 * s,
+                                    width: 13.006 * s,
+                                    height: 13.468 * s,
                                     child: Center(
                                       child: Transform.rotate(
                                         angle: 20.94 * (3.14159 / 180),
                                         child: Image.asset(
                                           'assets/images/banner/flower6.png',
-                                          width: 8.87 * s,
-                                          height: 9.59 * s,
+                                          width: 9.85 * s,
+                                          height: 10.652 * s,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -301,10 +305,10 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 9. 데코레이션 원형 1591 (Figma Node 338:12549)
                                   Positioned(
-                                    left: cx - 187.5 * s + 299.1 * s,
-                                    top: 282.16 * s,
-                                    width: 1.8 * s,
-                                    height: 1.8 * s,
+                                    left: cx - 187.5 * s + 311.42 * s,
+                                    top: 287.63 * s,
+                                    width: 2 * s,
+                                    height: 2 * s,
                                     child: Container(
                                       decoration: const BoxDecoration(
                                         color: Colors.white,
@@ -315,10 +319,10 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 10. 데코레이션 원형 1592 (Figma Node 338:12550)
                                   Positioned(
-                                    left: cx - 187.5 * s + 320.68 * s,
-                                    top: 198.29 * s,
-                                    width: 3.6 * s,
-                                    height: 3.6 * s,
+                                    left: cx - 187.5 * s + 335.4 * s,
+                                    top: 194.44 * s,
+                                    width: 4 * s,
+                                    height: 4 * s,
                                     child: Container(
                                       decoration: const BoxDecoration(
                                         color: Colors.white,
@@ -329,10 +333,10 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 11. 데코레이션 원형 1590 (Figma Node 484:26023)
                                   Positioned(
-                                    left: cx - 187.5 * s + 78.62 * s,
-                                    top: 188.21 * s,
-                                    width: 2.7 * s,
-                                    height: 2.7 * s,
+                                    left: cx - 187.5 * s + 66.45 * s,
+                                    top: 183.24 * s,
+                                    width: 3 * s,
+                                    height: 3 * s,
                                     child: Container(
                                       decoration: const BoxDecoration(
                                         color: Colors.white,
@@ -343,14 +347,14 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 12. 그린 플러스 Union 1 (Figma Node 338:12559)
                                   Positioned(
-                                    left: cx - 187.5 * s + 52.1 * s,
-                                    top: 209.01 * s,
-                                    width: 10.8 * s,
-                                    height: 10.8 * s,
+                                    left: cx - 187.5 * s + 36.98 * s,
+                                    top: 206.35 * s,
+                                    width: 12.001 * s,
+                                    height: 12.001 * s,
                                     child: SvgPicture.asset(
                                       'assets/images/banner/union_plus_1.svg',
-                                      width: 10.8 * s,
-                                      height: 10.8 * s,
+                                      width: 12.001 * s,
+                                      height: 12.001 * s,
                                       colorFilter: const ColorFilter.mode(
                                         Color(0xFF79FFAE),
                                         BlendMode.srcIn,
@@ -360,14 +364,14 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 13. 그린 플러스 Union 2 (Figma Node 338:12560)
                                   Positioned(
-                                    left: cx - 187.5 * s + 283.49 * s,
-                                    top: 288.8 * s,
-                                    width: 8.04 * s,
-                                    height: 8.04 * s,
+                                    left: cx - 187.5 * s + 294.08 * s,
+                                    top: 295 * s,
+                                    width: 8.933 * s,
+                                    height: 8.933 * s,
                                     child: SvgPicture.asset(
                                       'assets/images/banner/union_plus_2.svg',
-                                      width: 8.04 * s,
-                                      height: 8.04 * s,
+                                      width: 8.933 * s,
+                                      height: 8.933 * s,
                                       colorFilter: const ColorFilter.mode(
                                         Color(0xFF79FFAE),
                                         BlendMode.srcIn,
@@ -384,26 +388,22 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                     top: 91.25 * s, // Figma 484:26018
                                     child: Transform.rotate(
                                       angle: -4.6 * (3.14159 / 180),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 24 * s, vertical: 6 * s),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF423F99).withValues(alpha: 0.5),
-                                          borderRadius: BorderRadius.circular(9999),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(alpha: 0.2),
-                                              offset: const Offset(2, 4),
-                                              blurRadius: 0,
+                                      child: _OuterHardShadow(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 24 * s, vertical: 6 * s),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF423F99).withValues(alpha: 0.5),
+                                            borderRadius: BorderRadius.circular(9999),
+                                          ),
+                                          child: Text(
+                                            '리워드 받아요!',
+                                            style: TextStyle(
+                                              fontSize: 32 * s,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.white,
+                                              letterSpacing: -0.96 * s,
                                             ),
-                                          ],
-                                        ),
-                                        child: Text(
-                                          '리워드 받아요!',
-                                          style: TextStyle(
-                                            fontSize: 32 * s,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
-                                            letterSpacing: -0.96 * s,
                                           ),
                                         ),
                                       ),
@@ -415,26 +415,22 @@ class CameraMissionGuideScreen extends ConsumerWidget {
                                     top: 34 * s,
                                     child: Transform.rotate(
                                       angle: 2.58 * (3.14159 / 180),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 24 * s, vertical: 6 * s),
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF7C83EE),
-                                          borderRadius: BorderRadius.circular(9999),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withValues(alpha: 0.2),
-                                              offset: const Offset(2, 4),
-                                              blurRadius: 0,
+                                      child: _OuterHardShadow(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 24 * s, vertical: 6 * s),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF7C83EE),
+                                            borderRadius: BorderRadius.circular(9999),
+                                          ),
+                                          child: Text(
+                                            '마이 펫 촬영하고',
+                                            style: TextStyle(
+                                              fontSize: 32 * s,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.white,
+                                              letterSpacing: -0.96 * s,
                                             ),
-                                          ],
-                                        ),
-                                        child: Text(
-                                          '마이 펫 촬영하고',
-                                          style: TextStyle(
-                                            fontSize: 32 * s,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
-                                            letterSpacing: -0.96 * s,
                                           ),
                                         ),
                                       ),
@@ -447,17 +443,17 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 16. 하트 벌룬 (Figma Node 484:25976 - 배지 위로 올라와야 함)
                                   Positioned(
-                                    left: cx - 187.5 * s + 248.0 * s,
+                                    left: cx - 187.5 * s + 251.68 * s,
                                     top: 141.96 * s,
-                                    width: 23.81 * s,
-                                    height: 22.19 * s,
+                                    width: 26.46 * s,
+                                    height: 24.652 * s,
                                     child: Center(
                                       child: Transform.rotate(
                                         angle: 15.62 * (3.14159 / 180),
                                         child: Image.asset(
                                           'assets/images/banner/heart2.png',
-                                          width: 19.84 * s,
-                                          height: 17.49 * s,
+                                          width: 22.042 * s,
+                                          height: 19.436 * s,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
@@ -853,4 +849,46 @@ class CameraMissionGuideScreen extends ConsumerWidget {
       );
     }
   }
+}
+
+/// CSS/피그마의 drop shadow 는 박스 안쪽에 그려지지 않는다
+/// ("The shadow is not painted inside the border-box").
+/// Flutter 의 BoxShadow 는 박스 아래에 그대로 깔려서, 반투명 배지에서는
+/// 그림자가 비쳐 내부가 어두워지고 그림자가 닿지 않는 위쪽만 밝게 남아
+/// 테두리가 한 겹 더 있는 것처럼 보인다(검수 5행 ②).
+/// 그래서 배지 모양을 도려낸 바깥쪽 그림자만 그린다.
+class _OuterHardShadow extends StatelessWidget {
+  const _OuterHardShadow({required this.child});
+
+  /// 피그마 484:26017·484:26018 의 shadow: 2px 4px 0px rgba(0,0,0,0.2)
+  static const Offset _offset = Offset(2, 4);
+  static const Color _color = Color(0x33000000); // 검정 20%
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(painter: const _OuterHardShadowPainter(), child: child);
+  }
+}
+
+class _OuterHardShadowPainter extends CustomPainter {
+  const _OuterHardShadowPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(size.height / 2));
+    canvas.saveLayer(rect.inflate(_OuterHardShadow._offset.distance + 4), Paint());
+    canvas.drawRRect(
+      rrect.shift(_OuterHardShadow._offset),
+      Paint()..color = _OuterHardShadow._color,
+    );
+    // 배지가 덮을 영역은 도려내 그림자가 안쪽으로 비치지 않게 한다.
+    canvas.drawRRect(rrect, Paint()..blendMode = BlendMode.clear);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _OuterHardShadowPainter old) => false;
 }
