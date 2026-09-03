@@ -12,6 +12,7 @@ class NurimTextCard extends StatelessWidget {
     this.isExpanded = false,
     this.hasMore = false,
     this.bullets,
+    this.tailContent,
     this.onExpandToggled,
     this.icon,
   });
@@ -37,6 +38,9 @@ class NurimTextCard extends StatelessWidget {
   /// 펼쳐졌을 때 노출할 상세 불릿 리스트
   final List<String>? bullets;
 
+  /// 펼쳐졌을 때 불릿 아래에 이어지는 본문 (Figma 515:27329)
+  final String? tailContent;
+
   /// 더보기/접기 버튼을 눌렀을 때의 콜백
   final VoidCallback? onExpandToggled;
 
@@ -45,187 +49,202 @@ class NurimTextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x1A51565F), // #51565F1A
-                offset: Offset(0, 0),
-                blurRadius: 8,
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1A51565F), // #51565F1A
+            offset: Offset(0, 0),
+            blurRadius: 8,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 본문 영역
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Figma 515:27130 — 안읽음 점은 오버레이가 아니라 본문 위 한 줄을 차지한다.
+          const SizedBox(height: 16),
+          if (isUnread)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: AppColors.error, // Figma #FF3D3D
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ),
+          // 본문 영역
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 아이콘 + 타이틀
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 아이콘 + 타이틀
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Figma: 아이콘 24×24, 상단 오프셋 없이 제목과 top 정렬
-                        icon ??
-                            SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/images/icon_bell_solid.svg',
-                                  width: 16,
-                                  height: 14.43,
-                                ),
-                              ),
-                            ),
-                        const SizedBox(width: 6), // Figma: 아이콘 ↔ 제목 6
-                        Expanded(
-                          child: Text(
-                            title,
-                            maxLines: isExpanded ? null : 2,
-                            overflow: isExpanded ? null : TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700, // Bold
-                              color: AppColors.textStrong,
-                              height: 1.4,
-                              letterSpacing: -0.66,
+                    // Figma: 아이콘 24×24, 상단 오프셋 없이 제목과 top 정렬
+                    icon ??
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Center(
+                            child: SvgPicture.asset(
+                              'assets/images/icon_bell_solid.svg',
+                              width: 16,
+                              height: 14.43,
                             ),
                           ),
                         ),
-                      ],
+                    const SizedBox(width: 6), // Figma: 아이콘 ↔ 제목 6
+                    Expanded(
+                      child: Text(
+                        title,
+                        // Figma 515:27135 — 제목은 펼침 여부와 무관하게 2줄 말줄임
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700, // Bold
+                          color: AppColors.textStrong,
+                          height: 1.4,
+                          letterSpacing: -0.66,
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 8),
+                  ],
+                ),
+                const SizedBox(height: 8),
 
-                    // 본문 텍스트
-                    Text(
-                      content,
-                      maxLines: isExpanded ? null : 2,
-                      overflow: isExpanded ? null : TextOverflow.ellipsis,
+                // 본문 텍스트
+                Text(
+                  content,
+                  maxLines: isExpanded ? null : 2,
+                  overflow: isExpanded ? null : TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400, // Regular
+                    color: AppColors.textTertiary,
+                    height: 1.4,
+                    letterSpacing: -0.66,
+                  ),
+                ),
+
+                // 불릿 상세 정보 (펼쳐진 상태이고 정보가 존재할 때만 표시)
+                if (isExpanded && bullets != null && bullets!.isNotEmpty)
+                  // Figma: 텍스트 박스 요소 간격은 모두 8
+                  ...bullets!.map((bullet) => Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(top: 8, right: 6),
+                              width: 4,
+                              height: 4,
+                              decoration: const BoxDecoration(
+                                color: AppColors.textTertiary,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                bullet,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.textTertiary,
+                                  height: 1.4,
+                                  letterSpacing: -0.66,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                // 불릿 뒤 이어지는 본문 (Figma 515:27329)
+                if (isExpanded &&
+                    tailContent != null &&
+                    tailContent!.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      tailContent!,
                       style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w400, // Regular
+                        fontWeight: FontWeight.w400,
                         color: AppColors.textTertiary,
                         height: 1.4,
                         letterSpacing: -0.66,
                       ),
                     ),
+                  ),
+                const SizedBox(height: 8),
 
-                    // 불릿 상세 정보 (펼쳐진 상태이고 정보가 존재할 때만 표시)
-                    if (isExpanded && bullets != null && bullets!.isNotEmpty)
-                      // Figma: 텍스트 박스 요소 간격은 모두 8
-                      ...bullets!.map((bullet) => Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(top: 8, right: 6),
-                                  width: 4,
-                                  height: 4,
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.textTertiary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    bullet,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.textTertiary,
-                                      height: 1.4,
-                                      letterSpacing: -0.66,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-                    const SizedBox(height: 8),
+                // 날짜
+                Text(
+                  date,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.placeholder,
+                    height: 1.4,
+                    letterSpacing: -0.66,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-                    // 날짜
+          // 하단 더보기 / 접기 버튼
+          if (hasMore) ...[
+            Container(height: 1, color: AppColors.bgGray),
+            InkWell(
+              onTap: onExpandToggled,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Text(
-                      date,
+                      isExpanded ? '접기' : '더보기',
                       style: const TextStyle(
                         fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.placeholder,
+                        fontWeight: FontWeight.w500, // Medium
+                        color: AppColors.textSecondary,
                         height: 1.4,
                         letterSpacing: -0.66,
+                      ),
+                    ),
+                    const SizedBox(width: 16), // Figma: 텍스트 ↔ 화살표 16
+                    // Figma Icon/ArrowBottom/24-2 (18px, 접기는 180° 회전)
+                    RotatedBox(
+                      quarterTurns: isExpanded ? 2 : 0,
+                      child: SvgPicture.asset(
+                        'assets/images/ic_arrow_bottom_18.svg',
+                        width: 18,
+                        height: 18,
                       ),
                     ),
                   ],
                 ),
               ),
-
-              // 하단 더보기 / 접기 버튼
-              if (hasMore) ...[
-                Container(height: 1, color: AppColors.bgGray),
-                InkWell(
-                  onTap: onExpandToggled,
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(16),
-                    bottomRight: Radius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          isExpanded ? '접기' : '더보기',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500, // Medium
-                            color: AppColors.textSecondary,
-                            height: 1.4,
-                            letterSpacing: -0.66,
-                          ),
-                        ),
-                        const SizedBox(width: 16), // Figma: 텍스트 ↔ 화살표 16
-                        // Figma Icon/ArrowBottom/24-2 (18px, 접기는 180° 회전)
-                        RotatedBox(
-                          quarterTurns: isExpanded ? 2 : 0,
-                          child: SvgPicture.asset(
-                            'assets/images/ic_arrow_bottom_18.svg',
-                            width: 18,
-                            height: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-
-        // 안읽음 표시 빨간 점 (Figma: 우측 상단 16px 여백 위치)
-        if (isUnread)
-          Positioned(
-            top: 16,
-            right: 16,
-            child: Container(
-              width: 6,
-              height: 6,
-              decoration: const BoxDecoration(
-                color: AppColors.error, // Figma #FF3D3D
-                shape: BoxShape.circle,
-              ),
             ),
-          ),
-      ],
+          ],
+        ],
+      ),
     );
   }
 }
