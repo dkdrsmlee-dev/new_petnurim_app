@@ -502,17 +502,21 @@ Widget _missionAvatar(
   double charH,
   double top,
 ) {
-  final Widget fallback = Stack(
-    children: [
-      Positioned(
-        top: top,
-        left: (50 - charW) / 2,
-        width: charW,
-        height: charH,
-        child: Image.asset(fallbackAsset, fit: BoxFit.contain),
-      ),
-    ],
-  );
+  // 피그마 banner_img(132:9671)는 50 원 안에 캐릭터를 charW×charH 크기로
+  // top 만큼 내려 배치한다. 백엔드 썸네일도 같은 기하를 써야 하므로
+  // 배치를 헬퍼로 공유한다(예전엔 썸네일만 cover로 원을 꽉 채워 확대돼 보였다).
+  Widget place(Widget child) => Stack(
+        children: [
+          Positioned(
+            top: top,
+            left: (50 - charW) / 2,
+            width: charW,
+            height: charH,
+            child: child,
+          ),
+        ],
+      );
+  final Widget fallbackImage = Image.asset(fallbackAsset, fit: BoxFit.contain);
   // 이벤트 썸네일: 작은 'thumb' variant 우선, 서버에 없으면(404 등) 원본 폴백.
   final provider = (fileId != null && fileId.isNotEmpty)
       ? AuthedFileImageX.of(ref, fileId, variant: 'thumb', downloadFallback: true)
@@ -522,16 +526,17 @@ Widget _missionAvatar(
     height: 50,
     clipBehavior: Clip.hardEdge,
     decoration: BoxDecoration(shape: BoxShape.circle, color: bg),
-    child: provider == null
-        ? fallback
-        : Image(
-            image: provider,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-            frameBuilder: shimmerImageFrameBuilder,
-            errorBuilder: (_, _, _) => fallback,
-          ),
+    child: place(
+      provider == null
+          ? fallbackImage
+          : Image(
+              image: provider,
+              fit: BoxFit.contain,
+              frameBuilder: shimmerImageFrameBuilder,
+              // place()가 이미 감싸고 있으므로 에셋만 반환한다.
+              errorBuilder: (_, _, _) => fallbackImage,
+            ),
+    ),
   );
 }
 
