@@ -385,54 +385,87 @@ class CameraMissionGuideScreen extends ConsumerWidget {
 
                                   // 14. 하단 배지 (리워드 받아요!)
                                   Positioned(
-                                    top: 91.25 * s, // Figma 484:26018
+                                    // 피그마 484:26018 wrapper top(91.25)은 '회전 후
+                                    // bbox' 기준이고, 여기 top 은 '회전 전' 레이아웃
+                                    // 상단이라 값이 다르다. bbox 중심(91.25+74.754/2)
+                                    // 에서 알약 높이 절반을 뺀 값이 회전 전 상단.
+                                    top: 100.21 * s,
                                     child: Transform.rotate(
                                       angle: -4.6 * (3.14159 / 180),
                                       child: _OuterHardShadow(
+                                        child: _GradientStadiumBorder(
+                                        topAlpha: 0.35,
+                                        bottomAlpha: 0.18,
                                         child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 24 * s, vertical: 6 * s),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF423F99).withValues(alpha: 0.5),
-                                            borderRadius: BorderRadius.circular(9999),
-                                          ),
-                                          child: Text(
-                                            '리워드 받아요!',
-                                            style: TextStyle(
-                                              fontSize: 32 * s,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white,
-                                              letterSpacing: -0.96 * s,
-                                            ),
+                                        // 피그마는 알약 크기를 명시한다. 패딩+글자폭으로
+                                        // 정하면 폰트(Gmarket Sans → Pretendard)가 달라
+                                        // 폭이 어긋나므로 명시값을 그대로 쓴다.
+                                        width: 225.693 * s,
+                                        height: 56.844 * s,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF423F99).withValues(alpha: 0.5),
+                                          borderRadius: BorderRadius.circular(9999),
+                                        ),
+                                        child: Text(
+                                          '리워드 받아요!',
+                                          style: TextStyle(
+                                            // 피그마 스펙 32. Pretendard 가 Gmarket Sans 보다 1.13배
+                                            // 좁아 알약 안 여백은 더 넓어지지만, 크기를 키우면 글자
+                                            // 자체가 13% 커진다(실측 32 → 높이 35.1 = 피그마 35.3).
+                                            fontSize: 32 * s,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                            letterSpacing: -0.96 * s,
                                           ),
                                         ),
+                                      ),
+                                      ),
                                       ),
                                     ),
                                   ),
 
                                   // 15. 상단 배지 (마이 펫 촬영하고)
                                   Positioned(
-                                    top: 34 * s,
+                                    // 피그마 484:26017 wrapper top(34) → 회전 전 상단
+                                    top: 39.68 * s,
                                     child: Transform.rotate(
                                       angle: 2.58 * (3.14159 / 180),
                                       child: _OuterHardShadow(
+                                        child: _GradientStadiumBorder(
+                                        topAlpha: 0.70,
+                                        bottomAlpha: 0.50,
                                         child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 24 * s, vertical: 6 * s),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF7C83EE),
-                                            borderRadius: BorderRadius.circular(9999),
-                                          ),
-                                          child: Text(
-                                            '마이 펫 촬영하고',
-                                            style: TextStyle(
-                                              fontSize: 32 * s,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white,
-                                              letterSpacing: -0.96 * s,
-                                            ),
+                                        // 피그마는 알약 크기를 명시한다. 패딩+글자폭으로
+                                        // 정하면 폰트(Gmarket Sans → Pretendard)가 달라
+                                        // 폭이 어긋나므로 명시값을 그대로 쓴다.
+                                        width: 253.664 * s,
+                                        height: 56.843 * s,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          // 피그마 레이어 속성은 흰색 20% 반투명이지만,
+                                          // 실제 피그마 렌더에서는 아래 리워드 배지가
+                                          // 전혀 비치지 않는다(x=741·859·900·940 어디서도
+                                          // 채움이 균일). 앱에서 반투명으로 두면 두 배지가
+                                          // 살짝 겹치는 구간에서 리워드가 비쳐 보이므로,
+                                          // 렌더 결과와 같은 합성 단색을 쓴다.
+                                          color: const Color(0xFF7C83EE),
+                                          borderRadius: BorderRadius.circular(9999),
+                                        ),
+                                        child: Text(
+                                          '마이 펫 촬영하고',
+                                          style: TextStyle(
+                                            // 피그마 스펙 32. Pretendard 가 Gmarket Sans 보다 1.13배
+                                            // 좁아 알약 안 여백은 더 넓어지지만, 크기를 키우면 글자
+                                            // 자체가 13% 커진다(실측 32 → 높이 35.1 = 피그마 35.3).
+                                            fontSize: 32 * s,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                            letterSpacing: -0.96 * s,
                                           ),
                                         ),
+                                      ),
+                                      ),
                                       ),
                                     ),
                                   ),
@@ -851,18 +884,74 @@ class CameraMissionGuideScreen extends ConsumerWidget {
   }
 }
 
-/// CSS/피그마의 drop shadow 는 박스 안쪽에 그려지지 않는다
-/// ("The shadow is not painted inside the border-box").
-/// Flutter 의 BoxShadow 는 박스 아래에 그대로 깔려서, 반투명 배지에서는
-/// 그림자가 비쳐 내부가 어두워지고 그림자가 닿지 않는 위쪽만 밝게 남아
-/// 테두리가 한 겹 더 있는 것처럼 보인다(검수 5행 ②).
-/// 그래서 배지 모양을 도려낸 바깥쪽 그림자만 그린다.
+/// 피그마 배지에는 CSS 로 내보내지지 않는 1px 흰색 그라데이션 스트로크가 있다
+/// (Figma 코드 생성이 그라데이션 스트로크를 누락한다). 렌더 픽셀에서 역산한
+/// 불투명도를 위→아래 선형 그라데이션으로 재현한다.
+class _GradientStadiumBorder extends StatelessWidget {
+  const _GradientStadiumBorder({
+    required this.child,
+    required this.topAlpha,
+    required this.bottomAlpha,
+  });
+
+  final Widget child;
+  final double topAlpha;
+  final double bottomAlpha;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      foregroundPainter: _GradientStadiumBorderPainter(topAlpha, bottomAlpha),
+      child: child,
+    );
+  }
+}
+
+class _GradientStadiumBorderPainter extends CustomPainter {
+  const _GradientStadiumBorderPainter(this.topAlpha, this.bottomAlpha);
+
+  final double topAlpha;
+  final double bottomAlpha;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    // 선 두께 1 의 절반만큼 안쪽으로 들여 그려야 선이 잘리지 않는다.
+    final rrect = RRect.fromRectAndRadius(
+      rect.deflate(0.5),
+      Radius.circular(size.height / 2),
+    );
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.white.withValues(alpha: topAlpha),
+            Colors.white.withValues(alpha: bottomAlpha),
+          ],
+        ).createShader(rect),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _GradientStadiumBorderPainter old) =>
+      old.topAlpha != topAlpha || old.bottomAlpha != bottomAlpha;
+}
+
+/// 피그마의 drop shadow 는 알약 안쪽으로 비치지 않는다. 마이펫 배지 채움이
+/// 흰색 20% 반투명인데도 피그마 렌더의 채움값이 '그림자 없는 합성값'과
+/// 일치하는 것으로 확인했다. Flutter BoxShadow 는 박스 아래에 그대로 깔려
+/// 반투명 배지를 통과하므로, 배지 모양을 도려낸 바깥 그림자만 그린다.
 class _OuterHardShadow extends StatelessWidget {
   const _OuterHardShadow({required this.child});
 
   /// 피그마 484:26017·484:26018 의 shadow: 2px 4px 0px rgba(0,0,0,0.2)
   static const Offset _offset = Offset(2, 4);
-  static const Color _color = Color(0x33000000); // 검정 20%
+  static const Color _color = Color(0x33000000);
 
   final Widget child;
 
@@ -884,7 +973,6 @@ class _OuterHardShadowPainter extends CustomPainter {
       rrect.shift(_OuterHardShadow._offset),
       Paint()..color = _OuterHardShadow._color,
     );
-    // 배지가 덮을 영역은 도려내 그림자가 안쪽으로 비치지 않게 한다.
     canvas.drawRRect(rrect, Paint()..blendMode = BlendMode.clear);
     canvas.restore();
   }
