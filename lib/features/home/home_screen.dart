@@ -88,6 +88,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         appBar: MainHeader(
           // 마이페이지는 홈 탭이 아니라 별도 라우트로 push한다(GNB 미표시).
           onTapProfile: () => context.push(AppRoutes.myPage),
+          onTapNotification: () => context.push(AppRoutes.notificationCenter),
         ),
         body: SafeArea(
           child: IndexedStack(
@@ -156,120 +157,126 @@ class _HomeOverview extends ConsumerWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
         children: [
-        // 상단 흰색 블록(배너) — 하단 라운드로 회색 미션 시트가 올라오는 효과
+        // 상단 흰색 블록(배너)
         Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(14)),
-          ),
+          color: Colors.white,
           padding: const EdgeInsets.only(top: 16, bottom: 20),
           child: const HomeEventCarousel(),
         ),
-        // 매일 받는 리워드 미션 (Figma 116:8397) — 회색 배경 위 2열 컴팩트 카드
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '매일 받는 리워드 미션',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  height: 1.4,
-                  letterSpacing: -0.66,
-                  color: AppColors.textStrong,
+        // 매일 받는 리워드 미션 (Figma content 116:8398)
+        // 회색 시트가 상단 라운드(14)로 흰 배너 아래에 얹히는 형태.
+        // 바깥 ColoredBox가 라운드 뒤로 비치는 흰색을 깔아 곡률이 드러난다.
+        ColoredBox(
+          color: Colors.white,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: AppColors.bgGray,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+            ),
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '매일 받는 리워드 미션',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    height: 1.4,
+                    letterSpacing: -0.66,
+                    color: AppColors.textStrong,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: NurimCardBannerSmall(
-                      width: double.infinity,
-                      titleLine1: '매일 출석하고',
-                      titleLine2: '포인트 받기',
-                      pointText:
-                          '+${attendance?.defaultReward?.rewardValue ?? 100}P',
-                      statusText: '연속 출석',
-                      dayText:
-                          attendanceDays != null ? '$attendanceDays일' : '-일',
-                      bannerImg: _missionAvatar(
-                        ref,
-                        attendance?.thumbnailFileId,
-                        const Color(0xFF7FD3F2),
-                        'assets/images/home/mission_char_att.png',
-                        33.4,
-                        47.9,
-                        8.1,
-                      ),
-                      onTap: attendance == null
-                          ? null
-                          : () => _onAttendanceTap(
-                                context,
-                                ref,
-                                attendance.eventMasterId,
-                              ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: NurimCardBannerSmall(
-                      width: double.infinity,
-                      titleLine1: '마이펫 사진 찍고',
-                      titleLine2: '리워드 받기',
-                      pointText:
-                          '+${photo?.defaultReward?.rewardValue ?? 100}P',
-                      statusText: '주간 참여',
-                      // 사진 미션 주간 참여 횟수(백엔드 participationCount, 비로그인 0)
-                      dayText:
-                          participationCount != null ? '$participationCount' : '-',
-                      daySuffix: ' / 7일',
-                      bannerImg: _missionAvatar(
-                        ref,
-                        photo?.thumbnailFileId,
-                        const Color(0xFFEEBEF5),
-                        'assets/images/home/mission_char_cam.png',
-                        30.0,
-                        50.2,
-                        7.4,
-                      ),
-                      onTap: photo == null
-                          ? null
-                          : () async {
-                              // 이번 촬영 플로우의 결과만 반영되도록 이전 신호를 비운다.
-                              ref
-                                  .read(photoParticipatedProvider.notifier)
-                                  .set(null);
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      CameraMissionGuideScreen(
-                                    eventMasterId: photo.eventMasterId,
-                                  ),
+                const SizedBox(height: 10),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: NurimCardBannerSmall(
+                        width: double.infinity,
+                        titleLine1: '매일 출석하고',
+                        titleLine2: '포인트 받기',
+                        pointText:
+                            '+${attendance?.defaultReward?.rewardValue ?? 100}P',
+                        statusText: '연속 출석',
+                        dayText:
+                            attendanceDays != null ? '$attendanceDays일' : '-일',
+                        bannerImg: _missionAvatar(
+                          ref,
+                          attendance?.thumbnailFileId,
+                          const Color(0xFF7FD3F2),
+                          'assets/images/home/mission_char_att.png',
+                          33.4,
+                          47.9,
+                          8.1,
+                        ),
+                        onTap: attendance == null
+                            ? null
+                            : () => _onAttendanceTap(
+                                  context,
+                                  ref,
+                                  attendance.eventMasterId,
                                 ),
-                              );
-                              // 미션 완료 후 홈 복귀 시 주간참여 최신화(①/②+③).
-                              if (!context.mounted) return;
-                              final participatedPetId =
-                                  ref.read(photoParticipatedProvider);
-                              ref
-                                  .read(photoParticipatedProvider.notifier)
-                                  .set(null);
-                              await _afterPhoto(
-                                ref,
-                                context,
-                                participatedPetId,
-                              );
-                            },
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: NurimCardBannerSmall(
+                        width: double.infinity,
+                        titleLine1: '마이펫 사진 찍고',
+                        titleLine2: '리워드 받기',
+                        pointText:
+                            '+${photo?.defaultReward?.rewardValue ?? 100}P',
+                        statusText: '주간 참여',
+                        // 사진 미션 주간 참여 횟수(백엔드 participationCount, 비로그인 0)
+                        dayText:
+                            participationCount != null ? '$participationCount' : '-',
+                        daySuffix: ' / 7일',
+                        bannerImg: _missionAvatar(
+                          ref,
+                          photo?.thumbnailFileId,
+                          const Color(0xFFEEBEF5),
+                          'assets/images/home/mission_char_cam.png',
+                          30.0,
+                          50.2,
+                          7.4,
+                        ),
+                        onTap: photo == null
+                            ? null
+                            : () async {
+                                // 이번 촬영 플로우의 결과만 반영되도록 이전 신호를 비운다.
+                                ref
+                                    .read(photoParticipatedProvider.notifier)
+                                    .set(null);
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CameraMissionGuideScreen(
+                                      eventMasterId: photo.eventMasterId,
+                                    ),
+                                  ),
+                                );
+                                // 미션 완료 후 홈 복귀 시 주간참여 최신화(①/②+③).
+                                if (!context.mounted) return;
+                                final participatedPetId =
+                                    ref.read(photoParticipatedProvider);
+                                ref
+                                    .read(photoParticipatedProvider.notifier)
+                                    .set(null);
+                                await _afterPhoto(
+                                  ref,
+                                  context,
+                                  participatedPetId,
+                                );
+                              },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+        ),
         ),
       ],
       ),

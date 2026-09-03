@@ -6,9 +6,13 @@ import '../theme/app_colors.dart';
 import '../utils/toast_util.dart';
 
 class MainHeader extends StatelessWidget implements PreferredSizeWidget {
-  const MainHeader({super.key, this.onTapProfile});
+  const MainHeader({super.key, this.onTapProfile, this.onTapNotification});
 
   final VoidCallback? onTapProfile;
+
+  /// 알림 센터 진입 콜백. 미주입 시 기존대로 준비 중 토스트만 노출한다.
+  /// (core 위젯은 라우트를 직접 참조하지 않고 호출부에서 주입받는다.)
+  final VoidCallback? onTapNotification;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +48,10 @@ class MainHeader extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 16), // Gap between icons
                 // Bell Icon with notification dot (Figma Node: Icon/Bell/24)
-                // 알림 화면은 백엔드 API 미제공(Mock)이라 진입 대신 준비 중 토스트만 노출.
+                // 알림 목록은 백엔드 API 미제공이라 화면 내 임시 데이터로 검수한다.
                 GestureDetector(
-                  onTap: () => ToastUtil.show(context, '준비 중인 기능입니다.'),
+                  onTap: onTapNotification ??
+                      () => ToastUtil.show(context, '준비 중인 기능입니다.'),
                   child: SizedBox(
                     width: 24,
                     height: 24,
