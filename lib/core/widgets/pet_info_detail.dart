@@ -21,6 +21,39 @@ class NurimPetInfoDetail extends StatelessWidget {
   final bool showActionButton;
   final EdgeInsetsGeometry padding;
 
+  static const TextStyle _descStyle = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w500, // Medium
+    height: 1.4,
+    letterSpacing: -0.66,
+    color: AppColors.textDisabled,
+  );
+
+  /// 종 · 나이 · 성별. NurimPetCard·PetSelectCard 와 순서·동작을 맞춘다.
+  /// 품종만 남은 폭을 받아 말줄임하고 나이·성별은 줄어들지 않는다.
+  /// (예전엔 나이·종·성별 순이었고 셋 다 맨 Text 라 긴 품종에서 28 넘쳤다)
+  Widget _buildDescription() {
+    final items = [pet.breed, pet.ageText, pet.genderText]
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    final children = <Widget>[];
+    for (int i = 0; i < items.length; i++) {
+      final text = Text(items[i],
+          maxLines: 1, overflow: TextOverflow.ellipsis, style: _descStyle);
+      children.add(i == 0 ? Flexible(child: text) : text);
+      if (i < items.length - 1) {
+        children.add(const SizedBox(width: 4));
+        children.add(const _DotSeparator());
+        children.add(const SizedBox(width: 4));
+      }
+    }
+    return Row(mainAxisSize: MainAxisSize.min, children: children);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -125,58 +158,8 @@ class NurimPetInfoDetail extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-                // Description (Age · Breed · Gender)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (pet.ageText.isNotEmpty) ...[
-                      Text(
-                        pet.ageText,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500, // Medium
-                          height: 1.4,
-                          letterSpacing: -0.66,
-                          color: AppColors.textDisabled,
-                        ),
-                      ),
-                    ],
-                    if (pet.ageText.isNotEmpty && pet.breed.isNotEmpty) ...[
-                      const SizedBox(width: 4),
-                      const _DotSeparator(),
-                      const SizedBox(width: 4),
-                    ],
-                    if (pet.breed.isNotEmpty) ...[
-                      Text(
-                        pet.breed,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          height: 1.4,
-                          letterSpacing: -0.66,
-                          color: AppColors.textDisabled,
-                        ),
-                      ),
-                    ],
-                    if (pet.breed.isNotEmpty && pet.genderText.isNotEmpty) ...[
-                      const SizedBox(width: 4),
-                      const _DotSeparator(),
-                      const SizedBox(width: 4),
-                    ],
-                    if (pet.genderText.isNotEmpty) ...[
-                      Text(
-                        pet.genderText,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          height: 1.4,
-                          letterSpacing: -0.66,
-                          color: AppColors.textDisabled,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                // 종 · 나이 · 성별 — 다른 화면과 동일한 순서 (검수 15행)
+                _buildDescription(),
               ],
             ),
           ),
