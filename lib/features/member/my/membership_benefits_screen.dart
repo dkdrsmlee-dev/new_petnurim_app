@@ -169,12 +169,17 @@ class MembershipBenefitsScreen extends ConsumerWidget {
                       height: 1.3,
                       letterSpacing: -1,
                     )),
-                const SizedBox(height: 28),
+                // 간격은 피그마 1section(263:9035) 기준.
+                // 타이틀 하단 154 → 가격카드 상단 170 = 16,
+                // 가격카드 하단 314 → 혜택 알약 상단 364 = 50.
+                // (16 을 지키면 카드 상단이 40+114.1+16=170.1 로 디자인 170 과
+                //  맞아떨어져 코인·별 데코의 세로 기준선도 함께 맞는다)
+                const SizedBox(height: 16),
                 _buildPriceCard(context, item),
-                const SizedBox(height: 28),
+                const SizedBox(height: 50),
                 _buildBenefitBadge(),
                 const SizedBox(height: 16),
-                _buildBenefitBox(),
+                _buildBenefitBox(context),
                 const SizedBox(height: 32),
                 _buildSubscribeButton(context, item),
               ],
@@ -338,8 +343,9 @@ class MembershipBenefitsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBenefitBox() {
-    return Container(
+  Widget _buildBenefitBox(BuildContext context) {
+    final f = MediaQuery.of(context).size.width / 375;
+    final box = Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
@@ -355,6 +361,31 @@ class MembershipBenefitsScreen extends ConsumerWidget {
           _BenefitRow(no: '03', text: '기본 서비스 이용'),
         ],
       ),
+    );
+
+    // Star 10: 디자인에서 안내박스 좌상단 "바깥"에 있다(별 46.83/391.04,
+    // 박스 16/414 → 좌 +30.83, 위 -22.96). 데코와 함께 절대좌표로 두면
+    // 화면이 넓어질수록 별만 아래로 밀려 박스 안으로 들어오고, 박스가
+    // 흰색 10% 반투명이라 "박스가 그냥 투명처리됐다"로 보인다(검수 19행 ②).
+    // 가격카드에 coin4·Star 9 를 붙인 것과 같은 방식으로 박스에 고정해
+    // 폭·글자배율이 달라져도 항상 박스 바깥에 남게 한다.
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        box,
+        Positioned(
+          left: 30.83 * f,
+          top: -22.96 * f,
+          width: 11 * f,
+          height: 11 * f,
+          child: IgnorePointer(
+            child: SvgPicture.asset(
+              'assets/images/membership/star_b.svg',
+              colorFilter: _kWhiteFilter,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -504,10 +535,14 @@ class _HeroDecorations extends StatelessWidget {
       builder: (context, constraints) {
         final f = constraints.maxWidth / _dw;
 
+        // 가로는 폭에 비례(x·크기 × f), 세로는 디자인 좌표 그대로 쓴다.
+        // 본문(타이틀·카드·버튼)이 절대 dp 로 쌓이므로 세로까지 비례시키면
+        // 폭이 넓은 기기에서 데코만 아래로 밀려 본문과 어긋난다.
+        // (412dp 에서 별이 안내박스 안으로 들어오던 원인 — 검수 19행 ②)
         Positioned at(double x, double y, double w, double h, Widget child) {
           return Positioned(
             left: x * f,
-            top: y * f,
+            top: y,
             width: w * f,
             height: h * f,
             child: child,
@@ -519,7 +554,7 @@ class _HeroDecorations extends StatelessWidget {
             double cx, double cy, double w, double h, double deg, Widget child) {
           return Positioned(
             left: (cx - w / 2) * f,
-            top: (cy - h / 2) * f,
+            top: cy - h * f / 2,
             width: w * f,
             height: h * f,
             child: Transform.rotate(
@@ -533,7 +568,7 @@ class _HeroDecorations extends StatelessWidget {
         Positioned glow(double x, double y, double d) {
           return Positioned(
             left: x * f,
-            top: y * f,
+            top: y,
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(sigmaX: 37 * f, sigmaY: 37 * f),
               child: Container(
@@ -571,12 +606,11 @@ class _HeroDecorations extends StatelessWidget {
             // (coin4는 가격카드에 직접 고정 — _buildPriceCard 참고)
             atRot(308.89, 171.66, 6.512, 26, 42.89,
                 Image.asset('$_p/coin3.png', fit: BoxFit.contain)),
-            // 별 Star 8(좌상단) / Star 10(좌하단) — 흰색 강제(colorFilter).
-            // (Star 9는 가격카드 우하단에 직접 고정 — _buildPriceCard 참고)
+            // 별 Star 8(좌상단) — 흰색 강제(colorFilter).
+            // (Star 9는 가격카드 우하단, Star 10은 혜택 안내박스 좌상단에
+            //  직접 고정 — _buildPriceCard / _buildBenefitBox 참고)
             at(60.99, 33.48, 13.34, 13.34,
                 SvgPicture.asset('$_p/star_a.svg', colorFilter: _kWhiteFilter)),
-            at(46.83, 391.04, 11.00, 11.00,
-                SvgPicture.asset('$_p/star_b.svg', colorFilter: _kWhiteFilter)),
           ],
         );
       },
