@@ -124,40 +124,58 @@ class _PetRewardHistoryScreenState
     );
   }
 
+  /// 피그마 Tab base(657:9612) 활성 밑줄 색 gray/110.
+  static const Color _tabActiveLine = Color(0xFF3F434A);
+
   Widget _buildTabBar() {
-    return Row(
-      children: List.generate(_tabLabels.length, (i) {
-        final active = i == _tabIndex;
-        return Expanded(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => _switchTab(i),
-            child: Container(
-              alignment: Alignment.center,
-              padding:
-                  const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: active ? AppColors.textStrong : AppColors.border,
-                    width: active ? 3 : 1,
+    // 예전에는 탭마다 자기 하단 보더를 그렸다(활성 3 / 비활성 1). 보더는
+    // 컨테이너 안쪽에 그려져서 두 선의 두께가 다르면 위 끝이 어긋나 사이가
+    // 떠 보였다. 구분선을 탭 전체 폭에 1 로 깔고 활성 표시를 그 위에 겹쳐
+    // 아래 끝을 맞춘다. (검수 18행 ①)
+    final n = _tabLabels.length;
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Row(
+          children: List.generate(n, (i) {
+            final active = i == _tabIndex;
+            return Expanded(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => _switchTab(i),
+                child: Container(
+                  alignment: Alignment.center,
+                  // 피그마 Tab base: py 12 + 텍스트 22 = 46
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                  child: Text(
+                    _tabLabels[i],
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+                      height: 1.4,
+                      // 피그마: 활성 text/strong, 비활성 text/subtle(#909AA9)
+                      color:
+                          active ? AppColors.textStrong : AppColors.textDisabled,
+                      letterSpacing: -0.66,
+                    ),
                   ),
                 ),
               ),
-              child: Text(
-                _tabLabels[i],
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: active ? FontWeight.w600 : FontWeight.w500,
-                  color:
-                      active ? AppColors.textStrong : AppColors.textSecondary,
-                  letterSpacing: -0.66,
-                ),
-              ),
-            ),
+            );
+          }),
+        ),
+        // 탭 전체를 가로지르는 하단 구분선
+        Container(height: 1, color: AppColors.border),
+        // 활성 탭 표시. 폭을 비율로 잡아 탭 수·화면 폭이 달라져도 맞는다.
+        Align(
+          alignment: Alignment(n > 1 ? -1 + 2 * _tabIndex / (n - 1) : 0, 1),
+          child: FractionallySizedBox(
+            widthFactor: 1 / n,
+            child: Container(height: 3, color: _tabActiveLine),
           ),
-        );
-      }),
+        ),
+      ],
     );
   }
 
@@ -324,11 +342,16 @@ class _PetRewardHistoryScreenState
             physics: const AlwaysScrollableScrollPhysics(),
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
+              // 스크롤뷰 안은 높이가 무한이라 Expanded 를 그냥 쓰면 렌더가
+              // 죽는다. IntrinsicHeight 로 높이를 확정해 준다.
+              child: IntrinsicHeight(
+                child: Column(
                 children: [
                   _buildListHeader(0),
-                  const SizedBox(height: 100),
-                  const Center(
+                  // 고정 100 이면 화면이 길수록 위로 치우친다. 남는 공간의
+                  // 가운데에 오도록 한다. (검수 18행 ②)
+                  Expanded(
+                    child: Center(
                     child: Text(
                       '리워드 내역이 없어요.',
                       style: TextStyle(
@@ -337,8 +360,10 @@ class _PetRewardHistoryScreenState
                         color: AppColors.textSecondary,
                       ),
                     ),
+                    ),
                   ),
                 ],
+                ),
               ),
             ),
           ),
