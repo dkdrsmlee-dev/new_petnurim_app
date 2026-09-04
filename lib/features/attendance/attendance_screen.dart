@@ -750,12 +750,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         child: _buildKakaoIcon(),
                         label: '카카오',
                       ),
-                      const SizedBox(width: 57),
+                      const SizedBox(width: 44), // 피그마 gap 44
                       _buildShareIconItem(
                         child: _buildInstaIcon(),
                         label: '인스타',
                       ),
-                      const SizedBox(width: 57),
+                      const SizedBox(width: 44), // 피그마 gap 44
                       _buildShareIconItem(
                         child: _buildLinkIcon(),
                         label: '링크복사',
@@ -873,7 +873,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w700, // 피그마 Bold
                           height: 1.4,
                           letterSpacing: -0.66,
                         ),
@@ -911,7 +911,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w700, // 피그마 Bold
                           height: 1.4,
                           letterSpacing: -0.66,
                         ),
@@ -938,6 +938,11 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           Text(
             label,
             textAlign: TextAlign.center,
+            // '링크복사'는 47 폭을 조금 넘지만 피그마도 한 줄이다.
+            // 줄바꿈되면 카드가 19.6 높아져 하단 여백까지 좁아진다.
+            maxLines: 1,
+            softWrap: false,
+            overflow: TextOverflow.visible,
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,

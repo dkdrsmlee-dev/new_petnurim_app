@@ -66,7 +66,15 @@ class CalendarStamp extends StatelessWidget {
                     fontWeight: FontWeight.w600, // SemiBold
                     color: Colors.white,
                     letterSpacing: -0.66,
-                    height: 1.4, // line-height 보정
+                    // 피그마의 line-height 1.4 는 CSS 가 leading 을 위아래 균등 분배해
+                    // 16 알약 안에서 세로 중앙에 놓인다. 반면 Flutter 는 leading 을
+                    // 폰트 메트릭에 비례 배분해 글자가 아래로 3.5 쏠리고,
+                    // leadingDistribution(TextStyle/TextHeightBehavior 양쪽) 으로도
+                    // 교정되지 않는다. height 를 빼면 M3 기본값(bodyMedium 1.43)이
+                    // 상속돼 마찬가지이므로, 폰트 고유 줄높이를 명시해 줄상자를
+                    // 컨텐츠 박스(16 - 상하 패딩 1)와 일치시킨다. 그러면 CSS 와 같은
+                    // baseline 이 된다. (Pretendard 12: ascent 11.43 + descent 2.57)
+                    height: 14 / 12,
                   ),
                 ),
               ),
