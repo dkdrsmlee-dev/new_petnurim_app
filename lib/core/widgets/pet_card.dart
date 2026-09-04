@@ -65,22 +65,22 @@ class NurimPetCard extends StatelessWidget {
 
     final children = <Widget>[];
     for (int i = 0; i < list.length; i++) {
-      children.add(
-        Flexible(
-          child: Text(
-            list[i],
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              height: 1.4,
-              letterSpacing: -0.66,
-              color: AppColors.textDisabled,
-            ),
-          ),
+      final text = Text(
+        list[i],
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          height: 1.4,
+          letterSpacing: -0.66,
+          color: AppColors.textDisabled,
         ),
       );
+      // 피그마 Pet card(215:6441)는 품종만 폭을 양보하고(말줄임) 나이·성별은
+      // 줄어들지 않는다(nowrap). 셋 다 Flexible 이면 품종이 1/3 몫만 받아
+      // 너무 일찍 잘린다. 첫 항목(품종)에만 남은 폭을 준다. (검수 14행)
+      children.add(i == 0 ? Flexible(child: text) : text);
       if (i < list.length - 1) {
         children.add(const SizedBox(width: 4));
         children.add(const _DotSeparator());
@@ -99,7 +99,11 @@ class NurimPetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final card = Container(
       width: width,
-      height: height,
+      // 피그마 Pet card(215:6440) 높이는 192 지만 내용(패딩 16 + 펫 정보 +
+      // 간격 16 + 리스트 박스)이 실제로는 194 를 요구해 리워드 행 아랫부분이
+      // 2dp 잘렸다(실단말 마이펫 리스트에서 BOTTOM OVERFLOWED BY 2.0 PIXELS).
+      // 최소 높이로 두어 들어가면 192 를 유지하고 모자라면 자라게 한다.
+      constraints: BoxConstraints(minHeight: height),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: _backgroundColor,
@@ -146,6 +150,7 @@ class NurimPetCard extends StatelessWidget {
           ],
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -204,90 +209,95 @@ class NurimPetCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: AppColors.bgSoft,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            // Figma Icon/Crown/20
-                            SvgPicture.asset(
-                              'assets/images/ic_crown_20.svg',
-                              width: 20,
-                              height: 20,
-                            ),
-                            const SizedBox(width: 6),
-                            const Expanded(
-                              child: Text(
-                                '멤버십',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.4,
-                                  letterSpacing: -0.66,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            _MembershipChip(
-                              label: pet.membershipTier,
-                              onTap: pet.onMembershipJoinTap,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        const Divider(height: 1, thickness: 1, color: AppColors.borderLight),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            // Figma Icon/Coin/20 (ic_coin.svg와 동일 지오메트리, 회색 #51565F)
-                            SvgPicture.asset(
-                              'assets/images/ic_coin_20.svg',
-                              width: 20,
-                              height: 20,
-                            ),
-                            const SizedBox(width: 6),
-                            const Expanded(
-                              child: Text(
-                                '리워드',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.4,
-                                  letterSpacing: -0.66,
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              pet.rewardText,
+                // 리스트 박스를 Expanded 로 늘리면 카드 고정 높이(192)에 맞추려고
+                // 내용을 눌러 리워드 행이 2 잘렸다. 내용 높이 그대로 두고
+                // 카드는 minHeight 로 필요한 만큼 자라게 한다. (검수 14행)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgSoft,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          // Figma Icon/Crown/20
+                          SvgPicture.asset(
+                            'assets/images/ic_crown_20.svg',
+                            width: 20,
+                            height: 20,
+                          ),
+                          const SizedBox(width: 6),
+                          const Expanded(
+                            child: Text(
+                              '멤버십',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.right,
-                              style: const TextStyle(
-                                fontSize: 16,
+                              style: TextStyle(
+                                fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 height: 1.4,
                                 letterSpacing: -0.66,
-                                color: AppColors.textStrong,
+                                color: AppColors.textSecondary,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                          const SizedBox(width: 12),
+                          _MembershipChip(
+                            label: pet.membershipTier,
+                            onTap: pet.onMembershipJoinTap,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      const Divider(height: 1, thickness: 1, color: AppColors.borderLight),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          // Figma Icon/Coin/20 (ic_coin.svg와 동일 지오메트리).
+                          // 피그마 원본 stroke 는 #51565F 인데 바로 위 크라운은
+                          // #87909E 라 둘이 달라 보인다는 지적(검수 14행 ②)에 따라
+                          // 에셋 stroke 를 크라운과 같은 #87909E 로 맞췄다.
+                          // 디자인과 다른 값이므로 디자이너 확인 후 확정 필요.
+                          SvgPicture.asset(
+                            'assets/images/ic_coin_20.svg',
+                            width: 20,
+                            height: 20,
+                          ),
+                          const SizedBox(width: 6),
+                          const Expanded(
+                            child: Text(
+                              '리워드',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                height: 1.4,
+                                letterSpacing: -0.66,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            pet.rewardText,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              height: 1.4,
+                              letterSpacing: -0.66,
+                              color: AppColors.textStrong,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ],

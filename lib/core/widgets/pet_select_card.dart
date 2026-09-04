@@ -229,11 +229,12 @@ class _InfoRow extends StatelessWidget {
 
     final children = <Widget>[];
     for (int i = 0; i < items.length; i++) {
-      children.add(
-        Flexible(
-          child: Text(items[i], maxLines: 1, overflow: TextOverflow.ellipsis, style: _style),
-        ),
-      );
+      final text = Text(items[i],
+          maxLines: 1, overflow: TextOverflow.ellipsis, style: _style);
+      // 피그마 Pet select card(624:8533)는 품종만 폭을 양보하고(말줄임)
+      // 나이·성별은 줄어들지 않는다. 셋 다 Flexible 이면 품종이 1/3 몫만
+      // 받아 너무 일찍 잘린다. 첫 항목(품종)에만 남은 폭을 준다. (검수 14행)
+      children.add(i == 0 ? Flexible(child: text) : text);
       if (i < items.length - 1) {
         children.add(const SizedBox(width: 4));
         children.add(
