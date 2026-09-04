@@ -26,8 +26,11 @@ class NurimSectionTitle extends StatelessWidget {
 
     return Padding(
       padding: padding,
-      child: SizedBox(
-        height: 22,
+      // 피그마 높이는 22 지만 16 x leading 1.4 = 22.4 라 고정하면 글자가 잘린다.
+      // (배율 1.0 에서도 0.4 초과, 1.2 에서는 4.9 잘림)
+      // 최소 높이로 두어 기본 배율에서는 사실상 22 를 유지하고 큰 배율에서는 자란다.
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 22),
         child: Row(
           children: [
             Expanded(

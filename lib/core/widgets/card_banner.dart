@@ -318,6 +318,10 @@ class NurimCardBannerSmall extends StatelessWidget {
             children: [
               Text(
                 titleLine1,
+                // 좁은 화면(320dp)에서 줄바꿈되면 카드 고정 높이(186)를 넘겨
+                // 하단 오버플로가 났다. 둘째 줄과 동일하게 한 줄로 자른다.
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -367,16 +371,23 @@ class NurimCardBannerSmall extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  statusText,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 1.4,
-                    letterSpacing: -0.66,
-                    color: _statusTextColor,
+                // 라벨과 값이 둘 다 고정 크기라 좁은 화면에서 우측으로 넘쳤다.
+                // 값(일수)은 그대로 두고 라벨이 먼저 줄어들게 한다.
+                Flexible(
+                  child: Text(
+                    statusText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 1.4,
+                      letterSpacing: -0.66,
+                      color: _statusTextColor,
+                    ),
                   ),
                 ),
+                const SizedBox(width: 4),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

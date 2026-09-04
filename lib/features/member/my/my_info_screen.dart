@@ -520,12 +520,18 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                               Row(
                                 children: [
                                   Container(
-                                    height: 24,
+                                    // 피그마 Badge base(196:6911)는 h24 고정이지만
+                                    // 시스템 글자 크기를 키우면 글자가 넘쳐 잘린다.
+                                    // 최소 높이로 두어 기본 배율에서는 24 를 유지하고
+                                    // 큰 배율에서는 배지가 함께 커지게 한다.
+                                    constraints: const BoxConstraints(minHeight: 24),
                                     alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
+                                    // 세로 패딩 4 는 두지 않는다. Border.all 이 상하 1씩
+                                    // 먹어 컨텐츠 박스가 14 밖에 안 되는데 13 글자의
+                                    // 줄상자는 15 라 기본 배율에서도 눌린다.
+                                    // 높이는 minHeight 24 가 잡고 글자는 가운데 정렬한다.
+                                    // 실측: 배율 1.0/1.2 에서 24, 1.5 에서 25 로 자람.
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       border: Border.all(color: AppColors.border),
