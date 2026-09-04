@@ -72,7 +72,8 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
         child: Stack(
           children: [
             Positioned.fill(
-              bottom: 90, // Leave space for bottom buttons
+              // 하단 고정 버튼 블록 높이(위 4 + 버튼 56 + 아래 16)만큼 비운다
+              bottom: 76,
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24), // Figma: 좌우 16
                 children: [
@@ -139,29 +140,102 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                   // 직접 입력(ETC) 선택 시 텍스트 영역 활성화
                   if (_selectedReasonCode == _customReasonCode) ...[
                     const SizedBox(height: 8),
-                    TextField(
-                      controller: _customReasonController,
-                      maxLines: 4,
-                      maxLength: 100,
-                      decoration: InputDecoration(
-                        hintText: '내용을 작성해 주세요.',
-                        hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
-                        filled: true,
-                        fillColor: AppColors.bgSoft,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
+                    // 피그마 Textarea field base(59:10947): 흰 배경 + 테두리 #D6DBE4,
+                    // radius 12, 안쪽 패딩 16, 입력 영역 80, 글자 수는 입력창
+                    // '안쪽' 우측 하단(13, #B4C0D3). 앱은 회색 채움 + 테두리 없음에
+                    // 기본 카운터가 입력창 바깥에 붙어 있었다. (검수 16행 ②)
+                    Stack(
+                      children: [
+                        TextField(
+                          controller: _customReasonController,
+                          maxLines: null,
+                          minLines: 4,
+                          maxLength: 100,
+                          // 기본 카운터는 입력창 바깥에 그려져서 끄고 직접 배치한다.
+                          buildCounter: (
+                            _, {
+                            required int currentLength,
+                            required bool isFocused,
+                            int? maxLength,
+                          }) =>
+                              null,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textMuted,
+                            height: 1.4,
+                            letterSpacing: -0.66,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: '내용을 작성해 주세요.',
+                            hintStyle: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.placeholder,
+                              height: 1.4,
+                              letterSpacing: -0.66,
+                            ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            // 아래는 카운터 자리(13x1.4=18.2 + 위 간격 8)를 비워 둔다.
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(16, 16, 16, 42),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide:
+                                  const BorderSide(color: AppColors.border),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide:
+                                  const BorderSide(color: AppColors.border),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                color: AppColors.primary,
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.textStrong),
+                        Positioned(
+                          right: 16,
+                          bottom: 16,
+                          child: ValueListenableBuilder<TextEditingValue>(
+                            valueListenable: _customReasonController,
+                            builder: (context, value, _) => Text(
+                              '${value.text.characters.length}/100',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.dot, // #B4C0D3
+                                height: 1.4,
+                                letterSpacing: -0.66,
+                              ),
+                            ),
+                          ),
                         ),
-                        contentPadding: const EdgeInsets.all(16),
-                      ),
-                      style: const TextStyle(fontSize: 14, color: AppColors.textStrong),
+                      ],
                     ),
                   ],
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 24),
+                  // 사유 목록과 동의 사이 구분선 (검수 16행 ③).
+                  // 피그마 Divider(593:9347): surface/separator #F4F6F8, 높이 6,
+                  // 화면 폭 전체. ListView 의 좌우 16 패딩을 벗어나야 하므로
+                  // OverflowBox 로 넓힌다. (음수 마진은 Container assert 로 죽는다)
+                  SizedBox(
+                    height: 6,
+                    child: OverflowBox(
+                      maxWidth: double.infinity,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 6,
+                        child: const ColoredBox(color: AppColors.bgGray),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
 
                   // 3. 회원탈퇴 동의하기 섹션
                   SelectionControl<bool>(
@@ -193,19 +267,24 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
               bottom: 0,
               child: Container(
                 color: Colors.white,
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                // 피그마 Navi button(200:2593): 좌우 16, 위 4, 버튼 사이 8.
+                // 아래 16 은 11행과 같은 이유(안드로이드는 이 자리가 검은
+                // 내비게이션 바라 붙으면 답답해 보인다). (검수 16행 ⑤⑥)
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                 child: Row(
                   children: [
                     Expanded(
                       child: SizedBox(
-                        height: 52,
+                        // 피그마 Button: 높이 56, radius 12
+                        height: 56,
                         child: OutlinedButton(
                           onPressed: _isWithdrawing ? null : () => context.pop(),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: AppColors.borderLight),
+                            // 피그마 line/default #D6DBE4 (앱은 #E8EBF1 이었다)
+                            side: const BorderSide(color: AppColors.border),
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: const Text(
@@ -219,17 +298,18 @@ class _WithdrawScreenState extends ConsumerState<WithdrawScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    // 피그마 Button 사이 gap 8
+                    const SizedBox(width: 8),
                     Expanded(
                       child: SizedBox(
-                        height: 52,
+                        height: 56,
                         child: ElevatedButton(
                           onPressed: _agreed && !_isWithdrawing ? _handleWithdrawClick : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             disabledBackgroundColor: AppColors.borderLight,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 0,
                           ),
