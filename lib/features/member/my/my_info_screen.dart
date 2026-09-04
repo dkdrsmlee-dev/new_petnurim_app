@@ -480,112 +480,158 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 공용 팝업 헤더(뒤로가기만 노출)
-              PopupHeader(
-                title: '주소 설정',
-                showCloseButton: false,
-                onBackPressed: () => Navigator.pop(context),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24), // Figma: 좌우 16
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                  // Figma Address lnfo(196:6918)
-                  Text(
-                    baseAddress,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textMuted,
-                      letterSpacing: -0.66,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Container(
-                        height: 24,
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Text(
-                          '도로명',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primary,
-                            letterSpacing: -0.66,
-                            height: 1.4,
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // 검수 11행: 이 팝업은 뒤로가기가 아니라 X 로 닫는다(디자이너 요청)
+                PopupHeader(
+                  title: '주소 설정',
+                  showBackButton: false,
+                  onClosePressed: () => Navigator.pop(context),
+                ),
+                // 키보드가 올라와도 확인 버튼이 잘리지 않도록 본문만 줄어들고 스크롤된다
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // 피그마 Content(196:7569): 헤더 아래 16, 블록 간 24
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // 피그마 Address lnfo(196:6919)
+                              Text(
+                                baseAddress,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textMuted,
+                                  letterSpacing: -0.66,
+                                  height: 1.4,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 24,
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(color: AppColors.border),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: const Text(
+                                      '도로명',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.primary,
+                                        letterSpacing: -0.66,
+                                        // 피그마 leading 1.4 를 그대로 주면 줄상자(18.2)가
+                                        // 컨텐츠 박스(24-4-4=16)를 넘겨 글자가 아래로
+                                        // 3.67 쏠린다. 폰트 고유 줄높이를 명시해 맞춘다.
+                                        // (Pretendard ascent+descent = 14/12 em, 크기 무관)
+                                        height: 14 / 12,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      baseAddress,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.textSecondary,
+                                        letterSpacing: -0.66,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          baseAddress,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textSecondary,
-                            letterSpacing: -0.66,
-                            height: 1.4,
+                        const SizedBox(height: 24),
+                        // 피그마 Line6(196:7001) — 시트 폭 전체를 가로지르는 6 구분 바.
+                        // 예전엔 좌우 패딩 안에서 음수 마진으로 흉내내다 디버그 빌드에서
+                        // Container assert(margin.isNonNegative)로 시트가 죽었다.
+                        Container(height: 6, color: AppColors.bgGray),
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // 피그마 Detail address(196:7054)
+                              const Text(
+                                '상세 주소를 입력해 주세요.',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.textStrong,
+                                  height: 1.4,
+                                  letterSpacing: -0.66,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              TextField(
+                                controller: controller,
+                                autofocus: true,
+                                decoration: InputDecoration(
+                                  hintText: '상세 주소 입력',
+                                  hintStyle: const TextStyle(
+                                    color: AppColors.placeholder,
+                                  ),
+                                  // 피그마 Input field base(196:6987): 높이 52, radius 12
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.border,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.primary,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  // Figma Line6 — 시트 폭 전체를 가로지르는 6px 구분 바
-                  Container(
-                    height: 6,
-                    margin: const EdgeInsets.symmetric(horizontal: -16),
-                    color: AppColors.bgGray,
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    '상세 주소를 입력해 주세요.',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textStrong,
-                      height: 1.4,
-                      letterSpacing: -0.66,
+                        const SizedBox(height: 32),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: controller,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                      hintText: '상세 주소 입력',
-                      hintStyle: const TextStyle(color: AppColors.placeholder),
-                      // Figma Input field base: 높이 52
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: AppColors.border),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  ElevatedButton(
+                ),
+                // 피그마 Navi button(200:4631): 좌우 16, 위 4.
+                // 피그마는 버튼 하단이 iOS 홈 인디케이터(34, 흰 여백)에 바로 붙지만,
+                // Android 는 그 자리가 검은 내비게이션 바라 붙으면 답답해 보인다.
+                // 같은 파일 Account button(196:7218)이 쓰는 16 을 안전영역 위에 둔다.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                  child: ElevatedButton(
                     onPressed: () {
                       final detail = controller.text.trim();
                       Navigator.pop(context, detail);
@@ -594,7 +640,7 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      // Figma Navi button: h56, radius 12, 18 SemiBold
+                      // 피그마 Navi button: h56, radius 12, 18 SemiBold
                       minimumSize: const Size.fromHeight(56),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -607,10 +653,9 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     ),
                     child: const Text('확인'),
                   ),
-                  ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
