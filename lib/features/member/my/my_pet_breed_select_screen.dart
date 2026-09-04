@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../data/pet_repository.dart';
@@ -138,14 +139,15 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(106), // Status bar + page header
-        child: Column(
-          children: [
-            // 페이지 상단 타이틀 영역
-            Container(
-              height: 50,
-              color: Colors.white,
-            ),
+        // 상태바 자리를 50 으로 고정해 그리면 기기마다 어긋난다(실제 26.7).
+        // Scaffold 가 primary 일 때 appBar 높이에 상태바를 자동으로 더하므로
+        // 여기서는 피그마 Popup_header 높이 56 만 준다(더하면 이중 계산).
+        // 상태바만큼 아래로 미는 건 아래 SafeArea 가 한다. (검수 17행 ①)
+        preferredSize: const Size.fromHeight(56),
+        child: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
             Container(
               height: 56,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -178,16 +180,21 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                 ],
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
       body: SafeArea(
+        // appBar 가 이미 상단 안전영역을 차지하므로 여기서 또 더하면
+        // 헤더와 검색창 사이가 상태바 높이만큼 벌어진다.
+        top: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 1. 검색창 영역
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              // 피그마: 헤더 아래 16, 검색창 아래 16
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: TextFormField(
                 controller: _searchController,
                 style: const TextStyle(
@@ -202,10 +209,19 @@ class _MyPetBreedSelectScreenState extends ConsumerState<MyPetBreedSelectScreen>
                     letterSpacing: -0.66,
                   ),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  suffixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.textDisabled,
-                    size: 24,
+                  // 피그마 Icon/Serach/24(624:11933): 원 r6.93 + 손잡이,
+                  // stroke 2, #51565F. Material 아이콘과 형태가 달랐다. (검수 17행 ②)
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: SvgPicture.asset(
+                      'assets/images/ic_search_24.svg',
+                      width: 24,
+                      height: 24,
+                    ),
+                  ),
+                  suffixIconConstraints: const BoxConstraints(
+                    minWidth: 24 + 16,
+                    minHeight: 24,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
