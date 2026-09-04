@@ -670,58 +670,23 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
     if (detailAddress != null && mounted) {
       final finalCombinedAddress = detailAddress.isEmpty ? baseAddress : '$baseAddress $detailAddress';
       
-      final confirm = await showDialog<bool>(
+      // 주소 저장 완료 팝업 — 앱 공용 팝업(EdgeButtonDialog)으로 통일한다.
+      // 직접 만든 Dialog 라 확인 버튼이 여백 안쪽 둥근 버튼이었고, 앱의 다른
+      // 21 곳(같은 파일의 로그아웃·휴대폰변경 포함)이 쓰는 공용 팝업의
+      // '하단에 꽉 찬 56 버튼'과 달랐다. (검수 13행)
+      // 공용 위젯은 pop() 뒤에 onConfirm() 을 부르므로 반환값 대신 플래그로 받는다.
+      var confirmed = false;
+      await showDialog<void>(
         context: context,
         barrierDismissible: false,
-        builder: (context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            backgroundColor: Colors.white,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 12),
-                  const Text(
-                    '주소가 저장되었습니다.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF1E2024),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    child: const Text('확인'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+        builder: (dialogContext) => EdgeButtonDialog(
+          title: '주소가 저장되었습니다.',
+          confirmText: '확인',
+          onConfirm: () => confirmed = true,
+        ),
       );
 
-      if (confirm == true && mounted) {
+      if (confirmed && mounted) {
         try {
           await ref.read(memberRepositoryProvider).updateMemberAddress(
             zipCode: zipCode,
