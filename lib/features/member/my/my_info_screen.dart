@@ -75,56 +75,103 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
             // 생년월일은 표시 전용(수정 불가) — 기획서 USR_MYP_010
             final displayBirthDate = _formatApiBirthDate(memberInfo.birthDate);
 
-            return ListView(
-              padding: const EdgeInsets.symmetric(vertical: 24),
+            return Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
                     children: [
-                      const Text(
-                        '기본 정보',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.66,
-                          color: AppColors.textSecondary,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const Text(
+                              '기본 정보',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.66,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: AppColors.border),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                children: [
+                                  _CustomInfoRow(
+                                    title: '계정',
+                                    infoText: memberInfo.email,
+                                    subText: memberInfo.snsFlatform?.toUpperCase() == 'NAVER'
+                                        ? '(네이버)'
+                                        : memberInfo.snsFlatform?.toUpperCase() == 'KAKAO'
+                                            ? '(카카오)'
+                                            : '',
+                                  ),
+                                  _CustomInfoRow(
+                                    title: '이름',
+                                    infoText: memberInfo.name,
+                                  ),
+                                  _CustomInfoRow(
+                                    title: '생년월일',
+                                    infoText: displayBirthDate,
+                                  ),
+                                  _CustomInfoRow(
+                                    title: '휴대폰 번호',
+                                    infoText: _formatPhoneNumber(memberInfo.phoneNumber),
+                                    showDivider: false,
+                                    showChevron: true,
+                                    onPressed: () {
+                                      _changePhone(memberInfo.phoneNumber);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 24),
                       Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                        height: 6,
+                        color: AppColors.bgGray,
+                      ),
+                      const SizedBox(height: 24),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            _CustomInfoRow(
-                              title: '계정',
-                              infoText: memberInfo.email,
-                              subText: memberInfo.snsFlatform?.toUpperCase() == 'NAVER'
-                                  ? '(네이버)'
-                                  : memberInfo.snsFlatform?.toUpperCase() == 'KAKAO'
-                                      ? '(카카오)'
-                                      : '',
+                            const Text(
+                              '주소 정보',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.66,
+                                color: AppColors.textSecondary,
+                              ),
                             ),
-                            _CustomInfoRow(
-                              title: '이름',
-                              infoText: memberInfo.name,
-                            ),
-                            _CustomInfoRow(
-                              title: '생년월일',
-                              infoText: displayBirthDate,
-                            ),
-                            _CustomInfoRow(
-                              title: '휴대폰 번호',
-                              infoText: _formatPhoneNumber(memberInfo.phoneNumber),
-                              showDivider: false,
-                              showChevron: true,
-                              onPressed: () {
-                                _changePhone(memberInfo.phoneNumber);
+                            const SizedBox(height: 12),
+                            NurimAddressCard(
+                              title: '현재 주소',
+                              address: addressOverride ??
+                                  (memberInfo.address.isNotEmpty
+                                      ? memberInfo.address
+                                      : '주소를 등록해 주세요.'),
+                              onPressed: () async {
+                                final result = await context.push<Map<String, dynamic>>(AppRoutes.addressWebView);
+                                if (result != null && mounted) {
+                                  final baseAddress = result['address'] as String? ?? '';
+                                  final zipCode = result['zonecode'] as String? ?? '';
+                                  if (baseAddress.isNotEmpty) {
+                                    _showDetailAddressInputBottomSheet(memberInfo, baseAddress, zipCode);
+                                  }
+                                }
                               },
                             ),
                           ],
@@ -133,45 +180,13 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
-                Container(
-                  height: 6,
-                  color: AppColors.bgGray,
-                ),
-                const SizedBox(height: 24),
+                // 로그아웃·회원탈퇴는 화면 하단 고정
+                // (피그마 196:7218 Account button — x16, 인디케이터 위 16)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text(
-                        '주소 정보',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.66,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      NurimAddressCard(
-                        title: '현재 주소',
-                        address: addressOverride ??
-                            (memberInfo.address.isNotEmpty
-                                ? memberInfo.address
-                                : '주소를 등록해 주세요.'),
-                        onPressed: () async {
-                          final result = await context.push<Map<String, dynamic>>(AppRoutes.addressWebView);
-                          if (result != null && mounted) {
-                            final baseAddress = result['address'] as String? ?? '';
-                            final zipCode = result['zonecode'] as String? ?? '';
-                            if (baseAddress.isNotEmpty) {
-                              _showDetailAddressInputBottomSheet(memberInfo, baseAddress, zipCode);
-                            }
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 50),
                       OutlinedButton(
                         onPressed: _showLogoutDialog,
                         style: OutlinedButton.styleFrom(
@@ -190,12 +205,22 @@ class _MyInfoScreenState extends ConsumerState<MyInfoScreen> {
                         ),
                         child: const Text('로그아웃'),
                       ),
-                      const SizedBox(height: 24),
+                      // 피그마는 로그아웃 아래 24, 회원탈퇴 텍스트 아래 16.
+                      // TextButton 기본 최소 높이(48)가 텍스트 위아래로 여백을
+                      // 더 만들어 실측 41.7 / 34 가 나오므로, 탭 영역은 남기되
+                      // 버튼 자체 패딩(8)만큼 바깥 간격에서 빼서 디자인에 맞춘다.
+                      const SizedBox(height: 16),
                       Center(
                         child: TextButton(
                           onPressed: () => context.push(AppRoutes.myWithdraw),
                           style: TextButton.styleFrom(
                             foregroundColor: AppColors.textSecondary,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             textStyle: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -688,13 +713,6 @@ class _CustomInfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget child = Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      decoration: BoxDecoration(
-        border: showDivider
-            ? const Border(
-                bottom: BorderSide(color: AppColors.borderLight),
-              )
-            : null,
-      ),
       child: Row(
         children: [
           SizedBox(
@@ -764,7 +782,22 @@ class _CustomInfoRow extends StatelessWidget {
         child: child,
       );
     }
-    return child;
+    if (!showDivider) return child;
+
+    // 피그마 Info base(196:7226)는 카드에 좌우 패딩 16 을 줘서 행 폭이 311 이고,
+    // 구분선(행의 하단 보더)이 카드 좌우 끝에 닿지 않는다. 행 폭은 그대로 두고
+    // 선만 16 들여쓴다. 보더를 걷어낸 만큼(1) 선 높이가 대신하므로 행 높이는 그대로다.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        child,
+        Container(
+          height: 1,
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          color: AppColors.borderLight,
+        ),
+      ],
+    );
   }
 }
 
