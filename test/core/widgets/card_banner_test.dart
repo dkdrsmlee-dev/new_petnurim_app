@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:new_petnurim_app/core/widgets/card_banner.dart';
 
@@ -112,8 +113,9 @@ void main() {
 
     // Default 이미지 아이콘 렌더링 확인
     expect(find.byIcon(Icons.pets), findsOneWidget);
-    // 화살표 아이콘 렌더링 확인
-    expect(find.byIcon(Icons.arrow_forward_ios), findsOneWidget);
+    // 화살표 렌더링 확인. 피그마 ArrowRight16 을 쓰면서 Material 아이콘에서
+    // SVG 로 바뀌었다(assets/images/ic_arrow_right_16.svg).
+    expect(find.byType(SvgPicture), findsOneWidget);
 
     await tester.tap(find.byType(NurimCardBannerSmall));
     await tester.pumpAndSettle();
