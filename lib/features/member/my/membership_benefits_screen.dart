@@ -345,21 +345,27 @@ class MembershipBenefitsScreen extends ConsumerWidget {
 
   Widget _buildBenefitBox(BuildContext context) {
     final f = MediaQuery.of(context).size.width / 375;
-    final box = Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Column(
+    final box = CustomPaint(
+      // 디자인에는 밝은 테두리가 있다. 피그마 코드젠이 그라데이션 스트로크를
+      // CSS 로 표현하지 못해 누락시키는 바람에 앱에 빠져 있었다(검수 19행 ②).
+      // 디자인 캡처 실측: 두께 1, 흰색 알파 상/좌 0.46~0.47 → 우/하 0.28~0.32.
+      foregroundPainter: const _GlassBorderPainter(),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Column(
         children: [
-          _BenefitRow(no: '01', text: '결제 금액의 1% 기본 적립'),
-          SizedBox(height: 12),
-          _BenefitRow(no: '02', text: '가입 즉시 10,000PR 지급'),
-          SizedBox(height: 12),
-          _BenefitRow(no: '03', text: '기본 서비스 이용'),
-        ],
+            _BenefitRow(no: '01', text: '결제 금액의 1% 기본 적립'),
+            SizedBox(height: 12),
+            _BenefitRow(no: '02', text: '가입 즉시 10,000PR 지급'),
+            SizedBox(height: 12),
+            _BenefitRow(no: '03', text: '기본 서비스 이용'),
+          ],
+        ),
       ),
     );
 
@@ -470,6 +476,96 @@ class MembershipBenefitsScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// 혜택 안내박스의 유리 테두리.
+///
+/// 피그마 Info box(266:9879)에는 흰색 테두리가 있는데 Dev Mode 코드젠이
+/// 이를 CSS 로 표현하지 못해 결과물에서 통째로 빠진다(검수 19행 ②).
+/// 그래서 디자인 캡처를 실측해 재현한다.
+///
+/// 밝기가 "바깥 법선 각도"를 따라 변한다. 직선 변에서는 법선이 일정해
+/// 밝기도 일정하고, 모서리 원호에서만 급격히 바뀐다. 대각 선형/스윕
+/// 그라데이션으로는 이 모양이 나오지 않는다(변에서까지 밝기가 변한다).
+///
+/// 아래 표는 디자인 캡처(3.12px/dp)를 15도 간격으로 법선 방향 단면 적분해
+/// 얻은 "전폭 흰색 환산 두께(dp)"다. 좌상 원호가 가장 밝고(최대 0.80),
+/// 우하 원호가 그다음(0.5), 우상·좌하 원호는 테두리가 아예 사라진다(0).
+class _GlassBorderPainter extends CustomPainter {
+  const _GlassBorderPainter();
+
+  static const double _radius = 16;
+
+  /// 선 두께(dp). 표의 최댓값 0.68 을 알파 1 이하로 담을 수 있어야 한다.
+  static const double _stroke = 0.7;
+
+  /// 법선 각도 0..345도(15도 간격, 0=오른쪽·시계방향)의 환산 두께(dp).
+  /// 원호 구간은 ±4도 평균으로 픽셀 샘플링 노이즈를 걷어낸 값이다.
+  static const List<double> _equivDp = [
+    0.31, 0.48, 0.51, 0.56, 0.52, 0.48, // 0~75   우 → 우하 원호
+    0.30, 0.09, 0.01, 0.00, 0.00, 0.09, // 90~165 하 → 좌하 원호(사라짐)
+    0.44, 0.65, 0.67, 0.67, 0.68, 0.65, // 180~255 좌 → 좌상 원호(가장 밝음)
+    0.44, 0.10, 0.00, 0.00, 0.00, 0.08, // 270~345 상 → 우상 원호(사라짐)
+  ];
+
+  static double _alphaAt(double deg) {
+    final t = (deg % 360) / 15;
+    final i = t.floor();
+    final f = t - i;
+    final a = _equivDp[i % 24];
+    final b = _equivDp[(i + 1) % 24];
+    return ((a + (b - a) * f) / _stroke).clamp(0.0, 1.0);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const half = _stroke / 2;
+    final r = _radius - half;
+    const l = half, t = half;
+    final rt = size.width - half, bt = size.height - half;
+    if (rt - l < 2 * r || bt - t < 2 * r) return;
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _stroke
+      ..isAntiAlias = true;
+
+    void line(Offset a, Offset b, double deg) {
+      paint.color = Colors.white.withValues(alpha: _alphaAt(deg));
+      canvas.drawLine(a, b, paint);
+    }
+
+    // 모서리 원호는 90도를 12조각(7.5도)으로 나눠 조각마다 알파를 보간한다.
+    void corner(Offset center, double startDeg) {
+      const n = 12;
+      final box = Rect.fromCircle(center: center, radius: r);
+      for (var i = 0; i < n; i++) {
+        final a0 = startDeg + 90 * i / n;
+        final a1 = startDeg + 90 * (i + 1) / n;
+        paint.color = Colors.white.withValues(alpha: _alphaAt((a0 + a1) / 2));
+        // 조각 사이 이음매가 비지 않도록 살짝 겹쳐 그린다.
+        canvas.drawArc(
+          box,
+          a0 * math.pi / 180,
+          (a1 - a0 + 0.6) * math.pi / 180,
+          false,
+          paint,
+        );
+      }
+    }
+
+    line(Offset(rt, t + r), Offset(rt, bt - r), 0); // 우
+    corner(Offset(rt - r, bt - r), 0); // 우하
+    line(Offset(rt - r, bt), Offset(l + r, bt), 90); // 하
+    corner(Offset(l + r, bt - r), 90); // 좌하
+    line(Offset(l, bt - r), Offset(l, t + r), 180); // 좌
+    corner(Offset(l + r, t + r), 180); // 좌상
+    line(Offset(l + r, t), Offset(rt - r, t), 270); // 상
+    corner(Offset(rt - r, t + r), 270); // 우상
+  }
+
+  @override
+  bool shouldRepaint(_GlassBorderPainter oldDelegate) => false;
 }
 
 /// 혜택 목록 한 줄 (초록 번호 + 텍스트)
