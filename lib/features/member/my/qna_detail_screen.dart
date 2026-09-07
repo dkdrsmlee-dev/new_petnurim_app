@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../core/utils/toast_util.dart';
@@ -688,9 +689,12 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  // 답변은 관리자가 에디터로 작성해 HTML 로 내려온다.
+                  // Text 로 그리면 <p> 같은 태그가 그대로 보였다(검수 25행 ②).
+                  // 공지사항·자주묻는질문과 같이 HtmlWidget 으로 렌더한다.
+                  HtmlWidget(
                     qna.answer!.content,
-                    style: const TextStyle(
+                    textStyle: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       color: AppColors.textMuted,
