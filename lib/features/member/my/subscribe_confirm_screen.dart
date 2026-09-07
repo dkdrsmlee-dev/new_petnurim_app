@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/number_format.dart';
@@ -262,8 +263,14 @@ class _SubscribeConfirmScreenState
               // 부가세(하위 항목) — 작은 글씨·연한 색.
               Row(
                 children: [
-                  const Icon(Icons.subdirectory_arrow_right,
-                      size: 16, color: AppColors.placeholder),
+                  // 피그마 Icon/Answer/20(289:9385). 머티리얼
+                  // subdirectory_arrow_right 는 화살촉이 있는 굵은 아이콘이라
+                  // 디자인의 가는 "ㄴ" 선과 모양이 달랐다(검수 22행 ①).
+                  SvgPicture.asset(
+                    'assets/images/ic_answer_20.svg',
+                    width: 20,
+                    height: 20,
+                  ),
                   const SizedBox(width: 4),
                   const Expanded(
                     child: Text(
@@ -359,8 +366,11 @@ class _SubscribeConfirmScreenState
 
   // ── 결제 수단 ──────────────────────────────────────────────
   Widget _paymentMethod() {
-    // 카드가 2개 이상일 때만 변경 가능(> 화살표·탭). 1개면 변경 대상이 없음.
-    final canChange = widget.activeCards.length > 1;
+    // 피그마 Payment save(547:13711)는 카드가 하나여도 우측 화살표가 있다.
+    // 앱은 카드가 2개 이상일 때만 화살표를 그려 누락으로 보였다(검수 22행 ②).
+    // 화살표를 항상 그리고, 탭하면 카드가 하나여도 선택 시트를 연다
+    // (화살표만 있고 눌리지 않으면 더 이상하다).
+    final canChange = widget.activeCards.isNotEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -393,9 +403,8 @@ class _SubscribeConfirmScreenState
                     ),
                   ),
                 ),
-                if (canChange)
-                  const Icon(Icons.chevron_right,
-                      size: 20, color: AppColors.textDisabled),
+                const Icon(Icons.chevron_right,
+                    size: 20, color: AppColors.textDisabled),
               ],
             ),
           ),
