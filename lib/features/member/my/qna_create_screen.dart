@@ -709,58 +709,75 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 입력 4종은 피그마 Input field(698:11977) 공통 규격을 따른다.
+                    // 라벨 14/SemiBold/#51565F + 간격 8, 박스 높이 52 ·
+                    // 테두리 1 #D6DBE4 · 라운드 12 · 흰 배경 · 글자 16/Medium,
+                    // 필드 사이 간격 24. (검수 24행 ①)
                     const Text(
                       '문의유형',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textStrong,
+                        height: 1.4,
+                        letterSpacing: -0.66,
+                        color: AppColors.textMuted, // Figma #51565F
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     InkWell(
                       onTap: _showTypeBottomSheet,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                       child: Container(
-                        height: 56,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        // 디자인 52. 글자를 키운 사용자에게는 같이 늘어나도록
+                        // 고정 높이가 아니라 최소 높이로 둔다.
+                        // 13 + 화살표 24 + 13 + 테두리 2 = 52.
+                        constraints: const BoxConstraints(minHeight: 52),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 13),
                         decoration: BoxDecoration(
-                          color: AppColors.bgSoft,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: AppColors.borderLight,
-                            width: 1,
-                          ),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.border),
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              selectedLabel ?? '문의 유형을 선택해 주세요.',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: selectedLabel != null ? AppColors.textStrong : AppColors.placeholder,
+                            Expanded(
+                              child: Text(
+                                selectedLabel ?? '문의 유형을 선택해 주세요.',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.4,
+                                  letterSpacing: -0.66,
+                                  color: selectedLabel != null
+                                      ? AppColors.textMuted
+                                      : AppColors.placeholder,
+                                ),
                               ),
                             ),
-                            const Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              color: AppColors.textSecondary,
-                              size: 24,
+                            const SizedBox(width: 8),
+                            // Figma Icon/ArrowBottom/24-1
+                            SvgPicture.asset(
+                              'assets/images/ic_arrow_bottom_24.svg',
+                              width: 24,
+                              height: 24,
                             ),
                           ],
                         ),
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
                     const Text(
                       '제목',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textStrong,
+                        height: 1.4,
+                        letterSpacing: -0.66,
+                        color: AppColors.textMuted, // Figma #51565F
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     TextField(
                       controller: _titleController,
                       onChanged: (text) => setState(() {}),
@@ -768,84 +785,126 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       decoration: InputDecoration(
                         hintText: '제목을 입력해 주세요.',
                         hintStyle: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          height: 1.4,
+                          letterSpacing: -0.66,
                           color: AppColors.placeholder,
                         ),
                         counterText: '',
                         filled: true,
-                        fillColor: AppColors.bgSoft,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        fillColor: Colors.white,
+                        // 디자인 높이 52 = 상하 패딩 14.8 + 글자 줄상자 22.4.
+                        // (14 으로 두면 50.4 라 옆의 문의유형 상자보다 2 낮다)
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 16, vertical: 14.8),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.borderLight),
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.border),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: AppColors.primary),
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              const BorderSide(color: AppColors.primary, width: 1.5),
                         ),
                       ),
                       style: const TextStyle(
-                        fontSize: 15,
-                        color: AppColors.textStrong,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        height: 1.4,
+                        letterSpacing: -0.66,
+                        color: AppColors.textMuted,
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
                     const Text(
                       '내용',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textStrong,
+                        height: 1.4,
+                        letterSpacing: -0.66,
+                        color: AppColors.textMuted, // Figma #51565F
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Stack(
-                      children: [
-                        TextField(
-                          controller: _contentController,
-                          onChanged: (text) => setState(() {}),
-                          maxLines: 8,
-                          minLines: 6,
-                          maxLength: 1200,
-                          decoration: InputDecoration(
-                            hintText: '내용을 입력해 주세요.',
-                            hintStyle: const TextStyle(
-                              fontSize: 15,
-                              color: AppColors.placeholder,
+                    const SizedBox(height: 8),
+                    // 피그마 Textarea field base(695:9366) 실측: 박스 343x138 =
+                    // 패딩 16 + 본문 80 + 간격 8 + 카운터 18 + 패딩 16.
+                    // 기존에는 최소 6줄 + 하단 패딩 40 이라 약 185 로 훨씬 높았다
+                    // ("패딩값이 너무 높다" — 검수 24행 ②).
+                    // 본문 80 은 16px·행간 1.4 기준 3.57줄이라 maxLines 로는 못
+                    // 맞춰 expands 로 높이를 직접 주되, 글자 배율만큼 같이 늘린다.
+                    Builder(
+                      builder: (context) {
+                        final scale =
+                            MediaQuery.of(context).textScaler.scale(16) / 16;
+                        final counterHeight = 13 * 1.4 * scale;
+                        final bottomPadding = 16 + 8 + counterHeight;
+                        return Stack(
+                          children: [
+                            SizedBox(
+                              height: 16 + 80 * scale + bottomPadding,
+                              child: TextField(
+                                controller: _contentController,
+                                onChanged: (text) => setState(() {}),
+                                expands: true,
+                                maxLines: null,
+                                minLines: null,
+                                textAlignVertical: TextAlignVertical.top,
+                                maxLength: 1200,
+                                decoration: InputDecoration(
+                                  hintText: '내용을 입력해 주세요.',
+                                  hintStyle: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.4,
+                                    letterSpacing: -0.66,
+                                    color: AppColors.placeholder,
+                                  ),
+                                  counterText: '',
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      16, 16, 16, bottomPadding),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide:
+                                        const BorderSide(color: AppColors.border),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    borderSide: const BorderSide(
+                                        color: AppColors.primary, width: 1.5),
+                                  ),
+                                ),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.4,
+                                  letterSpacing: -0.66,
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
                             ),
-                            counterText: '',
-                            filled: true,
-                            fillColor: AppColors.bgSoft,
-                            contentPadding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 40),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.borderLight),
+                            Positioned(
+                              right: 16,
+                              bottom: 16,
+                              child: Text(
+                                '${_contentController.text.characters.length}/1200',
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.4,
+                                  letterSpacing: -0.66,
+                                  color: AppColors.dot, // #B4C0D3
+                                ),
+                              ),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.primary),
-                            ),
-                          ),
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: AppColors.textStrong,
-                          ),
-                        ),
-                        Positioned(
-                          right: 16,
-                          bottom: 16,
-                          child: Text(
-                            '${_contentController.text.length}/1200',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.placeholder,
-                            ),
-                          ),
-                        ),
-                      ],
+                          ],
+                        );
+                      },
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
                     CompositedTransformTarget(
                       link: _tooltipLayerLink,
                       child: Row(
@@ -853,9 +912,11 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                           const Text(
                             '첨부파일',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textStrong,
+                              height: 1.4,
+                              letterSpacing: -0.66,
+                              color: AppColors.textMuted, // Figma #51565F
                             ),
                           ),
                           const SizedBox(width: 6),
@@ -883,10 +944,11 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8),
                     Container(
                       // Figma Attachment section: h52, border primary
-                      height: 52,
+                      // (문의유형과 같은 이유로 최소 높이)
+                      constraints: const BoxConstraints(minHeight: 52),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
@@ -898,7 +960,8 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                       child: InkWell(
                         onTap: _showAttachmentBottomSheet,
                         borderRadius: BorderRadius.circular(12),
-                        child: const Center(
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 14),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -929,7 +992,6 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                         children: _attachedFiles.asMap().entries.map((entry) {
                           final index = entry.key;
                           final file = entry.value;
-                          final isImage = file['type'] == 'image';
                           return Container(
                             margin: const EdgeInsets.only(bottom: 8),
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -943,36 +1005,20 @@ class _QnaCreateScreenState extends ConsumerState<QnaCreateScreen> {
                             ),
                             child: Row(
                               children: [
-                                Icon(
-                                  isImage ? Icons.image_outlined : Icons.insert_drive_file_outlined,
-                                  color: AppColors.textSecondary,
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
+                                // 파일 종류 아이콘과 용량 표시는 디자인에 없어
+                                // 뺐다(검수 24행 ③). 파일명 + X 만 남긴다.
                                 Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        file['name']!,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textStrong,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        file['size']!,
-                                        style: const TextStyle(
-                                          fontSize: 11,
-                                          color: AppColors.textSecondary,
-                                        ),
-                                      ),
-                                    ],
+                                  child: Text(
+                                    file['name']!,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.4,
+                                      letterSpacing: -0.66,
+                                      color: AppColors.textMuted,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                  InkWell(
