@@ -126,7 +126,10 @@ class _MembershipCancelScreenState extends ConsumerState<MembershipCancelScreen>
             ),
           ),
           const SizedBox(height: 32),
-          Center(
+          // 피그마 Sad pet 1(593:9293)은 Text container(폭 343) 안 x=0,
+          // 즉 좌측 정렬이다. Center 로 감싸 가운데 있었다(검수 21행 ①).
+          Align(
+            alignment: Alignment.centerLeft,
             child: Image.asset(
               'assets/images/membership/sad_pet.png',
               width: 100,

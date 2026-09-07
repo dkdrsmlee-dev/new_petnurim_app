@@ -25,7 +25,20 @@ class MembershipBenefitList extends StatelessWidget {
     'assets/images/membership/ic_benefit_medal_24.svg',
   ];
 
-  static const List<MembershipBenefit> _fallback = [
+  /// 피그마 Membership list(590:7766) 문구.
+  ///
+  /// 원래는 `GET /memberships/guide` 의 benefitName/benefitDesc 를 그대로 쓰고
+  /// 이 목록은 응답이 비었을 때의 폴백이었다. 그런데 서버가 내려주는 문구가
+  /// 디자인보다 훨씬 길어("결제 금액의 1%를 리워드로 적립합니다." 등) 좁은
+  /// 화면에서 설명이 두 줄로 접히고 카드 안 정보 위계가 무너진다는 지적을
+  /// 받아(검수 21행 ②) 디자인 문구를 우선 쓰도록 바꿨다.
+  ///
+  /// 서버 문구를 고치는 쪽이 정석이지만 스웨거에 멤버십 혜택을 등록·수정하는
+  /// 관리 API 가 없다(Admin 멤버십관리는 조회 GET 만 있고 혜택 Request 스키마도
+  /// 없다). 관리자 화면에서 손댈 수 없는 DB 고정값이라 앱에서 맞춘다.
+  /// 나중에 서버 문구가 디자인대로 정리되면 [_designText] 우선 적용을 걷어내고
+  /// `benefits` 를 그대로 쓰면 된다.
+  static const List<MembershipBenefit> _designText = [
     MembershipBenefit(name: '기본 리워드 적립', desc: '결제 금액의 1%'),
     MembershipBenefit(name: '결제 금액과 동일한 리워드', desc: '결제와 동시에 100% 지급'),
     MembershipBenefit(name: '기본 서비스 이용', desc: '멤버십의 모든 기본 서비스 이용'),
@@ -33,7 +46,13 @@ class MembershipBenefitList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = benefits.isNotEmpty ? benefits : _fallback;
+    // 항목 "개수"는 관리자 값을 따르고(혜택이 늘거나 줄 수 있다), 문구만
+    // 디자인 값으로 덮어쓴다. 디자인에 없는 4번째부터는 관리자 문구를 쓴다.
+    final source = benefits.isNotEmpty ? benefits : _designText;
+    final items = [
+      for (int i = 0; i < source.length; i++)
+        i < _designText.length ? _designText[i] : source[i],
+    ];
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
