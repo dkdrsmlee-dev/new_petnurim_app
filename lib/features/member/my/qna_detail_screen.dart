@@ -309,7 +309,12 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                 highlightColor: Colors.transparent,
                               ),
                               child: PopupMenuButton<String>(
-                                offset: const Offset(-8, 28),
+                                // 피그마(988:47830): 메뉴 우측 끝이 ⋮ 아이콘
+                                // 우측 끝(화면에서 16)과 같고, 위쪽은 아이콘
+                                // 아래 10 에서 시작한다. 버튼은 터치 영역
+                                // 48 이라 아이콘(24)이 가운데 있으므로
+                                // 세로 오프셋 = (48-24)/2 + 24 + 10 = 46.
+                                offset: const Offset(0, 46),
                                 elevation: 6,
                                 shadowColor: const Color(0x1A51565F),
                                 shape: RoundedRectangleBorder(
@@ -317,6 +322,9 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                   side: const BorderSide(color: AppColors.border, width: 1),
                                 ),
                                 color: Colors.white,
+                                // 머티리얼 팝업이 기본으로 상하 8 씩 더 넣어
+                                // 메뉴가 디자인(90)보다 16 높았다.
+                                menuPadding: EdgeInsets.zero,
                                 onSelected: (_) {},
                                 itemBuilder: (context) => [
                                   PopupMenuItem<String>(
@@ -324,6 +332,11 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                     padding: EdgeInsets.zero,
                                     height: 0,
                                     child: Container(
+                                      // 피그마 Edit list(988:47830): 136x90 =
+                                      // 패딩 16 + (항목 21 + 간격 16 + 항목 21) + 패딩 16.
+                                      // 글자를 키우면 넘칠 수 있어 최소 폭으로 둔다.
+                                      constraints:
+                                          const BoxConstraints(minWidth: 136),
                                       padding: const EdgeInsets.all(16),
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
@@ -335,26 +348,30 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                               Navigator.pop(context);
                                               _editQna();
                                             },
-                                            child: Container(
+                                            child: SizedBox(
                                               width: double.infinity,
-                                              padding: const EdgeInsets.symmetric(vertical: 4),
+                                              // 항목마다 상하 패딩 4 가 더 붙어
+                                              // 메뉴가 디자인(90)보다 13 높았다
+                                              // (검수 28행 ②). 디자인은 패딩 없이
+                                              // 항목 높이 21 + 간격 16 이다.
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   const Text(
                                                     '수정하기',
                                                     style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: 15,
                                                       fontWeight: FontWeight.w500,
-                                                      color: AppColors.textStrong,
+                                                      height: 1.4,
+                                                      color: AppColors.textMuted,
                                                       letterSpacing: -0.66,
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 12),
+                                                  const SizedBox(width: 6),
                                                   SvgPicture.asset(
                                                     'assets/images/ic_edit.svg',
-                                                    width: 16,
-                                                    height: 16,
+                                                    width: 20,
+                                                    height: 20,
                                                     colorFilter: const ColorFilter.mode(
                                                       AppColors.textSecondary,
                                                       BlendMode.srcIn,
@@ -370,26 +387,30 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                               Navigator.pop(context);
                                               _deleteQna();
                                             },
-                                            child: Container(
+                                            child: SizedBox(
                                               width: double.infinity,
-                                              padding: const EdgeInsets.symmetric(vertical: 4),
+                                              // 항목마다 상하 패딩 4 가 더 붙어
+                                              // 메뉴가 디자인(90)보다 13 높았다
+                                              // (검수 28행 ②). 디자인은 패딩 없이
+                                              // 항목 높이 21 + 간격 16 이다.
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   const Text(
                                                     '삭제하기',
                                                     style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: 15,
                                                       fontWeight: FontWeight.w500,
-                                                      color: AppColors.textStrong,
+                                                      height: 1.4,
+                                                      color: AppColors.textMuted,
                                                       letterSpacing: -0.66,
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 12),
+                                                  const SizedBox(width: 6),
                                                   SvgPicture.asset(
                                                     'assets/images/ic_delete.svg',
-                                                    width: 16,
-                                                    height: 16,
+                                                    width: 20,
+                                                    height: 20,
                                                     colorFilter: const ColorFilter.mode(
                                                       AppColors.textSecondary,
                                                       BlendMode.srcIn,
@@ -406,7 +427,10 @@ class _QnaDetailScreenState extends ConsumerState<QnaDetailScreen> {
                                 ],
                                 icon: const Icon(Icons.more_vert, color: AppColors.textSecondary),
                                 padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
+                                // 머티리얼은 메뉴 폭을 56 단위로 올림해 136 이
+                                // 168 이 된다. 디자인 폭으로 못 박는다.
+                                constraints:
+                                    const BoxConstraints.tightFor(width: 136),
                               ),
                             ),
                         ],
