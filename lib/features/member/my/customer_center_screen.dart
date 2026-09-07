@@ -22,6 +22,26 @@ class CustomerCenterScreen extends ConsumerStatefulWidget {
   ConsumerState<CustomerCenterScreen> createState() => _CustomerCenterScreenState();
 }
 
+
+/// 고객센터 탭 라벨. 탭 폭을 넘칠 때만 축소해 잘리지 않게 한다.
+/// (TabBar 가 자식에 labelStyle 을 DefaultTextStyle 로 내려주므로
+///  Text 는 스타일을 그대로 물려받는다.)
+class _CsTab extends StatelessWidget {
+  const _CsTab(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tab(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(text, maxLines: 1),
+      ),
+    );
+  }
+}
+
 class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _expandedIndex = -1; // Keep track of which notice is expanded
@@ -342,27 +362,39 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               controller: _tabController,
               labelColor: AppColors.textStrong,
               unselectedLabelColor: AppColors.textDisabled, // Figma #909AA9
+              // 피그마 Tab base(602:12217)는 좌우 패딩 10. 머티리얼 기본값 16 이면
+              // 360dp 에서 "자주 묻는 질문"이 잘린다.
+              labelPadding: const EdgeInsets.symmetric(horizontal: 10),
               labelStyle: const TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 16, // Figma Body/semibold/md
                 fontWeight: FontWeight.w600,
+                letterSpacing: -0.66,
               ),
               unselectedLabelStyle: const TextStyle(
                 fontFamily: 'Pretendard',
                 fontSize: 16, // Figma Body/medium/md
                 fontWeight: FontWeight.w500,
+                letterSpacing: -0.66,
               ),
               indicatorColor: AppColors.primary,
               indicatorWeight: 3,
               indicatorSize: TabBarIndicatorSize.tab,
+              // 비활성 라인은 TabBar 자체 divider 하나만 쓴다.
+              // 예전에는 머티리얼 기본 divider 1 위에 Container 1 을 더 깔아
+              // 회색선이 2 로 보였고(검수 23행 ①), 활성 표시(3)의 아래 끝도
+              // 그 선보다 1 위에 있어 어긋났다. 피그마 Tab base 는 비활성
+              // border-b 1(#D6DBE4) · 활성 border-b 3(#7F4FFF)로 아래 끝이 같다.
+              dividerColor: AppColors.border,
+              dividerHeight: 1,
+              // 글자 배율을 키우면 "자주 묻는 질문"이 탭 폭을 넘겨 잘린다.
+              // 배율 1.0 에서는 그대로 두고, 넘칠 때만 줄여 그린다.
               tabs: const [
-                Tab(text: '공지사항'),
-                Tab(text: '자주 묻는 질문'),
-                Tab(text: '1:1 문의'),
+                _CsTab('공지사항'),
+                _CsTab('자주 묻는 질문'),
+                _CsTab('1:1 문의'),
               ],
             ),
-            // Divider Line under TabBar
-            Container(height: 1, color: AppColors.border),
             // Tab contents
             Expanded(
               child: TabBarView(
@@ -489,6 +521,9 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               ],
             ),
             child: Column(
+              // 기본값(center)이라 펼친 본문이 글자 폭만큼 줄어 가운데로
+              // 몰렸다(검수 23행 ②). stretch 로 카드 폭을 채워 좌측 정렬한다.
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Header area
                 InkWell(
@@ -550,8 +585,9 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                                   ],
                                 ],
                               ),
-                              maxLines: isExpanded ? 5 : 2,
-                              overflow: TextOverflow.ellipsis,
+                              // 피그마 Question(654:10651/10739)은 제목 줄 수에
+                              // 따라 카드 높이가 늘어난다. 2줄에서 자르면 긴
+                              // 제목이 잘린다(검수 23행 ③).
                               style: const TextStyle(
                                 fontFamily: 'Pretendard',
                                 fontSize: 16,
@@ -847,6 +883,9 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
               ],
             ),
             child: Column(
+              // 기본값(center)이라 펼친 본문이 글자 폭만큼 줄어 가운데로
+              // 몰렸다(검수 23행 ②). stretch 로 카드 폭을 채워 좌측 정렬한다.
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Question header (Q 배지 + 질문 + 화살표)
                 InkWell(
@@ -895,8 +934,9 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                         Expanded(
                           child: Text(
                             faq.title,
-                            maxLines: isExpanded ? 5 : 2,
-                            overflow: TextOverflow.ellipsis,
+                            // 피그마 Question(654:10651/10739)은 제목 줄 수에
+                            // 따라 카드 높이가 늘어난다. 2줄에서 자르면 긴
+                            // 제목이 잘린다(검수 23행 ③).
                             style: const TextStyle(
                               fontFamily: 'Pretendard',
                               fontSize: 16,
