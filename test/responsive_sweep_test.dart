@@ -21,6 +21,7 @@ import 'package:new_petnurim_app/core/widgets/nurim_text_card.dart';
 import 'package:new_petnurim_app/core/widgets/page_header.dart';
 import 'package:new_petnurim_app/core/widgets/popup_header.dart';
 import 'package:new_petnurim_app/core/widgets/section_title.dart';
+import 'package:new_petnurim_app/core/widgets/selection_control.dart';
 
 /// 화면 폭·글자 배율을 바꿔가며 공용 위젯의 오버플로를 검출한다.
 /// 디자인이 375dp 기준 고정값으로 들어가 있어 좁은 화면/큰 글자에서 깨지는 곳을 찾는다.
@@ -202,6 +203,26 @@ void main() {
         () => const BullitText(text: '미션 수행 시 100P가 즉시 지급됩니다.'));
     await sweep(tester, 'NurimSectionTitle',
         () => const NurimSectionTitle(title: '기본 정보'));
+    // 동의 체크(라벨이 길어 좁은 화면에서 두 줄로 접힌다) / 라디오
+    await sweep(
+        tester,
+        'SelectionControl(체크박스)',
+        () => SelectionControl<bool>(
+              style: SelectionControlStyle.checkbox,
+              text: '유의사항을 모두 확인하였으며, 이에 동의합니다.',
+              value: false,
+              onChanged: (_) {},
+            ));
+    await sweep(
+        tester,
+        'SelectionControl(라디오)',
+        () => SelectionControl<String>(
+              style: SelectionControlStyle.radio,
+              text: '혜택을 잘 사용하지 않아요.',
+              value: 'a',
+              groupValue: 'a',
+              onChanged: (_) {},
+            ));
     await sweep(tester, 'NurimMypageName',
         () => const NurimMypageName(name: '소지섭'));
     await sweep(tester, 'LastLoginBadge', () => const LastLoginBadge());

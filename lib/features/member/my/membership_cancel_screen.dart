@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_util.dart';
 import '../../../core/widgets/edge_button_dialog.dart';
 import '../../../core/widgets/page_header.dart';
+import '../../../core/widgets/selection_control.dart';
 import '../../auth/domain/readable_auth_error.dart';
 import '../data/membership_repository.dart';
 import '../domain/membership_models.dart';
@@ -162,7 +163,7 @@ class _MembershipCancelScreenState extends ConsumerState<MembershipCancelScreen>
             // 직접 입력(ETC) 라디오를 선택했을 때만 입력 칸 노출.
             if (reason.isEtc && _selectedCode == reason.code) ...[
               const SizedBox(height: 12),
-              _directInput(),
+              _directInput(context),
             ],
             const SizedBox(height: 16),
           ],
@@ -220,79 +221,114 @@ class _MembershipCancelScreenState extends ConsumerState<MembershipCancelScreen>
     );
   }
 
-  Widget _directInput() {
-    return TextField(
-      controller: _directController,
-      maxLength: 100,
-      maxLines: 3,
-      onChanged: (_) => setState(() {}),
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-        color: AppColors.textMuted,
-        letterSpacing: -0.66,
-      ),
-      decoration: InputDecoration(
-        hintText: '해지 사유를 자유롭게 입력해 주세요.',
-        hintStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: AppColors.placeholder,
-          letterSpacing: -0.66,
-        ),
-        counterStyle: const TextStyle(fontSize: 13, color: Color(0xFFB4C0D3)),
-        contentPadding: const EdgeInsets.all(16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary),
-        ),
-      ),
-    );
-  }
+  /// 직접 입력 텍스트영역.
+  ///
+  /// 피그마 Textarea field base(593:9313) 실측: 박스 343x138 =
+  /// 패딩 16 + 본문 80 + 간격 8 + 카운터 18 + 패딩 16.
+  /// 카운터(0/100)는 테두리 "안쪽" 우하단이다(검수 20행 ①).
+  /// Flutter 기본 counter 는 입력창 바깥에 그려지므로 끄고 직접 배치한다.
+  ///
+  /// 본문 80 은 16px·행간 1.4(=22.4) 기준 3.57줄이라 maxLines 로는 못 맞춘다.
+  /// expands 로 높이를 직접 주되, 글자 배율이 커지면 같이 늘어나도록
+  /// 본문·카운터 높이에 배율을 곱한다(고정 80 이면 큰 글자에서 잘린다).
+  Widget _directInput(BuildContext context) {
+    final scale = MediaQuery.of(context).textScaler.scale(16) / 16;
+    final counterHeight = 13 * 1.4 * scale;
+    final bottomPadding = 16 + 8 + counterHeight;
 
-  Widget _agreementCheck() {
-    return InkWell(
-      onTap: () => setState(() => _agreed = !_agreed),
-      child: Row(
-        children: [
-          Container(
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              color: _agreed ? AppColors.primary : Colors.white,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                color: _agreed ? AppColors.primary : AppColors.border,
-                width: 1.5,
+    return Stack(
+      children: [
+        SizedBox(
+          height: 16 + 80 * scale + bottomPadding,
+          child: TextField(
+            controller: _directController,
+            maxLength: 100,
+            expands: true,
+            maxLines: null,
+            minLines: null,
+            textAlignVertical: TextAlignVertical.top,
+            // 기본 카운터는 입력창 바깥에 그려져서 끄고 아래에서 직접 배치한다.
+            buildCounter: (
+              _, {
+              required int currentLength,
+              required bool isFocused,
+              int? maxLength,
+            }) =>
+                null,
+            onChanged: (_) => setState(() {}),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textMuted,
+              letterSpacing: -0.66,
+              height: 1.4,
+            ),
+            decoration: InputDecoration(
+              hintText: '해지 사유를 자유롭게 입력해 주세요.',
+              hintStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.placeholder,
+                letterSpacing: -0.66,
+                height: 1.4,
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              // 아래는 카운터 자리(패딩 16 + 간격 8 + 줄높이)를 비워 둔다.
+              contentPadding: EdgeInsets.fromLTRB(16, 16, 16, bottomPadding),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
               ),
             ),
-            child: _agreed
-                ? const Icon(Icons.check, size: 15, color: Colors.white)
-                : null,
           ),
-          const SizedBox(width: 8),
-          const Expanded(
-            child: Text(
-              '유의사항을 모두 확인하였으며, 이에 동의합니다.',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textStrong,
+        ),
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _directController,
+            builder: (context, value, _) => Text(
+              '${value.text.characters.length}/100',
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: AppColors.dot, // #B4C0D3
                 letterSpacing: -0.66,
                 height: 1.4,
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  /// 유의사항 동의 체크.
+  ///
+  /// 자체 구현이라 미체크 상태에서도 굵은 글씨였고(검수 20행 ②) 체크박스도
+  /// 빈 사각형이라 디자인(135:13273 = 연회색 채움 + 흰 체크)과 달랐다.
+  /// 회원탈퇴 화면과 같은 공용 위젯을 쓰도록 바꾼다.
+  /// 이 화면 디자인(593:9314)의 체크 줄은 상하 패딩 없이 높이 22 라
+  /// 패딩을 0 으로 넘긴다(공용 기본값은 그대로 둬서 다른 화면 영향 없음).
+  Widget _agreementCheck() {
+    return SelectionControl<bool>(
+      style: SelectionControlStyle.checkbox,
+      text: '유의사항을 모두 확인하였으며, 이에 동의합니다.',
+      value: _agreed,
+      padding: EdgeInsets.zero,
+      onChanged: (val) => setState(() => _agreed = val ?? false),
     );
   }
 

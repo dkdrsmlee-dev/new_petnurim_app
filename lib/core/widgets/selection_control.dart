@@ -13,6 +13,7 @@ class SelectionControl<T> extends StatelessWidget {
     required this.value,
     this.groupValue,
     required this.onChanged,
+    this.padding,
   });
 
   final SelectionControlStyle style;
@@ -24,6 +25,11 @@ class SelectionControl<T> extends StatelessWidget {
   final T? groupValue;
 
   final ValueChanged<T?> onChanged;
+
+  /// 항목 상하 패딩. 화면마다 디자인이 달라 덮어쓸 수 있게 열어 둔다
+  /// (예: 멤버십 해지의 동의 체크는 패딩 없는 22 높이 한 줄).
+  /// null 이면 기존 기본값(라디오 12 / 체크박스 10.5)을 쓴다.
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +58,15 @@ class SelectionControl<T> extends StatelessWidget {
       child: Padding(
         // 피그마 Selection control: 라디오 항목은 상하 패딩 12 + 아이콘 21 = 45.
         // 체크박스(동의)는 별도 스펙이라 기존 값을 유지한다.
-        padding: EdgeInsets.symmetric(
-          vertical: style == SelectionControlStyle.radio ? 12 : 10.5,
-        ),
+        padding: padding ??
+            EdgeInsets.symmetric(
+              vertical: style == SelectionControlStyle.radio ? 12 : 10.5,
+            ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          // 피그마 Selection control 은 items-start 다. 한 줄일 때는 차이가
+          // 없지만(체크박스 22 vs 줄상자 22.4), 좁은 화면에서 라벨이 두 줄로
+          // 접히면 가운데 정렬은 아이콘이 글줄 사이에 뜬다.
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildIcon(isSelected),
             if (text != null) ...[
@@ -71,6 +81,9 @@ class SelectionControl<T> extends StatelessWidget {
                     fontWeight: textWeight,
                     color: textColor,
                     height: 1.4,
+                    // 디자인 tracking -0.66 이 빠져 있어 라벨이 디자인보다
+                    // 넓게 잡히고, 그 때문에 좁은 화면에서 한 줄이 넘쳤다.
+                    letterSpacing: -0.66,
                   ),
                 ),
               ),
