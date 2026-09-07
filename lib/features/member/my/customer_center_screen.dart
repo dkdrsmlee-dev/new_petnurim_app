@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../core/utils/toast_util.dart';
@@ -14,6 +13,7 @@ import '../domain/qna_models.dart';
 import 'qna_create_screen.dart';
 import 'qna_detail_screen.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/html_content.dart';
 
 class CustomerCenterScreen extends ConsumerStatefulWidget {
   const CustomerCenterScreen({super.key});
@@ -488,7 +488,10 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
       child: ListView.builder(
         controller: _noticeScrollController,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        // 피그마(공지 644:8413 / FAQ 602:12213)는 탭 하단 160 → 첫 카드 176,
+        // 즉 위 여백 16 이다. 24 는 근거 없는 값이었다(검수 27행 ①).
+        // 아래 여백은 스크롤 끝 여유라 기존 24 를 유지한다.
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         itemCount: _noticeItems.length + (_noticeHasNext ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == _noticeItems.length) {
@@ -663,17 +666,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            HtmlWidget(
-                              detail.content,
-                              textStyle: const TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400, // Regular
-                                color: AppColors.textMuted,
-                                height: 1.4,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
+                            NurimHtmlContent(detail.content),
                             if (detail.files.isNotEmpty) ...[
                               const SizedBox(height: 24),
                               Text(
@@ -852,7 +845,10 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
       child: ListView.builder(
         controller: _faqScrollController,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        // 피그마(공지 644:8413 / FAQ 602:12213)는 탭 하단 160 → 첫 카드 176,
+        // 즉 위 여백 16 이다. 24 는 근거 없는 값이었다(검수 27행 ①).
+        // 아래 여백은 스크롤 끝 여유라 기존 24 를 유지한다.
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         itemCount: _faqItems.length + (_faqHasNext ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == _faqItems.length) {
@@ -999,17 +995,7 @@ class _CustomerCenterScreenState extends ConsumerState<CustomerCenterScreen> wit
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            HtmlWidget(
-                              detail.content,
-                              textStyle: const TextStyle(
-                                fontFamily: 'Pretendard',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400, // Regular
-                                color: AppColors.textMuted,
-                                height: 1.4,
-                                letterSpacing: -0.66,
-                              ),
-                            ),
+                            NurimHtmlContent(detail.content),
                           ],
                         );
                       },
