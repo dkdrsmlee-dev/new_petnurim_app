@@ -47,19 +47,17 @@ class ServiceTermsScreen extends ConsumerWidget {
                 ),
               );
             }
-            return ListView.separated(
+            return ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: terms.length,
-              separatorBuilder: (context, index) =>
-                  const Divider(height: 1, color: AppColors.borderLight),
+              // NurimListButton 이 이미 하단 구분선을 그리는데 그 위에
+              // Divider 를 하나 더 얹어 회색선이 2 로 보였다(검수 26행 ②).
               itemBuilder: (context, index) {
                 final term = terms[index];
                 return NurimListButton(
                   title: term.termsName,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 18,
-                  ),
+                  // 피그마 List button 은 상하좌우 16. 20/18 이라 내용이 눌렸다.
+                  padding: const EdgeInsets.all(16),
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
