@@ -147,8 +147,11 @@ class _MembershipCancelScreenState extends ConsumerState<MembershipCancelScreen>
           const SizedBox(height: 12),
           MembershipBenefitList(benefits: benefits),
           const SizedBox(height: 32),
+          // 디자인 문구는 "(선택)" 이지만 백엔드가 cancelReasonCodes 를
+          // required(최소 1개)로 받는다. 백엔드 스펙에 맞추기로 해 "(필수)" 로 쓴다.
+          // 해지 버튼 활성 조건(_canCancel)도 사유 선택을 요구하므로 문구와 일치한다.
           const Text(
-            '해지 사유를 알려주세요.(선택)',
+            '해지 사유를 알려주세요.(필수)',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w700,
