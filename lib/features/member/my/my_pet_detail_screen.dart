@@ -179,46 +179,58 @@ class MyPetDetailScreen extends ConsumerWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    // Figma Icon/Crown/24 (보라 크라운, #7F4FFF)
-                                    SvgPicture.asset(
-                                      'assets/images/ic_crown_24.svg',
-                                      width: 24,
-                                      height: 24,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      membership.membershipName,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textStrong,
+                                // 왼쪽 묶음(크라운·등급명·상태칩)에 폭 제한이 없어
+                                // 좁은 화면 + 큰 글자에서 "결제 내역"을 밀어내며
+                                // 넘쳤다(320dp 배율 1.2 에서 RIGHT OVERFLOWED BY
+                                // 40 PIXELS). 등급명만 남은 폭을 받아 말줄임하고
+                                // 상태칩·결제 내역은 줄지 않게 둔다(펫 카드와 동일 규칙).
+                                Flexible(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Figma Icon/Crown/24 (보라 크라운, #7F4FFF)
+                                      SvgPicture.asset(
+                                        'assets/images/ic_crown_24.svg',
+                                        width: 24,
+                                        height: 24,
                                       ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: membership.isCancelScheduled
-                                            ? const Color(0xFFFFECEC)
-                                            : AppColors.bgGray,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        membership.isCancelScheduled
-                                            ? '해지 신청'
-                                            : '현재 이용 중',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          color: membership.isCancelScheduled
-                                              ? const Color(0xFFFF5F5F)
-                                              : AppColors.textTertiary,
+                                      const SizedBox(width: 6),
+                                      Flexible(
+                                        child: Text(
+                                          membership.membershipName,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textStrong,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: membership.isCancelScheduled
+                                              ? const Color(0xFFFFECEC)
+                                              : AppColors.bgGray,
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          membership.isCancelScheduled
+                                              ? '해지 신청'
+                                              : '현재 이용 중',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: membership.isCancelScheduled
+                                                ? const Color(0xFFFF5F5F)
+                                                : AppColors.textTertiary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 InkWell(
                                   onTap: () {

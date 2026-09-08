@@ -401,11 +401,20 @@ class _NurimMyPetSectionState extends State<NurimMyPetSection> {
       );
     }
 
+    // PageView 는 자식에게 뷰포트 높이를 그대로 강제한다. 카드 내용(펫 이름·설명,
+    // 멤버십·리워드 행)은 글자 배율을 따라 자라는데 204 로 묶어 두면 배율 1.2 인
+    // 기기에서 카드 아래가 잘렸다(320dp 실단말 BOTTOM OVERFLOWED BY 3.0 PIXELS).
+    // 같은 카드가 마이펫 리스트(높이 무제한)에서는 멀쩡했으므로 원인은 이 고정값이다.
+    // 텍스트가 차지하는 몫(펫 정보 48.8 + 리워드 행 ≒ 30)에만 배율을 곱해 뷰포트를
+    // 늘린다. 배율 1.0 이면 204 그대로라 기존 화면은 1픽셀도 바뀌지 않는다.
+    final textScale = MediaQuery.of(context).textScaler.scale(16) / 16;
+    final double viewportHeight = 204 + 80 * math.max(0.0, textScale - 1.0);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SizedBox(
-          height: 204,
+          height: viewportHeight,
           child: PageView.builder(
             controller: _pageController,
             physics: const BouncingScrollPhysics(),

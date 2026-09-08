@@ -1042,22 +1042,33 @@ class _SubscribedViewState extends ConsumerState<_SubscribedView> {
   }
 
   Widget _infoRow(String label, Widget value, {Color labelColor = AppColors.textSecondary}) {
-    return SizedBox(
-      height: 36,
+    // 높이를 36 으로 못박고 라벨을 Expanded 로 두면, 값이 긴 행(이용 기간의
+    // 날짜 두 개)에서 라벨이 두 줄로 접힌 뒤 36 안에서 잘렸다("이용 기 / 간").
+    // 큰 글자(배율 1.2)에서는 구독 금액(24sp) 행도 36 을 넘는다.
+    // 라벨은 짧으니 제 폭을 갖고, 남은 폭은 값이 받아 필요하면 줄어들게 한다.
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 36),
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: labelColor,
-                letterSpacing: -0.66,
-              ),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: labelColor,
+              letterSpacing: -0.66,
             ),
           ),
-          value,
+          const SizedBox(width: 8),
+          Expanded(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: value,
+            ),
+          ),
         ],
       ),
     );

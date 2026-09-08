@@ -19,6 +19,7 @@ import 'package:new_petnurim_app/core/widgets/my_info_row.dart';
 import 'package:new_petnurim_app/core/widgets/mypage_name.dart';
 import 'package:new_petnurim_app/core/widgets/nurim_text_card.dart';
 import 'package:new_petnurim_app/core/widgets/page_header.dart';
+import 'package:new_petnurim_app/core/widgets/pet_card.dart';
 import 'package:new_petnurim_app/core/widgets/popup_header.dart';
 import 'package:new_petnurim_app/core/widgets/section_title.dart';
 import 'package:new_petnurim_app/core/widgets/selection_control.dart';
@@ -223,6 +224,19 @@ void main() {
               groupValue: 'a',
               onChanged: (_) {},
             ));
+    // 마이페이지/마이펫 카드 — PageView 고정 높이(204) 안에서 자란다
+    const petData = NurimPetCardData(
+      name: '초코',
+      breed: '골든리트리버',
+      ageText: '5살',
+      genderText: '남아',
+      membershipTier: '브론즈',
+      rewardText: '660P',
+      isPrimary: true,
+    );
+    await sweep(tester, 'NurimPetCard', () => const NurimPetCard(pet: petData));
+    await sweep(tester, 'NurimMyPetSection',
+        () => const NurimMyPetSection(pets: [petData]), fullWidth: true);
     await sweep(tester, 'NurimMypageName',
         () => const NurimMypageName(name: '소지섭'));
     await sweep(tester, 'LastLoginBadge', () => const LastLoginBadge());
